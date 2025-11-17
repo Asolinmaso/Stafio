@@ -1,0 +1,249 @@
+/* Attendance.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+body, html {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main content padding */
+.attendance-content {
+ background: #eff5ff;
+  min-height: 100vh;
+  animation: fadeIn 1s ease-in-out;
+  margin:0px;
+
+}
+.header-text{
+  margin:30px;
+  font-size:40px;
+  font-weight:600;
+}
+
+
+/* Summary Cards */
+.summary-cardss { 
+  padding:20px;
+    border-radius: 5px !important;
+    overflow: hidden;
+
+}
+
+.summary-title{
+  font-size:20px !important;
+   font-weight:600 !important;
+  color:black !important;
+   text-align: left;
+ 
+}
+.summary-subtitle{
+  font-size:15px !important;
+  margin:0px 0px 0px 0px;
+  font-weight:500 !important;
+  color:black !important;
+   text-align: left;
+}
+
+.summary-icon-circle1 {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center the tick inside */
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #000000ff; 
+  border-radius: 50%;        
+  margin-bottom: 8px;
+  margin-top: 0px;
+}
+.summary-icon-circle2 {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center the tick inside */
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #a72828ff; 
+  border-radius: 50%;        
+  margin-bottom: 8px;
+  margin-top: 0px;
+}
+.summary-icon-circle3 {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center the tick inside */
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #e8dd0fff; 
+  border-radius: 50%;        
+  margin-bottom: 8px;
+  margin-top: 0px;
+}
+.summary-icon-circle4 {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  width: 30px;             
+  height: 30px;
+  border: 1.5px solid #28a745; 
+  border-radius: 50%;        
+  margin-bottom: 8px;
+  margin-top: 0px;
+  color: #28a745;      
+}
+
+.summary-icon {
+  font-size: 25px !important;     
+  background-color:white; 
+  width:20px;
+  height:18px;
+   color: #28a745; 
+   margin:0px !important; 
+}
+
+/* 🔍 Search + Filter + Sort Bar */
+.search-filter-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* spacing between inputs */
+}
+
+.custom-input,
+.custom-select {
+  border: 1px solid #ccc;
+  border-radius: 25px; /* fully rounded */
+  padding: 6px 14px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.custom-input:focus,
+.custom-select:focus {
+  outline: none;
+  border-color: #007bff; /* Bootstrap primary */
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+}
+
+/* Funnel icon styling */
+.filter-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.filter-wrapper .custom-select {
+  padding-right: 34px; /* space for funnel */
+}
+
+.filter-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #6c757d; /* muted grey */
+  pointer-events: none; /* icon not clickable */
+}
+
+/* =============================
+   Attendance Overview Card
+   ============================= */
+
+/* Card header */
+.attendance-card h5 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff; /* Bootstrap primary */
+  margin: 0;
+}
+
+/* Quick Search input + date picker */
+.attendance-card .form-control {
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.attendance-card .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+
+/* My Leave Report button */
+.attendance-card .btn-info {
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #0dcaf0;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.attendance-card .btn-info:hover {
+  background: #0bb8dc;
+}
+
+/* Table */
+.attendance-card table {
+  font-size: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.attendance-card thead {
+  background: #f8f9fa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.attendance-card tbody tr:hover {
+  background: #f1f9ff;
+  transition: background 0.2s ease;
+}
+
+/* Status text (already color-coded with Bootstrap classes) */
+.attendance-card td {
+  vertical-align: middle;
+}
+
+/* Footer */
+.attendance-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* Showing dropdown */
+.attendance-footer .form-select {
+  border-radius: 12px;
+  font-size: 13px;
+  padding: 4px 8px;
+}
+
+/* Pagination buttons */
+.attendance-footer .btn {
+  border-radius: 12px;
+  font-size: 13px;
+  padding: 4px 12px;
+  transition: all 0.2s ease;
+}
+
+.attendance-footer .btn-light:hover {
+  background: #e9ecef;
+}
+
+.attendance-footer .btn-primary {
+  background: #007bff;
+  border: none;
+}
+
+.attendance-footer .btn-primary:hover {
+  background: #0069d9;
+}
+
+.nextbtn{
+  background: #19bde8;
+}

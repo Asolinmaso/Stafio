@@ -1,0 +1,118 @@
+.login-left {
+  position: relative;
+  background: #e8edfaff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* keep illustration at bottom */
+  padding: 40px;
+}
+
+.bg-shape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.login-left-content {
+  z-index: 2;
+  position: relative;
+  text-align: left; /* align text left */
+  align-self: flex-start; /* force left alignment */
+}
+
+.login-logos {
+  margin-top:40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* keep logos left */
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-left:30px;
+}
+
+.teamplus-logo {
+  height: 55px;
+}
+
+.stafio-logo {
+  height: 35px;
+}
+
+.login-heading {
+  margin-top: 10px;
+  font-size: 35px;
+  font-weight: 600;
+  color: #1e2a5a;
+  width:100%;
+  text-align:left;
+  margin-left:30px;
+}
+
+
+.login-subheading {
+  font-size: 35px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 10px;
+  text-align:left;
+   margin-left:30px;
+}
+
+.login-description  {
+  font-size: 18px;
+  color: #0a0a0aff;
+  margin-bottom: 20px;
+  line-height: 1.5;
+   margin-left:30px;
+  
+}
+
+.login-illustration {
+  max-width: 60%;
+  z-index: 2;
+  position: relative;
+  margin-top: -20px;
+  align-self: center; /* center only the main illustration */
+}
+
+.login-form-wrapper {
+  background: #ffffff; /* white background */
+  padding: 50px;
+  border: none; /* no border */
+  border-radius: 0; /* remove rounded corners */
+  box-shadow: none; /* no shadow */
+  
+}
+
+.login-form-wrapper h5{
+  color: #36baeeff;
+  font-weight:500;
+  font-size:23px;
+  padding-bottom:20px;
+
+}
+.login-form-wrapper h3{
+  font-weight:600;
+  font-size:30px;
+}
+.email-input{
+  background: #e9eaeaff;
+  width:400px;
+  height:40px;
+}
+
+.signup-page{
+  color: #36baeeff;
+}
+.login-btn{
+  width:400px;
+}
+
+.signup-text{
+  font-size:15px;
+}

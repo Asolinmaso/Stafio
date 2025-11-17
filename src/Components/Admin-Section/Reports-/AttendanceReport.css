@@ -1,0 +1,261 @@
+.att-report-layout {
+  display: flex;
+  background: #eff5ff;
+  min-height: 100vh;
+}
+
+.att-report-main {
+  flex: 1;
+  padding: 20px 30px;
+}
+
+/* ===== Header ===== */
+.att-report-header {
+  display: flex;
+  align-items: center;
+  margin: 30px 10px 40px 10px;
+}
+
+.att-report-header h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.att-report-dropdown {
+  padding: 6px 16px;
+  border: 1px solid #b9b9b9ff;
+  border-radius: 8px;
+  font-size: 14px;
+  background: transparent;
+  margin-left:20px;
+ 
+}
+
+/* ===== Filter Bar ===== */
+.att-report-filterbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 15px 0;
+   
+}
+
+.att-report-search-box {
+  position: relative;
+}
+
+.att-report-search-box input {
+  padding: 10px 16px 10px 40px;
+  border: 1px solid #c3c5c7;
+  border-radius: 16px;
+  font-size: 14px;
+  outline: none;
+background: transparent;
+  width: 220px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.att-report-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #c3c5c7;
+   background: transparent;
+  border-radius: 16px;
+  padding: 10px 16px;
+  color: #5a5858;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.att-report-sort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #c3c5c7;
+  border-radius: 16px;
+  padding: 10px 16px;
+  color: #5a5858;
+   background: transparent;
+}
+
+/* ===== Table Wrapper ===== */
+.att-report-table-wrapper {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.att-report-table-header {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e2e4;
+}
+
+.att-report-table-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-report-search {
+  position: relative;
+  
+}
+
+.header-report-search input {
+  padding: 8px 16px 8px 40px;
+  border: 1px solid #c3c5c7;
+  border-radius: 10px;
+  background: #fff;
+  width: 530px;
+}
+
+.header-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9b9b9b;
+}
+
+.att-report-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid #c3c5c7;
+  border-radius: 10px;
+  color: #64748b;
+  font-size: 14px;
+  background: #fff;
+}
+
+.att-report-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #19bde8;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* ===== Table ===== */
+.att-report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.att-report-table th,
+.att-report-table td {
+  padding: 20px 20px;
+  font-size: 14px;
+  
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.att-report-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+}
+
+.att-report-time.on-time {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.att-report-time.absent {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.att-report-time.late-login {
+  color: #eab308;
+  font-weight: 600;
+}
+
+.att-report-status {
+  font-weight: 500;
+  font-weight: 600;
+}
+
+.att-report-status.on-time {
+  color: #16a34a;
+}
+
+.att-report-status.absent {
+  color: #dc2626;
+}
+
+.att-report-status.late-login {
+   color: #eab308;
+}
+
+/* ===== Pagination ===== */
+.att-report-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10px;
+}
+
+.att-report-showing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.att-report-showing select {
+  padding: 6px 12px;
+  border: 1px solid #19bde8;
+  background: #19bde8;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.att-report-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.att-report-page-controls button {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.att-report-page-controls button.active {
+  background: #19bde8;
+  color: #fff;
+  border: 1px solid #19bde8;
+}

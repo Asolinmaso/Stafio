@@ -1,0 +1,141 @@
+/* ===== General Wrapper ===== */
+.profile-banner-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #f5f7fa;
+}
+
+/* ===== Main Container ===== */
+.profile-banner-container {
+  width: 1088px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: visible; /* allow profile image to overflow */
+}
+
+/* ===== Top Gradient Banner ===== */
+.profile-banner-top {
+  position: relative;
+  height: 140px;
+  background: linear-gradient(91.49deg, #19bde8 61.8%, #0e6a82 100.29%);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  overflow: visible; /* allow image to overflow */
+}
+
+/* ===== Profile Image (Left Side, Fully Visible, Above Everything) ===== */
+.profile-image-wrapper {
+  position: absolute;
+  left: 40px;          /* left side */
+  top: 80%;            /* start vertical center */
+  transform: translateY(-50%); /* vertical centering between top and bottom */
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #fff;
+  padding: 1px;
+  box-shadow: 0px 6px 16px rgba(28, 27, 27, 0.25);
+  z-index: 50;   
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #000000ff;
+}
+
+/* ===== Arrow Illustration ===== */
+.profile-banner-arrow {
+  position: absolute;
+  right: 240px;
+  top: 72%;
+  transform: translateY(-50%);
+  height: 150px;
+  width: auto;
+  opacity: 0.9;
+  z-index: 2;
+}
+
+/* ===== Right Illustration (Humans, etc.) ===== */
+.profile-banner-illustration {
+  position: absolute;
+  right: 55px;
+  top: 57%;
+  transform: translateY(-50%);
+  max-height: 140px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.95;
+  z-index: 1;
+}
+
+/* ===== White Info Card ===== */
+.profile-info-card {
+  background: #fff;
+  padding: 40px 40px 40px 40px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  position: relative;
+  z-index: 1; /* below profile image */
+  overflow: visible;
+}
+
+/* ===== Grid Layout ===== */
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  align-items: start;
+  color: #000000ff;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ===== Left Section ===== */
+.profile-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-name-line {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.profile-name {
+  font-weight: 600;
+  color: #000000ff;
+  font-size: 1.1rem;
+}
+
+.profile-id {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.profile-role {
+  color: #222;
+}
+
+.profile-location {
+  color: #444;
+}
+
+/* ===== Center Section ===== */
+.profile-center div {
+  color: #444;
+}
+
+/* ===== Right Section ===== */
+.profile-right {
+  text-align: right;
+  color: #444;
+}

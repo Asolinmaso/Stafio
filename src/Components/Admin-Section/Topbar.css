@@ -1,0 +1,312 @@
+.topbar {
+    margin-top:40px;
+  height: 60px;
+  background: #fff;
+  border-radius: 10px;
+  margin: 10px; 
+}
+
+.topbar-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.form-controler{
+  border-radius: 20px !important;
+  width:50% !important;
+  padding:10px 12px !important;
+  border:1px solid #ccc;
+  outline: none;
+   transition: all 0.2s ease;
+}
+.form-controler:focus {
+  border-color: #19bde8 !important;
+  box-shadow: 0 0 0 3px rgba(25, 189, 232, 0.25); /* optional glow */
+}
+
+.topbar-search{
+    width:40%;
+}
+
+.topbar-avatar {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+}
+
+.profile{
+    margin-right:50px;
+}
+
+
+/* AnnouncementPopup.css */
+
+.announcement-popup {
+  position: absolute;
+  top: 70px;
+  right: 40px;
+  width: 600px;
+  max-height: 80vh;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 2000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.popup-header .btn-outline-secondary {
+  border-radius: 20px;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-color: #ddd;
+  color: #333;
+}
+
+.popup-header .btn-outline-secondary:hover {
+  background-color: #f5f5f5;
+}
+
+.popup-header .btn-primary {
+  border-radius: 20px;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  background-color: #19bde8;
+  border: none;
+}
+
+.popup-header .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.popup-content {
+  background-color: #fafafa;
+  border-radius: 8px;
+  text-align: center;
+  color: #888;
+  padding: 60px 10px;
+  font-size: 0.95rem;
+}
+
+/* Scrollbar Styling */
+.announcement-popup::-webkit-scrollbar {
+  width: 6px;
+}
+
+.announcement-popup::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.announcement-popup::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
+}
+
+
+/* 🔹 Add New Announcement Popup Form */
+.add-form-container {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.add-form-container .form-header {
+  margin-bottom: 15px;
+}
+
+.add-form-container h5 {
+  color: #19bde8;
+  font-weight: 600;
+  margin: 0;
+}
+
+.add-form-container .close-icon {
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  transition: 0.2s ease;
+}
+
+.add-form-container .close-icon:hover {
+  color: #000;
+}
+
+/* 🔸 Form Layout */
+.announcement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px 25px;
+  align-items: start;
+}
+
+.form-grid div {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* 🔸 Input & Select Styling */
+.announcement-form input,
+.announcement-form select,
+.announcement-form textarea {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.announcement-form input:focus,
+.announcement-form select:focus,
+.announcement-form textarea:focus {
+  border-color: #19bde8;
+}
+
+
+.announcement-form textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* 🔸 Labels */
+.announcement-form label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+/* 🔸 Buttons */
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-buttons .btn {
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-buttons .btn-primary {
+  background-color: #19bde8;
+  border: none;
+}
+
+.form-buttons .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.form-buttons .btn-outline-secondary {
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.form-buttons .btn-outline-secondary:hover {
+  background-color: #f2f2f2;
+}
+
+/* 🔸 Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.announcement-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.announcement-item {
+  background: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.announcement-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.announcement-header{
+  text-align:left;
+}
+
+.announcement-name {
+  font-size: 15px;
+  color: #222;
+  padding-left:50px;
+}
+
+.announcement-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 13px;
+  color: #6c757d;
+  margin-top: 3px;
+  padding-left:50px;
+}
+
+.announcement-eventname{
+  margin-top:20px;
+  text-align:left;
+  color: #000000ff;
+  font-weight:600;
+}
+
+.announcement-meta .dot {
+  font-weight: bold;
+  color: #999;
+}
+
+.announcement-message {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  text-align:left;
+}

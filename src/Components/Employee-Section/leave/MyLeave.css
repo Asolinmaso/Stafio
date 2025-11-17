@@ -1,0 +1,221 @@
+
+.layout {
+  display: flex; /* Sidebar + Page content side by side */
+}
+
+.myleave-container {
+  flex: 1;
+  padding: 20px;
+  
+  min-height: 100vh;
+}
+
+
+.page-title {
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  margin-top:40px;
+  color:black;
+}
+
+/* Leave Summary Cards */
+.leave-summary {
+  display:flex;
+  width:50%;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: #fff;
+  flex: 1;
+  padding: 20px;
+  border-radius: 1px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+  display: block;
+  align-items: center;
+  gap: 5px;
+}
+
+.summary-icon {
+  color: #00c853;
+  font-size: 25px;
+  margin-bottom:10px;
+}
+
+.leave-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 20px 0 0 0;
+}
+
+/* Left summary section */
+.leave-summary {
+  display: flex;
+  gap: 15px;
+}
+
+/* Right actions section */
+.leave-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* pushes filter button to bottom */
+  align-items: flex-end;
+  height: 100%; /* makes it stretch same as summary section */
+}
+
+.leave-actions .top-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+}
+
+.leave-actions .bottom-button {
+  margin-top: auto; /* pushes filter button to bottom */
+}
+
+.leave-actions button {
+  padding: 8px 16px;
+  margin: 5px 0;
+  border: none;
+  cursor: pointer;
+ 
+}
+
+/* Buttons */
+.leave-actions {
+  margin-top:-30px;
+  display: flex;
+  gap: 50px;
+  margin-bottom: 30px;
+}
+
+.btn-apply {
+  background: #00bcd4;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius:15px 0px 0px 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-regularization {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  padding: 8px 18px;
+  border-radius: 0px 15px 15px 0px;
+  cursor: pointer;
+}
+
+.btn-filter {
+  color: #000000ff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background:transparent;
+  border: 1px solid #cececeff !important;
+  border-radius:12px;
+}
+
+/* Table */
+.leave-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+}
+
+.leave-table th,
+.leave-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.leave-table th {
+  background: #f9fbfd;
+  font-weight: 600;
+   border-bottom: 2px solid #eee;
+   border-top: 2px solid #eee;
+   height:70px;
+   text-align:center;
+}
+.leave-table td {
+  height:90px;
+   text-align:center;
+   font-weight:500;
+}
+
+.leave-table .status {
+  color: #00c853;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.action-icons {
+  align-items: center;
+}
+
+.edit-icon {
+  color: #555555ff;
+  cursor: pointer;
+  margin-right:10px !important;
+}
+.status {
+  display: block;   /* forces new line */
+  margin-top: 4px;  /* adds spacing below the date */
+  color: #00c853;
+  font-weight: 500;
+ margin-left:10px;
+}
+
+
+.delete-icon {
+  color: #ff5252;
+  cursor: pointer;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination select {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+   background: #19bde8;
+   color:white;
+}
+
+.page-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.page-controls button {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.page-controls button.active {
+  background: #19bde8;
+  color: #fff;
+  border-color: #00bcd4;
+}

@@ -1,0 +1,413 @@
+/* ===== Layout ===== */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+
+/* ===== Sidebar ===== */
+.AdminSidebar {
+  width: 250px;
+  min-height: 100vh;
+  background: #fff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== Main Container ===== */
+.myleave-container {
+  flex: 1;
+  padding: 20px;
+  background: #eff5ff;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* ===== Topbar ===== */
+.myleave-container .topbar {
+  width: 98%;
+  margin-bottom: 20px;
+}
+
+/* ===== Page Title ===== */
+.page-title {
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+/* ===== Leave Summary Cards ===== */
+.leave-summary {
+  display: flex;
+
+  gap: 15px;
+  margin-bottom: 20px;
+
+}
+
+.summary-card {
+  background: #fff;
+  flex: 1;
+  min-width: 200px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.summary-icon {
+  color: #00c853;
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+/* ===== Leave Actions ===== */
+.leave-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.top-buttons {
+  display: flex;
+  gap: 0;
+}
+
+.bottom-button {
+  margin-top: auto;
+}
+
+/* Buttons */
+.btn-apply {
+  background: #00bcd4;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 15px 0 0 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-apply:hover {
+  background: #00a5bb;
+}
+
+.btn-regularization {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  padding: 8px 18px;
+  border-radius: 0 15px 15px 0;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-regularization:hover {
+  background: #f4f4f4;
+}
+
+.btn-filter {
+  color: #000;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid #cecece;
+  border-radius: 12px;
+  padding: 6px 12px;
+  transition: 0.3s;
+}
+
+.btn-filter:hover {
+  background: #f0f0f0;
+}
+
+/* ===== Table ===== */
+.leave-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.leave-table th,
+.leave-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.leave-table th {
+  background: #f9fbfd;
+  font-weight: 600;
+  border-top: 2px solid #eee;
+  border-bottom: 2px solid #eee;
+  height: 70px;
+}
+
+.leave-table td {
+  height: 90px;
+  font-weight: 500;
+}
+
+.status {
+  display: block;
+  margin-top: 4px;
+  color: #00c853;
+  font-weight: 500;
+}
+
+/* Action Icons */
+.edit-icon {
+  color: #555;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: 0.3s;
+}
+
+.edit-icon:hover {
+  color: #00bcd4;
+}
+
+.delete-icon {
+  color: #ff5252;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-icon:hover {
+  color: #ff1744;
+}
+
+/* ===== Pagination ===== */
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination select {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #19bde8;
+  color: white;
+  cursor: pointer;
+}
+
+.page-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.page-controls button {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.page-controls button:hover {
+  background: #f0f0f0;
+}
+
+.page-controls button.active {
+  background: #19bde8;
+  color: #fff;
+  border-color: #00bcd4;
+}
+
+/* ===== Modal Overlay ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* ===== Modal Box ===== */
+.apply-leave-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 700px;
+  max-width: 95%;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== Blue Header ===== */
+.modal-header-blue {
+  background: #19bde8;
+  color: #fff;
+  padding: 14px 20px;
+  font-weight: 600;
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: transparent;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  border:none;
+  
+}
+/* ===== Modal Body ===== */
+.modal-body {
+  padding: 25px;
+}
+
+/* ===== Apply Leave Form Layout ===== */
+.apply-leave-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* stretch left and right sections */
+  min-height: 400px; /* adjust based on modal size */
+  gap: 10px; /* spacing between left and right */
+}
+
+/* ===== Left Form Section ===== */
+.form-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-left label {
+  font-weight: 600;
+  margin-top: 8px;
+  color: #2d2d2d;
+}
+
+.form-left input,
+.form-left select,
+.form-left textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-left input:focus,
+.form-left select:focus,
+.form-left textarea:focus {
+  border-color: #19bde8;
+}
+
+.date-row,
+.notify-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #e9f7fc;
+  color: #007dbb;
+  border: 1px solid #b5e6fa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+textarea {
+  resize: none;
+  height: 60px;
+}
+
+/* ===== Right Image Section ===== */
+.form-right {
+  flex: 0 0 180px; /* width of right section */
+  display: flex;
+  align-items: flex-end; /* align image to bottom */
+  justify-content: center;
+}
+
+.form-right img {
+  width: 150px;
+  height: auto;
+  margin: 0;
+}
+
+/* ===== Modal Footer Buttons ===== */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.apply-btn {
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  padding: 8px 18px !important;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.apply-btn:hover {
+  background: #009edb;
+}
+
+.cancel-btn {
+  background: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #e4e4e4;
+}
+
+
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

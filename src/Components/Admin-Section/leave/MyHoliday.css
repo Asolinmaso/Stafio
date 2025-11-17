@@ -1,0 +1,95 @@
+.myholiday-container {
+  flex: 1;
+  background-color: #eff5ff;
+  padding: 20px 30px;
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin: 40px 0 20px;
+}
+
+/* Table styling */
+.holiday-table-container {
+  background: #fff;
+  border-radius: 1px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  height:505px;
+}
+
+.holiday-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.holiday-table thead {
+  background: #f4f6fb;
+}
+
+.holiday-table th {
+  text-align: center;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+  border-bottom: 1px solid #ddd;
+  height:55px;
+}
+
+.holiday-table td {
+  text-align: center;
+  padding: 14px 10px;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px dashed #ddd;
+  height:64.4px;
+}
+
+/* Pagination */
+.holiday-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.showing {
+  font-size: 14px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.showing select {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+   background: #19bde8;
+   color:white;
+}
+
+.page-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.page-btn,
+.page-number {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+
+.page-number.active {
+  background: #00aaff;
+  color: #fff;
+  border-color: #00aaff;
+}

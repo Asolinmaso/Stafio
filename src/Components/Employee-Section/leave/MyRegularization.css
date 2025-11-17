@@ -1,0 +1,171 @@
+.layout {
+  display: flex;
+}
+
+.regularization-container {
+  flex: 1;
+  padding: 20px;
+  background: #eff5ff;
+  min-height: 100vh;
+  margin:0px;
+}
+
+.page-title {
+  font-size: 25px;
+  font-weight: 600;
+  margin: 40px 0 20px;
+  color: black;
+}
+
+/* Actions */
+.regularization-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0px;
+  margin-bottom: 20px;
+}
+
+.btn-regularization-add {
+  background: #00bcd4;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 15px 0 0 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-my-leaves {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  padding: 10px 18px;
+  border-radius: 0;
+  cursor: pointer;
+  border-radius: 0px 15px 15px 0px;
+}
+
+.btn-filter {
+  color: #000000ff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background:transparent;
+  border: 1px solid #cececeff !important;
+  border-radius:12px;
+  padding: 0 12px ;
+  margin-left:30px;
+}
+
+/* Table */
+.regularization-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.regularization-table th,
+.regularization-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.regularization-table th {
+  background: #f9fbfd;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+  border-top: 2px solid #eee;
+  height: 70px;
+}
+
+.regularization-table td {
+  height: 70px;
+  font-weight: 500;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 3px 15px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.approved {
+  color: #00c853;
+  border: 1px solid #00c853;
+  background: #ffffffff;
+}
+
+.status-badge.pending {
+  color: #f9a825;
+  border: 1px solid #f9a825;
+  background: #ffffffff;
+}
+
+.status-badge.rejected {
+  color: #ff5252;
+  border: 1px solid #ff5252;
+  background: #ffebee;
+}
+
+/* Action Icons */
+.action-icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.edit-icon {
+  color: #555;
+  cursor: pointer;
+}
+
+.delete-icon {
+  color: #ff5252;
+  cursor: pointer;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination select {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #19bde8;
+  color: white;
+}
+
+.page-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.page-controls button {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.page-controls button.active {
+  background: #19bde8;
+  color: #fff;
+  border-color: #00bcd4;
+}

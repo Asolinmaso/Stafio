@@ -1,0 +1,223 @@
+.regularization-page {
+  display: flex;
+  background: #eff5ff;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.regularization-main {
+  flex: 1;
+  padding: 20px 30px;
+  background: #eff5ff;
+}
+
+.regularization-container {
+  background: #f3f7fd;
+  margin-top: 20px;
+}
+
+.regularization-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.header-top h2 {
+  font-size: 30px;
+  color: #222;
+  margin-bottom: 15px;
+  font-weight:600;
+}
+
+.header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-tabs {
+    margin-top:40px;
+  display: flex;
+  gap: 0px;
+}
+
+.tab-btn {
+  background: #ffffffff !important;
+  color: #000000ff !important;
+  border: 1px solid #b8b4b4ff !important;
+  padding: 10px 28px !important;
+  border-radius: 15px 0 0 15px !important;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+ background: #19bde8 !important;
+  color: #ffffffff !important;
+  border: 1px solid #b8b4b4ff;
+  padding: 8px 12px !important;
+  border-radius: 0 15px 15px 0 !important;
+  cursor: pointer;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #acababff;
+  border-radius: 16px;
+  width: 180px;
+  font-size: 14px;
+  background:transparent;
+}
+
+.right-btn-filter {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  background: transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  margin-bottom:-10px;
+  color: #000;
+}
+
+.sort-select {
+  padding: 10px 14px;
+  border: 1px solid #aaa8a8ff;
+  border-radius: 16px;
+  background: #fff;
+  font-size: 14px;
+  margin-top:9px;
+  margin-bottom:0px;
+}
+
+
+
+.tab-btn {
+  padding: 8px 18px;
+  border: none;
+  background: #e6ecf8;
+  color: #2c3e50;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tab-btn.active {
+  background: #007bff;
+  color: #fff;
+}
+
+.right-bottom-button {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+
+
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.regularization-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.regularization-table th {
+  text-align: left;
+  padding: 12px;
+  font-size: 14px;
+  color: #6c757d;
+  border-bottom: 1px solid #eee;
+}
+
+.regularization-table td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  color: #2c3e50;
+}
+
+.emp-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emp-info img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.emp-name {
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+.status-badge.pending {
+  background: #fff6db;
+  color: #f5b100;
+}
+
+.status-badge.approved {
+  background: #e7fff2;
+  color: #00c26d;
+}
+
+.view-btn {
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+
+
+.showing select {
+  margin-left: 5px;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.page-btns {
+  display: block;
+  gap: 8px;
+}
+
+.page-btns button {
+  border: none;
+  background: #e6ecf8;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.page-btns .active {
+  background: #19bde8;
+  color: #fff;
+}

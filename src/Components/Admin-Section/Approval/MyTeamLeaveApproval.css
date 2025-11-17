@@ -1,0 +1,200 @@
+.myteam-layout {
+  display: flex;
+  background: #eff5ff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.myteam-layout .topbar{
+  padding-top: 5px;
+  margin-top: 30px;
+  padding-bottom: 8px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto; /* centers horizontally */
+  display: block;
+}
+
+.myteam-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.myteam-page {
+  flex: 1;
+  padding: 25px;
+  background: #eff5ff;
+
+}
+
+.myteam-title {
+  font-size: 30px;
+  color: #1e1e1e;
+  font-weight: 600;
+  margin-left: 40px;
+  margin-bottom: 5px;
+}
+
+.myteam-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 50px;
+  margin-bottom: 20px;
+}
+
+.filter-sort {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #cecece;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  background: #e7f0ff;
+}
+
+.sorts-select {
+  padding: 9px 10px ;
+  border-radius: 14px;
+  border: 1px solid #aaa8a8ff ;
+  font-size: 14px;
+  background:transparent !important;
+  cursor: pointer;
+  
+  
+  
+}
+
+.myteam-table {
+  width: 95%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-left: 40px;
+}
+
+.myteam-table th,
+.myteam-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.myteam-table th {
+  background: #f9fafb;
+  font-size: 14px;
+  color: #374151;
+}
+
+.employee-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emp-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.emp-name {
+  font-weight: 500;
+  color: #1f2937;
+  margin: 0;
+}
+
+.emp-id {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.days {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+   border: 1px solid ;
+}
+
+.status-approved {
+  background: transparent;
+  color: #16a34a;
+}
+
+.status-pending {
+  background: transparent;
+  color: #eab308;
+}
+
+.status-rejected {
+  background: transparent;
+  color: #dc2626;
+}
+
+.view-btn {
+  background: transparent;
+  border: 1px solid #353535ff;
+  color: #504e4eff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.view-btn:hover {
+  background: #19bde9;
+  color: white;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  font-size: 14px;
+  margin-left: 40px;
+  margin-right: 25px;
+}
+
+.page-btn {
+  background: #f1f5f9;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background: #19bde8;
+  color: white;
+}
+
+.showing select {
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  background: #19bde8;
+  color: #fff;
+}

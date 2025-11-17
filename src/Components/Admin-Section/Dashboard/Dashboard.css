@@ -1,0 +1,63 @@
+/* AdminDashboard.css */
+
+.dashboard-wrapper {
+  display: flex;
+  background-color: #eff5ff;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  background: #eff5ff;
+}
+
+.username h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.summary-card {
+  border-radius: 10px !important;
+  padding: 20px;
+  background: #eff5ff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+}
+
+.summary-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-icons {
+  font-size: 1.8rem;
+  color: #19bde8;
+}
+
+.btn-punch {
+  margin-top: 10px;
+  padding: 8px 16px ;
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  
+}
+
+.btn-punch:hover {
+  background: #17a2cc;
+}
+
+.maleteam{
+  height:330px;
+  margin-left:-50px;
+  margin-right:-20px;
+}
