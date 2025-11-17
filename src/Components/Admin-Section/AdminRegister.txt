@@ -45,7 +45,7 @@ const AdminRegister = () => {
     setMessage("");
 
     try {
-      const res = await axios.post("http://127.0.0.1:5000/register", formData);
+      const res = await axios.post("http://127.0.0.1:5001/register", formData);
       setMessage(res.data.message);
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
