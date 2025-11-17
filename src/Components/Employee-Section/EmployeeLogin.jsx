@@ -21,7 +21,7 @@ const EmployeeLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const loginUrl = "http://127.0.0.1:5000/employee_login"; // ✅ your backend endpoint
+    const loginUrl = "http://127.0.0.1:5001/employee_login"; // ✅ your backend endpoint
 
     try {
       const response = await fetch(loginUrl, {

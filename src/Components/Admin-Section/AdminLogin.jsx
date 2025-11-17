@@ -54,7 +54,7 @@ const AdminLogin = () => {
     const role = googleRoleRef.current;
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/google_login", {
+      const res = await fetch("http://127.0.0.1:5001/google_login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_token, role }),
@@ -94,7 +94,7 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/admin_login", {
+      const response = await fetch("http://127.0.0.1:5001/admin_login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

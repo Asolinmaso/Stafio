@@ -9,60 +9,56 @@ import axios from 'axios';
 // ====================== INITIAL STATE ======================
 const initialProfile = {
   profileImage: '',
-  name: 'Aiswarya Shyamkumar',
-  gender: 'Female',
-  dob: '1993-07-22',
-  maritalStatus: 'Married',
-  nationality: 'India',
-  bloodGroup: 'A+',
-  email: 'aiswarya@gmail.com',
-  phone: '9895195971',
-  address: 'Kattasseri House, Kalarikal, Alappuzha, Kerala',
-  emergencyContactNumber: '9895195971',
-  relationship: 'Husband',
-  empType: 'Internship',
-  department: 'Design',
-  location: 'Kerala',
-  supervisor: 'Sakshi Chadchankar',
-  hrManager: 'S. Santhana Lakshmi',
-  empId: '1234567',
-  status: 'Active'
+  name: '',
+  gender: '',
+  dob: '',
+  maritalStatus: '',
+  nationality: '',
+  bloodGroup: '',
+  email: '',
+  phone: '',
+  address: '',
+  emergencyContactNumber: '',
+  relationship: '',
+  empType: '',
+  department: '',
+  location: '',
+  supervisor: '',
+  hrManager: '',
+  empId: '',
+  status: ''
 };
 
 const initialEducation = {
-  institution: 'CEMP Punnapra',
-  location: 'Kerala',
-  startDate: '2012-07-22',
-  endDate: '2016-07-22',
-  qualification: 'B.Tech',
-  specialization: 'Computer Science',
-  skills: ['Illustrator', 'Photoshop', 'Figma', 'Adobe XD'],
-  portfolio: 'https://www.behance.net/gallery/229448069/Training-Provider-Web-UI-Design'
+  institution: '',
+  location: '',
+  startDate: '',
+  endDate: '',
+  qualification: '',
+  specialization: '',
+  skills: [],
+  portfolio: ''
 };
 
 const initialExperience = {
-  company: 'Azym Technology',
-  jobTitle: 'UIUX Designer',
-  startDate: '2017-07-22',
-  endDate: '2022-07-22',
-  responsibilities: 'Conduct user research, interviews, and usability testing to gather insights.',
-  totalYears: 4
+  company: '',
+  jobTitle: '',
+  startDate: '',
+  endDate: '',
+  responsibilities: '',
+  totalYears: ''
 };
 
 const initialBank = {
-  bankName: 'SBI',
-  branch: 'Alappuzha',
-  accountNumber: '123456789101',
-  ifsc: 'IFC12345',
-  aadhaar: '123456789101',
-  pan: 'IFC12345'
+  bankName: '',
+  branch: '',
+  accountNumber: '',
+  ifsc: '',
+  aadhaar: '',
+  pan: ''
 };
 
-const initialDocs = [
-  { fileName: 'Signed OfferLetter.pdf', status: 'Completed' },
-  { fileName: 'DegreeCertificate.pdf', status: 'Completed' },
-  { fileName: 'Pan Card.pdf', status: 'Completed' }
-];
+const initialDocs = [];
 
 // ====================== COMPONENT ======================
 const AdminProfile = () => {
@@ -86,7 +82,7 @@ const AdminProfile = () => {
       try {
         const userId = 1; // Replace with actual logged-in admin ID
         const response = await axios.get(
-          `http://127.0.0.1:5000/admin_profile/${userId}`,
+          `http://127.0.0.1:5001/admin_profile/${userId}`,
           {
             headers: {
               'X-User-Role': 'admin',
@@ -95,16 +91,19 @@ const AdminProfile = () => {
           }
         );
         
-        // Update all states with fetched data
-        setProfile(response.data.profile);
-        setEducation(response.data.education);
-        setExperience(response.data.experience);
-        setBank(response.data.bank);
-        setDocuments(response.data.documents);
+        // Only update with data from backend, use empty defaults if not provided
+        if (response.data) {
+          setProfile(response.data.profile || initialProfile);
+          setEducation(response.data.education || initialEducation);
+          setExperience(response.data.experience || initialExperience);
+          setBank(response.data.bank || initialBank);
+          setDocuments(response.data.documents || initialDocs);
+        }
         
         console.log("Admin profile data loaded successfully");
       } catch (error) {
         console.error("Error fetching admin profile data:", error);
+        // Keep empty initial state on error
       }
     };
 
@@ -182,7 +181,7 @@ const AdminProfile = () => {
       </div>
       <div className="main-content py-4">
         <Topbar />
-        <ProfileBanner />
+        <ProfileBanner profileData={profile} />
 
         <Tab.Container
           activeKey={activeTab}

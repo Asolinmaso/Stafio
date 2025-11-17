@@ -21,7 +21,7 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
     setErrorMsg("");
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/check_email", {
+      const response = await fetch("http://127.0.0.1:5001/check_email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -49,7 +49,7 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/update_password", {
+      const response = await fetch("http://127.0.0.1:5001/update_password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, newPassword }),

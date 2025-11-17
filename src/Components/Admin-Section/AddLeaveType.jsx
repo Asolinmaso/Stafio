@@ -36,7 +36,7 @@ const AddLeaveType = () => {
 
     try {
       const res = await axios.post(
-        "http://127.0.0.1:5000/leave_types",
+        "http://127.0.0.1:5001/leave_types",
         formData,
         {
           headers: {

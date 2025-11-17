@@ -13,7 +13,7 @@ export default function MyRegularization() {
   useEffect(() => {
     const fetchRegularizationData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/api/myregularization");
+        const response = await axios.get("http://127.0.0.1:5001/api/myregularization");
         setRegularizationData(response.data);
       } catch (error) {
         console.error("Error fetching Regularization data:", error);

@@ -20,7 +20,7 @@ const Attendance = () => {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/api/attendance");
+        const response = await axios.get("http://127.0.0.1:5001/api/attendance");
         setAttendanceData(response.data);
       } catch (error) {
         console.error("Error fetching attendance:", error);

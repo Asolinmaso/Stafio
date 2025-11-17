@@ -4,7 +4,20 @@ import arrow3 from "../../../assets/arrow3.png"; // Paper plane arrow
 import Rectangle6 from "../../../assets/Rectangle6.png"; // Human illustration
 import "./ProfileBanner.css";
 
-const ProfileBanner = () => {
+const ProfileBanner = ({ profileData }) => {
+  // Use profileData if provided, otherwise use empty values
+  const {
+    name = '',
+    empId = '',
+    empType = '',
+    location = '',
+    department = '',
+    supervisor = '',
+    hrManager = '',
+    email = '',
+    phone = ''
+  } = profileData || {};
+
   return (
     <div className="profile-banner-wrapper">
       <div className="profile-banner-container">
@@ -36,25 +49,25 @@ const ProfileBanner = () => {
             {/* Left Section */}
             <div className="profile-left">
               <div className="profile-name-line">
-                <span className="profile-name">Aiswarya Shyamkumar</span>
-                <span className="profile-id">(ID 1234567)</span>
+                <span className="profile-name">{name || 'Name not set'}</span>
+                <span className="profile-id">(ID {empId || 'Not assigned'})</span>
               </div>
-              <div className="profile-role">UIUX Designer</div>
-              <div className="profile-location">Kerala</div>
+              <div className="profile-role">{empType || 'Position not set'}</div>
+              <div className="profile-location">{location || 'Location not set'}</div>
             </div>
 
             {/* Center Section */}
             <div className="profile-center">
-              <div>Employment Type : Internship</div>
-              <div>Primary Supervisor : Sakshi Chadchankar</div>
-              <div>HR Manager : S. Santhana Lakshmi</div>
+              <div>Employment Type : {empType || 'Not specified'}</div>
+              <div>Primary Supervisor : {supervisor || 'Not assigned'}</div>
+              <div>HR Manager : {hrManager || 'Not assigned'}</div>
             </div>
 
             {/* Right Section */}
             <div className="profile-right">
-              <div>Department : Design</div>
-              <div>Email Id : aiswarya@gmail.com</div>
-              <div>Contact : 9895195971</div>
+              <div>Department : {department || 'Not assigned'}</div>
+              <div>Email Id : {email || 'Email not set'}</div>
+              <div>Contact : {phone || 'Phone not set'}</div>
             </div>
           </div>
         </div>

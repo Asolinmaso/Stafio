@@ -250,7 +250,7 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/dashboard");
+        const response = await axios.get("http://127.0.0.1:5001/dashboard");
         setDashboardData(response.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
