@@ -15,7 +15,7 @@ import Vector1 from "../../assets/Vector1.svg";
 import Vector4 from "../../assets/Vector4.svg";
 import Vector5 from "../../assets/Vector5.svg";
 import { useLocation } from "react-router-dom";
- 
+
 export const OrganizationMenu = () => {
   const location = useLocation();
   const isOrganizationActive =
@@ -92,7 +92,7 @@ export const ApprovalMenu = () => {
   const isApprovalsActive =
     location.pathname.startsWith("/leave-approval") ||
     location.pathname.startsWith("/myTeam-LeaveApproval") ||
-    location.pathname.startsWith("/regularization-approval") || 
+    location.pathname.startsWith("/regularization-approval") ||
     location.pathname.startsWith("/ra-myteam") ||
     location.pathname.startsWith("/leave-policies");
   const [open, setOpen] = useState(false);
@@ -128,9 +128,7 @@ export const ApprovalMenu = () => {
           <img
             src={Group4}
             alt="Approval Icon"
-             className={`me-2 sidebar-icon ${
-              isApprovalsActive ? "active" : ""
-            }`}
+            className={`me-2 sidebar-icon ${isApprovalsActive ? "active" : ""}`}
           />
           <div className="approval">Approval</div>
         </div>
@@ -213,9 +211,7 @@ export const LeaveMenu = () => {
           <img
             src={Group1}
             alt="Leave Icon"
-             className={`me-2 sidebar-icon ${
-              isLeavesActive ? "active" : ""
-            }`}
+            className={`me-2 sidebar-icon ${isLeavesActive ? "active" : ""}`}
           />
           <div className="leave">Leave</div>
         </div>
@@ -258,8 +254,9 @@ export const LeaveMenu = () => {
 };
 export const ReportMenu = () => {
   const location = useLocation();
-  const isReportsActive = location.pathname.startsWith("/admin-attendance-report") ||  
-  location.pathname.startsWith("/leave-report");
+  const isReportsActive =
+    location.pathname.startsWith("/admin-attendance-report") ||
+    location.pathname.startsWith("/leave-report");
   const [open, setOpen] = useState(false);
 
   // Paths that belong to Reports
@@ -287,9 +284,7 @@ export const ReportMenu = () => {
           <img
             src={Group5}
             alt="Report Icon"
-            className={`me-2 sidebar-icon ${
-              isReportsActive ? "active" : ""
-            }`}
+            className={`me-2 sidebar-icon ${isReportsActive ? "active" : ""}`}
           />
           <div className="report">Reports</div>
         </div>
@@ -333,10 +328,14 @@ const AdminSidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("announcements");
-     // Remove Remember Me data
-  localStorage.removeItem("remember_admin");
-  localStorage.removeItem("remember_email");
-  localStorage.removeItem("remember_password");
+    // Remove Remember Me data
+    localStorage.removeItem("remember_admin");
+    localStorage.removeItem("remember_email");
+    localStorage.removeItem("remember_password");
+    // 🔥 Remove Google Remember Me
+    localStorage.removeItem("remember_google");
+    localStorage.removeItem("remember_google_email");
+    localStorage.removeItem("remember_google_name");
 
     window.location.href = "/";
   };

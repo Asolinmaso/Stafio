@@ -5,23 +5,22 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ForgotPasswordPopup = ({ show, onClose }) => {
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [step, setStep] = useState(1);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword1, setShowPassword1] = useState(false);
 
-  // Step 2 states
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // -----------------------------
-  // STEP 1 → CHECK EMAIL EXISTS
-  // -----------------------------
-  const handleEmailCheck = async () => {
+  // STEP 1 → SEND OTP
+  const handleSendOtp = async () => {
     setErrorMsg("");
 
     try {
-      const response = await fetch("http://127.0.0.1:5001/check_email", {
+      const response = await fetch("http://127.0.0.1:5001/forgot_send_otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -29,19 +28,40 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
 
       const data = await response.json();
 
-      if (response.ok && data.exists) {
-        setStep(2); // go to next popup
+      if (response.ok) {
+        setStep(2);
       } else {
-        setErrorMsg("Email not found in database.");
+        setErrorMsg(data.message || "Failed to send OTP.");
       }
-    } catch (error) {
-      setErrorMsg("Network error. Please try again.");
+    } catch (err) {
+      setErrorMsg("Network error. Try again.");
     }
   };
 
-  // -----------------------------------
-  // STEP 2 → UPDATE USER PASSWORD IN DB
-  // -----------------------------------
+  // STEP 2 → VERIFY OTP
+  const handleVerifyOtp = async () => {
+    setErrorMsg("");
+
+    try {
+      const response = await fetch("http://127.0.0.1:5001/forgot_verify_otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStep(3); // go to reset password page
+      } else {
+        setErrorMsg(data.message || "Invalid OTP.");
+      }
+    } catch (err) {
+      setErrorMsg("Network error.");
+    }
+  };
+
+  // STEP 3 → RESET PASSWORD
   const handlePasswordUpdate = async () => {
     if (newPassword !== confirmPassword) {
       setErrorMsg("Passwords do not match.");
@@ -49,31 +69,30 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5001/update_password", {
+      const response = await fetch("http://127.0.0.1:5001/reset_password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, newPassword }),
+        body: JSON.stringify({ email, password: newPassword }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setStep(3); // go to success message
+        setStep(4); // success page
       } else {
-        setErrorMsg(data.message || "Failed to update password.");
+        setErrorMsg(data.message || "Failed to reset password.");
       }
     } catch (err) {
       setErrorMsg("Network error. Try again.");
     }
   };
 
-  // -----------------------------
-  // CLOSE ALL POPUPS
-  // -----------------------------
+  // CLOSE POPUP
   const handleCloseAll = () => {
     setEmail("");
     setNewPassword("");
     setConfirmPassword("");
+    setOtp("");
     setErrorMsg("");
     setStep(1);
     onClose();
@@ -81,11 +100,11 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
 
   return (
     <>
-      {/* POPUP - 1 (Enter Email) */}
+      {/* STEP 1: ENTER EMAIL */}
       <Modal show={show && step === 1} onHide={handleCloseAll} centered>
         <Modal.Body className="p-4">
-          <h3 className="mb-3">Forgot password</h3>
-          <p>Enter your email for verification. We will send a code.</p>
+          <h3 className="mb-3">Forgot Password</h3>
+          <p>Enter your email to receive OTP.</p>
 
           {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
 
@@ -99,14 +118,37 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
             />
           </Form.Group>
 
-          <Button className="w-100" onClick={handleEmailCheck}>
-            CONTINUE
+          <Button className="w-100" onClick={handleSendOtp}>
+            SEND OTP
           </Button>
         </Modal.Body>
       </Modal>
 
-      {/* POPUP - 2 (Enter New Password) */}
+      {/* STEP 2: ENTER OTP */}
       <Modal show={show && step === 2} onHide={handleCloseAll} centered>
+        <Modal.Body className="p-4">
+          <h4 className="mb-3">Verify OTP</h4>
+
+          {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
+
+          <Form.Group className="mb-3">
+            <Form.Label>Enter OTP</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter the 6-digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+          </Form.Group>
+
+          <Button className="w-100" onClick={handleVerifyOtp}>
+            VERIFY OTP
+          </Button>
+        </Modal.Body>
+      </Modal>
+
+      {/* STEP 3: RESET PASSWORD */}
+      <Modal show={show && step === 3} onHide={handleCloseAll} centered>
         <Modal.Body className="p-4">
           <h4 className="mb-3">Reset Password</h4>
 
@@ -128,14 +170,13 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
                 top: "70%",
                 transform: "translateY(-50%)",
                 cursor: "pointer",
-                color: "#6c757d",
               }}
             >
               {showPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
           </Form.Group>
 
-          <Form.Group className="mb-3"  style={{ position: "relative" }}>
+          <Form.Group className="mb-3" style={{ position: "relative" }}>
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
               type={showPassword1 ? "text" : "password"}
@@ -151,7 +192,6 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
                 top: "70%",
                 transform: "translateY(-50%)",
                 cursor: "pointer",
-                color: "#6c757d",
               }}
             >
               {showPassword1 ? <FaEye /> : <FaEyeSlash />}
@@ -164,8 +204,8 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
         </Modal.Body>
       </Modal>
 
-      {/* POPUP - 3 (Success Message) */}
-      <Modal show={show && step === 3} onHide={handleCloseAll} centered>
+      {/* STEP 4: SUCCESS */}
+      <Modal show={show && step === 4} onHide={handleCloseAll} centered>
         <Modal.Body className="p-4 text-center">
           <h4>Password Updated</h4>
           <p>Your password has been successfully updated.</p>

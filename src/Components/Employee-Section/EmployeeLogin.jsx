@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 import Imagelogin from "../../assets/Imagelogin.png";
-import "./EmployeeLogin.css";
 import BGShape from "../../assets/BGShape.png";
 import teampluslogo from "../../assets/stafioimg.png";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ForgotPasswordPopup from "../Admin-Section/ForgotPasswordPopup";
 
 const EmployeeLogin = () => {
@@ -19,63 +18,147 @@ const EmployeeLogin = () => {
 
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  // -------------------------------------------------------------------
+  // ⭐ NORMAL EMPLOYEE LOGIN
+  // -------------------------------------------------------------------
+  const handleEmployeeLogin = async (e) => {
     e.preventDefault();
-    const loginUrl = "http://127.0.0.1:5001/employee_login"; // ✅ your backend endpoint
+    setErrorMsg("");
 
     try {
-      const response = await fetch(loginUrl, {
+      const response = await fetch("http://127.0.0.1:5001/employee_login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ identifier, password }),
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Login failed");
+      if (!response.ok) throw new Error(data.message);
 
-      // ✅ Extract backend data
-      const { user_id, role, username, token } = data;
+      localStorage.setItem("employee_user_id", data.user_id);
+      localStorage.setItem("employee_role", data.role);
+      localStorage.setItem("employee_username", data.username);
 
-      if (role && role.toLowerCase() === "employee") {
-        // ✅ Store using employee-specific keys
-        localStorage.setItem("employee_user_id", user_id);
-        localStorage.setItem("employee_role", role);
-        localStorage.setItem("employee_username", username || "Employee");
-
-        // ⭐ Remember Me Logic
-        if (rememberMe) {
-          localStorage.setItem("remember_employee", "true");
-          localStorage.setItem("employee_email", identifier);
-          localStorage.setItem("employee_password", password); // Only for local testing
-        } else {
-          localStorage.removeItem("remember_employee");
-          localStorage.removeItem("employee_email");
-          localStorage.removeItem("employee_password");
-        }
-
-        if (token) localStorage.setItem("employee_token", token);
-
-        console.log("✅ Employee login successful:", data);
-
-        // ✅ Redirect to Employee Dashboard
-        navigate("/employee-dashboard");
+      // ⭐ Remember Me logic
+      if (rememberMe) {
+        localStorage.setItem("remember_employee", "true");
+        localStorage.setItem("employee_email", identifier);
+        localStorage.setItem("employee_password", password);
       } else {
-        alert("Access denied: Not an employee account");
+        localStorage.removeItem("remember_employee");
+        localStorage.removeItem("employee_email");
+        localStorage.removeItem("employee_password");
       }
-    } catch (error) {
-      console.error("Login error:", error.message);
-      setErrorMsg(error.message);
+
+      navigate("/employee-dashboard");
+    } catch (err) {
+      setErrorMsg(err.message || "Login failed");
     }
   };
 
-  React.useEffect(() => {
-    const remember = localStorage.getItem("remember_employee");
+  // -------------------------------------------------------------------
+  // ⭐ EMPLOYEE GOOGLE LOGIN (same method as Admin)
+  // -------------------------------------------------------------------
+  const handleGoogleLogin = (credentialResponse) => {
+    if (!credentialResponse || !credentialResponse.credential) {
+      setErrorMsg("Google login cancelled or failed.");
+      return;
+    }
 
-    if (remember === "true") {
+    fetch("http://127.0.0.1:5001/employee_google_login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id_token: credentialResponse.credential,
+        role: "employee",
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user_id) {
+          localStorage.setItem("employee_user_id", data.user_id);
+          localStorage.setItem("employee_role", data.role);
+          localStorage.setItem("employee_username", data.username);
+
+          if (rememberMe) {
+            localStorage.setItem("remember_employee", "true");
+            localStorage.setItem("remember_google", "true");
+            localStorage.setItem("employee_google_email", data.email);
+            localStorage.setItem("employee_google_name", data.username);
+          } else {
+            localStorage.removeItem("remember_google");
+            localStorage.removeItem("employee_google_email");
+            localStorage.removeItem("employee_google_name");
+          }
+
+          navigate("/employee-dashboard");
+        } else {
+          setErrorMsg(data.message || "Google login failed");
+        }
+      })
+      .catch(() => setErrorMsg("Google login failed"));
+  };
+
+  // -------------------------------------------------------------------
+  // ⭐ INITIALIZE GOOGLE LOGIN BUTTON (same as Admin)
+  // -------------------------------------------------------------------
+  useEffect(() => {
+    /* global google */
+    window.google.accounts.id.initialize({
+      client_id:
+        "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
+      callback: handleGoogleLogin,
+      ux_mode: "popup",
+      auto_select: false,
+    });
+
+    window.google.accounts.id.renderButton(
+      document.getElementById("googleEmployeeLoginButton"),
+      {
+        theme: "outline",
+        size: "large",
+        width: 400,
+        text: "continue_with",
+      }
+    );
+  }, []);
+
+  // -------------------------------------------------------------------
+  // ⭐ AUTO LOGIN (Normal + Google)
+  // -------------------------------------------------------------------
+  useEffect(() => {
+    const remember = localStorage.getItem("remember_employee");
+    const isGoogle = localStorage.getItem("remember_google") === "true";
+
+    if (remember === "true" && isGoogle) {
+      const idToken = localStorage.getItem("remember_google_token");
+      if (!idToken) return;
+
+      fetch("http://127.0.0.1:5001/employee_google_login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_token: idToken,
+          role: "employee",
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.user_id) {
+            localStorage.setItem("employee_user_id", data.user_id);
+            localStorage.setItem("employee_role", data.role);
+            localStorage.setItem("employee_username", data.username);
+            navigate("/employee-dashboard");
+          }
+        });
+
+      return;
+    }
+
+    if (remember === "true" && !isGoogle) {
       setIdentifier(localStorage.getItem("employee_email") || "");
       setPassword(localStorage.getItem("employee_password") || "");
-
-      // ⭐ AUTO LOGIN
       navigate("/employee-dashboard");
     }
   }, []);
@@ -83,21 +166,15 @@ const EmployeeLogin = () => {
   return (
     <Container fluid className="employee-login-container">
       <Row className="vh-100">
-        {/* Left Side Illustration */}
+        {/* LEFT SIDE */}
         <Col
           md={6}
           className="login-left d-flex flex-column align-items-center justify-content-center"
         >
-          <img src={BGShape} alt="Background Shape" className="bg-shape" />
+          <img src={BGShape} className="bg-shape" alt="" />
 
           <div className="login-left-content text-center">
-            <div className="login-logos mb-3">
-              <img
-                src={teampluslogo}
-                alt="Team Plus Logo"
-                className="teamplus-logo"
-              />
-            </div>
+            <img src={teampluslogo} alt="" className="teampluss-logo mb-3" />
             <h2 className="login-heading">One Portal,</h2>
             <h4 className="login-subheading">Unlimited Potential</h4>
             <p className="login-description">
@@ -105,30 +182,22 @@ const EmployeeLogin = () => {
             </p>
           </div>
 
-          <img
-            src={Imagelogin}
-            alt="Login Illustration"
-            className="login-illustration"
-          />
+          <img src={Imagelogin} className="login-illustrations" alt="" />
         </Col>
 
-        {/* Right Side Login Form */}
-        <Col
-          md={6}
-          className="d-flex align-items-center justify-content-left bg-white"
-        >
+        {/* RIGHT SIDE */}
+        <Col md={6} className="d-flex align-items-center bg-white">
           <div className="login-form-wrapper">
             <h5 className="mb-2">Welcome back! 👋</h5>
             <h3 className="mb-4">Employee Login</h3>
 
             {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
 
-            <Form onSubmit={handleLogin}>
+            <Form onSubmit={handleEmployeeLogin}>
               <Form.Group className="mb-3">
                 <Form.Label>Email / Username</Form.Label>
                 <Form.Control
                   type="text"
-                  className="email-input"
                   placeholder="Enter email or username"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
@@ -140,7 +209,6 @@ const EmployeeLogin = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type={showPassword ? "text" : "password"}
-                  className="email-input"
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -154,14 +222,13 @@ const EmployeeLogin = () => {
                     top: "70%",
                     transform: "translateY(-50%)",
                     cursor: "pointer",
-                    color: "#6c757d",
                   }}
                 >
                   {showPassword ? <FaEye /> : <FaEyeSlash />}
                 </span>
               </Form.Group>
-               {/* ✅ Add Remember Me + Forgot Password here */}
-              <div className="d-flex justify-content-between align-items-center mb-3">
+
+              <div className="d-flex justify-content-between mb-3">
                 <Form.Check
                   type="checkbox"
                   label="Remember me"
@@ -172,20 +239,26 @@ const EmployeeLogin = () => {
 
                 <span
                   onClick={() => setShowForgot(true)}
-                  className="forgot-password-link"
                   style={{ cursor: "pointer" }}
                 >
                   Forgot password?
                 </span>
               </div>
+
               <ForgotPasswordPopup
                 show={showForgot}
                 onClose={() => setShowForgot(false)}
               />
 
-              <Button variant="primary" type="submit" className="login-btn">
+              <Button className="login-btn" type="submit" variant="primary">
                 Login
               </Button>
+
+              {/* ⭐ GOOGLE LOGIN BUTTON (SAME AS ADMIN) */}
+              <div
+                id="googleEmployeeLoginButton"
+                style={{ marginTop: "15px" }}
+              ></div>
             </Form>
 
             <div className="signup-text mt-4">

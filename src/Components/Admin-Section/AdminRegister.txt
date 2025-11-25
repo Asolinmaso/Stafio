@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   Form,
   Button,
@@ -18,56 +17,124 @@ import BGShape from "../../assets/BGShape.png";
 import teampluslogo from "../../assets/stafioimg.png";
 import Registerlogo from "../../assets/registerlogo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import apiClient from "../../api/client";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 
 const AdminRegister = () => {
   const [formData, setFormData] = useState({
     username: "",
+    phone:"",
     password: "",
+    confirmPassword: "",
     email: "",
-    first_name: "",
-    last_name: "",
     role: "admin",
   });
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [password, setPassword] = useState("");
   const [strength, setStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const evaluatePasswordStrength = (value) => {
+    let score = 0;
+    if (/[A-Z]/.test(value)) score += 1;
+    if (/\d/.test(value)) score += 1;
+    if (value.length >= 8) score += 1;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) score += 1;
+    return score;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setError("");
     setMessage("");
 
+    if (!formData.username || !formData.email) {
+      setError("Username and email are required.");
+      return;
+    }
+    if (!formData.phone) {
+  setError("Phone number required.");
+  return;
+}
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     try {
-      const res = await axios.post("http://127.0.0.1:5001/register", formData);
-      setMessage(res.data.message);
+      setIsSubmitting(true);
+
+      if (!isOtpSent) {
+        // Step 1: send OTP
+        const res = await apiClient.post("/send_otp", {
+          email: formData.email,
+          username: formData.username,
+        });
+        setMessage(res.data?.message || "OTP sent successfully.");
+        setShowOtpInput(true);
+        setIsOtpSent(true);
+      } else {
+        // Step 2: verify OTP & register
+        const res = await apiClient.post("/verify_otp_register", {
+          email: formData.email,
+          username: formData.username,
+          phone: formData.phone,
+          password: formData.password,
+          otp,
+          role: formData.role,
+        });
+
+        setMessage(
+          res.data?.message || "Registration successful! You can now log in."
+        );
+        setShowOtpInput(false);
+        setIsOtpSent(false);
+        setOtp("");
+        setFormData({
+          username: "",
+          password: "",
+          phone:"",
+          confirmPassword: "",
+          email: "",
+          role: "admin",
+        });
+        setStrength(0);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
-      console.error("Error response:", err.response?.data);
+      const apiMessage =
+        err.response?.data?.message ||
+        (isOtpSent ? "Registration failed." : "Failed to send OTP.");
+      setError(apiMessage);
+      // eslint-disable-next-line no-console
+      console.error("AdminRegister error:", err.response || err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
- const handlePasswordChange = (e) => {
-  const value = e.target.value;
-  setPassword(value);
-  setFormData({ ...formData, password: value }); // ✅ Update formData.password
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, password: value });
+    setStrength(evaluatePasswordStrength(value));
+  };
 
-  let strengthScore = 0;
-
-  if (/[A-Z]/.test(value)) strengthScore += 1;
-  if (/\d/.test(value)) strengthScore += 1;
-  if (value.length >= 8) strengthScore += 1;
-  if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) strengthScore += 1;
-
-  setStrength(strengthScore);
-};
-
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, confirmPassword: value });
+  };
 
   // Determine progress bar color and label
   const getVariant = () => {
@@ -85,6 +152,43 @@ const AdminRegister = () => {
     if (strength === 4) return "Strong";
     return "";
   };
+
+  // ---------------------------
+  // ⭐ Google Register
+  // ---------------------------
+  const handleGoogleRegister = async (tokenResponse) => {
+    try {
+      // Get Google profile
+      const userInfoRes = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        }
+      );
+
+      const profile = await userInfoRes.json();
+
+      const googleEmail = profile.email;
+      const googleName = profile.name;
+
+      // Send to backend for registration
+      const res = await apiClient.post("/admin_google_register", {
+        email: googleEmail,
+        username: googleName,
+        role: "admin",
+      });
+
+      setMessage(res.data?.message || "Google registration successful!");
+      setError("");
+    } catch (err) {
+      setError("Google registration failed.");
+    }
+  };
+
+  const googleRegister = useGoogleLogin({
+    onSuccess: handleGoogleRegister,
+    onError: () => setError("Google registration failed."),
+  });
 
   return (
     <Container fluid className="admin-register-container">
@@ -144,7 +248,28 @@ const AdminRegister = () => {
                   required
                 />
               </Form.Group>
-
+              <Form.Group className="mb-3">
+                <Form.Label>Phone Nunber</Form.Label>
+                <Form.Control
+                  type="tel"
+                  name="phone"
+                  placeholder="Please enter your phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Enter email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Password</Form.Label>
 
@@ -181,7 +306,7 @@ const AdminRegister = () => {
                 </InputGroup>
 
                 {/* Progress bar */}
-                {password && (
+                {formData.password && (
                   <div style={{ marginTop: "8px" }}>
                     <ProgressBar
                       now={(strength / 4) * 100}
@@ -211,42 +336,77 @@ const AdminRegister = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  placeholder="Enter email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
+                <Form.Label>Confirm Password</Form.Label>
+                <InputGroup className="align-items-center">
+                  <div style={{ position: "relative" }}>
+                    <Form.Control
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      placeholder="Confirm password"
+                      value={formData.confirmPassword}
+                      onChange={handleConfirmPasswordChange}
+                      required
+                      style={{ paddingRight: "40px" }}
+                    />
+                    <span
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#6c757d",
+                      }}
+                    >
+                      {showConfirmPassword ? (
+                        <FaEye size={18} />
+                      ) : (
+                        <FaEyeSlash size={18} />
+                      )}
+                    </span>
+                  </div>
+                </InputGroup>
               </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="first_name"
-                  placeholder="Enter first name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-4">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="last_name"
-                  placeholder="Enter last name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
+              {showOtpInput && (
+                <Form.Group className="mb-3">
+                  <Form.Label>OTP Code</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter 6-digit OTP sent to your email"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    maxLength="6"
+                    required
+                  />
+                  <Form.Text className="text-muted">
+                    Enter the 6-digit code sent to {formData.email}
+                  </Form.Text>
+                </Form.Group>
+              )}
               <Button variant="primary" type="submit" className="register-btn">
-                Sign Up
+                {isOtpSent ? "Verify & Register" : "Send OTP"}
               </Button>
+              
+              {/* -------- Google Register Button -------- */}
+              <div className="text-center my-3">
+                <button
+                  type="button"
+                  onClick={() => googleRegister()}
+                  className="google-btn"
+                >
+                  <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    alt="Google"
+                    style={{ width: "20px", marginRight: "10px" }}
+                  />
+                  <span style={{ color: "#19bde9", fontWeight: 500 }}>
+                    Continue with Google
+                  </span>
+                </button>
+              </div>
 
               <div className="text-center mt-3">
                 <small>
