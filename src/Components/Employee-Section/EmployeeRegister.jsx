@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   Form,
   Button,
@@ -13,67 +12,109 @@ import {
 import { Link } from "react-router-dom";
 import "./EmployeeRegister.css";
 
-// Reuse same assets as Admin page
 import BGShape from "../../assets/BGShape.png";
 import teampluslogo from "../../assets/stafioimg.png";
 import Registerlogo from "../../assets/registerlogo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import apiClient from "../../api/client";
+import { useGoogleLogin } from "@react-oauth/google";
+import gicon from "../../assets/favicon.ico";
 
 const EmployeeRegister = () => {
   const [formData, setFormData] = useState({
     username: "",
+    phone: "",
     password: "",
+    confirmPassword: "",
     email: "",
-    first_name: "",
-    last_name: "",
     role: "employee",
   });
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [password, setPassword] = useState("");
   const [strength, setStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agree, setAgree] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-
-    try {
-      const res = await axios.post("http://127.0.0.1:5001/register", formData);
-      setMessage(res.data.message);
-    } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
-    }
+  const evaluatePasswordStrength = (value) => {
+    let score = 0;
+    if (/[A-Z]/.test(value)) score += 1;
+    if (/\d/.test(value)) score += 1;
+    if (value.length >= 8) score += 1;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) score += 1;
+    return score;
   };
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
-    setPassword(value);
-    setFormData({ ...formData, password: value }); // ✅ Update formData.password
-
-    let strengthScore = 0;
-
-    if (/[A-Z]/.test(value)) strengthScore += 1;
-    if (/\d/.test(value)) strengthScore += 1;
-    if (value.length >= 8) strengthScore += 1;
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) strengthScore += 1;
-
-    setStrength(strengthScore);
+    setFormData({ ...formData, password: value });
+    setStrength(evaluatePasswordStrength(value));
   };
 
-  // Determine progress bar color and label
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    setError("");
+    setMessage("");
+
+    if (!formData.username || !formData.email) {
+      setError("Username and email are required.");
+      return;
+    }
+
+    if (!formData.phone) {
+      setError("Phone number is required.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const res = await apiClient.post("/register", {
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: "employee",
+      });
+
+      setMessage(res.data?.message || "Registration successful!");
+
+      setFormData({
+        username: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        email: "",
+        role: "employee",
+      });
+      setStrength(0);
+    } catch (err) {
+      const apiMessage = err.response?.data?.message || "Registration failed.";
+      setError(apiMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const getVariant = () => {
-    if (strength === 1) return "danger"; // Red
-    if (strength === 2) return "warning"; // Yellow
-    if (strength === 3) return "ok"; // orange
-    if (strength === 4) return "success"; // Green
-    return "secondary"; // Grey (empty)
+    if (strength === 1) return "danger";
+    if (strength === 2) return "warning";
+    if (strength === 3) return "ok";
+    if (strength === 4) return "success";
+    return "secondary";
   };
 
   const getLabel = () => {
@@ -84,30 +125,58 @@ const EmployeeRegister = () => {
     return "";
   };
 
+  // ⭐ Employee Google Register
+  const handleGoogleEmployeeRegister = async (tokenResponse) => {
+    try {
+      const userInfoRes = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        }
+      );
+
+      const profile = await userInfoRes.json();
+
+      const googleEmail = profile.email;
+      const googleName = profile.name;
+
+      const res = await apiClient.post("/employee_google_register", {
+        email: googleEmail,
+        username: googleName,
+        role: "employee",
+      });
+
+      setMessage(res.data?.message || "Google registration successful!");
+      setError("");
+    } catch (err) {
+      setError("Google registration failed.");
+    }
+  };
+
+  const googleRegister = useGoogleLogin({
+    onSuccess: handleGoogleEmployeeRegister,
+    onError: () => setError("Google registration failed."),
+  });
+
   return (
-    <Container fluid className="employee-register-container">
+    <Container fluid className="admin-register-container">
       <Row className="vh-100">
-        {/* ===== LEFT SIDE ===== */}
+        {/* LEFT SIDE */}
         <Col
           md={6}
           className="register-left d-flex flex-column align-items-center justify-content-center"
         >
-          <img src={BGShape} alt="Background Shape" className="bg-shape" />
-
+          <img src={BGShape} alt="Background" className="bg-shape" />
           <div className="register-left-content text-center">
             <div className="register-logos mb-3">
-              <img
-                src={teampluslogo}
-                alt="Team Plus Logo"
-                className="teampluss-logo"
-              />
+              <img src={teampluslogo} alt="Logo" className="teamplus-logo" />
             </div>
 
-            <h2 className="register-heading">Welcome Employee,</h2>
-            <h4 className="register-subheading">Let’s Get Started</h4>
+            <h2 className="register-heading">One Portal,</h2>
+            <h4 className="register-subheading">Unlimited Potential</h4>
 
             <p className="register-description">
-              Join the team and explore your full potential today!
+              Create your employee account — It only takes a minute!
             </p>
           </div>
 
@@ -118,7 +187,7 @@ const EmployeeRegister = () => {
           />
         </Col>
 
-        {/* ===== RIGHT SIDE ===== */}
+        {/* RIGHT SIDE */}
         <Col
           md={6}
           className="d-flex align-items-center justify-content-left bg-white"
@@ -136,7 +205,7 @@ const EmployeeRegister = () => {
                 <Form.Control
                   type="text"
                   name="username"
-                  placeholder="Enter username"
+                  placeholder="Please enter your name"
                   value={formData.username}
                   onChange={handleChange}
                   required
@@ -144,10 +213,32 @@ const EmployeeRegister = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
+                <Form.Label>Phone Number</Form.Label>
+                <Form.Control
+                  type="tel"
+                  name="phone"
+                  placeholder="Please enter your phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-                {/* Input with eye toggle */}
-                <InputGroup className="align-items-center">
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Please enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <InputGroup>
                   <div style={{ position: "relative" }}>
                     <Form.Control
                       type={showPassword ? "text" : "password"}
@@ -156,7 +247,7 @@ const EmployeeRegister = () => {
                       value={formData.password}
                       onChange={handlePasswordChange}
                       required
-                      style={{ paddingRight: "40px" }} // add space for the eye icon
+                      style={{ paddingRight: "40px" }}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -169,17 +260,12 @@ const EmployeeRegister = () => {
                         color: "#6c757d",
                       }}
                     >
-                      {showPassword ? (
-                        <FaEye size={18} />
-                      ) : (
-                        <FaEyeSlash size={18} />
-                      )}
+                      {showPassword ? <FaEye /> : <FaEyeSlash />}
                     </span>
                   </div>
                 </InputGroup>
 
-                {/* Progress bar */}
-                {password && (
+                {formData.password && (
                   <div style={{ marginTop: "8px" }}>
                     <ProgressBar
                       now={(strength / 4) * 100}
@@ -187,64 +273,104 @@ const EmployeeRegister = () => {
                       animated
                       label={getLabel()}
                     />
-                    <div style={{ fontSize: "13px", marginTop: "4px" }}>
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
-                        • At least one uppercase
-                      </span>
-                      <br />
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
-                        • At least one number
-                      </span>
-                      <br />
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
-                        • Minimum 8 characters
-                      </span>
-                      <br />
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
-                        • At least one special character
-                      </span>
-                    </div>
                   </div>
                 )}
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  placeholder="Enter email"
-                  value={formData.email}
-                  onChange={handleChange}
+                <Form.Label>Confirm Password</Form.Label>
+                <InputGroup>
+                  <div style={{ position: "relative" }}>
+                    <Form.Control
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      placeholder="Enter confirm password"
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      required
+                      style={{ paddingRight: "40px" }}
+                    />
+                    <span
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#6c757d",
+                      }}
+                    >
+                      {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                    </span>
+                  </div>
+                </InputGroup>
+              </Form.Group>
+              <Form.Group className="mb-3 d-flex align-items-center">
+                <Form.Check
+                  type="checkbox"
+                  id="termsCheck"
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
                   required
+                  style={{
+                    width: "18px",
+                    height: "18px",
+                   
+                    cursor: "pointer",
+                    marginRight: "10px",
+                    accentColor: "#19bde8", // 🔵 Makes tick color BLUE
+                  }}
                 />
+
+                <label htmlFor="termsCheck" style={{ margin: 0 }}>
+                  I agree to all the{" "}
+                  <span style={{ color: "#19bde8", cursor: "pointer" }}>
+                    Terms
+                  </span>{" "}
+                  &{" "}
+                  <span style={{ color: "#19bde8", cursor: "pointer" }}>
+                    Conditions
+                  </span>
+                </label>
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="first_name"
-                  placeholder="Enter first name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-4">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="last_name"
-                  placeholder="Enter last name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                />
-              </Form.Group>
+              
 
               <Button variant="primary" type="submit" className="register-btn">
                 Sign Up
               </Button>
+
+              {/* Google Register Button */}
+              <div className="text-center my-3">
+                <button
+                  type="button"
+                  onClick={() => googleRegister()}
+                  className="google-btn"
+                >
+                  <img
+                    src={gicon}
+                    alt="Google"
+                    style={{ width: "20px", marginRight: "10px" }}
+                  />
+                  <span
+                    style={{
+                      color: "#19bde9",
+                      fontWeight: 600,
+                      fontSize: 18,
+                    }}
+                  >
+                    Continue with Google
+                  </span>
+                </button>
+              </div>
 
               <div className="text-center mt-3">
                 <small>

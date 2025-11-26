@@ -18,10 +18,13 @@ import teampluslogo from "../../assets/stafioimg.png";
 import Registerlogo from "../../assets/registerlogo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import apiClient from "../../api/client";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import gicon from "../../assets/favicon.ico";
 
 const AdminRegister = () => {
   const [formData, setFormData] = useState({
     username: "",
+    phone:"",
     password: "",
     confirmPassword: "",
     email: "",
@@ -33,9 +36,7 @@ const AdminRegister = () => {
   const [strength, setStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [showOtpInput, setShowOtpInput] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
@@ -52,70 +53,62 @@ const AdminRegister = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isSubmitting) return;
+  e.preventDefault();
+  if (isSubmitting) return;
 
-    setError("");
-    setMessage("");
+  setError("");
+  setMessage("");
 
-    if (!formData.username || !formData.email) {
-      setError("Username and email are required.");
-      return;
-    }
+  if (!formData.username || !formData.email) {
+    setError("Username and email are required.");
+    return;
+  }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+  if (!formData.phone) {
+    setError("Phone number required.");
+    return;
+  }
 
-    try {
-      setIsSubmitting(true);
+  if (formData.password !== formData.confirmPassword) {
+    setError("Passwords do not match.");
+    return;
+  }
 
-      if (!isOtpSent) {
-        // Step 1: send OTP
-        const res = await apiClient.post("/send_otp", {
-          email: formData.email,
-          username: formData.username,
-        });
-        setMessage(res.data?.message || "OTP sent successfully.");
-        setShowOtpInput(true);
-        setIsOtpSent(true);
-      } else {
-        // Step 2: verify OTP & register
-        const res = await apiClient.post("/verify_otp_register", {
-          email: formData.email,
-          username: formData.username,
-          password: formData.password,
-          otp,
-          role: formData.role,
-        });
+  try {
+    setIsSubmitting(true);
 
-        setMessage(
-          res.data?.message || "Registration successful! You can now log in."
-        );
-        setShowOtpInput(false);
-        setIsOtpSent(false);
-        setOtp("");
-        setFormData({
-          username: "",
-          password: "",
-          confirmPassword: "",
-          email: "",
-          role: "admin",
-        });
-        setStrength(0);
-      }
-    } catch (err) {
-      const apiMessage =
-        err.response?.data?.message ||
-        (isOtpSent ? "Registration failed." : "Failed to send OTP.");
-      setError(apiMessage);
-      // eslint-disable-next-line no-console
-      console.error("AdminRegister error:", err.response || err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    // ⭐ NORMAL REGISTRATION 
+    const res = await apiClient.post("/register", {
+      username: formData.username,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      role: "admin",
+    });
+
+    setMessage(res.data?.message || "Registration successful!");
+
+    // Reset form
+    setFormData({
+      username: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      email: "",
+      role: "admin",
+    });
+    setStrength(0);
+
+  } catch (err) {
+    const apiMessage =
+      err.response?.data?.message || "Registration failed.";
+    setError(apiMessage);
+    console.error("AdminRegister error:", err.response || err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
@@ -144,6 +137,43 @@ const AdminRegister = () => {
     if (strength === 4) return "Strong";
     return "";
   };
+
+  // ---------------------------
+  // ⭐ Google Register
+  // ---------------------------
+  const handleGoogleRegister = async (tokenResponse) => {
+    try {
+      // Get Google profile
+      const userInfoRes = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        }
+      );
+
+      const profile = await userInfoRes.json();
+
+      const googleEmail = profile.email;
+      const googleName = profile.name;
+
+      // Send to backend for registration
+      const res = await apiClient.post("/admin_google_register", {
+        email: googleEmail,
+        username: googleName,
+        role: "admin",
+      });
+
+      setMessage(res.data?.message || "Google registration successful!");
+      setError("");
+    } catch (err) {
+      setError("Google registration failed.");
+    }
+  };
+
+  const googleRegister = useGoogleLogin({
+    onSuccess: handleGoogleRegister,
+    onError: () => setError("Google registration failed."),
+  });
 
   return (
     <Container fluid className="admin-register-container">
@@ -199,6 +229,17 @@ const AdminRegister = () => {
                   name="username"
                   placeholder="Enter username"
                   value={formData.username}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Phone Nunber</Form.Label>
+                <Form.Control
+                  type="tel"
+                  name="phone"
+                  placeholder="Please enter your phone number"
+                  value={formData.phone}
                   onChange={handleChange}
                   required
                 />
@@ -293,7 +334,9 @@ const AdminRegister = () => {
                       style={{ paddingRight: "40px" }}
                     />
                     <span
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       style={{
                         position: "absolute",
                         right: "10px",
@@ -312,76 +355,29 @@ const AdminRegister = () => {
                   </div>
                 </InputGroup>
               </Form.Group>
-              {showOtpInput && (
-                <Form.Group className="mb-3">
-                  <Form.Label>OTP Code</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter 6-digit OTP sent to your email"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    maxLength="6"
-                    required
-                  />
-                  <Form.Text className="text-muted">
-                    Enter the 6-digit code sent to {formData.email}
-                  </Form.Text>
-                </Form.Group>
-              )}
+             
               <Button variant="primary" type="submit" className="register-btn">
-                {isOtpSent ? "Verify & Register" : "Send OTP"}
+                 Sign Up
               </Button>
-              <div className="google-buttons-wrapper mt-3">
+              
+              {/* -------- Google Register Button -------- */}
+              <div className="text-center my-3">
                 <button
                   type="button"
-                  className="google-btn google-btn-admin"
-                  onClick={() => {
-                    window.currentRegisterRole = "admin";
-                    if (
-                      window.google &&
-                      window.google.accounts &&
-                      window.google.accounts.id
-                    ) {
-                      window.google.accounts.id.prompt();
-                    } else {
-                      alert("Google SDK not ready - try again shortly.");
-                    }
-                  }}
+                  onClick={() => googleRegister()}
+                  className="google-btn"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" className="google-icon">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                  </svg>
-                  <span>Continue with Google (Admin)</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="google-btn google-btn-employee"
-                  onClick={() => {
-                    window.currentRegisterRole = "employee";
-                    if (
-                      window.google &&
-                      window.google.accounts &&
-                      window.google.accounts.id
-                    ) {
-                      window.google.accounts.id.prompt();
-                    } else {
-                      alert("Google SDK not ready - try again shortly.");
-                    }
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" className="google-icon">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                  </svg>
-                  <span>Continue with Google (Employee)</span>
+                  <img
+                    src={gicon}
+                    alt="Google"
+                    style={{ width: "20px", marginRight: "10px" }}
+                  />
+                  <span style={{ color: "#19bde9", fontWeight: 600, fontSize:18 }}>
+                    Continue with Google
+                  </span>
                 </button>
               </div>
+
               <div className="text-center mt-3">
                 <small>
                   Already have an account?{" "}
