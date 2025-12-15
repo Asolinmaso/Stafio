@@ -8,7 +8,7 @@
   /* new */
   position: absolute; /* Takes the title out of normal flow */
   top: 0px;           /* Aligns to the top edge of the wrapper */
-  left: -15px;          /* Aligns to the left edge of the wrapper */
+  left: -20px;          /* Aligns to the left edge of the wrapper */
   padding: 20px 40px; /* Adds space around the text, matching the image alignment */
   z-index: 100; 
 }
@@ -168,7 +168,8 @@
 
 /* ===== Right Section ===== */
 .profile-right {
-  text-align: right;
+  text-align: left;       /* new  text-align: right;*/
   color: #444;
   font-size: 0.9rem;        /* new */
+  padding-left: 90px;
 }
