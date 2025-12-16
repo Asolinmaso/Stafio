@@ -1,10 +1,15 @@
+*{
+  box-sizing: border-box;
+  
+}
 .topbar {
-  margin-top: 50px;
+  /* margin-top: 50px; */   /* modified */
   height: 70px;
   background: #fff;
   border-radius: 10px;
-  margin: 10px;
-  
+  margin-top: -10px;
+  margin-left: 1px;
+  width: 96%;
 }
 
 .topbar-img {
@@ -13,9 +18,20 @@
   object-fit: contain;
 }
 
-
-.topbar-search{
-    width:40%;
+.topbar-searches{          /* new*/
+    /* width: 400px;  */
+     width: 100px;
+  padding: 5px 10px;
+  padding-right:10px;
+  font-size: 13px;
+  outline: none;    
+}
+.topbar-searches input{     /* new*/
+    border: none;
+    background-color: beige;
+    width: 100px;
+    height: 100%;
+    outline: none;
 }
 
 .topbar-avatar {

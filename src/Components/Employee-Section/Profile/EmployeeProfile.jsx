@@ -325,24 +325,26 @@ const EmployeeProfile = () => {
                   <Row className="gy-4">
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>Name Of the Institution</Form.Label>
+                        <Form.Label className="form-label">Name Of the Institution</Form.Label>
                         <Form.Control
                           type="text"
                           name="institution"
                           value={education.institution}
                           onChange={handleEducationChange}
                           placeholder="Institution Name"
+                          className="edform-input"
                           disabled={!isEditingEducation}
                         />
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>Start Date</Form.Label>
+                        <Form.Label className="form-label">Start Date</Form.Label>
                         <div className="calendar-input-wrap">
                           <Form.Control
                             type="date"
                             name="startDate"
                             value={education.startDate}
                             onChange={handleEducationChange}
+                            className="edform-input"
                             disabled={!isEditingEducation}
                           />
                           <span className="calendar-icon">
@@ -351,18 +353,19 @@ const EmployeeProfile = () => {
                         </div>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>Qualification</Form.Label>
+                        <Form.Label className="form-label">Qualification</Form.Label>
                         <Form.Control
                           type="text"
                           name="qualification"
                           value={education.qualification}
                           onChange={handleEducationChange}
                           placeholder="Qualification"
+                          className="edform-input"
                           disabled={!isEditingEducation}
                         />
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>Skills</Form.Label>
+                        <Form.Label className="form-label">Skills</Form.Label>
                         <div className="skills-pill-wrap">
                           {education.skills.map((skill, i) => (
                             <span className="skill-pill" key={i}>{skill}</span>
@@ -372,24 +375,26 @@ const EmployeeProfile = () => {
                     </Col>
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>Location</Form.Label>
+                        <Form.Label className="form-label">Location</Form.Label>
                         <Form.Control
                           type="text"
                           name="location"
                           value={education.location}
                           onChange={handleEducationChange}
                           placeholder="Location"
+                          className="edform-input"
                           disabled={!isEditingEducation}
                         />
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>End Date</Form.Label>
+                        <Form.Label className="form-label">End Date</Form.Label>
                         <div className="calendar-input-wrap">
                           <Form.Control
                             type="date"
                             name="endDate"
                             value={education.endDate}
                             onChange={handleEducationChange}
+                            className="edform-input"
                             disabled={!isEditingEducation}
                           />
                           <span className="calendar-icon">
@@ -398,13 +403,14 @@ const EmployeeProfile = () => {
                         </div>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>Specialization</Form.Label>
+                        <Form.Label className="form-label">Specialization</Form.Label>
                         <Form.Control
                           type="text"
                           name="specialization"
                           value={education.specialization}
                           onChange={handleEducationChange}
                           placeholder="Specialization"
+                          className="edform-input"
                           disabled={!isEditingEducation}
                         />
                       </Form.Group>
@@ -416,6 +422,7 @@ const EmployeeProfile = () => {
                           value={education.portfolio}
                           onChange={handleEducationChange}
                           placeholder="Portfolio Link"
+                          className="edform-input"
                           disabled={!isEditingEducation}
                         />
                       </Form.Group>
@@ -444,18 +451,19 @@ const EmployeeProfile = () => {
                 <Form>
                   <Row className="gy-4">
                     <Col md={6}><Form.Label>Name Of the Company</Form.Label>
-                      <Form.Control type="text" name="company" value={experience.company} onChange={handleExperienceChange} disabled={!isEditingExperience} /></Col>
+                      <Form.Control type="text" name="company" value={experience.company} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
                     <Col md={6}><Form.Label>Job Title / Designation</Form.Label>
-                      <Form.Control type="text" name="jobTitle" value={experience.jobTitle} onChange={handleExperienceChange} disabled={!isEditingExperience} /></Col>
+                      <Form.Control type="text" name="jobTitle" value={experience.jobTitle} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
                     <Col md={6}><Form.Label>Start Date</Form.Label>
-                      <Form.Control type="date" name="startDate" value={experience.startDate} onChange={handleExperienceChange} disabled={!isEditingExperience} /></Col>
+                      <Form.Control type="date" name="startDate" value={experience.startDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
                     <Col md={6}><Form.Label>End Date</Form.Label>
-                      <Form.Control type="date" name="endDate" value={experience.endDate} onChange={handleExperienceChange} disabled={!isEditingExperience} /></Col>
+                      <Form.Control type="date" name="endDate" value={experience.endDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
                     <Col md={8}><Form.Label>Job Responsibilities</Form.Label>
-                      <Form.Control as="textarea" rows={2} name="responsibilities" value={experience.responsibilities} onChange={handleExperienceChange} disabled={!isEditingExperience} />
+                      <Form.Control type="text" name="responsibilities" value={experience.responsibilities} onChange={handleExperienceChange}className="pexform-input1" disabled={!isEditingExperience} />
                     </Col>
+                    <br />
                     <Col md={4}><Form.Label>Total Years Of Experience</Form.Label>
-                      <Form.Control type="number" name="totalYears" value={experience.totalYears} onChange={handleExperienceChange} disabled={!isEditingExperience} />
+                      <Form.Control type="number" name="totalYears" value={experience.totalYears} onChange={handleExperienceChange}className="pexform-input2" disabled={!isEditingExperience} />
                     </Col>
                   </Row>
                 </Form>

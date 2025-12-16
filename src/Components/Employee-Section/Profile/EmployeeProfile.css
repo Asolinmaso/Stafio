@@ -1,4 +1,6 @@
+
 /* ====================== PROFILE HEADER SECTION ====================== */
+
 .profile-header-card {
   border-radius: 14px;
   box-shadow: none;
@@ -39,7 +41,7 @@
   background: transparent;
   padding: 0;
   margin: 0;
-  height: 22px;     /* height: 52px; */
+  height: 15px;     /* height: 52px; */
   gap: 0;
   flex-wrap: nowrap;
   width: 100%;
@@ -52,7 +54,7 @@
 }
 
 .profile-tabs .nav-link {
-  padding: 0 12px;        /* modified padding: 0 15px;  */
+  padding: 0 20px;        /* modified padding: 0 15px;  */
   /* height: 5px; */      
   bottom: 40px;           /* new css line bottom: 22px; */
   margin-bottom: 0;
@@ -66,7 +68,7 @@
   transition: color 0.22s;
   position: relative;
   outline: none;
-  width: 100%;
+  width: 110%;
   display: flex;
   align-items: center;
   justify-content:space-around;     /* modified justify-content:center; */
@@ -129,7 +131,9 @@
   border-radius: 8px;    /* modified border-radius: 14px; */
   border: 1.3px solid #e5eaf1;
   box-shadow: 0 6px 20px rgba(20,66,110,0.11);
-  margin: 0 0 32px 0;
+  margin: 0 0 28px 0;
+  /* new */
+  width: 97%;
 }
 
 .tab-section-title.personal-info {
@@ -175,6 +179,8 @@
   padding: 0 38px 6px 38px !important;
   box-shadow: none !important;
   border: none !important;
+  /* new */
+  margin: 2px;
 }
 
 /* --- Option boxes for Gender/Marital --- */
@@ -186,8 +192,8 @@
   padding: 13px 21px 13px 18px;
   display: flex;
   align-items: center;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin-top: -2px;
+  margin-bottom: -12px;
   width: 90%;
 }
 
@@ -195,7 +201,7 @@
   font-size: 15.5px !important; /* font-size: 13.5px !important;     */
   font-weight: 500 !important;
   color: #000000 !important;  /* modified color: !important;     */
-  margin-bottom: 10px !important;
+  margin-bottom: -2px !important;
   letter-spacing: 0;
   
 }
@@ -205,15 +211,16 @@
 .form-control,
 .form-select {
   background: #F8F8F8 !important;
-  border: 1.4px solid #e5eaf1 !important;
+  border: solid #e5eaf1 !important;
   border-radius: 12px !important;
-  font-size: 1.07rem !important;
-  padding: 15px 21px !important;
+  font-size: 1.0rem !important;
+  padding: 10px 20px 10px 10px !important;
   color: #223042 !important;
-  box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045);
-  min-height: 52px !important;
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  height: 10% !important;
   transition: border-color 0.2s;
   width: 90%;
+  margin-bottom: -22px;
 }
 .form-input:focus, .form-control:focus, .form-select:focus {
   border-color: #12baf5 !important;
@@ -245,7 +252,7 @@
   margin-right: 8px;
   width: 18px;
   height: 18px;
-  
+  border: 1.3px solid ;
 }
 .d-flex.gap-4.align-items-center {
   gap: 2px !important;    /* modified gap: 32px !important; */
@@ -255,14 +262,14 @@
 .btn-save {
   background: #12baf5 !important;
   color: #fff !important;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  font-size: 16.1px;
-  min-width: 114px;
-  min-height: 45px;
-  margin-left: 8px;
-  box-shadow: 0 2px 9px 0 rgba(25,189,232,0.12);
+  border: none !important;
+  border-radius: 3px !important;
+  font-weight: 500;
+  font-size: 16px;
+  min-width: 95px;
+  min-height: 36px;
+  /* margin-left: 8px; */
+  box-shadow: 0 2px 9px 0 rgba(25,189,232,0.12); 
   transition: background 0.13s;
 }
 .btn-save:hover {
@@ -271,12 +278,13 @@
 .btn-cancel {
   background: #12baf5 !important;
   color: #ffffff !important;
-  border: 1.7px solid #12baf5 !important;
-  border-radius: 8px;
-  font-weight: 600;
+  border: 1px solid #12baf5 !important;
+  border-radius: 3px;
+  font-weight: 500;
   font-size: 16px;
-  min-width: 114px;
-  min-height: 45px;
+  min-width: 95px;
+  min-height: 36px;
+  /* margin-left: 8px; */
   box-shadow: 0 2px 8px 0 rgba(25,189,232,0.08);
   transition: background 0.13s, color 0.13s, border 0.17s;
 }
@@ -288,9 +296,9 @@
 .btn-edit {
   background: #12baf5 !important;
   color: #fff !important;
-  border-radius: 8px;
+  border-radius: 3px;
   border: none;
-  font-weight: 600;
+  font-weight: 500;
   min-width: 95px;
   min-height: 36px;
   box-shadow: 0 2px 7px rgba(25,189,232, 0.09);
@@ -308,8 +316,9 @@
 .profile-tab-section.education {
   background: #f6fbfe;
   border-radius: 10px;
-  padding: 28px 26px;
+  padding: 12px 22px;
   margin-top: 12px;
+  
 }
 .tab-section-title.education {
   font-weight: 600;
@@ -323,6 +332,22 @@
   border: 1px solid #e5eaf1;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
+
+.edform-input{       /* new css class for education form inputs */
+   background: #F8F8F8 !important;
+  border: solid #e5eaf1 !important;
+  border-radius: 12px !important;
+  font-size: 1.0rem !important;
+  padding: 10px 20px 10px 10px !important;
+  color: #223042 !important;
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  height: 10% !important;
+  transition: border-color 0.2s;
+  width: 90%;
+  margin-bottom: 4px;
+}
+
+
     /* --- Date calendar icon --- */
     
 .calendar-input-wrap {        /* new css part */  
@@ -349,21 +374,59 @@
 .profile-tab-section.experience {
   background: #f6fbfe;
   border-radius: 10px;
-  padding: 28px 26px;
+  padding: 26px 26px;
   margin-top: 12px;
 }
 .tab-section-title.experience {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1.05rem;
   margin-bottom: 22px;
   background: #fff;
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 7px 18px;
   width: fit-content;
   color: #223042;
   border: 1px solid #e5eaf1;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
+
+ .pexform-input{
+  background: #F8F8F8 !important;
+  border: solid #e5eaf1 !important;
+  border-radius: 12px !important;
+  font-size: 1.0rem !important;
+  padding: 10px 20px 10px 10px !important;
+  color: #223042 !important;
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  /* height: 10% !important; */
+   transition: border-color 0.2s;
+  width: 80%; 
+  /* margin: -8px; */
+}
+.pexform-input1{
+  width: 59%;
+  
+
+}
+.pexform-input2{
+  width: 100%;
+  margin-right: 20px;
+  
+  
+  
+} 
+
+/* .pexform-input,
+.pexform-input1,
+.pexform-input2 {
+  width: 100%;
+  background: #F8F8F8 !important;
+  border: solid #e5eaf1 !important;
+  border-radius: 12px !important;
+  font-size: 1rem !important;
+  padding: 10px 20px 10px 10px !important;
+  color: #223042 !important;
+} */
 
 /* ====================== BANK DETAILS TAB SECTION ====================== */
 .profile-tab-section.bank-details {
