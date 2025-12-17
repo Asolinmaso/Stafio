@@ -217,15 +217,21 @@
   padding: 10px 20px 10px 10px !important;
   color: #223042 !important;
   /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  height: 10% !important;
+  height: 50px !important;
   transition: border-color 0.2s;
+  /* new */
   width: 90%;
   margin-bottom: -22px;
+    appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto;
 }
+
 .form-input:focus, .form-control:focus, .form-select:focus {
   border-color: #12baf5 !important;
   box-shadow: 0 0 0 3px #19bde91f !important;
 }
+
 
 /* --- Date calendar icon --- */
 .input-icon-wrap {
@@ -345,6 +351,10 @@
   transition: border-color 0.2s;
   width: 90%;
   margin-bottom: 4px;
+  /* new */
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto
 }
 
 
@@ -390,7 +400,7 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
- .pexform-input{
+ /* .pexform-input{
   background: #F8F8F8 !important;
   border: solid #e5eaf1 !important;
   border-radius: 12px !important;
@@ -399,34 +409,41 @@
   color: #223042 !important;
   /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
   /* height: 10% !important; */
-   transition: border-color 0.2s;
-  width: 80%; 
+   /* transition: border-color 0.2s;
+  width: 80%;  */
   /* margin: -8px; */
-}
+/* }
 .pexform-input1{
   width: 59%;
   
 
 }
 .pexform-input2{
-  width: 100%;
+  width: 80%;
   margin-right: 20px;
-  
-  
-  
-} 
+ 
+}  */ 
 
-/* .pexform-input,
-.pexform-input1,
-.pexform-input2 {
-  width: 100%;
+ .pexform-input{
   background: #F8F8F8 !important;
   border: solid #e5eaf1 !important;
   border-radius: 12px !important;
-  font-size: 1rem !important;
+  font-size: 1.0rem !important;
   padding: 10px 20px 10px 10px !important;
   color: #223042 !important;
-} */
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  height: 50px !important;
+  transition: border-color 0.2s;
+  width: 90%;
+  margin-bottom: 5px;
+}
+
+.pexform-input1{
+   resize: vertical;
+   height: 65px;
+  
+   
+}
 
 /* ====================== BANK DETAILS TAB SECTION ====================== */
 .profile-tab-section.bank-details {
@@ -486,6 +503,7 @@ input[type="radio"] {
   align-items: center;
   margin-right: 32px;
 }
+
 
 /* ====================== INPUTS & BUTTONS ====================== */
 .form-control,
@@ -547,13 +565,19 @@ input[type="radio"] {
   font-size: 1rem;
 }
 .upload-box {
-  border: 2px dashed #bfeafd;
+  border-style: dashed;
+  border-color: rgb(209, 204, 204);
   background: #f7fafd;
-  border-radius: 11px;
+  border-radius: 25px;
   padding: 33px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* new */
+  height: 300px ;
+  margin-right: 250px;
+  width: 320px;
+   
 }
 .upload-cloud-icon {
   font-size: 2.5rem;

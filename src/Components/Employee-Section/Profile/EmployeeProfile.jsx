@@ -163,7 +163,7 @@ const EmployeeProfile = () => {
           activeKey={activeTab}
           onSelect={k => setActiveTab(k)}
           defaultActiveKey="personal"
-        >
+         >
           <Nav variant="tabs" className="profile-tabs">
             <Nav.Item><Nav.Link eventKey="personal">Personal Information</Nav.Link></Nav.Item>
             <Nav.Item><Nav.Link eventKey="education">Education Qualification</Nav.Link></Nav.Item>
@@ -248,25 +248,40 @@ const EmployeeProfile = () => {
                   </Col>
                   <Col md={6}>
                     <Form.Label className="form-label">Nationality</Form.Label>
-                    <Form.Control
-                      type="text"
+                    <Form.Select
+                      
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className="form-input"
+                      className="form-select blood-placeholder"
                       disabled={!isEditingPersonal}
-                    />
+                    >
+                      <option value="" disabled>Select Your Nationality</option>
+                        <option value="India">India</option>
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="Germany">Germany</option>
+                    </Form.Select>
                   </Col>
                   <Col md={6}>
                     <Form.Label className="form-label">Blood Group</Form.Label>
-                    <Form.Control
-                      type="text"
+                    <Form.Select
+                      
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
                       className="form-input"
                       disabled={!isEditingPersonal}
-                    />
+                    >
+                        <option value="" disabled>Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </Form.Select>
                   </Col>
                   <Col md={6}>
                     <Form.Label className="form-label">Emergency Contact Number</Form.Label>
@@ -354,15 +369,20 @@ const EmployeeProfile = () => {
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="form-label">Qualification</Form.Label>
-                        <Form.Control
-                          type="text"
+                        <Form.Select
+                          
                           name="qualification"
                           value={education.qualification}
                           onChange={handleEducationChange}
                           placeholder="Qualification"
                           className="edform-input"
                           disabled={!isEditingEducation}
-                        />
+                        >
+                          <option value="" disabled>Education Qualification</option>
+                          <option value="BE">BE</option>
+                          <option value="BSC">B.SC(computer science)</option>
+                          <option value="BCOM">B.COM(computer science)</option>
+                        </Form.Select>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="form-label">Skills</Form.Label>
@@ -404,18 +424,23 @@ const EmployeeProfile = () => {
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="form-label">Specialization</Form.Label>
-                        <Form.Control
-                          type="text"
+                        <Form.Select
+                          
                           name="specialization"
                           value={education.specialization}
                           onChange={handleEducationChange}
                           placeholder="Specialization"
                           className="edform-input"
                           disabled={!isEditingEducation}
-                        />
+                        >
+                          <option value="" disabled>Specialization</option>
+                           <option value="Cloud-computing">Cloud computing</option>
+                           <option value="Data-Science">Data Science</option>
+                           <option value="Cyber-Security">Cyber Security</option>
+                        </Form.Select>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>Portfolio Link</Form.Label>
+                        <Form.Label className="form-label">Portfolio Link</Form.Label>
                         <Form.Control
                           type="text"
                           name="portfolio"
@@ -451,19 +476,59 @@ const EmployeeProfile = () => {
                 <Form>
                   <Row className="gy-4">
                     <Col md={6}><Form.Label>Name Of the Company</Form.Label>
-                      <Form.Control type="text" name="company" value={experience.company} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
-                    <Col md={6}><Form.Label>Job Title / Designation</Form.Label>
-                      <Form.Control type="text" name="jobTitle" value={experience.jobTitle} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
-                    <Col md={6}><Form.Label>Start Date</Form.Label>
-                      <Form.Control type="date" name="startDate" value={experience.startDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
-                    <Col md={6}><Form.Label>End Date</Form.Label>
-                      <Form.Control type="date" name="endDate" value={experience.endDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} /></Col>
-                    <Col md={8}><Form.Label>Job Responsibilities</Form.Label>
-                      <Form.Control type="text" name="responsibilities" value={experience.responsibilities} onChange={handleExperienceChange}className="pexform-input1" disabled={!isEditingExperience} />
-                    </Col>
-                    <br />
-                    <Col md={4}><Form.Label>Total Years Of Experience</Form.Label>
-                      <Form.Control type="number" name="totalYears" value={experience.totalYears} onChange={handleExperienceChange}className="pexform-input2" disabled={!isEditingExperience} />
+                      <Form.Control 
+                        type="text" 
+                        name="company" 
+                        value={experience.company} 
+                        onChange={handleExperienceChange}
+                        placeholder="Company Name"
+                        className="pexform-input" 
+                        disabled={!isEditingExperience} 
+                      />
+                      <Form.Label className="form-label">Start Date</Form.Label>
+                        <div className="calender-input-wrap">
+                        <Form.Control type="date" name="startDate" value={experience.startDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} />
+                        <span className="calender-icon">
+                         <i className="bi bi-calender3"></i>
+                        </span>
+                      </div>
+                      <Form.Label>Job Responsibilities</Form.Label>
+                      <Form.Control as="textarea" 
+                       name="responsibilities" 
+                       value={experience.responsibilities} 
+                       onChange={handleExperienceChange}
+                       placeholder="Describe your job responsibilities"
+                       className="pexform-input1" 
+                       disabled={!isEditingExperience} 
+                     />
+                    </Col> 
+                    <Col md={6}> 
+                      <Form.Label>Job Title / Designation</Form.Label>
+                      <Form.Control 
+                       type="text" 
+                       name="jobTitle" 
+                       value={experience.jobTitle} 
+                       onChange={handleExperienceChange}
+                       placeholder="Job Title"
+                       className="pexform-input" 
+                       disabled={!isEditingExperience} 
+                      />
+                      <Form.Label className="form-label">End Date</Form.Label>
+                      <div className="calender-input-wrap">
+                      <Form.Control type="date" name="endDate" value={experience.endDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} />
+                        <span className="calender-icon">
+                         <i className="bi bi-calender3"></i>
+                        </span> </div>
+                      <Form.Label>Total Years Of Experience</Form.Label>
+                      <Form.Control 
+                       type="number" 
+                       name="totalYears" 
+                       value={experience.totalYears} 
+                       onChange={handleExperienceChange}
+                       placeholder="Experience in Years"
+                       className="pexform-input" 
+                       disabled={!isEditingExperience} 
+                     />
                     </Col>
                   </Row>
                 </Form>
@@ -489,17 +554,64 @@ const EmployeeProfile = () => {
                 <Form>
                   <Row className="gy-4">
                     <Col md={6}><Form.Label>Bank Name</Form.Label>
-                      <Form.Control type="text" name="bankName" value={bank.bankName} onChange={handleBankChange} disabled={!isEditingBank} /></Col>
+                      <Form.Control 
+                       type="text" 
+                       name="bankName" 
+                       value={bank.bankName} 
+                       onChange={handleBankChange}
+                       placeholder="Name of the Bank" 
+                       disabled={!isEditingBank} 
+                       />
+                      </Col>
                     <Col md={6}><Form.Label>Branch</Form.Label>
-                      <Form.Control type="text" name="branch" value={bank.branch} onChange={handleBankChange} disabled={!isEditingBank} /></Col>
+                      <Form.Control 
+                       type="text" 
+                       name="branch" 
+                       value={bank.branch} 
+                       onChange={handleBankChange}
+                       placeholder="Name of the Branch" 
+                       disabled={!isEditingBank} 
+                      />
+                    </Col>
                     <Col md={6}><Form.Label>Account Number</Form.Label>
-                      <Form.Control type="text" name="accountNumber" value={bank.accountNumber} onChange={handleBankChange} disabled={!isEditingBank} /></Col>
+                      <Form.Control 
+                       type="text" 
+                       name="accountNumber" 
+                       value={bank.accountNumber} 
+                       onChange={handleBankChange}
+                        placeholder="Bank AC Number" 
+                       disabled={!isEditingBank} 
+                      />
+                    </Col>
                     <Col md={6}><Form.Label>IFSC Code</Form.Label>
-                      <Form.Control type="text" name="ifsc" value={bank.ifsc} onChange={handleBankChange} disabled={!isEditingBank} /></Col>
+                      <Form.Control 
+                       type="text" 
+                       name="ifsc" 
+                       value={bank.ifsc} 
+                       onChange={handleBankChange}
+                        placeholder="IFSC Code" 
+                       disabled={!isEditingBank} 
+                      />
+                    </Col>
                     <Col md={6}><Form.Label>Aadhaar Number</Form.Label>
-                      <Form.Control type="text" name="aadhaar" value={bank.aadhaar} onChange={handleBankChange} disabled={!isEditingBank} /></Col>
+                      <Form.Control 
+                       type="text" 
+                       name="aadhaar" 
+                       value={bank.aadhaar} 
+                       onChange={handleBankChange} 
+                       placeholder="XXXX-XXXX-XXXX"
+                       disabled={!isEditingBank} 
+                     /></Col>
                     <Col md={6}><Form.Label>PAN Number</Form.Label>
-                      <Form.Control type="text" name="pan" value={bank.pan} onChange={handleBankChange} disabled={!isEditingBank} /></Col>
+                      <Form.Control 
+                       type="text" 
+                       name="pan" 
+                       value={bank.pan} 
+                       onChange={handleBankChange} 
+                        placeholder="ABCDE1234F"
+                       disabled={!isEditingBank} 
+                     />
+                    </Col>
                   </Row>
                 </Form>
               </div>
