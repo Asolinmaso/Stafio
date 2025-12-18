@@ -313,6 +313,7 @@ const AdminProfile = () => {
                       name="emergencyContactNumber"
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
+                      placeholder="Contact Number"
                       className="form-input"
                       disabled={!isEditingPersonal}
                     />
@@ -324,6 +325,7 @@ const AdminProfile = () => {
                       name="address"
                       value={profile.address}
                       onChange={handleProfileChange}
+                      placeholder="Home Address"
                       className="form-input"
                       disabled={!isEditingPersonal}
                     />
@@ -335,6 +337,7 @@ const AdminProfile = () => {
                       name="relationship"
                       value={profile.relationship}
                       onChange={handleProfileChange}
+                      placeholder="Emergency Contact Person"
                       className="form-input"
                       disabled={!isEditingPersonal}
                     />
@@ -501,10 +504,17 @@ const AdminProfile = () => {
                     <Col md={6}><Form.Label>Name Of the Company</Form.Label>
                       <Form.Control type="text" name="company" value={experience.company} onChange={handleExperienceChange} placeholder="Company Name" className="pexform-input" disabled={!isEditingExperience} />
                       <Form.Label className="form-label">Start Date</Form.Label>
-                      <div className="calender-input-wrap">
-                       <Form.Control type="date" name="startDate" value={experience.startDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} />
-                       <span className="calender-icon">
-                        <i className="bi bi-calender3"></i>
+                      <div className="calendar-input-wrap">
+                        <Form.Control 
+                         type="date" 
+                         name="startDate" 
+                         value={experience.startDate} 
+                         onChange={handleExperienceChange}
+                         className="pexform-input" 
+                         disabled={!isEditingExperience} 
+                        />
+                       <span className="calendar-icon">
+                        <i className="bi bi-calendar3"></i>
                          </span>
                       </div>
                       <Form.Label>Job Responsibilities</Form.Label>
@@ -514,10 +524,17 @@ const AdminProfile = () => {
                       <Form.Label>Job Title / Designation</Form.Label>
                       <Form.Control type="text" name="jobTitle" value={experience.jobTitle} onChange={handleExperienceChange} placeholder="Job Title" className="pexform-input" disabled={!isEditingExperience} />
                       <Form.Label className="form-label">End Date</Form.Label>
-                      <div className="calender-input-wrap">
-                      <Form.Control type="date" name="endDate" value={experience.endDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} />
-                        <span className="calender-icon">
-                         <i className="bi bi-calender3"></i>
+                      <div className="calendar-input-wrap">
+                      <Form.Control 
+                        type="date" 
+                        name="endDate" 
+                        value={experience.endDate} 
+                        onChange={handleExperienceChange}
+                        className="pexform-input" 
+                        disabled={!isEditingExperience} 
+                      />
+                        <span className="calendar-icon">
+                         <i className="bi bi-calendar3"></i>
                         </span> </div>
                       <Form.Label>Total Years Of Experience</Form.Label>
                       <Form.Control type="number" name="totalYears" value={experience.totalYears} onChange={handleExperienceChange} placeholder="Experience in Years" className="pexform-input" disabled={!isEditingExperience} />

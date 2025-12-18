@@ -12,6 +12,8 @@ const Topbar = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [announcements, setAnnouncements] = useState([]);
   const [role,setAdminrole] = useState("");
+  const [showAdminMenu, setShowAdminMenu] = useState(false);
+  
 
   const [formData, setFormData] = useState({
     date: "",
@@ -118,35 +120,121 @@ useEffect(() => {
         </div>
 
         {/* Right side user + bell */}
-        <div className="profile d-flex align-items-center gap-3">
-          <div style={{ cursor: "pointer", position: "relative" }}>
-            <FaBell size={20} className="text-dark" onClick={togglePopup} />
-          </div>
-          <div style={{cursor: "pointer"}}>
-            <img  src={topbarsettings}
-              alt="Profile Logo" 
-              className="topbar-settings"
-              onClick={() => navigate("/admin-settings")}
+       <div className="profile0 d-flex align-items-center gap-3" >
+          
+        <FaBell size={20} className="text-dark" style={{cursor:"pointer"}} onClick={togglePopup} />
+       </div>
+           <div style={{cursor: "pointer"}}>
+              <img  src={topbarsettings}
+                alt="Profile Logo" 
+                className="topbar-settings"
+                onClick={() => navigate("/admin-settings")}
               />
-          </div>
-
-          <div className="d-flex align-items-center">
-            <img
-              src={profileimg}
-              alt="User"
-              className="topbar-avatar rounded-circle me-2"
-            />
-            <div>
-              <div className="fw-bold">{adminusername || "User"}</div>
-              <div className="text-muted small">{role}</div>
             </div>
+          <div                 //new
+              className="profile-data1 d-flex align-items-center "
+              onClick={() => setShowAdminMenu((prev) => !prev)}
+              style={{ cursor: "pointer" }}
+             >
+             <img src={profileimg} alt="Admin-User" className="topbar-avatar rounded-circle me-2" />
+            <div>
+             <div className="fw-bold">{adminusername || "User"}</div>
+             <div className="text-muted small">{role}</div>
+           </div>                     
+           <FaChevronDown className="ms-2" />  
           </div>
-
-          <div className="chevron-container">
-            <FaChevronDown />
-          </div>
-        </div>
       </div>
+      
+     {/* Admin profile popup  */}
+     
+     {showAdminMenu && (
+     <div className="full-profile-popup1">
+       <div className="popup-header" >
+       <h5> Profile Details</h5>
+       <button className="btn-close"
+       onClick={() => setShowAdminMenu(false)}
+       >
+       </button>
+       </div>
+          <div className="popup-content">
+                        {/* Profile section */}
+                        <div className="popup-section">
+                          <div className="profile-photo">
+                           <img src={profileimg} alt="Profile" />
+                           <h6>{adminusername || "User"}</h6>  
+                           <p className="text-success">● Active</p>
+                          </div>
+                          <div className="details-grid">
+                            <div>
+                              <h6>Personal Details</h6>
+                              <strong>Position:</strong><p> HR Manager Head</p>
+                              <strong>Employment Type:</strong><p> Fulltime</p>
+                              <strong>Primary Supervisor:</strong> <p>Catherine</p>
+                              <strong>Department:</strong><p> All</p>
+                              <strong>HR Manager:</strong><p>S.Santhana Lakshmi</p>
+                            </div>
+                            <div>
+                              <h6>Personal Details</h6>
+                              <strong>Gender:</strong><p> Female</p>
+                              <strong>Date of Birth:</strong><p> 22/07/1993</p>
+                              <strong>Blood Group:</strong><p> A+</p>
+                              <strong>Marital Status:</strong><p> Married</p>
+                              <strong>Portfolio:</strong><p> http://www.behance.com</p>
+                              </div>
+                            <div>
+                             <h6>Educational Qualification</h6>
+                             <strong>Institution:</strong><p> CEMP Punnapra</p>
+                             <strong>Start & End Date:</strong><p> 22/07/2012 – 22/07/2016</p>
+                             <strong>Course:</strong><p> B.Tech</p>
+                             <strong>Specialization:</strong><p> Computer Science</p>
+                             <strong>Skills:</strong> <p> Figma, Adobe XD, Photoshop</p>
+                           </div>
+                          </div> 
+
+                        <div className="details-grid">
+                          <div>
+                            <h6>Address</h6>
+                             <strong>Address Line:</strong><p>Kattasseri House,Kalarikal</p>
+                             <strong>City:</strong><p> Alappuzha</p>
+                             <strong>State:</strong> <p>Kerala</p>
+                             <strong>Country:</strong><p> India</p>
+                          </div>
+                          <div>
+                           <h6>Contact Details</h6>
+                             <strong>Phone:</strong> <p>9895195971</p>
+                             <strong>Emergency Contact:</strong><p> 9895195971</p>
+                             <strong>Relationship:</strong><p> Husband</p>
+                             <strong>Email:</strong> <p>lakshmi@gmail.com</p>
+                          </div>
+                          <div>
+                            <h6>Previous Experience</h6>
+                             <strong>Company:</strong><p> Azym Technology</p>
+                             <strong>Start & End:</strong><p> 22/07/2017 – 22/07/2022</p>
+                             <strong>Job Title:</strong><p> HR Manager Head</p>
+                             <strong>Description:</strong><p> Conducted user research, interviews, and usability testing.</p>
+                          </div>
+                        </div>
+
+                        <div className="details-grid">
+                          <div>
+                            <h6>Bank Details</h6>
+                             <strong>Bank Name:</strong><p> SBI</p>
+                             <strong>Branch:</strong><p> Alappuzha</p>
+                             <strong>Account Number:</strong><p> 12345678911</p>
+                             <strong>IFSC Code:</strong><p> IFSC12345</p>
+                             <strong>PAN Number:</strong><p> IFSC12345</p>
+                         </div>
+                    
+                                      
+                </div>
+              </div>
+           </div>
+         </div>
+     )}
+
+
+
+
 
       {/* Announcement Popup */}
       {showPopup && (

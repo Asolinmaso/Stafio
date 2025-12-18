@@ -4,6 +4,7 @@ import arrow3 from "../../../assets/arrow3.png"; // Paper plane arrow
 import Rectangle6 from "../../../assets/Rectangle6.png"; // Human illustration
 import "./ProfileBanner.css";
 
+
 const ProfileBanner = () => {
   return (
     <div className="profile-banner-wrapper" >

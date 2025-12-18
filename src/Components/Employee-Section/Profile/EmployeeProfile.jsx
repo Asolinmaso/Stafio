@@ -290,6 +290,7 @@ const EmployeeProfile = () => {
                       name="emergencyContactNumber"
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
+                      placeholder="Contact Number"
                       className="form-input"
                       disabled={!isEditingPersonal}
                     />
@@ -301,6 +302,7 @@ const EmployeeProfile = () => {
                       name="address"
                       value={profile.address}
                       onChange={handleProfileChange}
+                      placeholder="Home Address"
                       className="form-input"
                       disabled={!isEditingPersonal}
                     />
@@ -312,6 +314,7 @@ const EmployeeProfile = () => {
                       name="relationship"
                       value={profile.relationship}
                       onChange={handleProfileChange}
+                      placeholder="Emergency Contact Person"
                       className="form-input"
                       disabled={!isEditingPersonal}
                     />
@@ -486,10 +489,10 @@ const EmployeeProfile = () => {
                         disabled={!isEditingExperience} 
                       />
                       <Form.Label className="form-label">Start Date</Form.Label>
-                        <div className="calender-input-wrap">
+                        <div className="calendar-input-wrap">
                         <Form.Control type="date" name="startDate" value={experience.startDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} />
-                        <span className="calender-icon">
-                         <i className="bi bi-calender3"></i>
+                        <span className="calendar-icon">
+                         <i className="bi bi-calendar3"></i>
                         </span>
                       </div>
                       <Form.Label>Job Responsibilities</Form.Label>
@@ -514,10 +517,10 @@ const EmployeeProfile = () => {
                        disabled={!isEditingExperience} 
                       />
                       <Form.Label className="form-label">End Date</Form.Label>
-                      <div className="calender-input-wrap">
+                      <div className="calendar-input-wrap">
                       <Form.Control type="date" name="endDate" value={experience.endDate} onChange={handleExperienceChange}className="pexform-input" disabled={!isEditingExperience} />
-                        <span className="calender-icon">
-                         <i className="bi bi-calender3"></i>
+                        <span className="calendar-icon">
+                         <i className="bi bi-calendar3"></i>
                         </span> </div>
                       <Form.Label>Total Years Of Experience</Form.Label>
                       <Form.Control 
@@ -589,7 +592,7 @@ const EmployeeProfile = () => {
                        name="ifsc" 
                        value={bank.ifsc} 
                        onChange={handleBankChange}
-                        placeholder="IFSC Code" 
+                       placeholder="IFSC Code" 
                        disabled={!isEditingBank} 
                       />
                     </Col>
