@@ -3,6 +3,8 @@ import "./Settings.css";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import { SettingsContext } from "./SettingsContext";
+import { Border } from "react-bootstrap-icons";
+import { BiFontSize } from "react-icons/bi";
 
 export default function Settings() {
   const { theme, setTheme, language, setLanguage, font, setFont } =
@@ -16,6 +18,7 @@ export default function Settings() {
       title: "System Settings",
       subtitle: "Setup and edit system settings and preferences",
       general: "General Settings",
+      general1: "General",           // new
       basic: "Basic Info",
       systemLanguage: "System Language",
       dashboardTheme: "Dashboard Theme",
@@ -27,6 +30,8 @@ export default function Settings() {
       phone: "Phone Number",
       position: "Position",
       role: "Role",
+      profilepicture:"Profile Picture",  // new
+      subp3:"We support only JPEGs or PNGs under 5MB",  // new
     },
     tamil: {
       title: "கணினி அமைப்புகள்",
@@ -102,7 +107,7 @@ export default function Settings() {
             {/* General Settings */}
             {activeTab === "general" && (
               <div>
-                <h3>{t.general}</h3>
+                <h3>{t.general1}</h3>
 
                 <div className="form-group">
                   <label>{t.systemLanguage}</label>
@@ -118,7 +123,11 @@ export default function Settings() {
 
                 <div className="form-group">
                   <label>{t.dashboardTheme}</label>
-                  <label className="switch">
+                   <div className="theme-input-box">     {/*new check box inside the input*/}
+                    <span className="theme-text">
+                     {theme === "light" ? "Light Theme" : "Dark Theme"}
+                    </span>
+                   <label className="switch">
                     <input
                       type="checkbox"
                       checked={theme === "dark"}
@@ -127,10 +136,11 @@ export default function Settings() {
                       }
                     />
                     <span className="slider round"></span>
-                  </label>
-                  <span className="theme-label">
+                   </label>
+                  </div>
+                  {/* <span className="theme-label">
                     {theme === "light" ? "Light Theme" : "Dark Theme"}
-                  </span>
+                  </span> */}
                 </div>
 
                 <div className="form-group">
@@ -161,7 +171,7 @@ export default function Settings() {
             {/* Basic Info */}
             {activeTab === "basic" && (
               <div>
-                <h3>{t.basic}</h3>
+                {/* <h3>{t.basic}</h3> */}  {/*modified */}
                 <div className="form-row">
                   <div className="form-column">
                     <div className="form-group">
@@ -196,6 +206,14 @@ export default function Settings() {
                       <input type="text" placeholder={t.role} />
                     </div>
                   </div>
+                </div>
+                <div className="form-column">
+                  <div className="form-group">
+                     <h3>{t.profilepicture}</h3>
+                     <p>{t.subp3}</p>
+                  
+                  
+                  </div>    
                 </div>
               </div>
             )}

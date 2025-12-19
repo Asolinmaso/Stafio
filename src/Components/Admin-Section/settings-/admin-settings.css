@@ -1,6 +1,6 @@
 /* Main page container */
 .settings-page {
-  padding: 30px 40px;
+  padding: 10px 5px !important;   /*modified*/
   background: #eff5ff;
   min-height: 100vh;
   font-family: "Montserrat", sans-serif;
@@ -8,7 +8,7 @@
 
 /* Header */
 .settings-header h1 {
-  font-size: 30px;
+  font-size: 32px !important;  /*modified*/
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 5px;
@@ -30,6 +30,7 @@
   border-bottom: 1px solid #e5e7eb;
   margin-bottom: 20px;
   margin-left: 20px;
+  
 }
 
 .tab-link {
@@ -98,7 +99,7 @@
 }
 
 .form-group label {
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 8px;
   color: #374151;
 }
@@ -202,9 +203,9 @@ input:checked + .slider:before {
       background: #e7e4e4ff;
  }
 
- .create-new-wrapper{
+ /* .create-new-wrapper{
 
- }
+ } */
  .btn-create-new{
     margin-bottom:10px ;
  }
