@@ -77,7 +77,7 @@ export default function AdminSettings() {
                 <h3>General</h3>
                 <div className="form-row">
                   <div className="form-column">
-                    <div className="form-group">
+                    <div className="form-group2">       {/* modified   */}
                       <label>System Language</label>
                       <select
                         value={language}
@@ -90,8 +90,12 @@ export default function AdminSettings() {
                      </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group">           {/* modified   */}
                       <label>Admin Dashboard Theme</label>
+                      <div className="theme-input-box">    {/*new check box inside the input*/}
+                        <span className="theme-label">
+                         {theme === "light" ? "Light Theme" : "Dark Theme"}
+                        </span>
                       <label className="switch">
                         <input
                           type="checkbox"
@@ -102,12 +106,11 @@ export default function AdminSettings() {
                         />
                         <span className="slider round"></span>
                       </label>
-                      <span className="theme-label">
-                        {theme === "light" ? "Light Theme" : "Dark Theme"}
-                      </span>
+                      </div>
+                      
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group2">
                       <label>System Font</label>
                       <select
                         value={font}
@@ -119,39 +122,52 @@ export default function AdminSettings() {
                       </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group">        {/* modified   */}
                       <label>Allow Manager to edit employee record</label>
-                      <label className="switch">
-                        <input type="checkbox" />
-                        <span className="slider round"></span>
-                      </label>
-                      <span className="theme-label">Disable</span>
+                      <div className="theme-input-box">     {/*new check box inside the input*/}
+                       <span className="theme-label">
+                        {theme === "Able" ? "Able" : "Disable"}
+                        </span>
+                        <label className="switch">
+                         <input 
+                            type="checkbox"
+                            checked={theme === "Able"}
+                            onChange={() =>
+                              setTheme(theme === "Disable" ? "Able" : "Disable")
+                            }
+                         />
+                         <span className="slider round"></span>
+                        </label>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="form-column">
+                  <div className="form-column">  {/* modified   */}
                     <div className="form-group">
                       <label>User Sign up</label>
-                      <label className="switch">
-                        <input type="checkbox" />
-                        <span className="slider round"></span>
-                      </label>
-                      <span className="theme-label">
-                        Allow new users to sign up
-                      </span>
+                       <div className="theme-input-box">
+                        <span className="theme-label">
+                           Allow new users to sign up
+                        </span>
+                        <label className="switch">
+                          <input type="checkbox" />
+                          <span className="slider round"></span>
+                        </label>
+                      </div>
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group1">
                       <label>Default Theme for Users</label>
-                      <input type="text" placeholder="Light Theme" />
+                      <input type="text" placeholder="Light Theme"  />
                     </div>
 
-                    <div className="form-group">
-                      <label>Date and Time Format</label>
+                     <div className="form-group2">     {/* modified   */}
+                      <label>Date and Time Format
                       <label className="switch">
                         <input type="checkbox" checked={true} readOnly />
                         <span className="slider round"></span>
-                      </label>
+                      </label></label>
+
                       <select
                         value={dateFormat}
                         onChange={(e) => setDateFormat(e.target.value)}
@@ -191,7 +207,7 @@ export default function AdminSettings() {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group3">
                       <label>Position</label>
                       <select
                         value={position}
@@ -243,7 +259,7 @@ export default function AdminSettings() {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group3">
                       <label>Role</label>
                       <select
                         value={role}

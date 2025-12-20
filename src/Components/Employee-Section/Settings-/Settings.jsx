@@ -170,7 +170,7 @@ export default function Settings() {
 
             {/* Basic Info */}
             {activeTab === "basic" && (
-              <div>
+            <div>
                 {/* <h3>{t.basic}</h3> */}  {/*modified */}
                 <div className="form-row">
                   <div className="form-column">
@@ -183,6 +183,8 @@ export default function Settings() {
                       <label>{t.lastName}</label>
                       <input type="text" placeholder={t.lastName} />
                     </div>
+
+                    
 
                     <div className="form-group">
                       <label>{t.email}</label>
@@ -206,15 +208,22 @@ export default function Settings() {
                       <input type="text" placeholder={t.role} />
                     </div>
                   </div>
-                </div>
-                <div className="form-column">
+                 </div>
+                
                   <div className="form-group">
                      <h3>{t.profilepicture}</h3>
                      <p>{t.subp3}</p>
-                  
-                  
+                     {/* <div className="profile-upload">
+                        <img
+                           src={profileimg}
+                          alt="Profile"
+                          className="profile-preview"
+                        />
+                        <button type="button" className="upload-btn">
+                          📁 Upload
+                        </button>
+                      </div> */}
                   </div>    
-                </div>
               </div>
             )}
           </div>
