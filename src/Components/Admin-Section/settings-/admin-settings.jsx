@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
 import profileimg from "../../../assets/profileimg.png"; 
 import user from "../../../assets/user.png"; 
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-
+import penicon from "../../../assets/penicon2.png";
+import deletebox from "../../../assets/deletebox.png"; 
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState("general");
@@ -13,6 +14,10 @@ export default function AdminSettings() {
   const [language, setLanguage] = useState("english");
   const [font, setFont] = useState("default");
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
+  //new for validation
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   // Add missing state variables
   const [firstName, setFirstName] = useState('');
@@ -24,6 +29,110 @@ export default function AdminSettings() {
   const [lunchBreak, setLunchBreak] = useState('1:00 PM - 2:00 PM');
   const [coffeeBreak, setCoffeeBreak] = useState('4:00 PM - 4:15 PM');
 
+  
+
+  const [basicForm, setBasicForm] = useState({ /* new for validation*/ 
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  });
+  
+  const [basicErrors, setBasicErrors] = useState({});
+
+    useEffect(() => {
+      // Example: auto-save when language changes
+    console.log("Auto-saving general settings", {
+      language,
+      theme,
+      font,
+      dateFormat
+    });
+  }, [language, theme, font, dateFormat]);
+
+          //handle input change
+
+const handleBasicChange = (e) => {
+  const { name, value } = e.target;
+
+  setBasicForm({
+    ...basicForm,
+    [name]: value
+  });
+
+  // clear error on change
+  setBasicErrors({
+    ...basicErrors,
+    [name]: ""
+  });
+};
+
+           //validation logic   new
+
+const validateBasicInfo = () => {
+  const errors = {};
+
+  if (!basicForm.firstName.trim()) {
+    errors.firstName = "*First name is required";
+  }
+
+  if (!basicForm.lastName.trim()) {
+    errors.lastName = "*Last name is required";
+  }
+
+  if (!basicForm.email.trim()) {
+    errors.email = "*Email is required";
+  } else if (!/^\S+@\S+\.\S+$/.test(basicForm.email)) {
+    errors.email = "*Enter a valid email address";
+  }
+
+  if (!basicForm.phone.trim()) {
+    errors.phone = "*Phone number is required";
+  } else if (!/^[0-9]{10}$/.test(basicForm.phone)) {
+    errors.phone = "*Enter a valid 10-digit phone number";
+  }
+
+  if (!basicForm.position) {
+  errors.position = "Please select a position";
+}
+
+
+    setBasicErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  //save Button logic
+
+const handleBasicSave = () => {
+  if (validateBasicInfo()) {
+    console.log("Basic info saved:", basicForm);
+    // API call later
+  }
+};
+
+//cancel button logic (reset)
+
+const handleBasicCancel = () => {
+  setBasicForm({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
+  });
+  setBasicErrors({});
+};
+
+//team and department checkbox selectsall/de-selectsall
+// state added
+const [selectedRows, setSelectedRows] = useState({
+  row1: false,
+  row2: false,
+  row3: false
+});
+
+  
+
+ 
   return (
     <div className="dashboard-wrapper d-flex">
       <div className="rightside-logo ">
@@ -45,6 +154,15 @@ export default function AdminSettings() {
             <h1>System Settings</h1>
             <p>Setup and edit system settings and preferences</p>
           </div>
+
+          {/* Create New button – only for Department tab */}{/*new modified */}
+     {activeTab === "departments" && (
+         <div className="department-top-action">
+           <button className="btn-create-new">Create new</button>
+         </div>
+          )}
+
+
 
           {/* Tabs */}
           <div className="settings-tabs">
@@ -69,8 +187,11 @@ export default function AdminSettings() {
             )}
           </div>
 
+
           {/* Tab Content */}
-          <div className="settings-card">
+          <div className={`settings-card ${
+            activeTab === "breaktimes" ? "breaktimes-no-card" : ""
+          }`}>
             {/* General Settings */}
             {activeTab === "general" && (
               <div>
@@ -191,33 +312,52 @@ export default function AdminSettings() {
                       <label>First Name</label>
                       <input
                         type="text"
+                        name="firstName"
+                        value={basicForm.firstName}
                         placeholder="Please enter name"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        // value={firstName}
+                        // onChange={(e) => setFirstName(e.target.value)}
+                        onChange={handleBasicChange}
                       />
+                      {basicErrors.firstName && (
+                         <span className="error-text">{basicErrors.firstName}</span>
+                       )}
                     </div>
 
                     <div className="form-group">
                       <label>Email</label>
                       <input
                         type="email"
+                        name="email"
                         placeholder="Please enter email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={basicForm.email}
+                        onChange={handleBasicChange}
                       />
+                      {basicErrors.email && (
+                         <span className="error-text">{basicErrors.email}</span>
+                       )}
                     </div>
 
                     <div className="form-group3">
                       <label>Position</label>
                       <select
-                        value={position}
-                        onChange={(e) => setPosition(e.target.value)}
+                        name="position"
+                        value={basicForm.position}
+                        onChange={handleBasicChange}
                       >
                         <option value="">Select</option>
                         <option value="manager">Manager</option>
                         <option value="developer">Developer</option>
                         <option value="designer">Designer</option>
                       </select>
+                      {basicErrors.position && (
+                         <span className="error-text">{basicErrors.position}</span>
+                       )}
+
+                      {/* {submitted && basicErrors.position && (
+                         <span className="error-text">{basicErrors.position}</span>
+                        )} */}
+
                     </div>
 
                     <div className="form-group">
@@ -243,20 +383,28 @@ export default function AdminSettings() {
                       <label>Last Name</label>
                       <input
                         type="text"
+                        name="lastName"
                         placeholder="Please enter name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        value={basicForm.lastName}
+                        onChange={handleBasicChange}
                       />
+                      {basicErrors.lastName && (
+                         <span className="error-text">{basicErrors.lastName}</span>
+                       )}
                     </div>
 
                     <div className="form-group">
                       <label>Phone Number</label>
                       <input
                         type="tel"
+                        name="phone"
                         placeholder="Please enter phone number"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        value={basicForm.phone}
+                        onChange={handleBasicChange}
                       />
+                      {basicErrors.phone && (
+                        <span className="error-text">{basicErrors.phone}</span>
+                      )}
                     </div>
 
                     <div className="form-group3">
@@ -274,10 +422,19 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="form-actions">
-                  <button type="button" className="btn-cancel">
+                  <button 
+                  type="button"
+                  className="btn-cancel"
+                  onClick={handleBasicCancel}
+                  >
                     Cancel
                   </button>
-                  <button type="submit" className="btn-save">
+                  <button 
+                  type="submit" 
+                  className="btn-save"
+                  onClick={handleBasicSave}
+                  
+                  >
                     Save
                   </button>
                 </div>
@@ -286,14 +443,26 @@ export default function AdminSettings() {
 
             {/* Team */}
             {activeTab === "team" && (
-              <div>
+              <div > 
         
                 <div className="team-table">
                   <table>
                     <thead>
                       <tr>
                         <th>
-                          <input type="checkbox" />
+                          <input type="checkbox"
+                          className="checkbbig"
+                          checked={Object.values(selectedRows).every(Boolean)}
+                           onChange={(e) => {
+                            const isChecked = e.target.checked;
+
+                              setSelectedRows({
+                                  row1: isChecked,
+                                  row2: isChecked,
+                                  row3: isChecked
+                                });
+                               }} 
+                           />
                         </th>
                         <th>Name</th>
                         <th>Date Joined</th>
@@ -303,7 +472,14 @@ export default function AdminSettings() {
                     <tbody>
                       <tr>
                         <td>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox"
+                          className="checkbsmall"
+                          checked={selectedRows.row1}
+                          onChange={(e) =>
+                            setSelectedRows({ ...selectedRows, row1: e.target.checked })
+                         }
+                          />
                         </td>
                         <td className="team-member">
                           <img
@@ -316,14 +492,21 @@ export default function AdminSettings() {
                             <div className="member-email">lakshmi@gmail.com</div>
                           </div>
                         </td>
-                        <td>May 24, 2025 - 09:00 AM</td>
+                        <td className="member-joined">May 24, 2025 - 09:00 AM</td>
                         <td>
                           <span className="role-badge hr">HR</span>
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox" 
+                          className="checkbsmall" 
+                          checked={selectedRows.row2}
+                          onChange={(e) =>
+                            setSelectedRows({ ...selectedRows, row2: e.target.checked })
+                          }
+                          />
                         </td>
                         <td className="team-member">
                           <img
@@ -336,7 +519,7 @@ export default function AdminSettings() {
                             <div className="member-email">sakshi@gmail.com</div>
                           </div>
                         </td>
-                        <td>May 24, 2025 - 09:00 AM</td>
+                        <td className="member-joined">May 24, 2025 - 09:00 AM</td>
                         <td>
                           <span className="role-badge team-head">
                             Team Head ▼
@@ -345,7 +528,14 @@ export default function AdminSettings() {
                       </tr>
                       <tr>
                         <td>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox" 
+                          className="checkbsmall"
+                          checked={selectedRows.row3}
+                          onChange={(e) =>
+                            setSelectedRows({ ...selectedRows, row3: e.target.checked })
+                           }
+                          />
                         </td>
                         <td className="team-member">
                           <img
@@ -358,7 +548,7 @@ export default function AdminSettings() {
                             <div className="member-email">asolin@gmail.com</div>
                           </div>
                         </td>
-                        <td>Apr 24, 2025 - 06:00 PM</td>
+                        <td className="member-joined">Apr 24, 2025 - 06:00 PM</td>
                         <td>
                           <span className="role-badge team-head">
                             Team Head ▼
@@ -374,16 +564,27 @@ export default function AdminSettings() {
             {/* Department - FIXED: Changed from "department" to "departments" */}
             {activeTab === "departments" && (
               <div>
-               
-                <div className="create-new-wrapper">
+                {/* <div className="create-new-wrapper">
                   <button className="btn-create-new">Create new</button>
-                </div>
+                </div> */}
                 <div className="department-table">
                   <table>
                     <thead>
                       <tr>
                         <th>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox"
+                          className="checkbbig"
+                          checked={Object.values(selectedRows).every(Boolean)}
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            setSelectedRows({
+                              row1: isChecked,
+                              row2: isChecked,
+                              row3: isChecked
+                          });
+                        }}
+                          />
                         </th>
                         <th>Department</th>
                         <th>Number Of Members</th>
@@ -394,38 +595,71 @@ export default function AdminSettings() {
                     <tbody>
                       <tr>
                         <td>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox"
+                          className="checkbsmall"
+                          checked={selectedRows.row1}
+                          onChange={(e) =>
+                            setSelectedRows({ ...selectedRows, row1: e.target.checked })
+                          }
+                          />
                         </td>
                         <td>HR</td>
                         <td>1</td>
                         <td>Lakshmi</td>
                         <td>
-                          <button className="action-btn edit">✏️</button>
-                          <button className="action-btn delete">🗑️</button>
+                          <button className="action-btn edit">
+                            <img className="pen-icon" src={penicon} alt="tick-icon" />
+                          </button>
+                          <button className="action-btn delete"> 
+                            <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
+                          </button>
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox"
+                          className="checkbsmall"
+                          checked={selectedRows.row2}
+                          onChange={(e) =>
+                            setSelectedRows({ ...selectedRows, row2: e.target.checked })
+                          }
+                          />
                         </td>
                         <td>Design</td>
                         <td>5</td>
                         <td>Sakshi</td>
                         <td>
-                          <button className="action-btn edit">✏️</button>
-                          <button className="action-btn delete">🗑️</button>
+                          <button className="action-btn edit"> 
+                            <img className="pen-icon" src={penicon} alt="tick-icon" />
+                            </button>
+                          <button className="action-btn delete">
+                             <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
+                          </button>
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <input type="checkbox" />
+                          <input 
+                          type="checkbox" 
+                          className="checkbsmall"
+                          checked={selectedRows.row3}
+                          onChange={(e) =>
+                            setSelectedRows({ ...selectedRows, row3: e.target.checked })
+                          }
+                          />
                         </td>
                         <td>Development</td>
                         <td>7</td>
                         <td>Asolin</td>
                         <td>
-                          <button className="action-btn edit">✏️</button>
-                          <button className="action-btn delete">🗑️</button>
+                          <button className="action-btn edit">
+                            <img className="pen-icon" src={penicon} alt="tick-icon" />
+                            </button>
+                          <button className="action-btn delete">
+                            <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
+                            </button>
                         </td>
                       </tr>
                     </tbody>
@@ -436,36 +670,43 @@ export default function AdminSettings() {
 
             {/* Break Times - FIXED: Changed from "breaks" to "breaktimes" */}
             {activeTab === "breaktimes" && (
-              <div>
-                <h3>Break Times</h3>
+              <div >
+                {/* <h3>Break Times</h3> */}
                 <div className="break-times-content">
                   <div className="break-item">
                     <label>Lunch Break</label>
                     <div className="time-input-group">
+                       <div className="time-input-wrapper">
                       <input
                         type="text"
                         value={lunchBreak}
                         onChange={(e) => setLunchBreak(e.target.value)}
+                        
                       />
-                      <button className="edit-btn">✏️</button>
+                      <button className="edit-btn inside">
+                        <img className="pen-icon" src={penicon} alt="tick-icon" />
+                      </button>
+                     </div> 
                     </div>
                   </div>
 
                   <div className="break-item">
                     <label>Coffee Break</label>
                     <div className="time-input-group">
-                      <input
+                      <div className="time-input-wrapper">
+                       <input
                         type="text"
                         value={coffeeBreak}
                         onChange={(e) => setCoffeeBreak(e.target.value)}
-                    
-                      />
-
-                      <button className="edit-btn">✏️</button>
+                       />
+                        <button className="edit-btn inside">
+                          <img className="pen-icon" src={penicon} alt="tick-icon" />
+                        </button>
+                    </div>
                     </div>
                   </div>
 
-                  <button className="btn-create-new">Create new</button>
+                  <button className="btn-create-new1">Create new</button>
                 </div>
               </div>
             )}

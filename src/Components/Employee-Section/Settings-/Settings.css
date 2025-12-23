@@ -244,17 +244,92 @@ body {
 
 /* picture add heading*/
 
-.form-group p{
+.form-group3 p{
   font-size: 15px;
   color: gray;
   margin-top: -8px;
 }
 
-.form-group h3{
-  font-size: 17px;
+.form-group3 h3{
+  font-size: 19px;
   font-weight: 600;
   color: #333333;
 }
 
-/* picture add */
+.form-group3 {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
 
+/* picture add */
+ /* new */
+.profile-upload1 {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* margin-top: 10px;  modified */
+}
+
+.profile-preview1 {
+  width: 70px;    /* modified  */
+  height: 70px;   /* modified  */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.upload-btn1 {
+  padding: 6px 14px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 14px;   /* modified */
+  cursor: pointer;
+  color: #7c7c7cff;
+  font-size: 16px;
+}
+
+.file-info1 {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+}
+
+.form-actions1 {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancel, .btn-save {
+  padding: 1px 2px !important;
+  border: none;
+  border-radius: none ; /* border-radius: 8px; */
+  cursor: pointer;
+  height: 40px !important;
+  
+}
+
+.btn-cancel {
+  background: #19bde8;
+  color: #ffffffff;
+  /* font-weight:500;   modified */
+  font-size:15px;    /* modified */
+  border-radius: none;
+}
+
+.btn-save {
+  background: #19bde8;
+  color:  #ffffffff;
+  /* border-radius: 8px !important; */  /* modified */  
+  font-weight:500 !important; /* modified */  
+  font-size:15px !important;   /* modified */
+  border-radius: none !important;
+
+}
+
+.error-text {           /* new */
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 2px;        /* modified */
+  margin-left: 5px;         /* modified */
+}

@@ -60,6 +60,28 @@
   border-radius: 2px;
 }
 
+/* Top right Create New button (Department tab only) */
+.department-top-action {       /*new modified*/
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 46px;
+  margin-top: -18px;
+}
+
+/* Button styling (for department tab) */
+.btn-create-new {             /*new modified*/
+  background: #00bcd4;
+  color: white;
+  border: none;
+  padding: 1px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  height: 36px;
+  margin-bottom: -22px;
+
+}
+
+
 /* Card */
 .settings-card {
   background: #ffffff;
@@ -163,7 +185,7 @@
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
 
-.form-group2{
+.form-group2{             /*new*/
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
@@ -186,7 +208,7 @@
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
 
-.form-group3{
+.form-group3{                 /*new*/
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
@@ -256,145 +278,24 @@ input:checked + .slider:before {
   transform: translateX(22px);
 }
 
-/* Theme label */
-.theme-label {
-  font-size: 14px;
-  color: #374151;
-  font-weight: 500;
-  margin-left: 8px;
-}
+/* Basic info image & upload */
 
-.team-table table, .department-table table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0px;
-
-}
-
-.team-table table{
-    border:1px solid #f8f8f8ff;
-    
-}
-
-.team-table th, .team-table td,
-.department-table th, .department-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-  
-}
-.team-table th {
-    background: #e7e4e4ff;
-}
-
- .department-table th {
-      background: #e7e4e4ff;
- }
-
- /* .create-new-wrapper{
-
- } */
- .btn-create-new{
-    margin-bottom:10px ;
- }
-
-
-.team-member {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.member-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-
-.member-name {
-  font-weight: 500;
-}
-
-.member-email {
-  font-size: 0.9em;
-  color: #666;
-}
-
-.role-badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-.role-badge.hr {
-  background: #8650C81A;
-  color: #9747FF;
-}
-
-.role-badge.team-head {
-  background: #51B8BA1A;
-  color: #009699;
-}
-
-.action-btn {
-  margin: 0 2px;
-  padding: 4px 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.btn-create-new {
-  background: #00bcd4;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.break-item {
-  margin-bottom: 20px;
-}
-
-.time-input-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 5px;
-}
-
-.time-input-group input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.edit-btn {
-  padding: 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.profile-upload {
+.profile-upload {        /*new*/
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-top: 10px;
+  /* margin-top: 10px;   modified  */
 }
 
 .profile-preview {
-  width: 60px;
-  height: 60px;
+  width: 80px;   /* modified  */
+  height: 80px;  /* modified  */
   border-radius: 50%;
   object-fit: cover;
 }
 
-.upload-btn {
-  padding: 6px 14px;
+.upload-btn {               /*new*/
+  padding: 6px 14px;           
   border: 1px solid #ddd;
   background: white;
   border-radius: 14px;
@@ -402,7 +303,7 @@ input:checked + .slider:before {
   color: #7c7c7cff;
 }
 
-.file-info {
+.file-info {                /*new*/
   font-size: 0.9em;
   color: #666;
   margin-top: 5px;
@@ -415,22 +316,227 @@ input:checked + .slider:before {
 }
 
 .btn-cancel, .btn-save {
-  padding: 10px 20px !important;
+  padding: 1px 2px !important;
   border: none;
-  border-radius: 8px;
+  border-radius: none; /* border-radius: 8px; */
   cursor: pointer;
+   height: 40px !important;
 }
 
 .btn-cancel {
   background: #19bde8;
   color: #ffffffff;
-  font-weight:600;
-  font-size:16px;
+    /*  font-weight:500; modified */
+  font-size:15px;   /* modified */
+  border-radius: none;
 }
 
 .btn-save {
   background: #19bde8;
-  color: #fff;
-  border-radius: 8px !important;
+  color:  #ffffffff;
+  /* border-radius: 8px !important; */  /* modified */
+  font-weight:500; /* modified */  
+  font-size:15px;   /* modified */
+  border-radius: none;
+}
+
+
+/* Theme label */
+.theme-label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+  margin-left: 8px;
+  /* margin-top: 20px; */
+}
+
+/* team tab */
+
+ .team-table{      /*modified  */
+  margin: -30px; 
+}
+
+.team-table table, .department-table table {
+  width: 100%;
+  border-collapse: collapse;
   
+}
+
+.team-table table{
+    border: 0px solid #f8f8f8ff;
+    border-radius: 10px ;
+}
+
+.team-table th, .team-table td,
+.department-table th, .department-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  
+}
+.team-table th {              /*modified  */
+    background: #e7e4e4ff;
+    border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+    
+}
+
+.checkbbig{            /*new  */
+    height: 16px;
+    width: 16px;
+ }
+
+.team-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-avatar {
+  width: 50px;     /*  modified */
+  height: 50px;    /*  modified */
+  
+}
+
+.member-name {
+  font-weight: 600;   /*  modified */
+  font-size: 13px;   /*  modified */
+}
+
+.member-email {
+  font-size: 12px;  /*  modified */
+  color: #666;   
+}
+
+.member-joined{      /*  new */
+  font-size: 14px;
+  color: rgb(136, 134, 134);
+}
+
+.role-badge {            /*modified  */
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7em;   /* font-size: 0.9em; */
+}
+
+.role-badge.hr {
+  background: #8650C81A;
+  color: #9747FF;
+}
+
+.role-badge.team-head {
+  background: #51B8BA1A;
+  color: #00c9cc;
+  font-weight: 600;
+}
+
+.action-btn {
+  margin: 0 2px;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Department Tab */            /*new  */
+
+
+ .department-table th {
+  background: #e7e4e4ff;
+  border-top-left-radius: 6px;   /*new  */
+  border-top-right-radius: 6px;  /*new  */
+  font-weight: 600;              /*new  */
+ } 
+
+ .department-table td{    /*new  */
+  font-size: 14px;
+
+ }
+
+ .department-table{     /*new  */
+  margin: -30px;
+  
+ }
+
+.pen-icon{      /*new  */
+  width:20px;
+}
+.deletebox-icon{       /*new  */
+  width:20px;
+}
+
+ 
+ /* Remove white card ONLY for Break Times tab */
+.breaktimes-no-card {                   /*new  */
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+
+.break-item {
+  margin-bottom: 20px;
+}
+
+.time-input-group {      
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  width: 500px;
+}
+
+.time-input-group input {  
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.time-input-wrapper {          /*new  */
+  position: relative;
+  width: 95%;
+}
+
+.time-input-wrapper input {       /*new  */
+  width: 100%;          
+  padding: 10px 40px 10px 12px; /* space for icon */
+  border: 1px solid #dadada;
+  border-radius: 10px;
+  height: 46px;
+  background-color: #f5f5f5;
+  color: #6b7280;
+}
+
+.edit-btn.inside {          /*new  */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #6b7280;
+  
+}
+
+.edit-btn {
+  padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding-right: 10px;
+  
+}
+
+.btn-create-new1 {         /*new  */
+  background: #00bcd4;
+  color: white;
+  border: none;
+  padding: 1px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  height: 36px;
 }
