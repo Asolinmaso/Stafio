@@ -8,6 +8,99 @@ import group10 from "../../../assets/Group10.png";
 import penicon from "../../../assets/penicon2.png";
 import deletebox from "../../../assets/deletebox.png"; 
 
+const translations = {
+  english: {
+    title: "System Settings",
+    subtitle: "Setup and edit system settings and preferences",
+    general: "General Settings",
+    basic: "Basic Info",
+    team: "Team",
+    department : "Department",
+    breaktimes : "Break Times",
+    systemLanguage: "System Language",
+    dashboardTheme: "Admin Dashboard Theme",
+    systemFont: "System Font",
+    dateFormat: "Date and Time Format",
+    firstName: "First Name",
+    lastName: "Last Name",
+    email: "Email",
+    phone: "Phone Number",
+    position: "Position",
+    role: "Role",
+    name: "Name",
+    datejoined: "Date Joined",
+    lunchBreak: "Lunch Break",
+    coffeeBreak: "Coffee Break",
+    numberOfMembers: "Number Of Members",
+    departmentHead: "Department Head",
+    action: "Action",
+    allowManagertoeditemployeerecord: "Allow Manager to edit employee record",
+    userSignup: "user Sign up",
+    defaultThemeforUsers: "default Theme for Users",
+  },
+
+  tamil: {
+    title: "கணினி அமைப்புகள்",
+    subtitle: "அமைப்புகளை திருத்தவும், அமைக்கவும்",
+    general: "பொது அமைப்புகள்",
+    basic: "அடிப்படை தகவல்",
+    team: "அணி",
+    department: "துறை",
+    breaktimes: "இடைவேளை நேரங்கள்",
+    systemLanguage: "மொழி",
+    dashboardTheme: "டாஷ்போர்டு தீம்",
+    systemFont: "எழுத்துரு பாணி",
+    dateFormat: "தேதி மற்றும் நேர வடிவம்",
+    firstName: "முதல் பெயர்",
+    lastName: "கடைசி பெயர்",
+    email: "மின்னஞ்சல்",
+    phone: "தொலைபேசி எண்",
+    position: "பதவி",
+    role: "பங்கு",
+    name: "பெயர்",
+    datejoined: "இணைந்த தேதி",
+    lunchBreak: "மதிய உணவு இடைவேளை",
+    coffeeBreak: "காபி இடைவேளை",
+    numberOfMembers: "உறுப்பினர்களின் எண்ணிக்கை",
+    departmentHead: "துறைத் தலைவர்",
+    action: "நடவடிக்கை",
+    allowManagertoeditemployeerecord: "பணியாளர் பதிவைத் திருத்த மேலாளரை அனுமதிக்கவும்.",
+    userSignup: "பயனர் பதிவு செய்யவும்",
+    defaultThemeforUsers: "பயனர்களுக்கான இயல்புநிலை தீம்",
+  },
+
+  hindi: {
+    title: "सिस्टम सेटिंग्स",
+    subtitle: "सिस्टम सेटिंग्स और प्राथमिकताएँ संपादित करें",
+    general: "सामान्य सेटिंग्स",
+    basic: "मूल जानकारी",
+    team: "टीम",
+    department: "विभाग",
+    breaktimes: "मध्य विराम",
+    systemLanguage: "भाषा",
+    dashboardTheme: "डैशबोर्ड थीम",
+    systemFont: "फ़ॉन्ट शैली",
+    dateFormat: "तारीख और समय प्रारूप",
+    firstName: "पहला नाम",
+    lastName: "अंतिम नाम",
+    email: "ईमेल",
+    phone: "फ़ोन नंबर",
+    position: "पद",
+    role: "भूमिका",
+    name: "नाम",
+    datejoined: "शामिल होने का दिनांक",
+    lunchBreak: "दोपहर का भोजनावकाश",
+    coffeeBreak: "कॉफी ब्रेक",
+    numberOfMembers: "सदस्यों की संख्या",
+    departmentHead: "विभाग के प्रमुख",
+    action: "कार्रवाई",
+    allowManagertoeditemployeerecord: "मैनेजर को कर्मचारी रिकॉर्ड संपादित करने की अनुमति दें",
+    userSignup: "उपयोगकर्ता साइन अप करें",
+    defaultThemeforUsers: "उपयोगकर्ताओं के लिए डिफ़ॉल्ट थीम",
+  },
+};
+
+
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState("general");
   const [theme, setTheme] = useState("light");
@@ -17,6 +110,10 @@ export default function AdminSettings() {
   //new for validation
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const t = (key) => translations[language]?.[key] || key;
+  //new for switch check box
+  const [allowManagerEdit, setAllowManagerEdit] = useState(false);
+
 
 
   // Add missing state variables
@@ -133,8 +230,8 @@ const [selectedRows, setSelectedRows] = useState({
   
 
  
-  return (
-    <div className="dashboard-wrapper d-flex">
+  return (                                                      // new
+    <div className={`dashboard-wrapper d-flex admin-${theme}`}>  
       <div className="rightside-logo ">
         <img src={group10} alt="logo"
         className="rightside-logos" />
@@ -151,8 +248,8 @@ const [selectedRows, setSelectedRows] = useState({
         <div className="settings-page p-4">
           {/* Header */}
           <div className="settings-header">
-            <h1>System Settings</h1>
-            <p>Setup and edit system settings and preferences</p>
+            <h1>{t("title")}</h1>
+            <p>{t("subtitle")}</p>
           </div>
 
           {/* Create New button – only for Department tab */}{/*new modified */}
@@ -174,14 +271,14 @@ const [selectedRows, setSelectedRows] = useState({
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab === "general"
-                    ? "General Settings"
+                    ? t("general")
                     : tab === "basic"
-                    ? "Basic Info"
+                    ? t("basic")
                     : tab === "team"
-                    ? "Team"
+                    ? t("team")
                     : tab === "departments"
-                    ? "Department"
-                    : "Break Times"}
+                    ? t("department")
+                    : t("breaktimes")}
                 </button>
               )
             )}
@@ -195,11 +292,11 @@ const [selectedRows, setSelectedRows] = useState({
             {/* General Settings */}
             {activeTab === "general" && (
               <div>
-                <h3>General</h3>
+                <h3>{t("general")}</h3>
                 <div className="form-row">
                   <div className="form-column">
                     <div className="form-group2">       {/* modified   */}
-                      <label>System Language</label>
+                      <label>{t("systemLanguage")}</label>
                       <select
                         value={language}
                         onChange={(e) => setLanguage(e.target.value)}
@@ -212,7 +309,7 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group">           {/* modified   */}
-                      <label>Admin Dashboard Theme</label>
+                      <label>{t("dashboardTheme")}</label>
                       <div className="theme-input-box">    {/*new check box inside the input*/}
                         <span className="theme-label">
                          {theme === "light" ? "Light Theme" : "Dark Theme"}
@@ -220,7 +317,7 @@ const [selectedRows, setSelectedRows] = useState({
                       <label className="switch">
                         <input
                           type="checkbox"
-                          checked={theme === "light"}
+                          checked={theme === "dark"}
                           onChange={() =>
                             setTheme(theme === "light" ? "dark" : "light")
                           }
@@ -232,7 +329,7 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group2">
-                      <label>System Font</label>
+                      <label>{t("systemFont")}</label>
                       <select
                         value={font}
                         onChange={(e) => setFont(e.target.value)}
@@ -244,18 +341,17 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group">        {/* modified   */}
-                      <label>Allow Manager to edit employee record</label>
+                      <label>{t("allowManagertoeditemployeerecord")}</label>
                       <div className="theme-input-box">     {/*new check box inside the input*/}
                        <span className="theme-label">
-                        {theme === "Able" ? "Able" : "Disable"}
+                        {theme === "Enable" ? "Enable" : "Disable"}
                         </span>
                         <label className="switch">
                          <input 
                             type="checkbox"
-                            checked={theme === "Able"}
+                            checked={allowManagerEdit}
                             onChange={() =>
-                              setTheme(theme === "Disable" ? "Able" : "Disable")
-                            }
+                              setAllowManagerEdit(!allowManagerEdit)}
                          />
                          <span className="slider round"></span>
                         </label>
@@ -265,7 +361,7 @@ const [selectedRows, setSelectedRows] = useState({
 
                   <div className="form-column">  {/* modified   */}
                     <div className="form-group">
-                      <label>User Sign up</label>
+                      <label>{t("userSignup")}</label>
                        <div className="theme-input-box">
                         <span className="theme-label">
                            Allow new users to sign up
@@ -278,14 +374,16 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group1">
-                      <label>Default Theme for Users</label>
-                      <input type="text" placeholder="Light Theme"  />
+                      <label>{t("defaultThemeforUsers")}</label>
+                      <input 
+                      type="text" 
+                      placeholder="Light Theme"  />
                     </div>
 
                      <div className="form-group2">     {/* modified   */}
-                      <label>Date and Time Format
+                      <label>{t("dateFormat")}
                       <label className="switch">
-                        <input type="checkbox" checked={true} readOnly />
+                         <input type="checkbox" /> {/*checked={true} readOnly*/} 
                         <span className="slider round"></span>
                       </label></label>
 
@@ -305,11 +403,11 @@ const [selectedRows, setSelectedRows] = useState({
             {/* Basic Info */}
             {activeTab === "basic" && (
               <div>
-                <h3>Basic Info</h3>
+                {/* <h3>Basic Info</h3> */}
                 <div className="form-row">
                   <div className="form-column">
                     <div className="form-group">
-                      <label>First Name</label>
+                      <label>{t("firstName")}</label>
                       <input
                         type="text"
                         name="firstName"
@@ -325,7 +423,7 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group">
-                      <label>Email</label>
+                      <label>{t("email")}</label>
                       <input
                         type="email"
                         name="email"
@@ -339,7 +437,7 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group3">
-                      <label>Position</label>
+                      <label>{t("position")}</label>
                       <select
                         name="position"
                         value={basicForm.position}
@@ -380,7 +478,7 @@ const [selectedRows, setSelectedRows] = useState({
 
                   <div className="form-column">
                     <div className="form-group">
-                      <label>Last Name</label>
+                      <label>{t("lastName")}</label>
                       <input
                         type="text"
                         name="lastName"
@@ -394,7 +492,7 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group">
-                      <label>Phone Number</label>
+                      <label>{t("phone")}</label>
                       <input
                         type="tel"
                         name="phone"
@@ -408,7 +506,7 @@ const [selectedRows, setSelectedRows] = useState({
                     </div>
 
                     <div className="form-group3">
-                      <label>Role</label>
+                      <label>{t("role")}</label>
                       <select
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
@@ -464,9 +562,9 @@ const [selectedRows, setSelectedRows] = useState({
                                }} 
                            />
                         </th>
-                        <th>Name</th>
-                        <th>Date Joined</th>
-                        <th>Role</th>
+                        <th>{t("name")}</th>
+                        <th>{t("datejoined")}</th>
+                        <th>{t("role")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -586,10 +684,10 @@ const [selectedRows, setSelectedRows] = useState({
                         }}
                           />
                         </th>
-                        <th>Department</th>
-                        <th>Number Of Members</th>
-                        <th>Department Head</th>
-                        <th>Action</th>
+                        <th>{t("department")}</th>
+                        <th>{t("numberOfMembers")}</th>
+                        <th>{t("departmentHead")}</th>
+                        <th>{t("action")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -674,7 +772,7 @@ const [selectedRows, setSelectedRows] = useState({
                 {/* <h3>Break Times</h3> */}
                 <div className="break-times-content">
                   <div className="break-item">
-                    <label>Lunch Break</label>
+                    <label>{t("lunchBreak")}</label>
                     <div className="time-input-group">
                        <div className="time-input-wrapper">
                       <input
@@ -691,7 +789,7 @@ const [selectedRows, setSelectedRows] = useState({
                   </div>
 
                   <div className="break-item">
-                    <label>Coffee Break</label>
+                    <label>{t("coffeeBreak")}</label>
                     <div className="time-input-group">
                       <div className="time-input-wrapper">
                        <input
