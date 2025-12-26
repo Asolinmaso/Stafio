@@ -39,7 +39,7 @@
   background: transparent;
   padding: 0;
   margin: 0;
-  height: 52px;
+   height: 15px;     /* height: 52px; */
   gap: 0;
   flex-wrap: nowrap;
   width: 100%;
@@ -52,38 +52,39 @@
 }
 
 .profile-tabs .nav-link {
-  padding: 0 15px;
-  height: 48px;
+  padding: 0 20px;        /* modified padding: 0 15px;  */
+  /* height: 48px; */
+   bottom: 40px;           /* new css line bottom: 22px; */
   margin-bottom: 0;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
-  color: #777c82;
+   color: #6A7181;           /* modified color: #777c82; */
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-  font-size: 14px;
+   font-size: 14px;          /* modified font-size:  15px;  */
   font-weight: 500;
   transition: color 0.22s;
   position: relative;
   outline: none;
-  width: 100%;
+  width: 110%;      /* modified width: 100%; */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content:space-around;     /* modified justify-content:center; */
   text-decoration: none; /* Remove default underline */
 }
 
 /* Active tab with text underline only */
 .profile-tabs .nav-link.active {
   color: #12baf5 !important;
-  font-weight: 700;
+ font-weight: 600;        /* modified font-weight: 700; */
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
   z-index: 2;
   text-decoration: underline !important;
   text-decoration-color: #12baf5 !important;
-  text-decoration-thickness: 3px !important;
-  text-underline-offset: 8px !important;
+  text-decoration-thickness: 1.5px !important;     /*modified text-decoration-thickness:3px !important; */
+  text-underline-offset: 3px !important;          /*modified text-underline-offset: 8px !important; */
 }
 
 /* Override Bootstrap's default active state */
@@ -125,10 +126,12 @@
 /* --- Header box with shadow/border, blue underline, white bg --- */
 .update-info-header-box {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;    /* modified border-radius: 14px; */
   border: 1.3px solid #e5eaf1;
   box-shadow: 0 6px 20px rgba(20,66,110,0.11);
-  margin: 0 0 32px 0;
+  margin: 0 0 28px 0;          /* modified margin: 0 0 32px 0; */
+  /* new */
+  width: 97%;
 }
 
 .tab-section-title.personal-info {
@@ -138,7 +141,7 @@
   background: transparent;
   border-radius: 12px 12px 0 0;
   box-shadow: none;
-  padding: 23px 32px 23px 34px;
+  padding: 14px 32px 12px 34px;   /* modified padding: 23px 32px 23px 34px; */
   min-height: 60px;
   position: relative;
   display: flex;
@@ -174,6 +177,8 @@
   padding: 0 38px 6px 38px !important;
   box-shadow: none !important;
   border: none !important;
+    /* new */
+  margin: 2px;
 }
 
 /* --- Option boxes for Gender/Marital --- */
@@ -185,15 +190,17 @@
   padding: 13px 21px 13px 18px;
   display: flex;
   align-items: center;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin-top: -2px;        /* modified margin-top: 2px; */
+  margin-bottom: -12px;    /* modified margin-bottom: 2px; */
+  /* new */
+  width: 90%;
 }
 
 .form-label {
-  font-size: 13.5px !important;
-  font-weight: 600 !important;
-  color: #2d2d2d !important;
-  margin-bottom: 10px !important;
+  font-size: 15.5px !important; /* font-size: 13.5px !important;     */
+  font-weight: 500 !important;  /* font-weight: 600 !important;     */
+  color: #000000 !important;  /* modified color: !important;     */
+  margin-bottom: -2px !important; /* margin-bottom: 10px !important;     */
   letter-spacing: 0;
 }
 
@@ -202,14 +209,17 @@
 .form-control,
 .form-select {
   background: #F8F8F8 !important;
-  border: 1.4px solid #e5eaf1 !important;
+  border: solid #e5eaf1 !important;   /* modified  border: 1.4px solid #e5eaf1 !important; */
   border-radius: 12px !important;
-  font-size: 1.07rem !important;
-  padding: 15px 21px !important;
+  font-size: 1.0rem !important;
+  padding: 10px 20px 10px 10px !important;
   color: #223042 !important;
-  box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045);
-  min-height: 52px !important;
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  height: 50px !important;   
   transition: border-color 0.2s;
+  /* new */
+  width: 90%;
+  margin-bottom: -22px;
 }
 .form-input:focus, .form-control:focus, .form-select:focus {
   border-color: #12baf5 !important;
@@ -223,7 +233,7 @@
 }
 .input-calendar-icon {
   position: absolute;
-  right: 23px;
+  right: 60px;      /* right: 23px; */
   top: 50%;
   transform: translateY(-50%);
   color: #14baf6;
@@ -251,7 +261,7 @@
   color: #fff !important;
   border-radius: 8px;
   border: none;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 16.1px;
   min-width: 114px;
   min-height: 45px;
@@ -318,6 +328,22 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
+.edform-input{       /* new css class for education form inputs */
+   background: #F8F8F8 !important;
+  border: solid #e5eaf1 !important;
+  border-radius: 12px !important;
+  font-size: 1.0rem !important;
+  padding: 10px 20px 10px 10px !important;
+  color: #223042 !important;
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  height: 10% !important;
+  transition: border-color 0.2s;
+  width: 90%;
+  /* margin-bottom: 4px; */
+}
+
+
+
 
 /* ====================== PREVIOUS EXPERIENCE TAB SECTION ====================== */
 .profile-tab-section.experience {
@@ -337,6 +363,27 @@
   color: #223042;
   border: 1px solid #e5eaf1;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.pexform-input{
+  background: #F8F8F8 !important;
+  border: solid #e5eaf1 !important;
+  border-radius: 12px !important;
+  font-size: 1.0rem !important;
+  padding: 10px 20px 10px 10px !important;
+  color: #223042 !important;
+  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
+  height: 50px !important;
+  transition: border-color 0.2s;
+  width: 90%;
+  margin-bottom: 5px;
+}
+
+.pexform-input1{
+   resize: vertical;
+   height: 65px;
+  
+   
 }
 
 /* ====================== BANK DETAILS TAB SECTION ====================== */
@@ -463,13 +510,18 @@ input[type="radio"] {
   font-size: 1rem;
 }
 .upload-box {
-  border: 2px dashed #bfeafd;
+  border-style: dotted;
+  border-color: gray;
   background: #f7fafd;
-  border-radius: 11px;
+  border-radius: 15px;
   padding: 33px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* new */
+  height: 300px ;
+  margin-right: 250px;
+  width: 320px; 
 }
 .upload-cloud-icon {
   font-size: 2.5rem;

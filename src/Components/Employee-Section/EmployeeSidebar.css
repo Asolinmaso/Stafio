@@ -1,14 +1,14 @@
 .employee-sidebar {
-  width: 250px;
+  width: 255px;
   background-color: #19BDE8;
   color: #fff;
   font-family: 'Montserrat', sans-serif; 
   top: 0;
-  left: 0;
-  padding: 20px 0px;
+  left: 0px;
+  padding: 6px 0px;
   display: flex;
   flex-direction: column;
-  min-height: 110vh;
+  min-height: 100vh;
   transform: translateX(-100%);
   opacity: 0;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
@@ -18,7 +18,7 @@
 }
 
 .employee-sidebar.show {
-  transform: translateX(0);
+  transform: translateX(0); 
   opacity: 1;
 }
 
@@ -33,32 +33,36 @@
   margin-top:18px;
 }
 .sidebar-title {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 1px;
+  font-weight: 500;
 }
 
 /* Links */
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;      /* gap: 10px; */
   color: #fff !important;
   text-decoration: none;
-  padding: 28px 15px;
+  padding: 18px 15px;  /* modified */
   border-radius: 0px;
-  font-size: 18px;
+  font-size: 16px;
   transition: all 0.25s ease-in-out;
   font-weight:500;
-  border-top: 1px solid #fff;  
+  border-top: 0.9px solid #cccaca;
+      
 }
 .sidebar-link.active {
   background-color: #ffffffff !important;
   color: #000000ff !important;
-   text-decoration: none !important; 
+   text-decoration: none !important;
+   
 }
+
 .submenu-link.active {
   color: #19BDE8; /* example: blue highlight */
   font-weight: 500;
+  
 }
 .submenu{
   background:white;
@@ -75,24 +79,25 @@
 }
 .leave{
   margin-left:10px;
-   text-decoration: none !important; 
+   text-decoration: none !important;
+
 }
 
 
 /* Logout */
 .sidebar-logout {
   margin-top: 0px;
-  padding: 28px 15px;
+   padding: 18px 15px;  /* padding: 28px 15px; */
   background: transparent;
   border-radius: 0px;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 16px;    /* font-size: 22px; */
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;      /* gap: 10px; */
   transition: background 0.3s ease, transform 0.2s ease;
-   border-top: 1px solid #fff; 
-    border-bottom: 1px solid #fff; 
+  border-top: 1px solid #fff; 
+  border-bottom: 1px solid #fff; 
 }
 .chev-container.abs{ position: relative; width: 24px; height: 24px; border:1px solid #ffffffff; border-radius:50%; }
 .chev-container.abs svg{

@@ -1,9 +1,15 @@
+/* *{
+  box-sizing: border-box;
+  
+} */
 .topbar {
-    margin-top:40px;
-  height: 60px;
+  /* margin-top: 50px; */   /* modified */
+  height: 70px;
   background: #fff;
   border-radius: 10px;
-  margin: 10px; 
+  margin-top: -10px;
+  margin-left: 1px;
+  width: 96%;
 }
 
 .topbar-img {
@@ -12,9 +18,24 @@
   object-fit: contain;
 }
 
+.topbar-searches{          /* new*/
+    /* width: 400px;  */
+     /* width: 100px; */
+  padding: 5px 10px;
+  padding-right:10px;
+  font-size: 13px;
+  outline: none;    
+}
+.topbar-searches input{     /* new*/
+    border: none;
+    background-color: beige;
+    /* width: 100px; */
+    height: 100%;
+    outline: none;
+}
 
-.topbar-search{
-    width:40%;
+.form-controler{
+  width: 50% !important;
 }
 
 .topbar-avatar {
