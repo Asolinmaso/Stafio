@@ -312,6 +312,21 @@
   padding: 7px 18px;
 }
 
+/* validation for personal info tab*/
+.input-error {
+  border: 1px solid #dc3545 !important;
+  background-color: #fff5f5;
+  margin-bottom: 0.2px;
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 12px;
+  /* margin-bottom: 2px; */
+  padding-top: 4px;
+}
+
+
 @media (max-width: 900px) {
   .update-info-header-box { margin: 0; }
   .personal-info-form { padding: 0 8px 4px 8px !important; }
@@ -363,17 +378,20 @@
 .calendar-input-wrap {        /* new css part */  
   position: relative;
   width: 100%;
+  cursor: pointer;
 }
 
 .calendar-icon {              /* new css part */
-   position: absolute;
-  right: 60px;      /* right: 23px; */
-  top: 50%;
+  position: absolute;
+  right: 70px;      /* right: 23px; */
+  top: 49%;
   transform: translateY(-50%);
   color: #14baf6;
   font-size: 1.23rem;
   pointer-events: none;
   z-index: 3;
+  
+  
 }
 
 .calendar-input-wrap input[type="date"]::-webkit-calendar-picker-indicator {
