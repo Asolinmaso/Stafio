@@ -454,15 +454,23 @@
   transition: border-color 0.2s;
   width: 90%;
   margin-bottom: 5px;
+  /* margin-top: 5px; */
+
+  
 }
 
 .pexform-input1{
    resize: vertical;
-   height: 65px;
-  
-   
+   height: 65px ;
+   margin-bottom: 5px;     /*new*/ 
 }
 
+.pexform-input2 {
+   resize: vertical;
+   height: 80px !important;
+   /* top: 10px; */
+  
+}
 /* ====================== BANK DETAILS TAB SECTION ====================== */
 .profile-tab-section.bank-details {
   background: #f6fbfe;

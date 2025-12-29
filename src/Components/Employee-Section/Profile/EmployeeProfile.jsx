@@ -66,17 +66,42 @@ const EmployeeProfile = () => {
   const [profile, setProfile] = useState(initialProfile);
   const [education, setEducation] = useState(initialEducation);
   const [experience, setExperience] = useState(initialExperience);
-  const [bank, setBank] = useState(initialBank);
+  // const [bank, setBank] = useState(initialBank);
   const [documents, setDocuments] = useState(initialDocs);
   
   //new
   const [personalErrors, setPersonalErrors] = useState({});
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
+  const [educationBackup, setEducationBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
+  const [bank, setBank] = useState({
+  bankName: "",
+  branch: "",
+  accountNumber: "",
+  ifsc: "",
+  aadhaar: "",
+  pan: ""
+});
 
+const [savedBank, setSavedBank] = useState({
+  bankName: "",
+  branch: "",
+  accountNumber: "",
+  ifsc: "",
+  aadhaar: "",
+  pan: ""
+});
+const [errors, setErrors] = useState({});
 
-
+const [savedEducation, setSavedEducation] = useState({
+  bankName: "",
+  branch: "",
+  accountNumber: "",
+  ifsc: "",
+  aadhaar: "",
+  pan: ""
+});
 
 
   // Per-tab edit states
@@ -85,6 +110,7 @@ const EmployeeProfile = () => {
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [isEditingBank, setIsEditingBank] = useState(false);
   const [isEditingDocs, setIsEditingDocs] = useState(false);
+
 
   // =========== FETCH DATA FROM BACKEND ===========
   useEffect(() => {
@@ -162,7 +188,35 @@ const EmployeeProfile = () => {
             setExperienceErrors(prev => ({...prev,[name]: ""}));
            };
 
-  const handleBankChange = e => setBank(prev => ({ ...prev, [e.target.name]: e.target.value }));
+           //handle bank change
+  const handleBankChange = (e) => {
+  const { name, value } = e.target;
+
+  let newValue = value;
+
+  // Allow only digits for numeric fields
+  if (["accountNumber", "aadhaar"].includes(name)) {
+    newValue = value.replace(/\D/g, "");
+  }
+
+  // PAN & IFSC should be uppercase
+  if (["pan", "ifsc"].includes(name)) {
+    newValue = value.toUpperCase();
+  }
+
+  setBank((prev) => ({...prev,[name]: newValue}));
+
+  // Validation check
+  if (validations[name]) {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validations[name].test(newValue)
+        ? ""
+        : `Invalid ${name.replace(/([A-Z])/g, " $1")}`
+    }));
+  }
+};
+
 
   const handleImageChange = e => {
     const file = e.target.files[0];
@@ -190,18 +244,7 @@ const EmployeeProfile = () => {
   const handleDocDelete = idx =>
     setDocuments(prev => prev.filter((_, didx) => didx !== idx));
 
-  //handleEditExperience
-  const handleEditExperience = () => {
-  setExperienceBackup(experience);
-  setIsEditingExperience(true);
-};
-  
-  //handleCancelExperience
-const handleCancelExperience = () => {
-  setExperience(experienceBackup);
-  setExperienceErrors({});
-  setIsEditingExperience(false);
-};
+
 
 
             //save button for personal info
@@ -217,15 +260,45 @@ const handleCancelExperience = () => {
            alert("Profile updated successfully!");
            };
 
-              //save button for education tab     
+              //save button for education tab 
+              
+               const handleEditEducation = () => {
+                  setEducationBackup(education);
+                 setIsEditingEducation(true);
+                 };
+
   const handleSaveEducation = () => {
              
             if (!validateEducation()) return;
             setIsEditingEducation(false);
             setEducationErrors({});
+            // setSavedEducation(education);
+            setEducationBackup(null)
             alert("Education Qualification updated successfully.");
             };
+  
+const handleCancelEducation = () => {
+  setEducation(educationBackup);
+  setEducationErrors({});
+  setIsEditingEducation(false);
+};
 
+
+
+               //handleEditExperience for buttons
+  const handleEditExperience = () => {
+  setExperienceBackup(experience);
+  setIsEditingExperience(true);
+};
+  
+  //handleCancelExperience
+const handleCancelExperience = () => {
+  setExperience(experienceBackup);
+  setExperienceErrors({});
+  setIsEditingExperience(false);
+};
+
+    //handleSaveExperience
   const handleSaveExperience = () => {
            if (!validateExperience()) return;
            setIsEditingExperience(false);
@@ -234,9 +307,41 @@ const handleCancelExperience = () => {
            alert("Experience updated!");
            };
 
-  const handleSaveBank = () => { setIsEditingBank(false); alert('Bank details updated!'); };
+
+     // handleSaveBank Save button logic
+
+  const handleSaveBank = () => {
+  const isValid = validateBankForm();
+  if (!isValid) return;
+
+  setSavedBank(bank);
+  setIsEditingBank(false);
+  alert("Bank details updated!");
+};
+
+const handleCancelBank = () => {
+  setBank({
+    bankName: "",
+    branch: "",
+    accountNumber: "",
+    ifsc: "",
+    aadhaar: "",
+    pan: ""
+  });
+
+  setErrors({});
+  setIsEditingBank(false);
+};
+
+
   const handleSaveDocs = () => { setIsEditingDocs(false); alert('Documents updated!'); };
  
+// const handleCancelBank = () => {
+//   setBank(savedBank);      // restore last saved data
+//   setErrors({});           // clear validation errors
+//   setIsEditingBank(false);
+// };
+
 
 
  // validation personal information
@@ -454,6 +559,63 @@ const validateExperience = () => {
   return Object.keys(errors).length === 0;
 };
 
+
+//validation for bank details 
+
+const validations = {
+  bankName: /^[a-zA-Z\s]{3,}$/,                  // Text only
+  branch: /^[a-zA-Z0-9\s]{3,}$/,                 // Text + numbers
+  accountNumber: /^\d{9,18}$/,                   // 9–18 digits
+  ifsc: /^[A-Z]{4}0[A-Z0-9]{6}$/,                // IFSC format
+  aadhaar: /^\d{12}$/,                           // 12 digits
+  pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/            // PAN format
+
+
+};
+
+  const validateBankForm = () => {
+  const newErrors = {};
+
+  // Required checks
+  if (!bank.bankName.trim()) {
+    newErrors.bankName = "*This field is required";
+  } else if (!validations.bankName.test(bank.bankName)) {
+    newErrors.bankName = "Enter a valid bank name";
+  }
+
+  if (!bank.branch.trim()) {
+    newErrors.branch = "*This field is required";
+  } else if (!validations.branch.test(bank.branch)) {
+    newErrors.branch = "Enter a valid branch name";
+  }
+
+  if (!bank.accountNumber) {
+    newErrors.accountNumber = "*This field is required";
+  } else if (!validations.accountNumber.test(bank.accountNumber)) {
+    newErrors.accountNumber = "Account Number must be 9–18 digits";
+  }
+
+  if (!bank.ifsc) {
+    newErrors.ifsc = "*This field is required";
+  } else if (!validations.ifsc.test(bank.ifsc)) {
+    newErrors.ifsc = "IFSC format: SBIN0001234";
+  }
+
+  if (!bank.aadhaar) {
+    newErrors.aadhaar = "*This field is required";
+  } else if (!validations.aadhaar.test(bank.aadhaar)) {
+    newErrors.aadhaar = "Aadhaar must be 12 digits";
+  }
+
+  if (!bank.pan) {
+    newErrors.pan = "*This field is required";
+  } else if (!validations.pan.test(bank.pan)) {
+    newErrors.pan = "PAN format: ABCDE1234F";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
 
   // =========== RENDER ===========
@@ -691,10 +853,10 @@ const validateExperience = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Educational Qualification</span>
                   {!isEditingEducation ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingEducation(true)}>Edit</Button>
+                    <Button className="btn-edit" onClick={handleEditEducation}>Edit</Button>
                   ) : (
                     <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={() => setIsEditingEducation(false)}>Cancel</Button>
+                      <Button className="btn-cancel" onClick={handleCancelEducation}>Cancel</Button>
                       <Button className="btn-save" onClick={handleSaveEducation}>Save</Button>
                     </div>
                   )}
@@ -861,10 +1023,10 @@ const validateExperience = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Previous Experience (if any)</span>
                   {!isEditingExperience ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingExperience(true)}>Edit</Button>
+                    <Button className="btn-edit" onClick={handleEditExperience}>Edit</Button>
                   ) : (
                     <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={() => setIsEditingExperience(false)}>Cancel</Button>
+                      <Button className="btn-cancel" onClick={handleCancelExperience}>Cancel</Button>
                       <Button className="btn-save" onClick={handleSaveExperience}>Save</Button>
                     </div>
                   )}
@@ -909,7 +1071,7 @@ const validateExperience = () => {
                        value={experience.responsibilities} 
                        onChange={handleExperienceChange}
                        placeholder="Describe your job responsibilities"
-                       className={`pexform-input ${experienceErrors.responsibilities ? "input-error" : ""}`} 
+                       className={`pexform-input2 ${experienceErrors.responsibilities ? "input-error" : ""}`} 
                        disabled={!isEditingExperience} 
                      />
                      {experienceErrors.responsibilities && (
@@ -924,7 +1086,7 @@ const validateExperience = () => {
                        value={experience.jobTitle} 
                        onChange={handleExperienceChange}
                        placeholder="Job Title"
-                       className={`pexform-input ${experienceErrors.jobTitle ? "input-error" : ""}`} 
+                       className={`pexform-input1 ${experienceErrors.jobTitle ? "input-error" : ""}`} 
                        disabled={!isEditingExperience} 
                       />
                       {experienceErrors.jobTitle && (
@@ -975,7 +1137,7 @@ const validateExperience = () => {
                     <Button className="btn-edit" onClick={() => setIsEditingBank(true)}>Edit</Button>
                   ) : (
                     <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={() => setIsEditingBank(false)}>Cancel</Button>
+                      <Button className="btn-cancel" onClick={handleCancelBank} >Cancel</Button>
                       <Button className="btn-save" onClick={handleSaveBank}>Save</Button>
                     </div>
                   )}
@@ -992,9 +1154,14 @@ const validateExperience = () => {
                        onChange={handleBankChange}
                        placeholder="Name of the Bank" 
                        disabled={!isEditingBank} 
+                       className={`form-input ${errors.bankName ? "input-error" : ""}`}
                        />
+                       {errors.bankName && (
+                           <div className="error-text">{errors.bankName}</div>
+                         )}
                       </Col>
-                    <Col md={6}><Form.Label>Branch</Form.Label>
+                    <Col md={6}>
+                    <Form.Label>Branch</Form.Label>
                       <Form.Control 
                        type="text" 
                        name="branch" 
@@ -1002,7 +1169,11 @@ const validateExperience = () => {
                        onChange={handleBankChange}
                        placeholder="Name of the Branch" 
                        disabled={!isEditingBank} 
+                       className={`form-input ${errors.branch ? "input-error" : ""}`}
                       />
+                      {errors.branch && (
+                          <div className="error-text">{errors.branch}</div>
+                       )}
                     </Col>
                     <Col md={6}><Form.Label>Account Number</Form.Label>
                       <Form.Control 
@@ -1012,7 +1183,11 @@ const validateExperience = () => {
                        onChange={handleBankChange}
                         placeholder="Bank AC Number" 
                        disabled={!isEditingBank} 
+                       className={`form-input ${errors.accountNumber ? "input-error" : ""}`}
                       />
+                      {errors.accountNumber && (
+                            <div className="error-text">{errors.accountNumber}</div>
+                        )}
                     </Col>
                     <Col md={6}><Form.Label>IFSC Code</Form.Label>
                       <Form.Control 
@@ -1021,8 +1196,12 @@ const validateExperience = () => {
                        value={bank.ifsc} 
                        onChange={handleBankChange}
                        placeholder="IFSC Code" 
-                       disabled={!isEditingBank} 
+                       disabled={!isEditingBank}
+                       className={`form-input ${errors.ifsc ? "input-error" : ""}`}
                       />
+                      {errors.ifsc && (
+                            <div className="error-text">{errors.ifsc}</div>
+                        )}
                     </Col>
                     <Col md={6}><Form.Label>Aadhaar Number</Form.Label>
                       <Form.Control 
@@ -1032,16 +1211,25 @@ const validateExperience = () => {
                        onChange={handleBankChange} 
                        placeholder="XXXX-XXXX-XXXX"
                        disabled={!isEditingBank} 
-                     /></Col>
+                       className={`form-input ${errors.aadhaar ? "input-error" : ""}`}
+                     />
+                     {errors.aadhaar && (
+                            <div className="error-text">{errors.aadhaar}</div>
+                        )}
+                     </Col>
                     <Col md={6}><Form.Label>PAN Number</Form.Label>
                       <Form.Control 
                        type="text" 
                        name="pan" 
                        value={bank.pan} 
                        onChange={handleBankChange} 
-                        placeholder="ABCDE1234F"
+                       placeholder="ABCDE1234F"
                        disabled={!isEditingBank} 
+                       className={`form-input ${errors.pan ? "input-error" : ""}`}
                      />
+                     {errors.pan && (
+                            <div className="error-text">{errors.pan}</div>
+                        )}
                     </Col>
                   </Row>
                 </Form>
