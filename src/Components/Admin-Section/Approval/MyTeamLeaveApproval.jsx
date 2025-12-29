@@ -1,71 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./MyTeamLeaveApproval.css";
 import { FaFilter } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-
+import illustration from "../../../assets/Formsbro.png";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import tick from "../../../assets/tickicon.png";
 
 export default function MyTeamLeaveApproval() {
-  const [search, setSearch] = useState("");
+  const [leaveData, setLeaveData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [showReasonModal, setShowReasonModal] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [actionType, setActionType] = useState(""); // "Approve" | "Reject"
+    const [approvalReason, setApprovalReason] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+      const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
+      const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  const navigate = useNavigate();
 
-  const leaveData = [
-    {
-      id: 1,
-      name: "Sakshi",
-      empId: "100849",
-      type: "Sick Leave",
-      days: "1 Day(s)",
-      date: "11-07-2025/Full Day",
-      request: "11-07-2025",
-      status: "Pending",
-      image: "https://i.pravatar.cc/40?img=1",
-    },
-    {
-      id: 2,
-      name: "Asolin",
-      empId: "100849",
-      type: "Sick Leave",
-      days: "0.5 Day(s)",
-      date: "11-07-2025/HALF Day(AN)",
-      request: "11-07-2025",
-      status: "Pending",
-      image: "https://i.pravatar.cc/40?img=2",
-    },
-    {
-      id: 3,
-      name: "Sakshi",
-      empId: "100849",
-      type: "Casual Leave",
-      days: "1 Day(s)",
-      date: "11-07-2025/Full Day",
-      request: "11-07-2025",
-      status: "Approved",
-      image: "https://i.pravatar.cc/40?img=3",
-    },
-    {
-      id: 4,
-      name: "Asolin",
-      empId: "100849",
-      type: "Casual Leave",
-      days: "3 Day(s)",
-      date: "11-07-2025–13-07-2025 /Full Day",
-      request: "11-07-2025",
-      status: "Approved",
-      image: "https://i.pravatar.cc/40?img=4",
-    },
-    {
-      id: 5,
-      name: "Sakshi",
-      empId: "100849",
-      type: "Sick Leave",
-      days: "1 Day(s)",
-      date: "11-07-2025/Full Day",
-      request: "11-07-2025",
-      status: "Rejected",
-      image: "https://i.pravatar.cc/40?img=5",
-    },
-  ];
+  useEffect(() => {
+    const fetchMyTeamLA = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:5001/api/myteamla");
+        setLeaveData(response.data);
+      } catch (error) {
+        console.error("Error fetching attendance data:", error);
+      }
+    };
+
+    fetchMyTeamLA();
+  }, []);
 
   const getStatusClass = (status) => {
     if (status === "Approved") return "status-approved";
@@ -74,11 +42,32 @@ export default function MyTeamLeaveApproval() {
   };
 
 
+ const filteredAndSortedLeaves = leaveData
+  // SEARCH by employee name
+  .filter((leave) =>
+    leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  // FILTER by status
+  .filter((leave) =>
+    filterStatus === "All" ? true : leave.status === filterStatus
+  )
+
+  // SORT by request date
+  .sort((a, b) => {
+    const dateA = new Date(a.requestDate);
+    const dateB = new Date(b.requestDate);
+
+    return sortOrder === "Newest"
+      ? dateB - dateA
+      : dateA - dateB;
+  });
+ 
+
   return (
     <div className="myteam-layout">
       <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="myteam-main">
@@ -88,12 +77,23 @@ export default function MyTeamLeaveApproval() {
 
           <div className="myteam-controls">
             <div className="filter-sort">
-              <button className="filter-btn">
-                <FaFilter /> Filter
-              </button>
-              <select className="sorts-select">
-                <option>Sort By : Newest</option>
-                <option>Sort By : Oldest</option>
+               <select
+                className="right-butn-filter"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+              <select
+                className="right-sort-select"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option value="Newest">Sort By : Newest</option>
+                <option value="Oldest">Sort By : Oldest</option>
               </select>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function MyTeamLeaveApproval() {
               </tr>
             </thead>
             <tbody>
-              {leaveData.map((item) => (
+              {filteredAndSortedLeaves.map((item) => (
                 <tr key={item.id}>
                   <td>
                     <div className="employee-info">
@@ -132,12 +132,22 @@ export default function MyTeamLeaveApproval() {
                   <td>{item.date}</td>
                   <td>{item.request}</td>
                   <td>
-                    <span className={`status-badge ${getStatusClass(item.status)}`}>
+                    <span
+                      className={`status-badge ${getStatusClass(item.status)}`}
+                    >
                       {item.status}
                     </span>
                   </td>
                   <td>
-                    <button className="view-btn">View Details</button>
+                    <button
+                      className="view-btn"
+                      onClick={() => {
+                        setSelectedLeave(item);
+                        setShowModal(true);
+                      }}
+                    >
+                      View Details
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -160,6 +170,162 @@ export default function MyTeamLeaveApproval() {
             </div>
           </div>
         </div>
+        {showModal && selectedLeave && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div
+              className="apply-leave-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="modal-header-blue">
+                <h3>Leave Approval</h3>
+                <button
+                  className="close-btn"
+                  onClick={() => setShowModal(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="modal-body">
+                <form className="apply-leave-form">
+                  <div className="form-left">
+                    <label>Employee ID:</label>
+                    <input type="text" value={selectedLeave.empId} readOnly />
+
+                    <label>Leave Type:</label>
+                    <input type="text" value={selectedLeave.type} readOnly />
+
+                    <label>Date Of Leave:</label>
+                    <div className="date-row">
+                      <input type="text" value={selectedLeave.from} readOnly />
+                      <input type="text" value={selectedLeave.to} readOnly />
+                      <input
+                        type="text"
+                        value={selectedLeave.session}
+                        readOnly
+                      />
+                    </div>
+
+                    <label>Notify Others:</label>
+                    <input type="text" value={selectedLeave.notify} readOnly />
+
+                    <label>Uploaded Document:</label>
+                    <input
+                      type="text"
+                      value={selectedLeave.document || "No File Uploaded"}
+                      readOnly
+                    />
+
+                    <label>Reason:</label>
+                    <textarea value={selectedLeave.reason} readOnly />
+
+                    {/* ACTION BUTTONS – ONLY IF PENDING */}
+                    {/* ACTION BUTTONS – ONLY IF PENDING */}
+                    {selectedLeave.status === "Pending" && (
+                      <div className="modal-actions">
+                        <button
+                          type="button"
+                          className="apply-btn"
+                          onClick={() => {
+                            setActionType("Approval");
+                            setShowReasonModal(true);
+                          }}
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          type="button"
+                          className="cancel-btn"
+                          onClick={() => {
+                            setActionType("Rejection");
+                            setShowReasonModal(true);
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    
+                    )}
+                  </div>
+
+                  {/* Right Image */}
+                  <div className="form-right">
+                    <img src={illustration} alt="Leave Illustration" />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+        {showReasonModal && (
+          <div className="modal-overlay">
+            <div className="reason-modal">
+              <button
+                className="close-btn"
+                onClick={() => setShowReasonModal(false)}
+              >
+                ×
+              </button>
+
+              <h3>Reason For {actionType}</h3>
+
+              <textarea
+                placeholder="Please fill out the note for approvals"
+                maxLength={250}
+                value={approvalReason}
+                onChange={(e) => setApprovalReason(e.target.value)}
+              />
+
+              <small>maximum character limit 250</small>
+
+              <div className="modal-actions">
+                <button
+                  className="apply-btn"
+                  onClick={() => {
+                    setShowReasonModal(false);
+                    setShowSuccessModal(true);
+                  }}
+                >
+                  Submit
+                </button>
+
+                <button
+                  className="cancel-btn"
+                  onClick={() => setShowReasonModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showSuccessModal && (
+          <div className="modal-overlay">
+            <div className="success-modal">
+              <button
+                className="close-btn"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setShowModal(false);
+                }}
+              >
+                ×
+              </button>
+
+              <img className="tick-icon" src={tick} alt="tick-icon" />
+
+              <h2>Success</h2>
+              <p>
+                Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
+                Successfully
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

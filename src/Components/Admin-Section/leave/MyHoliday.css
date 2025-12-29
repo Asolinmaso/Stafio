@@ -3,6 +3,8 @@
   background-color: #eff5ff;
   padding: 20px 30px;
   min-height: 100vh;
+  overflow-y: auto;      /* page content scrolls here */
+  overflow-x: hidden;
 }
 
 .page-title {

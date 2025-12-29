@@ -6,18 +6,33 @@ import { FaFilter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import group10 from "../../../assets/Group10.png";
-
+import { useLocation } from "react-router-dom";
 
 const Employee = () => {
   const [showModal, setShowModal] = useState(false);
   const [employees, setEmployees] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+  department: "all",
+  position: "all",
+  status: "all",
+});
+
+
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const highlightName = location.state?.highlightName || "";
 
   // ✅ Fetch employees from backend
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/employeeslist");
+        const response = await axios.get(
+          "http://127.0.0.1:5001/api/employeeslist"
+        );
         setEmployees(response.data);
       } catch (error) {
         console.error("Error fetching employees:", error);
@@ -27,11 +42,65 @@ const Employee = () => {
     fetchEmployees();
   }, []);
 
+  const filteredEmployees = highlightName
+    ? employees.filter((emp) =>
+        emp.name.toLowerCase().includes(highlightName.toLowerCase())
+      )
+    : employees;
+
+  // for searching employees
+  const baseEmployees = highlightName
+    ? employees.filter((emp) =>
+        emp.name.toLowerCase().includes(highlightName.toLowerCase())
+      )
+    : employees;
+
+  const searchedEmployees = baseEmployees.filter((emp) =>
+    `${emp.name} ${emp.email} ${emp.empId}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
+  // for filtering the employees
+  const filteredEmployee = searchedEmployees.filter((emp) => {
+    return (
+      (filters.department === "all" ||
+        emp.department === filters.department) &&
+      (filters.position === "all" ||
+        emp.position === filters.position) &&
+      (filters.status === "all" ||
+        emp.status === filters.status)
+    );
+  });
+
+
+  // for filtering the employees
+  const sortedEmployees = [...filteredEmployee].sort((a, b) => {
+    switch (sortBy) {
+      case "name":
+        return a.name.localeCompare(b.name);
+
+      case "department":
+        return a.department.localeCompare(b.department);
+
+      case "status":
+        return a.status.localeCompare(b.status);
+
+      case "newest":
+        return (b.id ?? 0) - (a.id ?? 0); // fallback
+
+      case "oldest":
+        return (a.id ?? 0) - (b.id ?? 0);
+
+      default:
+        return 0;
+    }
+  });
+
   return (
     <div className="employee-page">
       <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
 
@@ -46,7 +115,12 @@ const Employee = () => {
               <h2>Employees</h2>
 
               <div className="top-buttons">
-                <button className="btn-apply">All Employee</button>
+                <button
+                  className="btn-apply"
+                  onClick={() => navigate("/employees-list")}
+                >
+                  All Employee
+                </button>
                 <button
                   className="btn-regularization"
                   onClick={() => navigate("/el-myteam")}
@@ -58,7 +132,9 @@ const Employee = () => {
               <input
                 type="text"
                 placeholder="🔍 Search..."
-                className="search-input"
+                className="search-inputt"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
@@ -69,12 +145,62 @@ const Employee = () => {
               </button>
 
               <div className="filter-sort">
-                <button className="filter-btn">
+                <button
+                  className="right-butn-filterr"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
                   <FaFilter /> Filter
                 </button>
-                <select className="sort-select1">
-                  <option>Sort By : Newest</option>
-                  <option>Sort By : Oldest</option>
+                {showFilters && (
+                  <div className="filter-panel">
+                    <select
+                      value={filters.department}
+                      onChange={(e) =>
+                        setFilters({ ...filters, department: e.target.value })
+                      }
+                    >
+                      <option value="all">All Departments</option>
+                      <option value="Human Resource">Human Resource</option>
+                      <option value="Development">Development</option>
+                      <option value="Design">Design</option>
+                      <option value="Sales">Sales</option>
+                    </select>
+
+                    <select
+                      value={filters.position}
+                      onChange={(e) =>
+                        setFilters({ ...filters, position: e.target.value })
+                      }
+                    >
+                      <option value="all">All Positions</option>
+                      <option value="Designer">Designer</option>
+                      <option value="Developer">Developer</option>
+                      <option value="UIUX">UIUX</option>
+                    </select>
+
+                    <select
+                      value={filters.status}
+                      onChange={(e) =>
+                        setFilters({ ...filters, status: e.target.value })
+                      }
+                    >
+                      <option value="all">All Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                )}
+
+                <select
+                  className="sort-select1"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="newest">Sort By : Newest</option>
+                  <option value="oldest">Sort By : Oldest</option>
+                  <option value="name">Sort By : Name</option>
+                  <option value="department">Sort By : Department</option>
+                  <option value="status">Sort By : Status</option>
                 </select>
               </div>
             </div>
@@ -93,13 +219,25 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody>
-              {employees.map((emp) => (
+              {sortedEmployees.map((emp) => (
                 <tr key={emp.id}>
                   <td>
                     <div className="emp-info">
                       <img src={emp.image} alt={emp.name} className="emp-img" />
                       <div>
-                        <p className="emp-name">{emp.name}</p>
+                        <p
+                          className={`emp-name ${
+                            highlightName &&
+                            emp.name
+                              .toLowerCase()
+                              .includes(highlightName.toLowerCase())
+                              ? "highlight"
+                              : ""
+                          }`}
+                        >
+                          {emp.name}
+                        </p>
+
                         <p className="emp-email">{emp.email}</p>
                       </div>
                     </div>
@@ -125,7 +263,7 @@ const Employee = () => {
               <select>
                 <option>07</option>
                 <option>10</option>
-                <option>15</option>
+                <option>20</option>
               </select>
             </div>
             <div className="page-nav">

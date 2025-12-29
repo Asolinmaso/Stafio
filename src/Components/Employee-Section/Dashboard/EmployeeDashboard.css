@@ -233,7 +233,7 @@
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  height: 100%;
+  height: 95%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -261,6 +261,9 @@
 /* Chart area */
 .attendance-card .recharts-wrapper {
   margin-top: 8px;
+}
+.recharts-surface{
+  margin-left:-10px;
 }
 
 .attendance-card .recharts-cartesian-axis-tick-value {

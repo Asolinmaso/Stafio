@@ -1,14 +1,22 @@
-// AdminLogin.jsx
 import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
 
 import BGShape from "../../assets/BGShape.png";
-import teampluslogo from "../../assets/stafioimg.png";
+import teampluslogo from "../../assets/stafio-bg-dark.png";
 import Imagelogin from "../../assets/Imagelogin.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
+
+import {
+  saveSession,
+  isLoggedIn,
+  saveRememberMe,
+  saveGoogleRememberMe,
+  clearRememberMe,
+  getRememberMe,
+} from "../../utils/sessionManager";
 
 const AdminLogin = () => {
   const [identifier, setIdentifier] = useState("");
@@ -21,7 +29,25 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   // ---------------------------
-  // ⭐ Admin Normal Login
+  // ✅ Check if already logged in this tab
+  // ---------------------------
+  useEffect(() => {
+    if (isLoggedIn()) {
+      navigate("/admin-dashboard");
+      return;
+    }
+
+    // Check for Remember Me (gets most recent)
+    const remembered = getRememberMe("admin");
+    if (remembered && !remembered.isGoogle) {
+      setIdentifier(remembered.email);
+      setPassword(remembered.password);
+      setRememberMe(true);
+    }
+  }, [navigate]);
+
+  // ---------------------------
+  // ✅ Admin Normal Login
   // ---------------------------
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -38,19 +64,21 @@ const AdminLogin = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("admin_user_id", data.user_id);
-        localStorage.setItem("admin_role", data.role);
-        localStorage.setItem("admin_username", data.username);
+        // ✅ Save session using sessionManager
+        saveSession(
+          {
+            user_id: data.user_id,
+            username: data.username,
+            email: identifier,
+          },
+          "admin"
+        );
 
-        // ⭐ Remember Me
+        // ✅ Handle Remember Me with user_id
         if (rememberMe) {
-          localStorage.setItem("remember_admin", "true");
-          localStorage.setItem("remember_email", identifier);
-          localStorage.setItem("remember_password", password);
+          saveRememberMe(identifier, password, "admin", data.user_id);
         } else {
-          localStorage.removeItem("remember_admin");
-          localStorage.removeItem("remember_email");
-          localStorage.removeItem("remember_password");
+          clearRememberMe("admin", data.user_id);
         }
 
         navigate("/admin-dashboard");
@@ -63,7 +91,7 @@ const AdminLogin = () => {
   };
 
   // ---------------------------
-  // ⭐ Google Login (Fully Fixed)
+  // ✅ Google Login
   // ---------------------------
   const handleGoogleLogin = (credentialResponse) => {
     if (!credentialResponse || !credentialResponse.credential) {
@@ -82,20 +110,21 @@ const AdminLogin = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.user_id) {
-          localStorage.setItem("admin_user_id", data.user_id);
-          localStorage.setItem("admin_role", data.role);
-          localStorage.setItem("admin_username", data.username);
+          // ✅ Save session using sessionManager
+          saveSession(
+            {
+              user_id: data.user_id,
+              username: data.username,
+              email: data.email,
+            },
+            "admin"
+          );
 
-          // ⭐ Save Google Remember Me
+          // ✅ Handle Google Remember Me with user_id
           if (rememberMe) {
-            localStorage.setItem("remember_admin", "true");
-            localStorage.setItem("remember_google", "true");
-            localStorage.setItem("remember_google_email", data.email);
-            localStorage.setItem("remember_google_name", data.username);
+            saveGoogleRememberMe(data.email, data.username, "admin", data.user_id);
           } else {
-            localStorage.removeItem("remember_google");
-            localStorage.removeItem("remember_google_email");
-            localStorage.removeItem("remember_google_name");
+            clearRememberMe("admin", data.user_id);
           }
 
           navigate("/admin-dashboard");
@@ -106,77 +135,42 @@ const AdminLogin = () => {
       .catch(() => setError("Google login failed"));
   };
 
+  // ---------------------------
+  // ✅ Initialize Google Login Button
+  // ---------------------------
   useEffect(() => {
     /* global google */
-    window.google.accounts.id.initialize({
-      client_id:
-        "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
-      callback: handleGoogleLogin,
-      ux_mode: "popup",
-      auto_select: false,
-    });
+    if (window.google && window.google.accounts) {
+      window.google.accounts.id.initialize({
+        client_id:
+          "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
+        callback: handleGoogleLogin,
+        ux_mode: "popup",
+        auto_select: false,
+      });
 
-    window.google.accounts.id.renderButton(
-      document.getElementById("googleLoginButton"),
-      {
-        theme: "outline",
-        size: "large",
-        width: 400,
-        text: "continue_with",
-      }
-    );
-  }, []);
-
-  useEffect(() => {
-    const remember = localStorage.getItem("remember_admin");
-    const isGoogle = localStorage.getItem("remember_google") === "true";
-
-    if (remember === "true" && isGoogle) {
-      const idToken = localStorage.getItem("remember_google_token");
-
-      if (!idToken) return; // no token → stop auto-login
-
-      fetch("http://127.0.0.1:5001/admin_google_login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_token: idToken,
-          role: "admin",
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.user_id) {
-            localStorage.setItem("admin_user_id", data.user_id);
-            localStorage.setItem("admin_role", data.role);
-            localStorage.setItem("admin_username", data.username);
-
-            navigate("/admin-dashboard");
-          }
-        });
-
-      return;
-    }
-
-    // Normal remember me (username/password)
-    if (remember === "true" && !isGoogle) {
-      setIdentifier(localStorage.getItem("remember_email") || "");
-      setPassword(localStorage.getItem("remember_password") || "");
-      navigate("/admin-dashboard");
+      window.google.accounts.id.renderButton(
+        document.getElementById("googleLoginButton"),
+        {
+          theme: "outline",
+          size: "large",
+          width: 400,
+          text: "continue_with",
+        }
+      );
     }
   }, []);
 
   return (
     <Container fluid className="admin-login-container">
       <Row className="vh-100">
-        {/* ---------- LEFT SIDE ---------- */}
         <Col
           md={6}
           className="login-left d-flex flex-column align-items-center justify-content-center"
         >
           <img src={BGShape} alt="Background Shape" className="bg-shape" />
 
-          <div className="login-left-content text-center">
+          <div className="login-left-content">
             <img
               src={teampluslogo}
               alt="Team Plus"
@@ -185,7 +179,7 @@ const AdminLogin = () => {
             <h2 className="login-heading">One Portal,</h2>
             <h4 className="login-subheading">Unlimited Potential</h4>
             <p className="login-description">
-              Welcome to workspace Hub – Where people & productivity meet.
+              Welcome to workspace Hub — Where people & productivity meet.
             </p>
           </div>
 
@@ -196,7 +190,6 @@ const AdminLogin = () => {
           />
         </Col>
 
-        {/* ---------- RIGHT SIDE ---------- */}
         <Col
           md={6}
           className="d-flex align-items-center justify-content-left bg-white"
@@ -272,8 +265,6 @@ const AdminLogin = () => {
                 Login
               </Button>
 
-              {/* ⭐ GOOGLE LOGIN BUTTON */}
-              {/* ⭐ OFFICIAL GOOGLE LOGIN BUTTON RENDER TARGET */}
               <div id="googleLoginButton" style={{ marginTop: "15px" }}></div>
             </Form>
 

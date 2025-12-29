@@ -9,7 +9,20 @@
   
   min-height: 100vh;
 }
-
+.right-butn-filter1{
+  color: #000;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid #cecece;
+  border-radius: 12px;
+  padding: 6px 12px;
+  margin-bottom:20px;
+  margin-right:20px;
+}
 
 .page-title {
   font-size: 25px;

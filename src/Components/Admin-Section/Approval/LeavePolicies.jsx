@@ -1,23 +1,44 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import "./LeavePolicies.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const LeavePolicies = () => {
-  const leavePolicies = [
-    { name: "Casual Leave", createdOn: "14 Apr 2025", type: "All" },
-    { name: "Sick Leave", createdOn: "06 Apr 2025", type: "All" },
-    { name: "Maternity", createdOn: "27 Mar 2025", type: "Specific" },
-    { name: "Paternity", createdOn: "20 Mar 2025", type: "Specific" },
-    { name: "Annual Leave", createdOn: "16 Mar 2025", type: "All" },
-    { name: "Sabbatical Leave", createdOn: "16 Mar 2025", type: "All" },
-    { name: "Medical Leave", createdOn: "16 Mar 2025", type: "All" },
-  ];
+  const [leavePolicies, setLeavePolicies] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const  fetchleavepolicies = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:5001/api/leavepolicies");
+        setLeavePolicies(response.data);
+      } catch (error) {
+        console.error("Error fetching attendance data:", error);
+      }
+    };
+
+    fetchleavepolicies();
+  }, []);
 
   const [showModal, setShowModal] = useState(false);
+
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
 
   return (
     <div className="leave-policies-layout">

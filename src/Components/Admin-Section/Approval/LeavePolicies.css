@@ -126,7 +126,7 @@
 
 /* ===== Modal Header ===== */
 .leave-policies-modal-header {
-  background: #1eb5d6;
+  background: #19bde8;
   color: #fff;
   padding: 16px 20px;
   display: flex;
@@ -258,7 +258,7 @@
 }
 
 .leave-policies-save-btn {
-  background: #1eb5d6;
+  background: #19bde8;
   color: #fff;
   border: none;
   padding: 10px 24px !important;

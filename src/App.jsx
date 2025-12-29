@@ -38,7 +38,6 @@ import LeaveReport from './Components/Admin-Section/Reports-/LeaveReport';
 // Employee Components
 import EmployeeLogin from './Components/Employee-Section/EmployeeLogin';
 import EmployeeDashboard from './Components/Employee-Section/Dashboard/EmployeeDashboard';
-import ApplyLeave from './Components/Employee-Section/leave/ApplyLeave';
 import Attendance from './Components/Employee-Section/Attendance/Attendance';
 import ProfileBanner from './Components/Employee-Section/Profile/EmployeeProfile';
 import EmployeeRegister from './Components/Employee-Section/EmployeeRegister';
@@ -87,7 +86,7 @@ const App = () => {
         
         <Route path="/employee-login" element={<EmployeeLogin />} />
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
-        <Route path="/apply-leave" element={<ApplyLeave />} />
+        
         <Route path="/employee-attendance" element={<Attendance />} />
         <Route path="/profile" element={<ProfileBanner />} />
         <Route path='/register-employee' element={<EmployeeRegister />} />

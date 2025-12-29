@@ -41,6 +41,7 @@ import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
 const EmployeeDashboard = () => {
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
 
   // ✅ Load userId from localStorage
   useEffect(() => {
@@ -50,10 +51,12 @@ const EmployeeDashboard = () => {
 
   // ✅ Fetch username from backend
   useEffect(() => {
-    const storedUsername = localStorage.getItem("employee_username"); // or "employeeUsername"
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
+    // Read values from sessionStorage
+    const storedUsername = sessionStorage.getItem("current_username");
+    const storedRole = sessionStorage.getItem("current_role");
+
+    setUsername(storedUsername);
+    setRole(storedRole);
   }, []);
 
   // ✅ Punch In/Out
@@ -184,59 +187,68 @@ const EmployeeDashboard = () => {
     }
   };
 
-  // this is for attendance bar data
+// this is for attendance bar data
+const attendanceDataSets = {
+  months: [
+    { label: "Jan", value: 95 },
+    { label: "Feb", value: 90 },
+    { label: "Mar", value: 86 },
+    { label: "Apr", value: 92 },
+    { label: "May", value: 88 },
+  ],
+  weeks: [
+    { label: "W1", value: 85 },
+    { label: "W2", value: 88 },
+    { label: "W3", value: 90 },
+    { label: "W4", value: 92 },
+  ],
+  days: [
+    { label: "Mon", value: 90 },
+    { label: "Tue", value: 85 },
+    { label: "Wed", value: 88 },
+    { label: "Thu", value: 92 },
+    { label: "Fri", value: 95 },
+  ],
+};
+ 
 
-  const attendanceData = [
-    { month: "Jan", value: 100 },
-    { month: "Feb", value: 90 },
-    { month: "Mar", value: 86, highlight: true },
-    { month: "Apr", value: 100 },
-    { month: "May", value: 75 },
-  ];
+  const MEETING_START_HOUR = 9;
+  const MEETING_START_MIN = 0;
+  const MEETING_DURATION = 10; // minutes
 
-  function AttendanceCard() {
-    return (
-      <Card className="attendance-card">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <Card.Title>Monthly Attendance</Card.Title>
-          </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={attendanceData}>
-              <XAxis dataKey="month" />
-              <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-              <Tooltip formatter={(v) => `${v}%`} />
-              <Bar
-                dataKey="value"
-                radius={[4, 4, 0, 0]}
-                fill="#E5F0F7"
-                barSize={30}
-              >
-                <LabelList
-                  dataKey="value"
-                  position="top"
-                  formatter={(val) => `${val}%`}
-                />
-              </Bar>
-              <Bar
-                dataKey="value"
-                data={attendanceData.filter((d) => d.highlight)}
-                radius={[4, 4, 0, 0]}
-                fill="#19BDE8"
-                barSize={30}
-              >
-                <LabelList
-                  dataKey="value"
-                  position="top"
-                  formatter={(val) => `${val}%`}
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </Card.Body>
-      </Card>
-    );
-  }
+  const meetingLink = "https://meet.google.com/shm-kuvn-xqb";
+
+  const getMeetingMinutesLeft = () => {
+    const now = new Date();
+
+    const meetingStart = new Date();
+    meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+
+    const meetingEnd = new Date(meetingStart);
+    meetingEnd.setMinutes(meetingStart.getMinutes() + MEETING_DURATION);
+
+    if (now < meetingStart) {
+      return MEETING_DURATION;
+    }
+
+    if (now > meetingEnd) {
+      return 0;
+    }
+
+    const diffMs = meetingEnd - now;
+    return Math.ceil(diffMs / 60000);
+  };
+
+  const [meetingMinutesLeft, setMeetingMinutesLeft] = useState(
+    getMeetingMinutesLeft()
+  );
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMeetingMinutesLeft(getMeetingMinutesLeft());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const [dashboardData, setDashboardData] = useState({
     total_leaves: 0,
@@ -288,16 +300,32 @@ const EmployeeDashboard = () => {
                         <h2>
                           {currentTime} , {currentDate}
                         </h2>
-                        <div className="meeting-box">
+                        <a
+                          href={meetingLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="meeting-box"
+                          style={{
+                            cursor: "pointer",
+                            textDecoration: "none",
+                            color: "inherit",
+                          }}
+                        >
                           <div className="meeting-info">
                             <h4>Standup Meeting</h4>
-                            <p>02 Min Left</p>
+                            <p>
+                              {meetingMinutesLeft > 0
+                                ? `${meetingMinutesLeft} Min Left`
+                                : "Meeting Ended"}
+                            </p>
                           </div>
-                          <div className="meeting-time">07</div>
+
+                          <div className="meeting-time">Join</div>
+
                           <div className="chevron-box">
                             <FaChevronRight />
                           </div>
-                        </div>
+                        </a>
                         <button className="btn-punch" onClick={handlePunchIn}>
                           Check In
                         </button>
@@ -484,7 +512,7 @@ const EmployeeDashboard = () => {
             </Col>
 
             <Col md={4}>
-               <EmployeeAttendanceCard attendanceData={attendanceData} />
+              <EmployeeAttendanceCard dataSets={attendanceDataSets} />
             </Col>
           </Row>
 
@@ -501,7 +529,6 @@ const EmployeeDashboard = () => {
 
 export default EmployeeDashboard;
 
-
 const alertStyle = {
   position: "fixed",
   top: "50%",
@@ -517,7 +544,7 @@ const alertStyle = {
   alignItems: "center",
   gap: "10px",
   zIndex: 9999,
-  width:"30%",
+  width: "30%",
 };
 
 const closeBtnStyle = {

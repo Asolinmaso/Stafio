@@ -4,6 +4,8 @@ import Topbar from "../Topbar";
 import "./EmployeesMyTeam.css";
 import { FaFilter } from "react-icons/fa";
 import group10 from "../../../assets/Group10.png";
+import { useLocation } from "react-router-dom";
+
 
 
 const Employee = () => {
@@ -29,6 +31,73 @@ const Employee = () => {
       image: "https://i.pravatar.cc/40?img=4",
     },
   ]);
+  const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("newest");
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState({
+    department: "all",
+    position: "all",
+    status: "all",
+  });
+
+  const location = useLocation();
+  const highlightName = location.state?.highlightName || "";
+
+   const filteredEmployees = highlightName
+    ? employees.filter((emp) =>
+        emp.name.toLowerCase().includes(highlightName.toLowerCase())
+      )
+    : employees;
+
+    // for searching employees
+  const baseEmployees = highlightName
+    ? employees.filter((emp) =>
+        emp.name.toLowerCase().includes(highlightName.toLowerCase())
+      )
+    : employees;
+
+  const searchedEmployees = baseEmployees.filter((emp) =>
+    `${emp.name} ${emp.email} ${emp.empId}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
+  // for filtering the employees
+  const filteredEmployee = searchedEmployees.filter((emp) => {
+    return (
+      (filters.department === "all" ||
+        emp.department === filters.department) &&
+      (filters.position === "all" ||
+        emp.position === filters.position) &&
+      (filters.status === "all" ||
+        emp.status === filters.status)
+    );
+  });
+
+
+
+  // for filtering the employees
+  const sortedEmployees = [...filteredEmployee].sort((a, b) => {
+    switch (sortBy) {
+      case "name":
+        return a.name.localeCompare(b.name);
+
+      case "department":
+        return a.department.localeCompare(b.department);
+
+      case "status":
+        return a.status.localeCompare(b.status);
+
+      case "newest":
+        return (b.id ?? 0) - (a.id ?? 0); // fallback
+
+      case "oldest":
+        return (a.id ?? 0) - (b.id ?? 0);
+
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="employee-page">
@@ -45,27 +114,52 @@ const Employee = () => {
               {/* LEFT SIDE */}
               <div className="header-left">
                 <h2>My Team</h2>
-
-        
-
                 <input
-                  type="text"
-                  placeholder="🔍 Search..."
-                  className="search-input"
-                />
-              </div>
+                type="text"
+                placeholder="🔍 Search..."
+                className="search-inputt"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
               {/* RIGHT SIDE */}
               <div className="header-right1">
                 <div className="filter-sort">
-                  <button className="filter-btn">
-                    <FaFilter /> Filter
-                  </button>
-                  <select className="sort-select1">
-                    <option>Sort By : Newest</option>
-                    <option>Sort By : Oldest</option>
-                  </select>
-                </div>
+                                <button
+                                  className="right-butn-filterr"
+                                  onClick={() => setShowFilters(!showFilters)}
+                                >
+                                  <FaFilter /> Filter
+                                </button>
+                                {showFilters && (
+                                  <div className="filter-panel">
+                                    <select
+                                      value={filters.department}
+                                      onChange={(e) =>
+                                        setFilters({ ...filters, department: e.target.value })
+                                      }
+                                    >
+                                      <option value="all">All Departments</option>
+                                      <option value="Human Resource">Human Resource</option>
+                                      <option value="Development">Development</option>
+                                      <option value="Design">Design</option>
+                                      <option value="Sales">Sales</option>
+                                    </select>       
+                                  </div>
+                                )}
+                
+                                <select
+                                  className="sort-select1"
+                                  value={sortBy}
+                                  onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                  <option value="newest">Sort By : Newest</option>
+                                  <option value="oldest">Sort By : Oldest</option>
+                                  <option value="name">Sort By : Name</option>
+                                  <option value="department">Sort By : Department</option>
+                                </select>
+                              </div>
               </div>
             </div>
           </div>
@@ -82,7 +176,7 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody>
-              {employees.map((emp) => (
+              {sortedEmployees.map((emp) => (
                 <tr key={emp.id}>
                   <td>
                     <div className="emp-info">

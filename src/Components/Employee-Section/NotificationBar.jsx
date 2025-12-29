@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes, FaRocket } from "react-icons/fa";
 import "./NotificationBar.css";
 
-const NotificationBar = () => {
+const NotificationBar = ({ onViewAll }) => {
   const [visible, setVisible] = useState(true);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
 
@@ -36,7 +36,15 @@ const NotificationBar = () => {
           <span className="dismiss" onClick={() => setVisible(false)}>
             Dismiss
           </span>
-          <span className="viewAll">View All</span>
+          <span
+            className="viewAll"
+            onClick={() => {
+              onViewAll(); // 🔔 same as clicking bell
+              setVisible(false); // optional
+            }}
+          >
+            View All
+          </span>
         </div>
       </div>
 
