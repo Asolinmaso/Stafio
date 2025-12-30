@@ -64,17 +64,33 @@ const initialDocs = [];
 const EmployeeProfile = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [profile, setProfile] = useState(initialProfile);
-  const [education, setEducation] = useState(initialEducation);
+  // const [education, setEducation] = useState(initialEducation);
   const [experience, setExperience] = useState(initialExperience);
   // const [bank, setBank] = useState(initialBank);
   const [documents, setDocuments] = useState(initialDocs);
   
   //new
   const [personalErrors, setPersonalErrors] = useState({});
+  const [personalBackup, setPersonalBackup] = useState(null);   //new
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
+  const [education, setEducation] = useState({
+  institution: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  qualification: "",
+  specialization: "",
+  portfolio: "",
+
+  skills: ["Illustrator", "Photoshop", "Figma", "Adobe XD"]
+});
+
+const [skillInput, setSkillInput] = useState("");
+
+  
   const [bank, setBank] = useState({
   bankName: "",
   branch: "",
@@ -95,12 +111,14 @@ const [savedBank, setSavedBank] = useState({
 const [errors, setErrors] = useState({});
 
 const [savedEducation, setSavedEducation] = useState({
-  bankName: "",
-  branch: "",
-  accountNumber: "",
-  ifsc: "",
-  aadhaar: "",
-  pan: ""
+  institution: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  qualification: "",
+  specialization: "",
+  skills: "",
+  portfolio: ""
 });
 
 
@@ -228,51 +246,105 @@ const [savedEducation, setSavedEducation] = useState({
     }
   };
 
-  const handleSkillChange = (e, idx) => {
-    const newSkills = [...education.skills];
-    newSkills[idx] = e.target.value;
-    setEducation(prev => ({ ...prev, skills: newSkills }));
-  };
+  // const handleSkillChange = (e, idx) => {
+  //   const newSkills = [...education.skills];
+  //   newSkills[idx] = e.target.value;
+  //   setEducation(prev => ({ ...prev, skills: newSkills }));
+  // };
 
-  const addSkill = () => setEducation(prev => ({ ...prev, skills: [...prev.skills, ''] }));
-  const removeSkill = idx =>
-    setEducation(prev => ({
-      ...prev,
-      skills: prev.skills.filter((_, sidx) => sidx !== idx)
-    }));
+  // const addSkill = () => setEducation(prev => ({ ...prev, skills: [...prev.skills, ''] }));
+  // const removeSkill = idx =>
+  //   setEducation(prev => ({
+  //     ...prev,
+  //     skills: prev.skills.filter((_, sidx) => sidx !== idx)
+  //   }));
+
+
+  const handleSkillInputChange = (e) => {
+  setSkillInput(e.target.value);
+};
+
+// addskill
+const addSkill = () => {
+  if (!skillInput.trim()) return;
+
+  // prevent duplicates
+  if (education.skills.includes(skillInput.trim())) {
+    setSkillInput("");
+    return;
+  }
+
+  setEducation(prev => ({
+    ...prev,
+    skills: [...prev.skills, skillInput.trim()]
+  }));
+
+  setSkillInput("");
+};
+  
+// removeskill
+const removeSkill = (idx) => {
+  setEducation(prev => ({
+    ...prev,
+    skills: prev.skills.filter((_, i) => i !== idx)
+  }));
+};
+
+// add skill on Enter key
+const handleSkillKeyDown = (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addSkill();
+  }
+};
+
+
 
   const handleDocDelete = idx =>
     setDocuments(prev => prev.filter((_, didx) => didx !== idx));
+  
 
 
 
+          //edit handle button for personal info
+              const handleEditPersonal = () => {
+               setPersonalBackup(profile);   // save current profile
+               setIsEditingPersonal(true);
+              };
 
-            //save button for personal info
-  const handleSavePersonal = () => { const isValid = validatePersonalInfo();
+            //save handle button for personal info
+  const handleSavePersonal = () => {
+     const isValid = validatePersonalInfo();
 
-           if (!isValid) {
-           console.log("Validation failed", personalErrors);
-           return;
-           }
+            if (!isValid) return;
 
-           setIsEditingPersonal(false);
-           setPersonalErrors({});
-           alert("Profile updated successfully!");
-           };
+            setPersonalBackup(profile); // keep latest saved state
+            setIsEditingPersonal(false);
+            setPersonalErrors({});
+            alert("Profile updated successfully!");
+            };
+                
+           //cancel handle button for personal info
+           const handleCancelPersonal = () => {
+             setProfile(personalBackup);   // restore previous values
+             setPersonalErrors({});
+             setIsEditingPersonal(false);
+             };
 
-              //save button for education tab 
+
+        //save button for education tab 
               
-               const handleEditEducation = () => {
-                  setEducationBackup(education);
-                 setIsEditingEducation(true);
-                 };
+      const handleEditEducation = () => {
+            setEducationBackup(education);
+            setIsEditingEducation(true);
+           };
 
   const handleSaveEducation = () => {
              
             if (!validateEducation()) return;
             setIsEditingEducation(false);
             setEducationErrors({});
-            // setSavedEducation(education);
+            setSavedEducation(education);
             setEducationBackup(null)
             alert("Education Qualification updated successfully.");
             };
@@ -402,14 +474,14 @@ const handleCancelBank = () => {
   const errors = {};
 
   //mandatory feilds
-  if (!education.institution ||
-      !education.startDate ||
-      !education.endDate ||
-      !education.qualification ||
-      !education.specialization ||
-      !education.portfolio) {
-    errors.form = "Please fill all required fields.";
-  }
+  // if (!education.institution ||
+  //     !education.startDate ||
+  //     !education.endDate ||
+  //     !education.qualification ||
+  //     !education.specialization ||
+  //     !education.portfolio) {
+  //   errors.form = "Please fill all required fields.";
+  // }
 
   // institution
   if (!education.institution) {
@@ -422,6 +494,11 @@ const handleCancelBank = () => {
   }
 
   // Date validation
+
+
+
+
+
 
   // Required: Start Date
   if (!education.startDate) {
@@ -440,6 +517,16 @@ const handleCancelBank = () => {
     if (start > end) {
       errors.endDate = "End Date must be after Start Date.";
     }
+  }
+                   // new
+  if (!education.skills || education.skills.length === 0) {
+    errors.skills = "At least one skill is required.";
+  } else if (education.skills.some(skill => !skill.trim())) {
+    errors.skills = "Skill cannot be empty.";
+  }
+    // qualification
+  if (!education.skills) {
+    errors.skills = "*This field is required";
   }
 
   // qualification
@@ -649,14 +736,10 @@ const validations = {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Personal Information</span>
                   {!isEditingPersonal ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingPersonal(true)}>Edit</Button>
+                    <Button className="btn-edit" onClick={handleEditPersonal}>Edit</Button>
                   ) : (
                     <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel"
-                              onClick={() => {
-                              setIsEditingPersonal(false);
-                              setPersonalErrors({});
-                              }}>Cancel</Button>
+                      <Button className="btn-cancel" onClick={handleCancelPersonal}>Cancel</Button>
                       <Button className="btn-save" onClick={handleSavePersonal}>Save</Button>
                     </div>
                   )}
@@ -880,12 +963,12 @@ const validations = {
                           value={education.institution}
                           onChange={handleEducationChange}
                           placeholder="Institution Name"
-                          className={`edform-input ${educationErrors.institution ? "input-error" : ""}`}
+                          className={`edform-input ${educationErrors.institution ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         />
                            {/* new */}
                          {educationErrors.institution && (
-                             <div className="error-text">{educationErrors.institution}</div>
+                             <div className="error-text1">{educationErrors.institution}</div>
                         )}
                       </Form.Group>
                       <Form.Group>
@@ -896,12 +979,12 @@ const validations = {
                             name="startDate"
                             value={education.startDate}
                             onChange={handleEducationChange}
-                            className={`edform-input ${educationErrors.startDate ? "input-error" : ""}`}
+                            className={`edform-input ${educationErrors.startDate ? "input-error1" : ""}`}
                             disabled={!isEditingEducation}
                           />
                           {/* new */}
                           {educationErrors.startDate && (
-                            <div className="error-text">{educationErrors.startDate}</div>
+                            <div className="error-text1">{educationErrors.startDate}</div>
                           )}
                           <span className="calendar-icon">
                             <i className="bi bi-calendar3"></i>
@@ -916,7 +999,7 @@ const validations = {
                           value={education.qualification}
                           onChange={handleEducationChange}
                           placeholder="Qualification"
-                          className={`edform-input ${educationErrors.qualification ? "input-error" : ""}`}
+                          className={`edform-input ${educationErrors.qualification ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         >
                           <option value="" disabled>Education Qualification</option>
@@ -926,16 +1009,46 @@ const validations = {
                         </Form.Select>
                          {/* new */}
                         {educationErrors.qualification && (
-                             <div className="error-text">{educationErrors.qualification}</div>
+                             <div className="error-text1">{educationErrors.qualification}</div>
                         )}
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="form-label">Skills</Form.Label>
+                         
+                         {/* Skill Input + Add Button */}
+                            <div className="skill-input-wrap">
+                               <Form.Control
+                                 type="text"
+                                 placeholder="Add a skill"
+                                 value={skillInput}
+                                 onChange={handleSkillInputChange}
+                                 onKeyDown={handleSkillKeyDown}
+                                 className="skill-input"
+                               />
+                               <button
+                                 type="button"
+                                 className="skill-add-btn"
+                                 onClick={addSkill}
+                                 >
+                                 +
+                               </button>
+                             </div>
                         <div className="skills-pill-wrap">
                           {education.skills.map((skill, i) => (
-                            <span className="skill-pill" key={i}>{skill}</span>
+                            <span className="skill-pill" key={i}>{skill}
+                            <span
+                               className="skill-remove"
+                               onClick={() => removeSkill(i)}
+                              >
+                                 ×
+                             </span>
+                            </span>
                           ))}
-                        </div>
+                        </div>                       { /* new */}
+                        { educationErrors.skills && (                
+                            <div className="error-text">{educationErrors.skills}</div>
+                         )}
+
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -947,12 +1060,12 @@ const validations = {
                           value={education.location}
                           onChange={handleEducationChange}
                           placeholder="Location"
-                          className={`edform-input ${educationErrors.location ? "input-error" : ""}`}
+                          className={`edform-input ${educationErrors.location ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         />
                         {/* new */}
                          {educationErrors.location && (
-                             <div className="error-text">{educationErrors.location}</div>
+                             <div className="error-text1">{educationErrors.location}</div>
                         )}
                       </Form.Group>
 
@@ -964,11 +1077,11 @@ const validations = {
                             name="endDate"
                             value={education.endDate}
                             onChange={handleEducationChange}
-                            className={`edform-input ${educationErrors.endDate ? "input-error" : ""}`}
+                            className={`edform-input ${educationErrors.endDate ? "input-error1" : ""}`}
                             disabled={!isEditingEducation}
                           />
                           {educationErrors.endDate && (
-                            <div className="error-text">{educationErrors.endDate}</div>
+                            <div className="error-text1">{educationErrors.endDate}</div>
                            )}
                           <span className="calendar-icon">
                             <i className="bi bi-calendar3"></i>
@@ -983,7 +1096,7 @@ const validations = {
                           value={education.specialization}
                           onChange={handleEducationChange}
                           placeholder="Specialization"
-                          className={`edform-input ${educationErrors.specialization ? "input-error" : ""}`}
+                          className={`edform-input ${educationErrors.specialization ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         >
                           <option value="" disabled>Specialization</option>
@@ -993,7 +1106,7 @@ const validations = {
                         </Form.Select>
                          {/* new */}
                         {educationErrors.specialization && (
-                             <div className="error-text">{educationErrors.specialization}</div>
+                             <div className="error-text1">{educationErrors.specialization}</div>
                         )}
                       </Form.Group>
                       <Form.Group>
@@ -1004,11 +1117,11 @@ const validations = {
                           value={education.portfolio}
                           onChange={handleEducationChange}
                           placeholder="Portfolio Link"
-                          className={`edform-input ${educationErrors.portfolio ? "input-error" : ""}`}
+                          className={`edform-input ${educationErrors.portfolio ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         />
                         {educationErrors.portfolio && (
-                             <div className="error-text">{educationErrors.portfolio}</div>
+                             <div className="error-text1">{educationErrors.portfolio}</div>
                         )}
                       </Form.Group>
                     </Col>
@@ -1042,11 +1155,11 @@ const validations = {
                         value={experience.company} 
                         onChange={handleExperienceChange}
                         placeholder="Company Name"
-                        className={`pexform-input ${experienceErrors.company ? "input-error" : ""}`}
+                        className={`pexform-input ${experienceErrors.company ? "input-error1" : ""}`}
                         disabled={!isEditingExperience} 
                       />
                       {experienceErrors.company && (
-                           <div className="error-text">{experienceErrors.company}</div>
+                           <div className="error-text1">{experienceErrors.company}</div>
                           )}
                       <Form.Label className="form-label">Start Date</Form.Label>
                         <div className="calendar-input-wrap">
@@ -1055,11 +1168,11 @@ const validations = {
                           name="startDate" 
                           value={experience.startDate} 
                           onChange={handleExperienceChange}
-                          className={`pexform-input ${experienceErrors.startDate ? "input-error" : ""}`} 
+                          className={`pexform-input ${experienceErrors.startDate ? "input-error1" : ""}`} 
                           disabled={!isEditingExperience} 
                           />
                           {experienceErrors.startDate && (
-                           <div className="error-text">{experienceErrors.startDate}</div>
+                           <div className="error-text1">{experienceErrors.startDate}</div>
                           )}
                         <span className="calendar-icon">
                          <i className="bi bi-calendar3"></i>
@@ -1086,11 +1199,11 @@ const validations = {
                        value={experience.jobTitle} 
                        onChange={handleExperienceChange}
                        placeholder="Job Title"
-                       className={`pexform-input1 ${experienceErrors.jobTitle ? "input-error" : ""}`} 
+                       className={`pexform-input1 ${experienceErrors.jobTitle ? "input-error1" : ""}`} 
                        disabled={!isEditingExperience} 
                       />
                       {experienceErrors.jobTitle && (
-                           <div className="error-text">{experienceErrors.jobTitle}</div>
+                           <div className="error-text1">{experienceErrors.jobTitle}</div>
                           )}
                       <Form.Label className="form-label">End Date</Form.Label>
                       <div className="calendar-input-wrap">
@@ -1099,11 +1212,11 @@ const validations = {
                          name="endDate" 
                          value={experience.endDate} 
                          onChange={handleExperienceChange}
-                         className={`pexform-input ${experienceErrors.endDate ? "input-error" : ""}`} 
+                         className={`pexform-input ${experienceErrors.endDate ? "input-error1" : ""}`} 
                          disabled={!isEditingExperience} 
                          />
                          {experienceErrors.endDate && (
-                             <div className="error-text">{experienceErrors.endDate}</div>
+                             <div className="error-text1">{experienceErrors.endDate}</div>
                            )}
                         <span className="calendar-icon">
                          <i className="bi bi-calendar3"></i>
@@ -1116,11 +1229,11 @@ const validations = {
                        value={experience.totalYears} 
                        onChange={handleExperienceChange}
                        placeholder="Experience in Years"
-                       className={`pexform-input ${experienceErrors.totalYears ? "input-error" : ""}`}
+                       className={`pexform-input ${experienceErrors.totalYears ? "input-error1" : ""}`}
                        disabled={!isEditingExperience} 
                      />
                      {experienceErrors.totalYears && (
-                           <div className="error-text">{experienceErrors.totalYears}</div>
+                           <div className="error-text1">{experienceErrors.totalYears}</div>
                           )}
                     </Col>
                   </Row>

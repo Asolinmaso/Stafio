@@ -28,7 +28,7 @@
 }
 .topbar-searches input{     /* new*/
     border: none;
-    background-color: beige;
+    background-color: #F6F6F6;
     /* width: 100px; */
     height: 100%;
     outline: none;

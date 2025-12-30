@@ -76,7 +76,7 @@
 /* Active tab with text underline only */
 .profile-tabs .nav-link.active {
   color: #12baf5 !important;
- font-weight: 600;        /* modified font-weight: 700; */
+ font-weight: 500;        /* modified font-weight: 700; */
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
@@ -219,7 +219,7 @@
   transition: border-color 0.2s;
   /* new */
   width: 90%;
-  margin-bottom: -22px;
+  /* margin-bottom: -22px; */
 }
 .form-input:focus, .form-control:focus, .form-select:focus {
   border-color: #12baf5 !important;
@@ -316,6 +316,20 @@
   padding-top: 4px;
 }
 
+.input-error1 {                  /*new*/
+  border: 2px solid rgb(228, 228, 228)  !important;
+  background-color: #fff5f5;
+  margin-bottom: 2px !important;   /* modified */
+}
+
+.error-text1 {               /*new*/
+  color: #dc3545;
+  font-size: 14px;
+  /* margin-bottom: 2px; */ 
+  padding-top: 2px;
+  margin-top: -5px;
+}
+
 @media (max-width: 900px) {
   .update-info-header-box { margin: 0; }
   .personal-info-form { padding: 0 8px 4px 8px !important; }
@@ -350,11 +364,74 @@
   padding: 10px 20px 10px 10px !important;
   color: #223042 !important;
   /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  height: 10% !important;
+  /* height: 10% !important; */
   transition: border-color 0.2s;
   width: 90%;
-  /* margin-bottom: 4px; */
+  margin-bottom: 15px;  /* margin-bottom: 4px; */
+  /* new */
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto
 }
+
+/* Skills for education add update delete */  /* new */
+
+.skill-input-wrap {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.skill-input {
+  flex: 1;
+  height: 42px;
+}
+
+.skill-add-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid #cae7f0;
+  background: #ffffff;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.skill-add-btn:hover {
+  background: #f1faff;
+}
+
+/* Pills */
+.skills-pill-wrap {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.skill-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #F8F8F8;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-weight: 400;
+  color: #000;
+  border: 1px solid #cae7f0;
+  font-size: 0.95rem;
+}
+
+.skill-remove {
+  cursor: pointer;
+  font-size: 16px;
+  color: #777;
+}
+
+.skill-remove:hover {
+  color: #ff4d4f;
+}
+
 
 
 
@@ -390,13 +467,13 @@
   height: 50px !important;
   transition: border-color 0.2s;
   width: 90%;
-  margin-bottom: 5px;
+  margin-bottom: 22px !important;
 }
 
 .pexform-input1{
    resize: vertical;
    height: 65px;
-   margin-bottom: 5px;   /*new*/  
+   margin-bottom: 22px !important;   /* new   */
 }
 
 .pexform-input2 {
@@ -490,7 +567,7 @@ input[type="radio"] {
 }
 
 /* ====================== SKILL PILLS ====================== */
-.skills-pill-wrap {
+/* .skills-pill-wrap {
   display: flex;
   gap: 7px;
   flex-wrap: wrap;
@@ -505,7 +582,7 @@ input[type="radio"] {
   color: #000000;
   border: 1px solid #cae7f0;
   font-size: 0.98rem;
-}
+} */
 
 /* ====================== DOCUMENTS/UPLOAD BOX ====================== */
 .doc-item {
