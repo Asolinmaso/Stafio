@@ -44,10 +44,10 @@
 .sidebar-link {
   display: flex;
   align-items: center;
-  justify-content: ;
+  /* justify-content: ; */
   color: #fff !important;
   text-decoration: none;
-  padding: 28px 15px;
+  padding: 22px 15px;
   font-size: 18px;
   font-weight: 500;
   border-top: 1px solid #fff;
