@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./MyLeave.css";
 import {
   FaCheckCircle,
@@ -16,6 +16,9 @@ import group10 from "../../../assets/Group10.png";
 
 export default function Myleave() {
   const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+        const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
+        const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
 
   const leaveData = [
     {
@@ -36,6 +39,30 @@ export default function Myleave() {
     },
   ];
    const navigate = useNavigate();
+
+const filteredAndSortedLeaves = leaveData
+  // SEARCH by employee name
+ 
+
+  // FILTER by status
+  .filter((leave) =>
+    filterStatus === "All" ? true : leave.status === filterStatus
+  )
+
+  
+
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
 
   return (
     <div className="layout">
@@ -88,9 +115,16 @@ export default function Myleave() {
               >Regularization</button>
             </div>
             <div className="bottom-button">
-              <button className="btn-filter">
-                <FaFilter /> Filter
-              </button>
+              <select
+                className="right-butn-filter"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
             </div>
           </div>
         </div>
@@ -109,7 +143,7 @@ export default function Myleave() {
               </tr>
             </thead>
             <tbody>
-              {leaveData.map((leave, index) => (
+              {filteredAndSortedLeaves.map((leave, index) => (
                 <tr key={leave.id}>
                   <td>{String(index + 1).padStart(2, "0")}</td>
                   <td>{leave.type}</td>
@@ -147,7 +181,7 @@ export default function Myleave() {
                 <form className="apply-leave-form">
                   <div className="form-left">
                     <label>Employee ID:</label>
-                    <input type="text" value="Aiswarya (100234)" readOnly />
+                    <input type="text"  />
 
                     <label>Leave Type:</label>
                     <select>

@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import "./EmployeeRegister.css";
 
 import BGShape from "../../assets/BGShape.png";
-import teampluslogo from "../../assets/stafioimg.png";
+import teampluslogo from "../../assets/stafio-bg-dark.png";
 import Registerlogo from "../../assets/registerlogo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import apiClient from "../../api/client";
@@ -194,14 +194,14 @@ const EmployeeRegister = () => {
         >
           <div className="register-form-wrapper">
             <h5 className="mb-2">Just a Few Details to Begin</h5>
-            <h3 className="mb-4">Employee Sign Up</h3>
+            <h3 className="mb-4">Sign Up</h3>
 
             {message && <Alert variant="success">{message}</Alert>}
             {error && <Alert variant="danger">{error}</Alert>}
 
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
-                <Form.Label>Username</Form.Label>
+                <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="username"
@@ -219,7 +219,17 @@ const EmployeeRegister = () => {
                   name="phone"
                   placeholder="Please enter your phone number"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ""); // allow only numbers
+                    if (value.length <= 10) {
+                      handleChange({
+                        target: { name: "phone", value },
+                      });
+                    }
+                  }}
+                  pattern="[0-9]{10}"
+                  maxLength={10}
+                  title="Phone number must be exactly 10 digits"
                   required
                 />
               </Form.Group>
@@ -273,6 +283,23 @@ const EmployeeRegister = () => {
                       animated
                       label={getLabel()}
                     />
+                    <div style={{ fontSize: "13px", marginTop: "4px" }}>
+                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                        • At least one uppercase
+                      </span>
+                      <br />
+                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                        • At least one number
+                      </span>
+                      <br />
+                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                        • Minimum 8 characters
+                      </span>
+                      <br />
+                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                        • At least one special character
+                      </span>
+                    </div>
                   </div>
                 )}
               </Form.Group>
@@ -323,7 +350,7 @@ const EmployeeRegister = () => {
                   style={{
                     width: "18px",
                     height: "18px",
-                   
+                    marginTop:"-5px",
                     cursor: "pointer",
                     marginRight: "10px",
                     accentColor: "#19bde8", // 🔵 Makes tick color BLUE
@@ -332,17 +359,15 @@ const EmployeeRegister = () => {
 
                 <label htmlFor="termsCheck" style={{ margin: 0 }}>
                   I agree to all the{" "}
-                  <span style={{ color: "#19bde8", cursor: "pointer" }}>
+                  <span style={{ color: "#197ae8ff", cursor: "pointer",fontWeight:"600" }}>
                     Terms
                   </span>{" "}
                   &{" "}
-                  <span style={{ color: "#19bde8", cursor: "pointer" }}>
+                  <span style={{ color: "#197ae8ff", cursor: "pointer",fontWeight:"600" }}>
                     Conditions
                   </span>
                 </label>
               </Form.Group>
-
-              
 
               <Button variant="primary" type="submit" className="register-btn">
                 Sign Up

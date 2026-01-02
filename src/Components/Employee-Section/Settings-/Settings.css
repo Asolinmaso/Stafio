@@ -125,6 +125,10 @@
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
+label.switch{
+  margin-top:10px !important;
+}
+
 /* NEW css part  for check box inside the input*/
 .theme-input-box {
   display: flex;
@@ -135,7 +139,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   background-color:#f7f8f8;
-  width: 315px; /* adjust if needed */
+  width: 340px; /* adjust if needed */
 }
 
 .theme-text {
@@ -169,6 +173,7 @@
   background-color: #d1d5db;
   transition: 0.3s;
   border-radius: 34px;
+  
 }
 
 .slider:before {
@@ -200,8 +205,9 @@ input:checked + .slider:before {
 }
 
 .form-row label{
+  margin-bottom:10px !important;
   display: flex;
-  gap: 30px;          /* space between left and right columns */
+  gap: 100px !important;          /* space between left and right columns */
   flex-wrap: wrap;    /* wrap on small screens */
   font-size: 17px !important;    /* modified */
 }

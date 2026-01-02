@@ -36,6 +36,7 @@ body {
   position: relative;
   text-align: left;
   align-self: flex-start;
+  height:300px;
 }
 
 .login-logos {
@@ -50,8 +51,9 @@ body {
 
 .teampluss-logo {
   height: 40% !important;
-  margin-right:190px;
+  margin-left:20px;
   margin-bottom:0px !important;
+ 
 }
 
 .stafio-logo {
@@ -180,14 +182,12 @@ body {
 }
 
 .forgot-password-link {
-  font-size: 14px;
+  font-size: 16px;
   color: #000;
   text-decoration: none;
 }
 
-.forgot-password-link:hover {
-  text-decoration: underline;
-}
+
 
 
 .google-login-custom {

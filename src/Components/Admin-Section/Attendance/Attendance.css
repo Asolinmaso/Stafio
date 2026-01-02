@@ -7,7 +7,7 @@
 
 /* Make sure fixed image always stays visible and ignores padding */
 .rightside-logo {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
   z-index: 0; /* Ensure it stays above all content */
@@ -42,6 +42,7 @@
 }
 
 .attendance-header h2 {
+ 
   font-size: 30px;
   font-weight: 600;
   color: #222;
@@ -53,15 +54,15 @@
   gap: 20px;
 }
 
-.filter-btn {
+.select-filter{
   display: flex;
   align-items: center;
   gap: 8px;
   background: transparent;
-  border: 1px solid #ddd;
+  border:1px solid #a8a8a8ff;
   color: #666;
   font-weight: 500;
-  padding: 10px 16px;
+  padding: 8px 10px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
@@ -73,7 +74,7 @@
   color: #19bde8;
 }
 
-.sort-dropdown {
+select.sort-dropdown {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -82,7 +83,8 @@
   cursor: pointer;
   border:1px solid #a8a8a8ff;
   border-radius:10px;
-  padding:6px 10px;
+  padding:10px 10px;
+  background:transparent;
 }
 
 /* ===== Section Header ===== */

@@ -1,6 +1,4 @@
-
 /* ====================== PROFILE HEADER SECTION ====================== */
-
 .profile-header-card {
   border-radius: 14px;
   box-shadow: none;
@@ -41,7 +39,7 @@
   background: transparent;
   padding: 0;
   margin: 0;
-  height: 15px;     /* height: 52px; */
+  height: 52px;
   gap: 0;
   flex-wrap: nowrap;
   width: 100%;
@@ -54,40 +52,38 @@
 }
 
 .profile-tabs .nav-link {
-  padding: 0 20px;        /* modified padding: 0 15px;  */
-  /* height: 5px; */      
-  bottom: 40px;           /* new css line bottom: 22px; */
+  padding: 0 15px;
+  height: 48px;
   margin-bottom: 0;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
-  color: #6A7181;           /* modified color: #777c82; */
+  color: #777c82;
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-  font-size: 14px;          /* modified font-size:  15px;  */
-  font-weight: 500;   /*modified */
+  font-size: 14px;
+  font-weight: 500;
   transition: color 0.22s;
   position: relative;
   outline: none;
-  width: 110%;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content:space-around !important;     /* modified justify-content:center; */
+  justify-content: center;
   text-decoration: none; /* Remove default underline */
 }
 
 /* Active tab with text underline only */
 .profile-tabs .nav-link.active {
   color: #12baf5 !important;
-  font-weight: 500;     /*modified */
+  font-weight: 700;
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
   z-index: 2;
   text-decoration: underline !important;
   text-decoration-color: #12baf5 !important;
-  text-decoration-thickness: 1.5px !important;     /*modified text-decoration-thickness:3px !important; */
-  text-underline-offset: 3px !important;         /*  modified text-underline-offset: 7px !important;*/
-  
+  text-decoration-thickness: 3px !important;
+  text-underline-offset: 8px !important;
 }
 
 /* Override Bootstrap's default active state */
@@ -95,7 +91,6 @@
 .profile-tabs .nav-tabs .nav-link.active {
   background-color: transparent !important;
   border: none !important;
-  
 }
 
 .profile-tabs-card {
@@ -130,12 +125,10 @@
 /* --- Header box with shadow/border, blue underline, white bg --- */
 .update-info-header-box {
   background: #fff;
-  border-radius: 8px;    /* modified border-radius: 14px; */
+  border-radius: 14px;
   border: 1.3px solid #e5eaf1;
   box-shadow: 0 6px 20px rgba(20,66,110,0.11);
-  margin: 0 0 28px 0;
-  /* new */
-  width: 97%;
+  margin: 0 0 32px 0;
 }
 
 .tab-section-title.personal-info {
@@ -143,9 +136,9 @@
   font-size: 14px;
   color: #223042;
   background: transparent;
-  border-radius: 12px 12px 0 0; 
+  border-radius: 12px 12px 0 0;
   box-shadow: none;
-   padding: 14px 32px 12px 34px;   /* modified padding: 23px 32px 23px 34px; */
+  padding: 23px 32px 23px 34px;
   min-height: 60px;
   position: relative;
   display: flex;
@@ -181,8 +174,6 @@
   padding: 0 38px 6px 38px !important;
   box-shadow: none !important;
   border: none !important;
-  /* new */
-  margin: 2px;
 }
 
 /* --- Option boxes for Gender/Marital --- */
@@ -194,18 +185,16 @@
   padding: 13px 21px 13px 18px;
   display: flex;
   align-items: center;
-  margin-top: -2px;
-  margin-bottom: -4px;   /* modified  */
-  width: 90%;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .form-label {
-  font-size: 15.5px !important; /* font-size: 13.5px !important;     */
-  font-weight: 500 !important;
-  color: #000000 !important;  /* modified color: !important;     */
-  margin-bottom: -2px !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  color: #2d2d2d !important;
+  margin-bottom: 10px !important;
   letter-spacing: 0;
-  
 }
 
 /* --- Input updates: uniform, taller, inner shadow, rounded corners --- */
@@ -213,27 +202,19 @@
 .form-control,
 .form-select {
   background: #F8F8F8 !important;
-  border: solid #e5eaf1 !important;
+  border: 1.4px solid #e5eaf1 !important;
   border-radius: 12px !important;
-  font-size: 1.0rem !important;
-  padding: 10px 20px 10px 10px !important;
+  font-size: 1.07rem !important;
+  padding: 15px 21px !important;
   color: #223042 !important;
-  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  height: 50px !important;
+  box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045);
+  min-height: 52px !important;
   transition: border-color 0.2s;
-  /* new */
-  width: 90%;
-  margin-bottom: 3px; /* margin-bottom: -22px; *//* modified  */
-    appearance: auto;
-  -webkit-appearance: auto;
-  -moz-appearance: auto;
 }
-
 .form-input:focus, .form-control:focus, .form-select:focus {
   border-color: #12baf5 !important;
   box-shadow: 0 0 0 3px #19bde91f !important;
 }
-
 
 /* --- Date calendar icon --- */
 .input-icon-wrap {
@@ -242,7 +223,7 @@
 }
 .input-calendar-icon {
   position: absolute;
-  right: 60px;      /* right: 23px; */
+  right: 23px;
   top: 50%;
   transform: translateY(-50%);
   color: #14baf6;
@@ -260,24 +241,22 @@
   margin-right: 8px;
   width: 18px;
   height: 18px;
-  border: 1.3px solid ;
 }
 .d-flex.gap-4.align-items-center {
-  gap: 2px !important;    /* modified gap: 32px !important; */
-  
+  gap: 32px !important;
 }
 
 .btn-save {
   background: #12baf5 !important;
   color: #fff !important;
-  border: none !important;
-  border-radius: 3px !important;
-  font-weight: 500;
-  font-size: 16px;
-  min-width: 95px;
-  min-height: 36px;
-  /* margin-left: 8px; */
-  box-shadow: 0 2px 9px 0 rgba(25,189,232,0.12); 
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 16.1px;
+  min-width: 114px;
+  min-height: 45px;
+  margin-left: 8px;
+  box-shadow: 0 2px 9px 0 rgba(25,189,232,0.12);
   transition: background 0.13s;
 }
 .btn-save:hover {
@@ -286,13 +265,12 @@
 .btn-cancel {
   background: #12baf5 !important;
   color: #ffffff !important;
-  border: 1px solid #12baf5 !important;
-  border-radius: 3px;
-  font-weight: 500;
+  border: 1.7px solid #12baf5 !important;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 16px;
-  min-width: 95px;
-  min-height: 36px;
-  /* margin-left: 8px; */
+  min-width: 114px;
+  min-height: 45px;
   box-shadow: 0 2px 8px 0 rgba(25,189,232,0.08);
   transition: background 0.13s, color 0.13s, border 0.17s;
 }
@@ -304,44 +282,15 @@
 .btn-edit {
   background: #12baf5 !important;
   color: #fff !important;
-  border-radius: 3px;
+  border-radius: 8px;
   border: none;
-  font-weight: 500;
+  font-weight: 600;
   min-width: 95px;
   min-height: 36px;
   box-shadow: 0 2px 7px rgba(25,189,232, 0.09);
   font-size: 15px;
   padding: 7px 18px;
 }
-
-/* validation for personal info tab*/
-.input-error {
-  border: 2px solid rgb(228, 228, 228) !important;
-  background-color: #fff5f5;
-  margin-bottom: 0.2px;
-}
-
-.error-text {
-  color: #dc3545;
-  font-size: 12px;
-  /* margin-bottom: 2px; */ 
-  padding-top: 4px;
-}
-
-.input-error1 {                  /*new*/
-  border: 2px solid rgb(228, 228, 228)  !important;
-  background-color: #fff5f5;
-  margin-bottom: 2px !important;   /* modified */
-}
-
-.error-text1 {               /*new*/
-  color: #dc3545;
-  font-size: 14px;
-  /* margin-bottom: 2px; */ 
-  padding-top: 2px;
-  margin-top: -5px;
-}
-
 
 @media (max-width: 900px) {
   .update-info-header-box { margin: 0; }
@@ -353,9 +302,8 @@
 .profile-tab-section.education {
   background: #f6fbfe;
   border-radius: 10px;
-  padding: 12px 22px;
+  padding: 28px 26px;
   margin-top: 12px;
-  
 }
 .tab-section-title.education {
   font-weight: 600;
@@ -370,123 +318,20 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
-.edform-input{       /* new css class for education form inputs */
-   background: #F8F8F8 !important;
-  border: solid #e5eaf1 !important;
-  border-radius: 12px !important;
-  font-size: 1.0rem !important;
-  padding: 10px 20px 10px 10px !important;
-  color: #223042 !important;
-  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  /* height: 12% !important; */
-  transition: border-color 0.2s;
-  width: 90%;
-  margin-bottom: 18px ;  /* margin-bottom: 4px; */  /* modified  */
-  /* new */
-  appearance: auto;
-  -webkit-appearance: auto;
-  -moz-appearance: auto
-}
-
-
-    /* --- Date calendar icon --- */
-    
-.calendar-input-wrap {        /* new css part */  
-  position: relative;
-  width: 100%;
-  cursor: pointer;
-}
-
-.calendar-icon {              /* new css part */
-  position: absolute;
-  right: 70px;      /* right: 23px; */
-  top: 49%;
-  transform: translateY(-50%);
-  color: #14baf6;
-  font-size: 1.23rem;
-  pointer-events: none;
-  z-index: 3;
-  
-  
-}
-
-.calendar-input-wrap input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;                /* new css part */
-}
-
-
-/* Skills for education add update delete */  /* new */
-
-.skill-input-wrap {
-  display: flex;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.skill-input {
-  flex: 1;
-  height: 42px;
-}
-
-.skill-add-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
-  border: 1px solid #cae7f0;
-  background: #ffffff;
-  font-size: 22px;
-  cursor: pointer;
-}
-
-.skill-add-btn:hover {
-  background: #f1faff;
-}
-
-/* Pills */
-.skills-pill-wrap {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.skill-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #F8F8F8;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-weight: 400;
-  color: #000;
-  border: 1px solid #cae7f0;
-  font-size: 0.95rem;
-}
-
-.skill-remove {
-  cursor: pointer;
-  font-size: 16px;
-  color: #777;
-}
-
-.skill-remove:hover {
-  color: #ff4d4f;
-}
-
 
 /* ====================== PREVIOUS EXPERIENCE TAB SECTION ====================== */
 .profile-tab-section.experience {
   background: #f6fbfe;
   border-radius: 10px;
-  padding: 26px 26px;
+  padding: 28px 26px;
   margin-top: 12px;
 }
 .tab-section-title.experience {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.05rem;
   margin-bottom: 22px;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 7px 18px;
   width: fit-content;
   color: #223042;
@@ -494,61 +339,6 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
- /* .pexform-input{
-  background: #F8F8F8 !important;
-  border: solid #e5eaf1 !important;
-  border-radius: 12px !important;
-  font-size: 1.0rem !important;
-  padding: 10px 20px 10px 10px !important;
-  color: #223042 !important;
-  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  /* height: 10% !important; */
-   /* transition: border-color 0.2s;
-  width: 80%;  */
-  /* margin: -8px; */
-/* }
-.pexform-input1{
-  width: 59%;
-  
-
-}
-.pexform-input2{
-  width: 80%;
-  margin-right: 20px;
- 
-}  */ 
-
- .pexform-input{
-  background: #F8F8F8 !important;
-  border: solid #e5eaf1 !important;
-  border-radius: 12px !important;
-  font-size: 1.0rem !important;
-  padding: 10px 20px 10px 10px !important;
-  color: #223042 !important;
-  /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  height: 50px !important;
-  transition: border-color 0.2s;
-  width: 90%;
-  margin-bottom: 5px;
-  /* margin-top: 5px; */
-
-  
-}
-
-.pexform-input1{
-   resize: vertical;
-   height: 65px ;
-   margin-bottom: 5px;     /*new*/
-    
-}
-
-.pexform-input2 {
-   resize: vertical;
-   height: 80px !important;
-   /* top: 10px; */
-   
-  
-}
 /* ====================== BANK DETAILS TAB SECTION ====================== */
 .profile-tab-section.bank-details {
   background: #f6fbfe;
@@ -608,7 +398,6 @@ input[type="radio"] {
   margin-right: 32px;
 }
 
-
 /* ====================== INPUTS & BUTTONS ====================== */
 .form-control,
 .form-select {
@@ -629,7 +418,7 @@ input[type="radio"] {
 }
 
 /* ====================== SKILL PILLS ====================== */
-/* .skills-pill-wrap {
+.skills-pill-wrap {
   display: flex;
   gap: 7px;
   flex-wrap: wrap;
@@ -644,7 +433,7 @@ input[type="radio"] {
   color: #000000;
   border: 1px solid #cae7f0;
   font-size: 0.98rem;
-} */
+}
 
 /* ====================== DOCUMENTS/UPLOAD BOX ====================== */
 .doc-item {
@@ -669,19 +458,13 @@ input[type="radio"] {
   font-size: 1rem;
 }
 .upload-box {
-  border-style: dashed;
-  border-color: rgb(209, 204, 204);
+  border: 2px dashed #bfeafd;
   background: #f7fafd;
-  border-radius: 25px;
+  border-radius: 11px;
   padding: 33px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* new */
-  height: 300px ;
-  margin-right: 250px;
-  width: 320px;
-   
 }
 .upload-cloud-icon {
   font-size: 2.5rem;

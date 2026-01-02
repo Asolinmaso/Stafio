@@ -29,14 +29,31 @@ import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
 
 const Dashboard = () => {
-  const [adminusername, setAdminusername] = useState("");
-  const attendanceData = [
-    { month: "Jan", value: 95 },
-    { month: "Feb", value: 90 },
-    { month: "Mar", value: 86, highlight: true },
-    { month: "Apr", value: 92 },
-    { month: "May", value: 88 },
-  ];
+  const [username, setUsername] = useState("");
+  const [role ,setRole] = useState("");
+ const attendanceDataSets = {
+  months: [
+    { label: "Jan", value: 95 },
+    { label: "Feb", value: 90 },
+    { label: "Mar", value: 86 },
+    { label: "Apr", value: 92 },
+    { label: "May", value: 88 },
+  ],
+  weeks: [
+    { label: "W1", value: 85 },
+    { label: "W2", value: 88 },
+    { label: "W3", value: 90 },
+    { label: "W4", value: 92 },
+  ],
+  days: [
+    { label: "Mon", value: 90 },
+    { label: "Tue", value: 85 },
+    { label: "Wed", value: 88 },
+    { label: "Thu", value: 92 },
+    { label: "Fri", value: 95 },
+  ],
+};
+
 
   // ✅ Punch In/Out
   const [isPunchedIn, setIsPunchedIn] = useState(false);
@@ -167,10 +184,12 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const storedAdminusername = localStorage.getItem("admin_username"); // or "AdminUsername"
-    if (storedAdminusername) {
-      setAdminusername(storedAdminusername);
-    }
+    // Read values from sessionStorage
+    const storedUsername = sessionStorage.getItem("current_username");
+    const storedRole = sessionStorage.getItem("current_role");
+
+    setUsername(storedUsername);
+    setRole(storedRole);
   }, []);
 
   const [adminDashboardData, setAdminDashboardData] = useState({
@@ -199,12 +218,49 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const MEETING_START_HOUR = 9;
+  const MEETING_START_MIN = 0;
+  const MEETING_DURATION = 10; // minutes
+
+  const meetingLink = "https://meet.google.com/shm-kuvn-xqb";
+
+  const getMeetingMinutesLeft = () => {
+    const now = new Date();
+
+    const meetingStart = new Date();
+    meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+
+    const meetingEnd = new Date(meetingStart);
+    meetingEnd.setMinutes(meetingStart.getMinutes() + MEETING_DURATION);
+
+    if (now < meetingStart) {
+      return MEETING_DURATION;
+    }
+
+    if (now > meetingEnd) {
+      return 0;
+    }
+
+    const diffMs = meetingEnd - now;
+    return Math.ceil(diffMs / 60000);
+  };
+
+  const [meetingMinutesLeft, setMeetingMinutesLeft] = useState(
+    getMeetingMinutesLeft()
+  );
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMeetingMinutesLeft(getMeetingMinutesLeft());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="dashboard-wrapper d-flex">
       <div className="rightside-logo ">
-              <img src={group10} alt="logo"
-              className="rightside-logos" />
-            </div>
+        <img src={group10} alt="logo" className="rightside-logos" />
+      </div>
       <div className="sidebar">
         <AdminSidebar />
       </div>
@@ -214,7 +270,7 @@ const Dashboard = () => {
           {/* Welcome Section */}
           <Row className="mb-4 align-items-center">
             <div className="username">
-              <h1>Welcome, {adminusername || "User"}!</h1>
+              <h1>Welcome, {username || "User"}!</h1>
             </div>
           </Row>
 
@@ -234,16 +290,33 @@ const Dashboard = () => {
                         <h2>
                           {currentTime} , {currentDate}
                         </h2>
-                        <div className="meeting-box">
+                        <a
+                          href={meetingLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="meeting-box"
+                          style={{
+                            cursor: "pointer",
+                            textDecoration: "none",
+                            color: "inherit",
+                          }}
+                        >
                           <div className="meeting-info">
                             <h4>Standup Meeting</h4>
-                            <p>02 Min Left</p>
+                            <p>
+                              {meetingMinutesLeft > 0
+                                ? `${meetingMinutesLeft} Min Left`
+                                : "Meeting Ended"}
+                            </p>
                           </div>
-                          <div className="meeting-time">07</div>
+
+                          <div className="meeting-time">Join</div>
+
                           <div className="chevron-box">
                             <FaChevronRight />
                           </div>
-                        </div>
+                        </a>
+
                         <button className="btn-punch" onClick={handlePunchIn}>
                           Ckeck In
                         </button>
@@ -287,11 +360,9 @@ const Dashboard = () => {
                         {/* ⚠️ Break time alert popup */}
                         {showAlert && (
                           <div style={alertStyle}>
+                            <span>⚠️</span>
                             <span>
-                              ⚠️
-                            </span>
-                            <span>
-                               Your break time of 15 minutes has ended. Please
+                              Your break time of 15 minutes has ended. Please
                               resume work.
                             </span>
                             <button
@@ -375,7 +446,7 @@ const Dashboard = () => {
                 <Col md={4} className="mb-3">
                   <Card
                     className="summary-card"
-                    onClick={() => navigate("/who-is-on-leave")}
+                    onClick={() => navigate("/leave-approval")}
                     style={{ cursor: "pointer" }}
                   >
                     <div className="summary-top">
@@ -419,7 +490,10 @@ const Dashboard = () => {
 
                 {/* Pending Approval */}
                 <Col md={4} className="mb-3">
-                  <Card className="summary-card">
+                  <Card className="summary-card"
+                  onClick={() => navigate("/leave-approval")}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="summary-top">
                       <h2>{adminDashboardData.Pending_Approval}</h2>
                       <div className="summary-icons">
@@ -457,7 +531,7 @@ const Dashboard = () => {
               </Row>
             </Col>
             <Col md={4}>
-              <AttendanceCard attendanceData={attendanceData} />
+             <AttendanceCard dataSets={attendanceDataSets} />
             </Col>
           </Row>
 
@@ -490,7 +564,7 @@ const alertStyle = {
   alignItems: "center",
   gap: "10px",
   zIndex: 9999,
-  width:"30%",
+  width: "30%",
 };
 
 const closeBtnStyle = {

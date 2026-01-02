@@ -1,57 +1,56 @@
-import React from "react";
+import React,{ useState, useEffect } from "react";
 import "./RAMyTeam.css";
 import { FaFilter } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
+import axios from "axios";
 
 
 export default function RegularizationApproval() {
-  const data = [
-    {
-      id: 1,
-      name: "Sakshi",
-      empId: "100849",
-      regDate: "11-07-2025/1st Half",
-      attendance: "Present",
-      requestDate: "11-07-2025",
-      status: "Pending",
-      img: "https://randomuser.me/api/portraits/women/13.jpg",
-    },
-    {
-      id: 2,
-      name: "Asolin",
-      empId: "100849",
-      regDate: "11-07-2025/1st Half",
-      attendance: "Present",
-      requestDate: "11-07-2025",
-      status: "Approved",
-      img: "https://randomuser.me/api/portraits/women/12.jpg",
-    },
-    {
-      id: 3,
-      name: "Sakshi",
-      empId: "100849",
-      regDate: "11-07-2025/1st Half",
-      attendance: "Present",
-      requestDate: "11-07-2025",
-      status: "Approved",
-      img: "https://randomuser.me/api/portraits/women/13.jpg",
-    },
-    {
-      id: 4,
-      name: "Asolin",
-      empId: "100849",
-      regDate: "11-07-2025/Full Day",
-      attendance: "Present",
-      requestDate: "11-07-2025",
-      status: "Approved",
-      img: "https://randomuser.me/api/portraits/women/12.jpg",
-    },
-  ];
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
+  const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  
+
+  useEffect(() => {
+    const fetchMyTeamRA = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:5001/api/myteamra");
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching attendance data:", error);
+      }
+    };
+
+    fetchMyTeamRA();
+  }, []);
 
   const navigate = useNavigate();
+const filteredAndSortedLeaves = data
+  // SEARCH by employee name
+  .filter((leave) =>
+    leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  // FILTER by status
+  .filter((leave) =>
+    filterStatus === "All" ? true : leave.status === filterStatus
+  )
+
+  // SORT by request date
+  .sort((a, b) => {
+    const dateA = new Date(a.requestDate);
+    const dateB = new Date(b.requestDate);
+
+    return sortOrder === "Newest"
+      ? dateB - dateA
+      : dateA - dateB;
+  });
+
+
 
   return (
     <div className="regularization-page">
@@ -80,17 +79,30 @@ export default function RegularizationApproval() {
               {/* Right side search/filter/sort */}
               <div className="right-controls">
                 <input
-                  type="text"
-                  placeholder="🔍 Search..."
-                  className="search-input"
-                />
-                <button className="right-btn-filter">
-                  <FaFilter /> Filter
-                </button>
-                <select className="sort-select">
-                  <option>Sort By : Newest</option>
-                  <option>Sort By : Oldest</option>
-                </select>
+                type="text"
+                placeholder="🔍 Search..."
+                className="right-search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+                <select
+                className="right-butn-filter"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+                 <select
+                className="right-sort-select"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option value="Newest">Sort By : Newest</option>
+                <option value="Oldest">Sort By : Oldest</option>
+              </select>
               </div>
             </div>
           </div>
@@ -107,7 +119,7 @@ export default function RegularizationApproval() {
                 </tr>
               </thead>
               <tbody>
-                {data.map((emp) => (
+                {filteredAndSortedLeaves.map((emp) => (
                   <tr key={emp.id}>
                     <td>
                       <div className="emp-info">

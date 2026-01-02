@@ -20,7 +20,6 @@ const ProfileBanner = ({ profileData }) => {
 
   return (
     <div className="profile-banner-wrapper">
-      <div className="my-profile-title"><h1>My Profile</h1>{/* added new my profile title */}</div>
       <div className="profile-banner-container">
         {/* Top Gradient Banner */}
         <div className="profile-banner-top">
@@ -50,25 +49,25 @@ const ProfileBanner = ({ profileData }) => {
             {/* Left Section */}
             <div className="profile-left">
               <div className="profile-name-line">
-                <span className="profile-name">S.Santhana Lakshmi</span>
-                <span className="profile-id">(ID 1234567)</span>
+                <span className="profile-name">{name || 'Name not set'}</span>
+                <span className="profile-id">(ID {empId || 'Not assigned'})</span>
               </div>
-              <div className="profile-role">HR Manager Head</div>
-              <div className="profile-location">Chennai</div>
+              <div className="profile-role">{empType || 'Position not set'}</div>
+              <div className="profile-location">{location || 'Location not set'}</div>
             </div>
 
             {/* Center Section */}
             <div className="profile-center">
-              <div>Employment Type : Full Time</div>
-              <div>Primary Supervisor : Catherine</div>
-              <div>HR Manager : S.Santhana Lakshmi</div>
+              <div>Employment Type : {empType || 'Not specified'}</div>
+              <div>Primary Supervisor : {supervisor || 'Not assigned'}</div>
+              <div>HR Manager : {hrManager || 'Not assigned'}</div>
             </div>
 
             {/* Right Section */}
             <div className="profile-right">
-              <div>Department : All</div>
-              <div>Email Id : lakshmi@gmail.com</div>
-              <div>Contact : 9895195971</div>
+              <div>Department : {department || 'Not assigned'}</div>
+              <div>Email Id : {email || 'Email not set'}</div>
+              <div>Contact : {phone || 'Phone not set'}</div>
             </div>
           </div>
         </div>

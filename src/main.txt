@@ -14,3 +14,39 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+
+/// for testing in the dashboard timer
+
+1.   At the top of your Dashboard.jsx, add:
+
+const TEST_MODE = true; // 🔁 change to false after testing
+
+const getNow = () => {
+  if (TEST_MODE) {
+    const mockTime = new Date();
+    mockTime.setHours(9, 0, 0, 0); // ⏰ Force 9:00 AM
+    return mockTime;
+  }
+  return new Date();
+};
+
+
+
+2.   Replace:
+
+const now = new Date();
+
+With:
+
+const now = getNow();
+
+
+
+3.    If you have something like:
+
+const now = new Date();
+
+Change it to:
+
+const now = getNow();
