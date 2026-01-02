@@ -6,7 +6,7 @@ import {
   Container,
   Row,
   Col,
-  ProgressBar,
+  // ProgressBar,
   InputGroup,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -33,24 +33,44 @@ const AdminRegister = () => {
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [strength, setStrength] = useState(0);
+  // const [strength, setStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  //new
+ const [agree, setAgree] = useState(false);
+ const [passwordRules, setPasswordRules] = useState({
+  uppercase: false,
+  number: false,
+  length: false,
+  special: false,
+});
+
+
+// regex validation for name,email and ph.number
+
+const nameRegex = /^[A-Za-z\s]{3,50}$/;
+const phoneRegex = /^[6-9]\d{9}$/; // Indian 10-digit mobile
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+googleRegister 
+
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const evaluatePasswordStrength = (value) => {
-    let score = 0;
-    if (/[A-Z]/.test(value)) score += 1;
-    if (/\d/.test(value)) score += 1;
-    if (value.length >= 8) score += 1;
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) score += 1;
-    return score;
-  };
+const validatePasswordRules = (password) => {
+  setPasswordRules({
+    uppercase: /[A-Z]/.test(password),
+    number: /\d/.test(password),
+    length: password.length >= 8,
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  });
+};
+
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -59,15 +79,49 @@ const AdminRegister = () => {
   setError("");
   setMessage("");
 
-  if (!formData.username || !formData.email) {
-    setError("Username and email are required.");
+  if (                               //new
+  !passwordRules.uppercase ||
+  !passwordRules.number ||
+  !passwordRules.length ||
+  !passwordRules.special
+) {
+  setError("Password does not meet all requirements.");
+  return;
+}
+
+
+   if (!formData.username.trim()) {
+    setError("Name is required.");
     return;
   }
+   if (!nameRegex.test(formData.username)) {
+    setError("Name should contain only letters and spaces (min 3 characters).");
+    return;
+  }
+
+  // if (!formData.username || !formData.email) {
+  //   setError("Username and email are required.");
+  //   return;
+  // }
 
   if (!formData.phone) {
     setError("Phone number required.");
     return;
   }
+    if (!phoneRegex.test(formData.phone)) {
+    setError("Enter a valid 10-digit mobile number.");
+    return;
+  }
+
+  if (!formData.email) {
+    setError("Email is required.");
+    return;
+  }
+    if (!emailRegex.test(formData.email)) {
+    setError("Enter a valid email address.");
+    return;
+  }
+
 
   if (formData.password !== formData.confirmPassword) {
     setError("Passwords do not match.");
@@ -76,19 +130,22 @@ const AdminRegister = () => {
 
   try {
     setIsSubmitting(true);
-
+    setError("");
     // ⭐ NORMAL REGISTRATION 
     const res = await apiClient.post("/register", {
-      username: formData.username,
-      email: formData.email,
+      username: formData.username.trim(),
+      email: formData.email.trim(),
       phone: formData.phone,
       password: formData.password,
       role: "admin",
     });
 
+    if (res.status === 200 || res.status === 201) {
     setMessage(res.data?.message || "Registration successful!");
+    setError("");
 
     // Reset form
+
     setFormData({
       username: "",
       phone: "",
@@ -99,11 +156,31 @@ const AdminRegister = () => {
     });
     setStrength(0);
 
+    setPasswordRules({
+      uppercase: false,
+      number: false,
+      length: false,
+      special: false,
+    });
+    return; //  !!stop execution here
+  }
+
+  setError("Registration failed.");
+
   } catch (err) {
-    const apiMessage =
-      err.response?.data?.message || "Registration failed.";
-    setError(apiMessage);
-    console.error("AdminRegister error:", err.response || err);
+     console.error("Register error:", err);
+    // const apiMessage =
+     // !! Only show error if backend REALLY failed
+
+  if (err.response) {
+    setError(err.response.data?.message || "Registration failed.");
+  } else {
+    // Network / redirect / google auth
+    setError("");
+  }
+
+    // setError(apiMessage);
+    // console.error("AdminRegister error:", err.response || err);
   } finally {
     setIsSubmitting(false);
   }
@@ -113,7 +190,7 @@ const AdminRegister = () => {
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, password: value });
-    setStrength(evaluatePasswordStrength(value));
+    validatePasswordRules(value);
   };
 
   const handleConfirmPasswordChange = (e) => {
@@ -122,27 +199,29 @@ const AdminRegister = () => {
   };
 
   // Determine progress bar color and label
-  const getVariant = () => {
-    if (strength === 1) return "danger"; // Red
-    if (strength === 2) return "warning"; // Yellow
-    if (strength === 3) return "ok"; // orange
-    if (strength === 4) return "success"; // Green
-    return "secondary"; // Grey (empty)
-  };
+  // const getVariant = () => {
+  //   if (strength === 1) return "danger"; // Red
+  //   if (strength === 2) return "warning"; // Yellow
+  //   if (strength === 3) return "ok"; // orange
+  //   if (strength === 4) return "success"; // Green
+  //   return "secondary"; // Grey (empty)
+  // };
 
-  const getLabel = () => {
-    if (strength === 1) return "Weak";
-    if (strength === 2) return "Moderate";
-    if (strength === 3) return "Almost Strong";
-    if (strength === 4) return "Strong";
-    return "";
-  };
+  // const getLabel = () => {
+  //   if (strength === 1) return "Weak";
+  //   if (strength === 2) return "Moderate";
+  //   if (strength === 3) return "Almost Strong";
+  //   if (strength === 4) return "Strong";
+  //   return "";
+  // };
 
   // ---------------------------
   // ⭐ Google Register
   // ---------------------------
   const handleGoogleRegister = async (tokenResponse) => {
     try {
+        setError("");
+        setMessage("");
       // Get Google profile
       const userInfoRes = await fetch(
         "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -151,10 +230,14 @@ const AdminRegister = () => {
         }
       );
 
+       if (!userInfoRes.ok) {           //new
+      throw new Error("Failed to fetch Google profile");
+    }
+
       const profile = await userInfoRes.json();
 
-      const googleEmail = profile.email;
-      const googleName = profile.name;
+      // const googleEmail = profile.email;
+      // const googleName = profile.name;
 
       // Send to backend for registration
       const res = await apiClient.post("/admin_google_register", {
@@ -163,16 +246,34 @@ const AdminRegister = () => {
         role: "admin",
       });
 
+          // ✅ Accept success properly
+    if (res.status === 200 || res.status === 201) {
       setMessage(res.data?.message || "Google registration successful!");
       setError("");
-    } catch (err) {
-      setError("Google registration failed.");
+       return; // stop here
+    } 
+
+    //  fallback
+    setError("Google registration failed.");
+  }
+    catch (err) {
+      console.error("Google register error:", err);
+        
+      //  Show error ONLY if backend responded
+    if (err.response) {
+      setError(err.response.data?.message || "Google registration failed.");
+    } else {
+      setError(""); // silent fail (popup / redirect issues)
+    }
     }
   };
 
   const googleRegister = useGoogleLogin({
     onSuccess: handleGoogleRegister,
-    onError: () => setError("Google registration failed."),
+     onError: () => {
+    //  console.warn("Google auth cancelled or failed:", err);
+    setError(""); // do NOT show error here
+     },
   });
 
   return (
@@ -216,32 +317,42 @@ const AdminRegister = () => {
         >
           <div className="register-form-wrapper">
             <h5 className="mb-2">Just a Few Details to Begin</h5>
-            <h3 className="mb-4">Admin Sign Up</h3>
+            <h3 className="mb-4">Sign Up</h3>
 
             {message && <Alert variant="success">{message}</Alert>}
             {error && <Alert variant="danger">{error}</Alert>}
 
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
-                <Form.Label>Username</Form.Label>
+                <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="username"
-                  placeholder="Enter username"
+                  placeholder="Please enter your name"
                   value={formData.username}
-                  onChange={handleChange}
-                  required
+                  onChange={(e) => {           //new
+                  const value = e.target.value;
+                  if (/^[A-Za-z\s]*$/.test(value)) {
+                  handleChange(e);
+                  }
+                  }}
+                  // required
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Phone Nunber</Form.Label>
+                <Form.Label>Phone Number</Form.Label>
                 <Form.Control
                   type="tel"
                   name="phone"
                   placeholder="Please enter your phone number"
                   value={formData.phone}
-                  onChange={handleChange}
-                  required
+                  onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d{0,10}$/.test(value)) {
+                  handleChange(e);
+                  }
+                  }}
+                  // required
                 />
               </Form.Group>
               <Form.Group className="mb-3">
@@ -249,10 +360,10 @@ const AdminRegister = () => {
                 <Form.Control
                   type="email"
                   name="email"
-                  placeholder="Enter email"
+                  placeholder="Please enter your email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
+                  // required
                 />
               </Form.Group>
               <Form.Group className="mb-3">
@@ -292,29 +403,28 @@ const AdminRegister = () => {
 
                 {/* Progress bar */}
                 {formData.password && (
-                  <div style={{ marginTop: "8px" }}>
-                    <ProgressBar
+                  <div style={{ marginTop: "8px",fontSize: "12px",gap:"2px" }}>
+                    {/* <ProgressBar
                       now={(strength / 4) * 100}
                       variant={getVariant()}
                       animated
                       label={getLabel()}
-                    />
-                    <div style={{ fontSize: "13px", marginTop: "4px" }}>
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                    /> */}
+                    <div style={{ color: passwordRules.uppercase ? "green" : "red"}}>
+                      
                         • At least one uppercase
-                      </span>
+                    </div>
                       <br />
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                      <div style={{ color: passwordRules.number ? "green" : "red" }}>
                         • At least one number
-                      </span>
+                      </div>
                       <br />
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                      <div style={{ color: passwordRules.length ? "green" : "red" }}>
                         • Minimum 8 characters
-                      </span>
+                      </div>
                       <br />
-                      <span style={{ color: strength >= 4 ? "green" : "red" }}>
+                      <div style={{ color: passwordRules.special ? "green" : "red" }}>
                         • At least one special character
-                      </span>
                     </div>
                   </div>
                 )}
@@ -327,7 +437,7 @@ const AdminRegister = () => {
                     <Form.Control
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
-                      placeholder="Confirm password"
+                      placeholder="Enter confirm password"
                       value={formData.confirmPassword}
                       onChange={handleConfirmPasswordChange}
                       required
@@ -355,22 +465,45 @@ const AdminRegister = () => {
                   </div>
                 </InputGroup>
               </Form.Group>
-             
-              <Button variant="primary" type="submit" className="register-btn">
+
+      <>
+        <div className="terms-container">
+         <input
+           type="checkbox"
+           id="terms"
+           className="terms-checkbox"
+           checked={agree}
+           onChange={(e) => setAgree(e.target.checked)}
+         />
+         <label htmlFor="terms" className="terms-label">
+            I agree to all the{" "}
+            <span className="terms-link">Terms & Conditions</span>
+         </label>
+        </div>
+
+              <Button variant="primary" type="submit" className="register-btn" disabled={!agree}>
                  Sign Up
               </Button>
+      </>
               
               {/* -------- Google Register Button -------- */}
               <div className="text-center my-3">
                 <button
                   type="button"
-                  onClick={() => googleRegister()}
+                  // onClick={() => googleRegister()}
                   className="google-btn"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    setError("");
+                    setMessage("");
+                    googleRegister();
+                    }}
                 >
                   <img
                     src={gicon}
                     alt="Google"
-                    style={{ width: "20px", marginRight: "10px" }}
+                    // style={{ width: "20px", marginRight: "10px" }}
+                    className="google-icon"
                   />
                   <span style={{ color: "#19bde9", fontWeight: 600, fontSize:18 }}>
                     Continue with Google

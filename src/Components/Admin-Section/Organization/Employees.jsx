@@ -129,15 +129,7 @@ const Detail = ({ label, value }) => (
         </div>
       </div>
 
-        {selectedEmployee && (
-         <EmployeeProfileModal
-           employee={selectedEmployee}
-           isHRAdmin={isHRAdmin}
-           onClose={() => setSelectedEmployee(null)}
-         />
-         )}
-
-
+      
     </div>
   );
 };
@@ -518,6 +510,15 @@ const Employee = () => {
           </div>
         )}
       </div>
+      
+      {selectedEmployee && (
+         <EmployeeProfileModal
+           employee={selectedEmployee}
+           isHRAdmin={isHRAdmin}
+           onClose={() => setSelectedEmployee(null)}
+         />
+         )}
+
     </div>
   );
 };

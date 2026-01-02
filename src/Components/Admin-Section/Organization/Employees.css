@@ -267,6 +267,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding-left: 220px;
 }
 
 .profile-modal {
@@ -296,9 +297,16 @@
   font-size: 13px;
 }
 
-.edit-btn, .close-btn {
+.edit-btn {
   border: none;
   background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.close-btn{
+  border: none;
+  background: #000;
   cursor: pointer;
   font-size: 16px;
 }
