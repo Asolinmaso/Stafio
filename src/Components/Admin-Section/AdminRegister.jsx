@@ -55,23 +55,25 @@ const nameRegex = /^[A-Za-z\s]{3,50}$/;
 const phoneRegex = /^[6-9]\d{9}$/; // Indian 10-digit mobile
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-googleRegister 
+// new 
+ 
+const allRulesPassed = Object.values(passwordRules).every(Boolean);
 
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+ 
 
-const validatePasswordRules = (password) => {
+if (name === "password") {
   setPasswordRules({
-    uppercase: /[A-Z]/.test(password),
-    number: /\d/.test(password),
+    uppercase: /[A-Z]/.test(value),
+    number: /\d/.test(value),
     length: password.length >= 8,
-    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(value),
   });
+ }
 };
-
-
   const handleSubmit = async (e) => {
   e.preventDefault();
   if (isSubmitting) return;
@@ -79,12 +81,7 @@ const validatePasswordRules = (password) => {
   setError("");
   setMessage("");
 
-  if (                               //new
-  !passwordRules.uppercase ||
-  !passwordRules.number ||
-  !passwordRules.length ||
-  !passwordRules.special
-) {
+ if (!Object.values(passwordRules).every(Boolean)) {    //new
   setError("Password does not meet all requirements.");
   return;
 }
@@ -139,11 +136,16 @@ const validatePasswordRules = (password) => {
       password: formData.password,
       role: "admin",
     });
+    console.log("SUCCESS MESSAGE:", res.data?.message);
 
     if (res.status === 200 || res.status === 201) {
     setMessage(res.data?.message || "Registration successful!");
     setError("");
 
+    setTimeout(() => {
+  // optional redirect
+  // navigate("/login");
+}, 1500);
     // Reset form
 
     setFormData({
@@ -154,7 +156,7 @@ const validatePasswordRules = (password) => {
       email: "",
       role: "admin",
     });
-    setStrength(0);
+  
 
     setPasswordRules({
       uppercase: false,
@@ -189,16 +191,24 @@ const validatePasswordRules = (password) => {
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, password: value });
-    validatePasswordRules(value);
-  };
+    setFormData(prev => ({ ...prev, 
+      password: value,
+  }));
+    setPasswordRules({
+    uppercase: /[A-Z]/.test(value),
+    number: /\d/.test(value),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+    length: value.length >= 8,
+  });
+};
 
   const handleConfirmPasswordChange = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, confirmPassword: value });
   };
 
-  // Determine progress bar color and label
+
+;  // Determine progress bar color and label
   // const getVariant = () => {
   //   if (strength === 1) return "danger"; // Red
   //   if (strength === 2) return "warning"; // Yellow
@@ -241,17 +251,25 @@ const validatePasswordRules = (password) => {
 
       // Send to backend for registration
       const res = await apiClient.post("/admin_google_register", {
-        email: googleEmail,
-        username: googleName,
+        email: profile.email,
+        username: profile.name,
         role: "admin",
       });
+
+      console.log("GOOGLE SUCCESS MESSAGE:", res.data?.message);
 
           // ✅ Accept success properly
     if (res.status === 200 || res.status === 201) {
       setMessage(res.data?.message || "Google registration successful!");
       setError("");
+
+      setTimeout(() => {
+      // navigate("/login");
+      }, 1500);
+
        return; // stop here
     } 
+    
 
     //  fallback
     setError("Google registration failed.");
@@ -401,31 +419,24 @@ const validatePasswordRules = (password) => {
                   </div>
                 </InputGroup>
 
-                {/* Progress bar */}
-                {formData.password && (
-                  <div style={{ marginTop: "8px",fontSize: "12px",gap:"2px" }}>
-                    {/* <ProgressBar
-                      now={(strength / 4) * 100}
-                      variant={getVariant()}
-                      animated
-                      label={getLabel()}
-                    /> */}
-                    <div style={{ color: passwordRules.uppercase ? "green" : "red"}}>
-                      
-                        • At least one uppercase
-                    </div>
-                      <br />
-                      <div style={{ color: passwordRules.number ? "green" : "red" }}>
-                        • At least one number
-                      </div>
-                      <br />
-                      <div style={{ color: passwordRules.length ? "green" : "red" }}>
-                        • Minimum 8 characters
-                      </div>
-                      <br />
-                      <div style={{ color: passwordRules.special ? "green" : "red" }}>
-                        • At least one special character
-                    </div>
+                
+                {!allRulesPassed && formData.password && (
+                  <div className="password-rules" style={{ marginTop: "8px",fontSize: "12px",gap:"2px" }}>
+                    
+                    <ul>
+                       <li className={passwordRules.uppercase ? "valid" : "invalid"}>
+                          At least one uppercase letter
+                      </li>
+                      <li className={passwordRules.number ? "valid" : "invalid"}>
+                         At least one number
+                      </li>
+                      <li className={passwordRules.length ? "valid" : "invalid"}>
+                         Minimum 8 characters
+                      </li>
+                      <li className={passwordRules.special ? "valid" : "invalid"}>
+                         At least one special character
+                     </li>
+                   </ul>
                   </div>
                 )}
               </Form.Group>
@@ -495,7 +506,7 @@ const validatePasswordRules = (password) => {
                   disabled={isSubmitting}
                   onClick={() => {
                     setError("");
-                    setMessage("");
+                    // setMessage("");
                     googleRegister();
                     }}
                 >

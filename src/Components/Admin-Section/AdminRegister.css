@@ -158,6 +158,25 @@ body {
   text-decoration: underline;
 }
 
+/* password errors */
+.password-rules {
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.password-rules ul {
+  padding-left: 18px;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
+
+/* signup btn */
 .signup-btn {
   width: 100%;
   padding: 12px;
