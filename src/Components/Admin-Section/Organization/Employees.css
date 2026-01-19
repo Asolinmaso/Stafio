@@ -11,6 +11,7 @@
   flex-direction: column;
   background: #eff5ff;
   overflow-y: auto;
+   height: 100vh;   /* new */
 }
 
 .employee-content {
@@ -18,13 +19,14 @@
   background: #eff5ff;
 }
 .employee-page .topbar {
-   padding-top: 5px;
+   padding-top: 12px!important; /* new */
   margin-top: 30px;
-  padding-bottom: 8px;
+  padding-bottom: 12px !important;  /* new */
   width: 95%;
   margin-left: auto;
   margin-right: auto; /* centers horizontally */
   display: block;
+  margin-bottom: 30px;      /* new */
 }
 
 /* HEADER LAYOUT */
@@ -33,12 +35,12 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   
 }
 
 .employee-header h2 {
-  font-size: 26px;
+  font-size: 26px ;
   font-weight: 600;
   color: #222;
   margin-left:10px;
@@ -87,10 +89,10 @@
   border: 1px solid #ccc;
   border-radius: 16px;
   font-size: 16px;
-  width: 250px;
+  width: 270px !important;
   outline: none;
-  margin-Left:-20px;
-  margin-top:10px;
+  margin-Left:10px !important;
+  margin-top:8px !important;
 }
 
 /* RIGHT SIDE */
@@ -99,6 +101,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+  margin-top: 40px !important;
 }
 
 .add-btn {
@@ -124,11 +127,11 @@
   gap: 20px;
   align-items: center;
   justify-content: flex-end;
-  margin-top:20px;
+  margin-top:15px !important;
   border: none;
 }
 
-.filter-btn {
+.right-butn-filterr {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -142,14 +145,88 @@
 }
 
 .sort-select1 {
-  padding: 8px 14px;
+  padding: 8px 14px ;
   border: 1px solid #ccc;
   border-radius: 16px;
   font-size: 15px;
   cursor: pointer;
   margin-top:0px;
-  background:transparent;
+  background: transparent;
 }
+
+/* new css part */
+
+.filter-wrapper {
+  position: relative;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 320px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  padding: 16px;
+  z-index: 100;
+}
+
+.filter-dropdown h4 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.filter-field label {
+  font-size: 13px;
+  color: #555;
+}
+
+.filter-field input,
+.filter-field select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.reset-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 6px 14px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.apply-btn {
+  background: #18b6e3;
+  border: none;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
 
 /* TABLE */
 
@@ -206,7 +283,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
 }
 
 .emp-img {
@@ -221,12 +298,12 @@
   margin: 0;
 }
 
-.emp-email {          /* new */
-  font-size: 12px !important;     
+.emp-email {           /* new */
+  font-size: 13px;
   color: gray;
   margin: 0;
 }
- 
+
 .status {            /* new */
   padding: 4px 10px;
   font-size: 12px;
@@ -414,9 +491,9 @@
 .modal-overlay {
   position: fixed;
   top: 0;
-  left: 0;
+  left: 75px !important;
   width: 100%;
-  height: 100%;
+  height:100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -481,7 +558,8 @@
 .add-employee-form {
   background: white;
   border-radius: 8px;
-  padding: 30px;
+  padding: 3px;        /* modified */
+  padding-left: 20px;    /* new */
 }
 
 .form-left {
@@ -498,6 +576,7 @@
   padding-bottom: 25px;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 10px;
+  margin-right: 20px;
 }
 
 .profile-placeholder {
@@ -517,28 +596,29 @@
   font-size: 16px;
   font-weight: 600;
   color: #333;
+  padding-right: 10px;
 }
 
 .upload-info p {
-  margin: 0 0 12px 0;
+  margin: 0 0 12px 0 !important;
   font-size: 13px;
   color: #666;
 }
 
 .upload-btn1 {
-  background: #19bde8;
-  color: white;
+  background: #19bde8 !important;
+  color: white !important;
   border: none;
   padding: 8px 16px;
-  border-radius: 5px;
-  font-size: 13px;
+  border-radius:5px !important;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.upload-btn:hover {
-  background: #19bde8;
+.upload-btn1:hover {
+  background: #12acd3 !important;
 }
 
 /* Form Row */
@@ -554,8 +634,8 @@
 }
 
 .form-group label {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 600 ;
   color: #333;
   margin-bottom: 8px;
 }

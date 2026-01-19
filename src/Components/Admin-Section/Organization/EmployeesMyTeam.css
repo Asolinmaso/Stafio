@@ -13,8 +13,8 @@
   overflow-y: auto;
 }
 
-.employee-content {
-  padding: 10px 30px 0px 30px;
+.employee-content {         /* modified */
+  padding: 7px 30px 0px 30px;
   background: #eff5ff;
 }
 .employee-page .topbar {
@@ -42,7 +42,7 @@
   font-size: 30px;
   font-weight: 600;
   color: #222;
-  margin-left:10px;
+  margin-left:-15px;
 }
 
 /* LEFT SIDE */
@@ -83,14 +83,14 @@
 
 
 /* SEARCH */
-.search-input {
-  padding: 6px 14px;
-  border: 1px solid #ccc;
-  border-radius: 16px;
+.search-input {              /* modified */
+  padding: 6px 10px !important;
+  border: 1px solid #ccc !important;
+  border-radius: 12px !important;
   font-size: 16px;
   width: 250px;
   outline: none;
-  margin-Left:-20px;
+  margin-Left:-25px !important;
   margin-top:10px;
 }
 
@@ -100,7 +100,8 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
-  margin-top:90px;
+  margin-right: -20px;
+  margin-top:50px !important;
   }
 
 .add-btn {

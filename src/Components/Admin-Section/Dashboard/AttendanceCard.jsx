@@ -1,5 +1,5 @@
-import React from "react";
-import { Card } from "react-bootstrap";
+import React, { useState } from "react";
+import { Card, Dropdown } from "react-bootstrap";
 import {
   BarChart,
   Bar,
@@ -7,50 +7,74 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  LabelList,
+  Cell,
+  // LabelList,
 } from "recharts";
 
 // ✅ Memoized component so it won't re-render unnecessarily
-const AttendanceCard = React.memo(function AttendanceCard({ attendanceData }) {
-  const data = Array.isArray(attendanceData) ? attendanceData : [];
-  const highlighted = data.filter((d) => d.highlight);
+const AttendanceCard = ({ dataSets }) => {
+  // const [view, setView] = useState("monthly");
+  // const highlighted = data.filter((d) => d.highlight);
+  const [view, setView] = useState("months");
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const data = dataSets[view];
 
   return (
-    <Card className="attendance-card">
-      <Card.Body>
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <Card.Title>Monthly Attendance Overview</Card.Title>
-        </div>
+    <Card className="attendance-card p-3" style={{ borderRadius: "16px" }}>
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h6 className="mb-0">Monthly Attendance</h6>
 
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={data}>
-            <XAxis dataKey="month" />
-            <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-            <Tooltip formatter={(v) => `${v}%`} />
+        <Dropdown>
+          <Dropdown.Toggle variant="light" size="sm">
+            ⚙️
+          </Dropdown.Toggle>
 
-            {/* Default Bars */}
-            <Bar
-              dataKey="value"
-              radius={[4, 4, 0, 0]}
-              fill="#19bde8"
-              barSize={30}
-            ></Bar>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => setView("months")}>
+              Months
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setView("weeks")}>
+              Weeks
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setView("days")}>
+              days
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
 
-            {/* Highlighted Bar */}
-            {highlighted.length > 0 && (
-              <Bar
-                dataKey="value"
-                data={highlighted}
-                radius={[4, 4, 0, 0]}
-                fill="#19BDE8"
-                barSize={30}
-              ></Bar>
-            )}
-          </BarChart>
-        </ResponsiveContainer>
-      </Card.Body>
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height={220}>
+        <BarChart data={data}>
+          <XAxis
+            dataKey="label"
+            
+            interval={0}   // ✅ prevents text breaking
+          />
+          <YAxis
+            domain={[0, 100]}
+            tickFormatter={(v) => `${v}%`}
+          />
+          <Tooltip cursor={false} formatter={(v) => `${v}%`} />
+
+          <Bar dataKey="value" radius={[6, 6, 0, 0]}
+          onMouseLeave={() => setHoveredIndex(null)}
+          >
+            {data.map((_, index) => (
+              <Cell
+                key={index}
+                fill={hoveredIndex === index ? "#00B5E2" : "#E6EEF3"}
+                onMouseEnter={() => setHoveredIndex(index)}
+                style={{ transition: "fill 0.1s ease" }}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </Card>
   );
-});
+};
 
 export default AttendanceCard;

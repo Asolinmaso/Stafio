@@ -1,14 +1,17 @@
 // AdminLogin.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
 
 import BGShape from "../../assets/BGShape.png";
-import teampluslogo from "../../assets/stafioimg.png";
+import teampluslogo from "../../assets/stafio-bg-dark.png";
 import Imagelogin from "../../assets/Imagelogin.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
+import gicon from "../../assets/favicon.ico";
+
+import { useGoogleLogin } from "@react-oauth/google";
 
 const AdminLogin = () => {
   const [identifier, setIdentifier] = useState("");
@@ -19,6 +22,8 @@ const AdminLogin = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
+  const googleInitRef = useRef(false);
+
 
   // ---------------------------
   // ⭐ Admin Normal Login
@@ -65,67 +70,101 @@ const AdminLogin = () => {
   // ---------------------------
   // ⭐ Google Login (Fully Fixed)
   // ---------------------------
-  const handleGoogleLogin = (credentialResponse) => {
-    if (!credentialResponse || !credentialResponse.credential) {
-      setError("Google login cancelled or failed.");
-      return;
-    }
+  // const handleGoogleLogin = (credentialResponse) => {
+  //   if (!credentialResponse || !credentialResponse.credential) {
+  //     setError("Google login cancelled or failed.");
+  //     return;
+  //   }
 
-    fetch("http://127.0.0.1:5001/admin_google_login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_token: credentialResponse.credential,
-        role: "admin",
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user_id) {
-          localStorage.setItem("admin_user_id", data.user_id);
-          localStorage.setItem("admin_role", data.role);
-          localStorage.setItem("admin_username", data.username);
+  //   fetch("http://127.0.0.1:5001/admin_google_login", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       id_token: credentialResponse.credential,
+  //       role: "admin",
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data.user_id) {
+  //         localStorage.setItem("admin_user_id", data.user_id);
+  //         localStorage.setItem("admin_role", data.role);
+  //         localStorage.setItem("admin_username", data.username);
 
-          // ⭐ Save Google Remember Me
-          if (rememberMe) {
-            localStorage.setItem("remember_admin", "true");
-            localStorage.setItem("remember_google", "true");
-            localStorage.setItem("remember_google_email", data.email);
-            localStorage.setItem("remember_google_name", data.username);
-          } else {
-            localStorage.removeItem("remember_google");
-            localStorage.removeItem("remember_google_email");
-            localStorage.removeItem("remember_google_name");
-          }
+  //         // ⭐ Save Google Remember Me
+  //         if (rememberMe) {
+  //           localStorage.setItem("remember_admin", "true");
+  //           localStorage.setItem("remember_google", "true");
+  //           localStorage.setItem("remember_google_email", data.email);
+  //           localStorage.setItem("remember_google_name", data.username);
+  //         } else {
+  //           localStorage.removeItem("remember_google");
+  //           localStorage.removeItem("remember_google_email");
+  //           localStorage.removeItem("remember_google_name");
+  //         }
 
-          navigate("/admin-dashboard");
-        } else {
-          setError(data.message || "Google login failed");
+  //         navigate("/admin-dashboard");
+  //       } else {
+  //         setError(data.message || "Google login failed");
+  //       }
+  //     })
+  //     .catch(() => setError("Google login failed"));
+  // };
+
+  const googleLogin = useGoogleLogin({
+  flow: "implicit",
+  onSuccess: async (tokenResponse) => {
+    try {
+      const res = await fetch(
+        "http://127.0.0.1:5001/admin_google_login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token: tokenResponse.access_token,
+            role: "admin",
+          }),
         }
-      })
-      .catch(() => setError("Google login failed"));
-  };
+      );
 
-  useEffect(() => {
-    /* global google */
-    window.google.accounts.id.initialize({
-      client_id:
-        "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
-      callback: handleGoogleLogin,
-      ux_mode: "popup",
-      auto_select: false,
-    });
+      const data = await res.json();
 
-    window.google.accounts.id.renderButton(
-      document.getElementById("googleLoginButton"),
-      {
-        theme: "outline",
-        size: "large",
-        width: 400,
-        text: "continue_with",
+      if (data.user_id) {
+        localStorage.setItem("admin_user_id", data.user_id);
+        localStorage.setItem("admin_role", data.role);
+        localStorage.setItem("admin_username", data.username);
+        navigate("/admin-dashboard");
+      } else {
+        setError("Google login failed");
       }
-    );
-  }, []);
+    } catch {
+      setError("Google login failed");
+    }
+  },
+  onError: () => setError("Google login failed"),
+});
+
+
+//  useEffect(() => {
+//   if (googleInitRef.current) return;
+//   googleInitRef.current = true;
+
+//   if (!window.google) return;
+
+//   window.google.accounts.id.initialize({
+//     client_id:
+//       "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
+//     callback: handleGoogleLogin,
+//     ux_mode: "popup",
+//   });
+
+//     window.google.accounts.id.renderButton(
+//     document.getElementById("googleLoginButton"),
+//     { theme: "outline", size: "large" }
+//   );
+
+// }, []);
+
 
   useEffect(() => {
     const remember = localStorage.getItem("remember_admin");
@@ -209,11 +248,11 @@ const AdminLogin = () => {
 
             <Form onSubmit={handleAdminLogin}>
               <Form.Group className="mb-3">
-                <Form.Label>Email / Username</Form.Label>
+                <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="text"
                   className="email-input"
-                  placeholder="Enter email or username"
+                  placeholder="Please Enter your email"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   required
@@ -274,7 +313,23 @@ const AdminLogin = () => {
 
               {/* ⭐ GOOGLE LOGIN BUTTON */}
               {/* ⭐ OFFICIAL GOOGLE LOGIN BUTTON RENDER TARGET */}
-              <div id="googleLoginButton" style={{ marginTop: "15px" }}></div>
+              {/* Custom Google Login Button */}
+            
+            {/* Hidden official Google button */}
+  
+<div
+  className="custom-google-btn"
+  
+    onClick={() => googleLogin()}
+>
+  <img
+    src={gicon}
+    alt="Google"
+    className="google-icon"
+  />
+  <span>Continue with Google</span>
+</div>
+
             </Form>
 
             <div className="signup-text mt-4">
