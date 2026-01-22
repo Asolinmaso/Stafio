@@ -3,7 +3,7 @@ import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import "./AdminSidebar.css";
-import stafioimg from "../../assets/stafioimg.png";
+import stafioimg from "../../assets/stafio-bg-dark.png";
 import booking from "../../assets/booking.png";
 import Group from "../../assets/Group.png";
 import Group1 from "../../assets/Group1.png";
@@ -15,6 +15,7 @@ import Vector1 from "../../assets/Vector1.svg";
 import Vector4 from "../../assets/Vector4.svg";
 import Vector5 from "../../assets/Vector5.svg";
 import { useLocation } from "react-router-dom";
+import { logoutCurrentTab } from "../../utils/sessionManager";
 
 export const OrganizationMenu = () => {
   const location = useLocation();
@@ -327,6 +328,7 @@ const AdminSidebar = () => {
   }, []);
 
   const handleLogout = () => {
+    logoutCurrentTab();
     localStorage.removeItem("announcements");
     // Remove Remember Me data
     localStorage.removeItem("remember_admin");
@@ -336,7 +338,7 @@ const AdminSidebar = () => {
     localStorage.removeItem("remember_google");
     localStorage.removeItem("remember_google_email");
     localStorage.removeItem("remember_google_name");
-
+    sessionStorage.removeItem("tab_id");
     window.location.href = "/";
   };
 

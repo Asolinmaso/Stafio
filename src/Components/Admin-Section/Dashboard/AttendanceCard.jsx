@@ -45,8 +45,8 @@ const AttendanceCard = ({ dataSets }) => {
         </Dropdown>
       </div>
 
-      {/* Chart */}
-      <ResponsiveContainer width="100%" height={220}>
+      {/* Chart */}                                         {/* modified height */}
+       <ResponsiveContainer width="100%" height={190}>    
         <BarChart data={data}>
           <XAxis
             dataKey="label"

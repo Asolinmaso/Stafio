@@ -108,7 +108,7 @@ body {
   color: #36baee;
   font-weight: 500;
   font-size: 24px;         /* modified */
-  padding-bottom: 10px;
+  padding-bottom: 10px;    /* modified */
 }
 
 .login-form-wrapper h3 {
@@ -269,8 +269,8 @@ body {
 }
 
 .google-icon {
-  width: 20px;
-  height: 20px;
+  width: 30px !important;
+  height: 20px !important;
 }
 
 .google-hidden {

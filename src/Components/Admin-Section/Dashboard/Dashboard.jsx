@@ -22,12 +22,15 @@ import arrow3 from "../../../assets/arrow3.png";
 import gradientimg from "../../../assets/gradientimg.png";
 import clock from "../../../assets/clock.gif";
 import group10 from "../../../assets/Group10.png";
-import user from "../../../assets/user.png";  //new
+import profileimg from "../../../assets/profileimg.png";   //new
 import { FaChevronRight } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
+
+import { getCurrentSession } from "../../../utils/sessionManager";
+
 
 const Dashboard = () => {
   const [username, setUsername] = useState("");
@@ -205,13 +208,14 @@ const handleStartBreak = (breakItem = null) => {    //modified newly and added
     };
   }, []);
 
-  useEffect(() => {
+      useEffect(() => {
     // Read values from sessionStorage
-    const storedUsername = sessionStorage.getItem("current_username");
-    const storedRole = sessionStorage.getItem("current_role");
+       const session = getCurrentSession();
 
-    setUsername(storedUsername);
-    setRole(storedRole);
+      if (session) {
+         setUsername(session.username || "");
+         setRole(session.role || "");
+      }
   }, []);
 
   const [adminDashboardData, setAdminDashboardData] = useState({
@@ -332,7 +336,7 @@ const handleStartBreak = (breakItem = null) => {    //modified newly and added
                             </p>
                           </div>
 
-                          <div className="meeting-time"><img src={user} alt="user" /></div>
+                          <div className="meeting-time"><img src={profileimg} alt="profileimg" /></div>
 
                           <div className="chevron-box">
                             <FaChevronRight />
@@ -468,7 +472,7 @@ const handleStartBreak = (breakItem = null) => {    //modified newly and added
           {/* Admin Summary Cards */}
           <Row className="notice mb-4">
             <Col md={8}>
-              <Row>
+              <Row class>
                 {/* Total Employees */}
                 <Col md={4} className="mb-3">
                   <Card

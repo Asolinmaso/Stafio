@@ -11,6 +11,17 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
 import gicon from "../../assets/favicon.ico";
 
+import {
+  saveSession,
+  isLoggedIn,
+  saveRememberMe,
+  saveGoogleRememberMe,
+  clearRememberMe,
+  getRememberMe,
+} from "../../utils/sessionManager";
+
+
+
 import { useGoogleLogin } from "@react-oauth/google";
 
 const AdminLogin = () => {
@@ -42,30 +53,29 @@ const AdminLogin = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("admin_user_id", data.user_id);
-        localStorage.setItem("admin_role", data.role);
-        localStorage.setItem("admin_username", data.username);
-
-        // ⭐ Remember Me
-        if (rememberMe) {
-          localStorage.setItem("remember_admin", "true");
-          localStorage.setItem("remember_email", identifier);
-          localStorage.setItem("remember_password", password);
-        } else {
-          localStorage.removeItem("remember_admin");
-          localStorage.removeItem("remember_email");
-          localStorage.removeItem("remember_password");
-        }
-
-        navigate("/admin-dashboard");
-      } else {
-        setError(data.message || "Login failed");
+      if (!response.ok) {
+         setError(data.message || "Login failed");
+         return;
       }
-    } catch (err) {
-      setError("Network error. Check if backend is running.");
+
+    // ✅ 1. Save session (MANDATORY)
+    saveSession(data, "admin");
+
+    // ✅ 2. Remember Me (OPTIONAL)
+    if (rememberMe) {
+      saveRememberMe(identifier, password, "admin", data.user_id);
+    } else {
+      clearRememberMe("admin", data.user_id);
     }
-  };
+
+
+      // ✅ 3. Navigate
+    navigate("/admin-dashboard");
+
+  } catch {
+    setError("Network error. Check backend.");
+  }
+};
 
   // ---------------------------
   // ⭐ Google Login (Fully Fixed)
@@ -129,19 +139,26 @@ const AdminLogin = () => {
 
       const data = await res.json();
 
-      if (data.user_id) {
-        localStorage.setItem("admin_user_id", data.user_id);
-        localStorage.setItem("admin_role", data.role);
-        localStorage.setItem("admin_username", data.username);
-        navigate("/admin-dashboard");
-      } else {
+      if (!data.user_id) {
         setError("Google login failed");
+        return;
       }
+
+      // ✅ 1. Save session
+      saveSession(data, "admin");
+
+      // ✅ 2. Remember Google
+      if (rememberMe) {
+        saveGoogleRememberMe(data.email, data.username, "admin", data.user_id);
+      }
+
+      navigate("/admin-dashboard");
+
     } catch {
       setError("Google login failed");
     }
   },
-  onError: () => setError("Google login failed"),
+
 });
 
 
@@ -165,45 +182,21 @@ const AdminLogin = () => {
 
 // }, []);
 
+//  AUTO LOGIN (Normal + Google)
 
-  useEffect(() => {
-    const remember = localStorage.getItem("remember_admin");
-    const isGoogle = localStorage.getItem("remember_google") === "true";
+useEffect(() => {
+  if (isLoggedIn()) {
+    navigate("/admin-dashboard");
+    return;
+  }
 
-    if (remember === "true" && isGoogle) {
-      const idToken = localStorage.getItem("remember_google_token");
+  const remembered = getRememberMe("admin");
+  if (!remembered) return;
 
-      if (!idToken) return; // no token → stop auto-login
+  setIdentifier(remembered.email || "");
+  setPassword(remembered.password || "");
+}, []);
 
-      fetch("http://127.0.0.1:5001/admin_google_login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_token: idToken,
-          role: "admin",
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.user_id) {
-            localStorage.setItem("admin_user_id", data.user_id);
-            localStorage.setItem("admin_role", data.role);
-            localStorage.setItem("admin_username", data.username);
-
-            navigate("/admin-dashboard");
-          }
-        });
-
-      return;
-    }
-
-    // Normal remember me (username/password)
-    if (remember === "true" && !isGoogle) {
-      setIdentifier(localStorage.getItem("remember_email") || "");
-      setPassword(localStorage.getItem("remember_password") || "");
-      navigate("/admin-dashboard");
-    }
-  }, []);
 
   return (
     <Container fluid className="admin-login-container">

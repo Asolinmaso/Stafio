@@ -16,6 +16,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { searchData } from "./searchData";
 import axios from "axios";
 
+import { getCurrentSession } from "../../utils/sessionManager";
+
+
 const Topbar = () => {
   const [adminusername, setAdminusername] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -41,10 +44,10 @@ const Topbar = () => {
   });
 
   useEffect(() => {
-    const storedAdminusername = localStorage.getItem("admin_username");
-    if (storedAdminusername) {
-      setAdminusername(storedAdminusername);
-    }
+    // const storedAdminusername = localStorage.getItem("admin_username");
+    // if (storedAdminusername) {
+    //   setAdminusername(storedAdminusername);
+    // }
 
     // Load saved announcements
     const savedAnnouncements = localStorage.getItem("announcements");
@@ -59,13 +62,25 @@ const Topbar = () => {
   }, []);
 
   useEffect(() => {
-    // Read values from sessionStorage
-    const storedUsername = sessionStorage.getItem("current_username");
-    const storedRole = sessionStorage.getItem("current_role");
+  const session = getCurrentSession();
 
-    setUsername(storedUsername);
-    setRole(storedRole);
-  }, []);
+  if (session) {
+    setAdminusername(session.username);
+    setUsername(session.username);
+    setRole(session.role);
+  }
+}, []);
+
+
+
+  // useEffect(() => {
+  //   // Read values from sessionStorage
+  //   const storedUsername = localStorage.getItem("admin_username");
+  //   const storedRole = localStorage.getItem("admin_role");
+
+  //   if (storedUsername) setUsername(storedUsername);
+  //   if (storedRole) setRole(storedRole);
+  // }, []);
 
   useEffect(() => {
     if (announcements.length > 0) {

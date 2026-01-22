@@ -52,7 +52,7 @@
 .meeting-left{
   margin-left:10px;
   height:250px;
-  align
+  /* align */
 }
 .meeting-left h2{
   font-size: 25px;
@@ -284,7 +284,7 @@ background:#E6EAF5;
 .punch-info-box {
   display: flex;
   gap: 25px;
-  justify-content: ;
+  /* justify-content: ; */
   margin: 15px 0;
   font-size: 16px;
   
@@ -299,7 +299,7 @@ background:#E6EAF5;
 .button-row {
   display: flex;
   gap: 24px;
-  justify-content:;
+  /* justify-content:; */
   
 }
 .btn-punch-out{

@@ -6,6 +6,8 @@
   margin: 10px;
   padding-top: 5px !important;       /* new */
   padding-bottom: 5px !important;    /* new */
+  width: auto;
+  margin-left: 13px !important;        /* modified */
 }
 
 .topbar-img {
