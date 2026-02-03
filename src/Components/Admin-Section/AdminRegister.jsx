@@ -14,7 +14,7 @@ import "./AdminRegister.css";
 
 // Reuse same assets as login
 import BGShape from "../../assets/BGShape.png";
-import teampluslogo from "../../assets/stafioimg.png";
+import teampluslogo from "../../assets/stafio-bg-dark.png";
 import Registerlogo from "../../assets/registerlogo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import apiClient from "../../api/client";

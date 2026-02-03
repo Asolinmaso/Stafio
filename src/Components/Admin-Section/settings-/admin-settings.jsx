@@ -308,7 +308,7 @@ const [selectedRows, setSelectedRows] = useState({
                      </select>
                     </div>
 
-                    <div className="form-group">           {/* modified   */}
+                    <div className="form-groupz">           {/* modified   */}
                       <label>{t("dashboardTheme")}</label>
                       <div className="theme-input-box">    {/*new check box inside the input*/}
                         <span className="theme-label">
@@ -340,7 +340,7 @@ const [selectedRows, setSelectedRows] = useState({
                       </select>
                     </div>
 
-                    <div className="form-group">        {/* modified   */}
+                    <div className="form-groupz">        {/* modified   */}
                       <label>{t("allowManagertoeditemployeerecord")}</label>
                       <div className="theme-input-box">     {/*new check box inside the input*/}
                        <span className="theme-label">
@@ -360,7 +360,7 @@ const [selectedRows, setSelectedRows] = useState({
                   </div>
 
                   <div className="form-column">  {/* modified   */}
-                    <div className="form-group">
+                    <div className="form-groupz">
                       <label>{t("userSignup")}</label>
                        <div className="theme-input-box">
                         <span className="theme-label">

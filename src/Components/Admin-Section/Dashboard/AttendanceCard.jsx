@@ -11,6 +11,8 @@ import {
   // LabelList,
 } from "recharts";
 
+import { FaSlidersH } from "react-icons/fa";
+
 // ✅ Memoized component so it won't re-render unnecessarily
 const AttendanceCard = ({ dataSets }) => {
   // const [view, setView] = useState("monthly");
@@ -28,7 +30,7 @@ const AttendanceCard = ({ dataSets }) => {
 
         <Dropdown>
           <Dropdown.Toggle variant="light" size="sm">
-            ⚙️
+            <FaSlidersH />
           </Dropdown.Toggle>
 
           <Dropdown.Menu>

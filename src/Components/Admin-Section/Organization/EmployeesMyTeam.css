@@ -37,12 +37,13 @@
   
 }
 
-.employee-header h2 {
-    margin-top:20px;
+.employee-header h2 {   /* modified */
+    margin-top:-20px !important;
   font-size: 30px;
   font-weight: 600;
   color: #222;
-  margin-left:-15px;
+  margin-left:-45px;     /* modified */
+  margin-bottom: 15px;
 }
 
 /* LEFT SIDE */
@@ -81,17 +82,33 @@
   cursor: pointer;
 }
 
+.search-containerr1 {     /* new */
+  position: relative; /* Parent must be relative */
+  display: flex;
+  align-items: center;
+  /* margin-left: 10px !important; */
+}
+
+.search-iconn1 {          /* new */
+  position: absolute; /* Icon sits on top of input */
+  left: -5px !important;        /* Spacing from the left edge */
+  color: #888;
+}
 
 /* SEARCH */
-.search-input {              /* modified */
-  padding: 6px 10px !important;
-  border: 1px solid #ccc !important;
-  border-radius: 12px !important;
-  font-size: 16px;
-  width: 250px;
+.search-inputt1 {         /* modified */
+  padding-left: 40px !important; /* Space for the icon */
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  padding-right: 60px !important;
+  border: 1px solid #ccc;
+  border-radius: 13px;
+  font-size: 15px;
+  width: 100% !important;
   outline: none;
-  margin-Left:-25px !important;
-  margin-top:10px;
+  margin-Left:-20px !important;
+  margin-top:4px !important; 
+  background: none;
 }
 
 /* RIGHT SIDE */
@@ -101,7 +118,7 @@
   align-items: flex-end;
   gap: 10px;
   margin-right: -20px;
-  margin-top:50px !important;
+  margin-top:40px !important;
   }
 
 .add-btn {
@@ -131,7 +148,7 @@
   border: none;
 }
 
-.filter-btn {
+.right-butn-filterr {
   display: flex;
   align-items: center;
   gap: 6px;

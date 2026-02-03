@@ -8,6 +8,9 @@ import axios from "axios";
 import group10 from "../../../assets/Group10.png";
 import { useLocation } from "react-router-dom";
 
+import { FaUserFriends } from "react-icons/fa"; //new
+import { FaSearch } from 'react-icons/fa';   //new
+
 const Employee = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,6 +25,42 @@ const Employee = () => {
 
 //new state
 const [allEmployees, setAllEmployees] = useState([]);
+const [formData, setFormData] = useState({
+  firstName: "",
+  lastName: "",
+  employeeId: "",
+  joiningDate: "",
+  email: "",
+  phone: "",
+  employmentType: "",
+  supervisor: "",
+  hrManager: "",
+  department: "",
+  designation: "",
+  status: "Active",
+});
+
+const [errors, setErrors] = useState({});
+
+const initialFormState = {
+  firstName: "",
+  lastName: "",
+  employeeId: "",
+  joiningDate: "",
+  email: "",
+  phone: "",
+  employmentType: "",
+  supervisor: "",
+  hrManager: "",
+  department: "",
+  designation: "",
+  status: "Active",
+};
+
+const resetForm = () => {
+  setFormData(initialFormState);
+  setErrors({});
+};
 
 
 
@@ -30,6 +69,76 @@ const [allEmployees, setAllEmployees] = useState([]);
 
   const location = useLocation();
   const highlightName = location.state?.highlightName || "";
+
+
+// Handle input change
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({ ...formData, [name]: value });
+  setErrors({ ...errors, [name]: "" });
+};
+
+//Validation logic for new employee form
+
+const validateForm = () => {
+  let newErrors = {};
+
+  if (!formData.firstName.trim() || formData.firstName.length < 3) {
+    newErrors.firstName = "*First name is required";
+  }
+
+  if (!formData.lastName.trim() || formData.lastName.length < 1) {
+    newErrors.lastName = "*Last name must contain at least one letter";
+  }
+
+  if (!formData.employeeId.trim()) {
+    newErrors.employeeId = "*Employee ID is required";
+  }
+
+  if (!formData.joiningDate) {
+    newErrors.joiningDate = "*Please select a joining date";
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    newErrors.email = "*Enter a valid email address";
+  }
+
+  const phoneRegex = /^[6-9]\d{9}$/;
+  if (!phoneRegex.test(formData.phone)) {
+    newErrors.phone = "*Enter a valid 10-digit phone number";
+  }
+
+  const selectFields = [
+    "employmentType",
+    "supervisor",
+    "hrManager",
+    "department",
+    "designation",
+  ];
+
+  selectFields.forEach((field) => {
+    if (!formData[field]) {
+      newErrors[field] = "*Please select an option";
+    }
+  });
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+//  Handle submit
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (validateForm()) {
+    console.log("Form Submitted:", formData);
+    // API call here
+  }
+};
+
+
+
 
   // ✅ Fetch employees from backend
   useEffect(() => {
@@ -142,15 +251,17 @@ if (filters.name.trim()) {
                 >
                   My Team
                 </button>
-              </div>
-
+              </div> 
+              <div className="search-container">
+              <FaSearch className="search-icon" size={16} />
               <input
                 type="text"
-                placeholder="🔍  Search..."
-                className="search-input"
+                placeholder= "Search..."
+                className="search-input0"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              </div>
             </div>
 
             {/* RIGHT SIDE */}
@@ -346,25 +457,29 @@ if (filters.name.trim()) {
 
         {/* ---------- Modal Popup ---------- */}
         {showModal && (
-          <div className="modal-overlay">
-            <div className="add-employee-modal">
+          <div className="modal-overlay1">         {/* classname changed/modified */}
+            <div className="add-employee-modal1">  {/* classname changed/modified */}
               <div className="modal-header-blue">
                 <h3>Add New Employee</h3>
                 <button
                   className="close-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                  resetForm();
+                  setShowModal(false)
+                }}
                 >
                   ×
                 </button>
               </div>
 
               <div className="modal-body">
-                <form className="add-employee-form">
+                <form className="add-employee-form" onSubmit={handleSubmit}>
                   <div className="form-left">
                     {/* Profile Upload Section */}
                     <div className="profile-upload-section">
                       <div className="profile-placeholder">
-                        <i className="profile-icon">👤 </i>
+                        <i className="profile-icon">
+                          <FaUserFriends size="2em" /> </i>
                       </div>
                       <div className="upload-info">
                         <h4>Upload Profile Image</h4>
@@ -379,11 +494,25 @@ if (filters.name.trim()) {
                     <div className="form-row1">
                       <div className="form-group">
                         <label>First Name</label>
-                        <input type="text" placeholder="Please enter name" />
+                        <input 
+                        type="text"
+                        name="firstName" 
+                        placeholder="Please enter name"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                         />
+                  {errors.firstName && <p className="error-text">{errors.firstName}</p>}
                       </div>
                       <div className="form-group">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Please enter name" />
+                        <input 
+                        type="text"
+                        name="lastName"
+                        placeholder="Please enter name"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                         />
+                  {errors.lastName && <p className="error-text">{errors.lastName}</p>}
                       </div>
                     </div>
 
@@ -392,84 +521,141 @@ if (filters.name.trim()) {
                         <label>Employee ID</label>
                         <input
                           type="text"
+                          name="employeeId"
                           placeholder="Please enter employee ID"
+                          value={formData.employeeId}
+                          onChange={handleChange}
                         />
+                  {errors.employeeId && <p className="error-text">{errors.employeeId}</p>}
                       </div>
                       <div className="form-group">
                         <label>Joining Date</label>
-                        <input type="date" placeholder="dd/mm/yyyy" />
+                        <input 
+                        type="date"
+                        name="joiningDate"
+                        placeholder="dd/mm/yyyy"
+                        value={formData.joiningDate}
+                        onChange={handleChange}
+                         />
+                  {errors.joiningDate && <p className="error-text">{errors.joiningDate}</p>}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Email</label>
-                        <input type="email" placeholder="Please enter email" />
+                        <input 
+                        type="email"
+                        name="email" 
+                        placeholder="Please enter email"
+                        value={formData.email}
+                        onChange={handleChange}
+                         />
+                  {errors.email && <p className="error-text">{errors.email}</p>}
                       </div>
                       <div className="form-group">
                         <label>Phone Number</label>
                         <input
                           type="tel"
+                          name="phone"
                           placeholder="Please enter phone number"
+                          value={formData.phone}
+                          onChange={handleChange}
                         />
+                  {errors.phone && <p className="error-text">{errors.phone}</p>}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Employment Type</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Full Time</option>
-                          <option>Part Time</option>
-                          <option>Contract</option>
-                          <option>Intern</option>
+                        <select 
+                        name="employmentType"
+                        value={formData.employmentType}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Full Time">Full Time</option>
+                          <option value="Part Time">Part Time</option>
+                          <option value="Contract">Contract</option>
+                          <option value="Intern">Intern</option>
                         </select>
+                  {errors.employmentType && (
+                  <p className="error-text">{errors.employmentType}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Primary Supervisor</label>
-                        <select>
-                          <option>Select</option>
-                          <option>John Doe</option>
-                          <option>Jane Smith</option>
-                          <option>Mike Johnson</option>
+                        <select 
+                        name="supervisor"
+                        value={formData.supervisor}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="John Doe">John Doe</option>
+                          <option value="Jane Smith">Jane Smith</option>
+                          <option value="Mike Johnson">Mike Johnson</option>
                         </select>
+                  {errors.supervisor && (
+                  <p className="error-text">{errors.supervisor}</p>
+               )}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>HR Manager</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Sarah Wilson</option>
-                          <option>David Brown</option>
-                          <option>Lisa Taylor</option>
+                        <select 
+                        name="hrManager"
+                        value={formData.hrManager}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Sarah Wilson">Sarah Wilson</option>
+                          <option value="David Brown">David Brown</option>
+                          <option value="Lisa Taylor">Lisa Taylor</option>
                         </select>
+                  {errors.hrManager && (
+                  <p className="error-text">{errors.hrManager}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Department</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Engineering</option>
-                          <option>Marketing</option>
-                          <option>Sales</option>
-                          <option>HR</option>
-                          <option>Finance</option>
+                        <select
+                        name="department"
+                        value={formData.department}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Engineering">Engineering</option>
+                          <option value="Marketing">Marketing</option>
+                          <option value="Sales">Sales</option>
+                          <option value="HR">HR</option>
+                          <option value="Finance">Finance</option>
                         </select>
+                  {errors.department && (
+                  <p className="error-text">{errors.department}</p>
+               )}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Designation</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Software Engineer</option>
-                          <option>Senior Engineer</option>
-                          <option>Team Lead</option>
-                          <option>Manager</option>
+                        <select
+                        name="designation"
+                        value={formData.designation}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Software Engineer">Software Engineer</option>
+                          <option value="Senior Engineer">Senior Engineer</option>
+                          <option value="Team Lead">Team Lead</option>
+                          <option value="Manager">Manager</option>
                         </select>
+                  {errors.designation && (
+                  <p className="error-text">{errors.designation}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Status</label>
@@ -488,8 +674,10 @@ if (filters.name.trim()) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setShowModal(false)}
                         className="cancel-btn"
+                        onClick={() => {
+                        setShowModal(false)
+                      }}
                       >
                         Cancel
                       </button>

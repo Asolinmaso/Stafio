@@ -47,9 +47,11 @@ body {
   margin-left: 30px;
 }
 
-.teamplus-logo{
-  
-  height: 50% !important;
+.teamplus-logo {          /* modified */
+  height: 22% !important; 
+  width: 60%; 
+  margin-right:180px;     
+  margin-bottom:10px !important;
 }
 
 .stafio-logo {
@@ -80,7 +82,7 @@ body {
   color: #0a0a0a;
   margin-bottom: 20px;
   line-height: 1.5;
-  margin-left: 30px;
+  margin-left: -160px;  /* modified */
 }
 
 .register-illustration {

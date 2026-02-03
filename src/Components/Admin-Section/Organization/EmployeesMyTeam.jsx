@@ -6,6 +6,8 @@ import { FaFilter } from "react-icons/fa";
 import group10 from "../../../assets/Group10.png";
 import { useLocation } from "react-router-dom";
 
+import { FaSearch } from 'react-icons/fa';   //new
+
 const Employee = () => {
 	const [employees] = useState([
 		{
@@ -106,13 +108,16 @@ const Employee = () => {
 							{/* LEFT SIDE */}
 							<div className="header-left">
 								<h2>My Team</h2>
+								 <div className="search-containerr1">
+							     <FaSearch className="search-iconn1" size={16} />
 								<input
 									type="text"
-									placeholder="🔍 Search..."
-									className="search-input"
+									placeholder="Search..."
+									className="search-inputt1"
 									value={searchTerm}
 									onChange={(e) => setSearchTerm(e.target.value)}
 								/>
+								</div>
 							</div>
 
 							{/* RIGHT SIDE */}

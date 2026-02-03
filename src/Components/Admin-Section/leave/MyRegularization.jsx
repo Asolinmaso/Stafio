@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./MyRegularization.css";
 import { FaEdit, FaTimesCircle, FaFilter, FaUpload } from "react-icons/fa";
 import illustration from "../../../assets/timemgnt.png"; // Add your illustration image
@@ -10,6 +10,9 @@ import group10 from "../../../assets/Group10.png";
 
 export default function MyRegularization() {
   const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+      const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
+      const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
   const regularizationData = [
     {
       id: 1,
@@ -49,6 +52,28 @@ export default function MyRegularization() {
   ];
   const navigate = useNavigate();
 
+const filteredAndSortedLeaves = regularizationData
+  
+  // FILTER by status
+  .filter((leave) =>
+    filterStatus === "All" ? true : leave.status === filterStatus
+  )
+
+
+
+
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
   return (
     <div className="layout">
       <div className="rightside-logo ">
@@ -75,9 +100,16 @@ export default function MyRegularization() {
           >
             My Leaves
           </button>
-          <button className="btn-filter">
-            <FaFilter /> Filter
-          </button>
+          <select
+                className="right-butn-filters"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
         </div>
 
         {/* Regularization Table */}
@@ -94,7 +126,7 @@ export default function MyRegularization() {
               </tr>
             </thead>
             <tbody>
-              {regularizationData.map((row, index) => (
+              {filteredAndSortedLeaves.map((row, index) => (
                 <tr key={row.id}>
                   <td>{String(index + 1).padStart(2, "0")}</td>
                   <td>{row.attendanceType}</td>
@@ -158,7 +190,7 @@ export default function MyRegularization() {
                   {/* Left Form Section */}
                   <div className="regularization-left">
                     <label>Employee ID:</label>
-                    <input type="text" value="Aiswarya (100234)" readOnly />
+                    <input type="text"/>
 
                     <label>Leave Type:</label>
                     <select>

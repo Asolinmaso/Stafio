@@ -10,18 +10,28 @@ import "./AttendanceReport.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import axios from "axios";
 import group10 from "../../../assets/Group10.png";
 
 
+
 export default function AttendanceReport() {
   const [attendanceData, setAttendanceData] = useState([]);
+  const [currentTime, setCurrentTime] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
+  const [sortDays, setSortDays] = useState(7);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/attendancelist");
+        const response = await axios.get(
+          "http://127.0.0.1:5001/api/attendancelist"
+        );
         setAttendanceData(response.data);
       } catch (error) {
         console.error("Error fetching attendance data:", error);
@@ -31,11 +41,72 @@ export default function AttendanceReport() {
     fetchAttendanceData();
   }, []);
 
+  useEffect(() => {
+    // Function to update time & date every second
+    const updateTime = () => {
+      const now = new Date();
+
+      // Format time (e.g., 9:01:09 AM)
+      const time = now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+
+      // Format date (e.g., 10 Aug 2025)
+      const date = now.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+
+      setCurrentTime(time);
+      setCurrentDate(date);
+    };
+
+    updateTime(); // run immediately
+    const timer = setInterval(updateTime, 1000); // update every 1s
+
+    return () => clearInterval(timer); // cleanup on unmount
+  }, []);
+
+  const filteredAttendance = attendanceData
+    // SEARCH BY EMPLOYEE NAME
+    .filter((record) =>
+      record.employee.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    // FILTER BY STATUS
+    .filter((record) =>
+      statusFilter === "All" ? true : record.status === statusFilter
+    )
+
+    // SORT BY LAST N DAYS
+
+    .filter(() => true);
+
+
+const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await axios.get("http://127.0.0.1:5001/api/employeeslist");
+        setEmployees(res.data);
+      } catch (err) {
+        console.error("Error fetching employees", err);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
+
   return (
     <div className="att-report-layout">
       <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="att-report-main">
@@ -44,26 +115,54 @@ export default function AttendanceReport() {
         {/* Header Section */}
         <div className="att-report-header">
           <h2>Attendance Report</h2>
-          <select className="att-report-dropdown">
-            <option>Aiswarya (100539)</option>
+          <select
+            className="leave-report-dropdown"
+            value={selectedEmployeeName}
+            onChange={(e) => setSelectedEmployeeName(e.target.value)}
+          >
+            <option value="">Select Employee</option>
+
+            {employees.map((emp) => (
+              <option key={emp.id} value={emp.name}>
+                {emp.name} ({emp.empId})
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Filter Bar */}
         <div className="att-report-filterbar">
           <div className="att-report-search-box">
-            <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search" />
+            
+            <input
+              type="text"
+              placeholder="Search by employee..."
+              className="search-input2"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
-          <button className="att-report-filter-btn">
-            <FaFilter /> Filter
-          </button>
+          <select
+            className="select-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="All">All</option>
+            <option value="On Time">On Time</option>
+            <option value="Late Login">Late Login</option>
+            <option value="Absent">Absent</option>
+          </select>
 
-          <div className="att-report-sort">
-            <span>Sort By : Last 7 Days</span>
-            <FaChevronDown />
-          </div>
+          <select
+            className="sort-dropdown"
+            value={sortDays}
+            onChange={(e) => setSortDays(Number(e.target.value))}
+          >
+            <option value={5}>Last 5 Days</option>
+            <option value={10}>Last 10 Days</option>
+            <option value={20}>Last 20 Days</option>
+          </select>
         </div>
 
         {/* Table Section */}
@@ -71,13 +170,9 @@ export default function AttendanceReport() {
           <div className="att-report-table-header">
             <h3>Attendance Overview</h3>
             <div className="header-controls">
-              <div className="header-report-search">
-                <FaSearch className="header-search-icon" />
-                <input type="text" placeholder="Search..." />
-              </div>
               <div className="att-report-date">
                 <FaCalendarAlt />
-                <span>10 Aug 2025</span>
+                <span>{currentDate}</span>
               </div>
               <button className="att-report-download-btn">
                 <FaDownload /> Download
@@ -99,8 +194,8 @@ export default function AttendanceReport() {
               </tr>
             </thead>
             <tbody>
-              {attendanceData.length > 0 ? (
-                attendanceData.map((record, index) => {
+              {filteredAttendance .length > 0 ? (
+                filteredAttendance .map((record, index) => {
                   const statusClass = record.status
                     .toLowerCase()
                     .replace(/\s+/g, "-");

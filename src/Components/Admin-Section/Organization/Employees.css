@@ -23,7 +23,7 @@
   margin-top: 30px;
   padding-bottom: 12px !important;  /* new */
   width: 95%;
-  margin-left: auto;
+  margin-left: 20px !important;        /* modified */
   margin-right: auto; /* centers horizontally */
   display: block;
   margin-bottom: 30px;      /* new */
@@ -51,6 +51,12 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+
+}
+
+.header-left h2 {
+  margin: auto;
+  padding: 7px 0px 0px 35px;       /* modified */
 }
 
 .employee-tabs {
@@ -82,17 +88,33 @@
   cursor: pointer;
 }
 
+.search-container {     /* new */
+  position: relative; /* Parent must be relative */
+  display: flex;
+  align-items: center;
+  /* margin-left: 10px !important; */
+}
+
+.search-icon {          /* new */
+  position: absolute; /* Icon sits on top of input */
+  left: 18px !important;        /* Spacing from the left edge */
+  color: #888;
+}
 
 /* SEARCH */
-.search-input {
-  padding: 6px 14px;
+.search-input0 {
+  padding-left: 30px !important; /* Space for the icon */
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  padding-right: 16px !important;
   border: 1px solid #ccc;
-  border-radius: 16px;
-  font-size: 16px;
-  width: 270px !important;
+  border-radius: 13px;
+  font-size: 15px;
+  width: 100% !important;
   outline: none;
   margin-Left:10px !important;
-  margin-top:8px !important;
+  margin-top:4px !important; 
+  background: none;
 }
 
 /* RIGHT SIDE */
@@ -488,12 +510,12 @@
 }
 
 /* Modal Overlay */
-.modal-overlay {
+.modal-overlay1 {          /* classname changed/modified */
   position: fixed;
   top: 0;
   left: 75px !important;
   width: 100%;
-  height:100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -501,22 +523,25 @@
   z-index: 1000;
 }
 
+
+
 /* Add Employee Modal */
-.add-employee-modal {
+.add-employee-modal1 {     /* classname changed/modified */
   background: white;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 900px;
-  max-height: 90vh;
+  /* border-radius: 12px; */
+  width: 100%;
+  max-width: 1104px;      /* modified */
+  max-height: 100vh;
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  margin-left: 99px;       /* modified */
 }
 
 /* Modal Header - Cyan Blue */
 .modal-header-blue {
   background: #19bde8;
   color: white;
-  padding: 20px 30px;
+  padding: 10px 10px !important;     /* modified */
   border-radius: 0px 0px 0 0;
   display: flex;
   justify-content: space-between;
@@ -525,15 +550,17 @@
 
 .modal-header-blue h3 {
   margin: 0;
-  font-size: 24px;
+  font-size: 19px;       /* modified */
   font-weight: 600;
+  padding-left: 50px ;   /* new */
 }
 
 .close-btn {
   background: none;
   border: none;
-  color: white;
-  font-size: 18px;
+  color: white !important;     /* modified */
+  margin-right: 20px !important;   /* modified */
+  font-size: 35px !important;     /* modified */
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
@@ -546,12 +573,12 @@
 }
 
 .close-btn:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(145, 142, 142, 0.2);
 }
 
 /* Modal Body */
-.modal-body {
-  padding: 30px;
+.modal-body {               /* modified */
+  padding: 0 !important;   /* modified */
   background: #fafafa;
 }
 
@@ -572,23 +599,30 @@
 .profile-upload-section {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding-bottom: 25px;
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 10px;
+  gap: 10px;
+  padding: 20px 0px 0px 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ececec;
+  margin-bottom: 20px;
   margin-right: 20px;
+  background-color: #faf8f8;
 }
 
-.profile-placeholder {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+.profile-placeholder {   
+  width: 70px;         /* modified */
+  height: 70px;         /* modified */
+  background: linear-gradient(135deg, #f0eded, #bbdefb);  /* modified */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
-  color: #0288d1;
+  font-size: 36px;   /* modified */
+  
+}
+
+.profile-icon{   /* modified */
+  font-size: 24px;   
+  color:  #19bde8 ;
 }
 
 .upload-info h4 {
@@ -605,16 +639,17 @@
   color: #666;
 }
 
-.upload-btn1 {
+.upload-btn1 {          /* modified */
   background: #19bde8 !important;
-  color: white !important;
+  color: white !important;    /* modified */
   border: none;
-  padding: 8px 16px;
-  border-radius:5px !important;
-  font-size: 11px;
-  font-weight: 500;
+  padding: 8px 17px;
+  border-radius:3px !important;   /* modified */
+  font-size: 14px !important;     /* modified */
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-top: -7px !important;    /* new */
 }
 
 .upload-btn1:hover {
@@ -625,17 +660,18 @@
 .form-row1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 30px;       /* modified */
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  padding: 5px 0px 0px 20px;
 }
 
 .form-group label {
-  font-size: 16px;
-  font-weight: 600 ;
+  font-size: 17px ;
+  font-weight: 500 !important ;
   color: #333;
   margin-bottom: 8px;
 }
@@ -643,12 +679,13 @@
 /* Input Styles */
 .form-group input,
 .form-group select {
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #ddd ;
+  background-color: #f3efef !important;
+  border-radius: 6px ;
   font-size: 14px;
   background: white;
   transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 470px !important;  /* modified */
 }
 
 .form-group input:focus,
@@ -689,12 +726,20 @@
   filter: invert(0.5);
 }
 
+/* Error Text */
+.error-text {
+  color: red !important;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 /* Modal Actions */
 .modal-actions1 {
   display: block;
   gap: 25px ;
   margin-top: 30px;
-  padding-top: 20px;
+  padding-top: 20px;   /* modified */
+  padding-bottom: 20px;      /* new */
 
 }
 
@@ -702,14 +747,15 @@
   background: #00bcd4;
   color: white;
   border: none;
-  padding: 8px 24px !important;
-  border-radius: 6px;
+  padding: 6px 22px !important;   /* modified */
+  border-radius: 6px !important;  /* modified */
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 80px;
-  margin-right:20px;
+  min-width: 70px ;          /* modified */
+  margin-right:25px;         /* modified */
+  margin-left: 30px;        /* modified */
 }
 
 .save-btn:hover {
@@ -720,15 +766,15 @@
 
 .cancel-btn {
   background: white;
-  color: #666;
+  color: #616060;
   border: 2px solid #ddd;
   padding: 10px 24px;
-  border-radius: 6px;
+  border-radius: 6px !important;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 80px;
+  min-width: 70px;
 }
 
 .cancel-btn:hover {

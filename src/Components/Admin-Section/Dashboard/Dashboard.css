@@ -58,7 +58,8 @@
 }
 
 .notice .summary-card{    /*new*/
-  margin-right: -10px;
+  margin-right: 2px;    /*modified*/
+  margin-left: -13px;    /*modified*/
 
 }
 

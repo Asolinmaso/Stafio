@@ -5,9 +5,12 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
+import { useState,useEffect } from "react";
 
 
 const WhoIsOnLeave = () => {
+   const [currentTime, setCurrentTime] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
   const leaveList = [
     { id: "2244", employee: "Akshya", type: "Casual Leave", from: "10 Aug 2025", to: "11 Aug 2025", days: "1 Day" },
     { id: "2244", employee: "Rhugmini", type: "Casual Leave", from: "06 Aug 2025", to: "07 Aug 2025", days: "1 Day" },
@@ -18,6 +21,37 @@ const WhoIsOnLeave = () => {
   ];
 
    const navigate = useNavigate();
+
+ useEffect(() => {
+    // Function to update time & date every second
+    const updateTime = () => {
+      const now = new Date();
+
+      // Format time (e.g., 9:01:09 AM)
+      const time = now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+
+      // Format date (e.g., 10 Aug 2025)
+      const date = now.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+
+      setCurrentTime(time);
+      setCurrentDate(date);
+    };
+
+    updateTime(); // run immediately
+    const timer = setInterval(updateTime, 1000); // update every 1s
+
+    return () => clearInterval(timer); // cleanup on unmount
+  }, []);
+
 
   return (
     <div className="whoisleave-layout">
@@ -43,7 +77,7 @@ const WhoIsOnLeave = () => {
               <input type="text" placeholder="🔍 Quick Search..." className="whoisleave-search" />
               <div className="whoisleave-date">
                 <FaCalendarAlt />
-                <span>10 Aug 2025</span>
+                <span>{currentDate}</span>
               </div>
               <button className="whoisleave-view-btn"
                onClick={() => navigate("/attendance")}

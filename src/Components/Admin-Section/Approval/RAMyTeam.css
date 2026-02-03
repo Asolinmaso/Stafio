@@ -215,3 +215,67 @@
   background: #19bde8;
   color: #fff;
 }
+
+/* =========================
+   FILTER POPUP – IMAGE MATCH FIX
+   (Popup below Filter button)
+========================= */
+
+.filter-wrapper {
+  position: relative; /* anchor for popup */
+}
+
+/* Popup aligned exactly under Filter button */
+.filter-popup {
+  position: absolute;
+  top: calc(100% + 12px); /* space below button */
+  right: 0;              /* align to Filter button */
+  width: 360px;
+
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+  z-index: 9999;
+}
+
+/* Smooth entrance (optional but matches UI feel) */
+.filter-popup {
+  animation: filterFadeIn 0.25s ease;
+}
+
+@keyframes filterFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Allow filter popup to escape container */
+.regularization-page,
+.regularization-main,
+.regularization-container {
+  overflow: visible !important;
+}
+
+.filter-wrapper {
+  position: relative;
+}
+
+/* Exact position like design */
+.filter-popup {
+  position: absolute;
+  top: 52px;          /* directly below Filter button */
+  right: 100;
+  width: 360px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+  z-index: 9999;
+}

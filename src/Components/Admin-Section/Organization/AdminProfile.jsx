@@ -744,7 +744,7 @@ const validations = {
       <div className="sidebar">
         <AdminSidebar />
       </div>
-      <div className="main-content py-4">
+      <div className="main-content5 py-4">
         <Topbar />
         <ProfileBanner profileData={profile} />
 

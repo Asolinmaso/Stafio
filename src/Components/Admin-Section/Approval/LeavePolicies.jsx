@@ -1,23 +1,146 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import "./LeavePolicies.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const LeavePolicies = () => {
-  const leavePolicies = [
-    { name: "Casual Leave", createdOn: "14 Apr 2025", type: "All" },
-    { name: "Sick Leave", createdOn: "06 Apr 2025", type: "All" },
-    { name: "Maternity", createdOn: "27 Mar 2025", type: "Specific" },
-    { name: "Paternity", createdOn: "20 Mar 2025", type: "Specific" },
-    { name: "Annual Leave", createdOn: "16 Mar 2025", type: "All" },
-    { name: "Sabbatical Leave", createdOn: "16 Mar 2025", type: "All" },
-    { name: "Medical Leave", createdOn: "16 Mar 2025", type: "All" },
-  ];
+  const [leavePolicies, setLeavePolicies] = useState([]);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+  leaveName: "",
+  description: "",
+  maxDays: 12,
+  applicability: "",
+  leaveType: "",
+  gender: [],
+});
+  
+  const [showModal, setShowModal] = useState(false);  
+  const [errors, setErrors] = useState({});
 
-  const [showModal, setShowModal] = useState(false);
+  //initial state + reset function
+  const initialFormState = {
+  leaveName: "",
+  description: "",
+  maxDays: 0,
+  applicability: "",
+  leaveType: "",
+  gender: [],
+};
+
+const resetForm = () => {
+  setFormData(initialFormState);
+  setErrors({});
+};
+
+
+//Handle input change
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  // Allow only digits for maxDays
+  if (name === "maxDays" && !/^\d*$/.test(value)) {
+    return;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+
+  setErrors((prev) => ({ ...prev, [name]: "" }));
+};
+
+//Handle gender checkbox
+const handleGenderChange = (e) => {
+  const { value, checked } = e.target;
+
+  setFormData((prev) => ({
+    ...prev,
+    gender: checked
+      ? [...prev.gender, value]
+      : prev.gender.filter((g) => g !== value),
+  }));
+
+  setErrors((prev) => ({ ...prev, gender: "" }));
+};
+
+//Validation function
+const validateForm = () => {
+  let newErrors = {};
+
+  // Leave Name: mandatory, alphabets + numbers
+  const nameRegex = /^[a-zA-Z0-9 ]+$/;
+  if (!formData.leaveName.trim()) {
+    newErrors.leaveName = "*Leave name is required";
+  } else if (!nameRegex.test(formData.leaveName)) {
+    newErrors.leaveName = "*Only alphabets and numbers allowed";
+  }
+
+  // Max Days: positive number
+  if (!formData.maxDays || Number(formData.maxDays) <= 0) {
+    newErrors.maxDays = "*Maximum days allowed per year must be greater than 0";
+  } else if (Number(formData.maxDays) > 12) {
+  newErrors.maxDays = "*Maximum allowed days per year is 12";
+}
+
+  // Applicability
+  if (!formData.applicability) {
+    newErrors.applicability = "*Please select applicability";
+  }
+
+  // Gender
+  if (formData.gender.length === 0) {
+    newErrors.gender = "*Please select at least one gender";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+//Save button handler (NO refresh)
+const handleSave = (e) => {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  // API call here (later)
+  resetForm();
+  setShowModal(false);
+};
+
+
+  useEffect(() => {
+    const  fetchleavepolicies = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:5001/api/leavepolicies");
+        setLeavePolicies(response.data);
+      } catch (error) {
+        console.error("Error fetching attendance data:", error);
+      }
+    };
+
+    fetchleavepolicies();
+  }, []);
+
+
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
 
   return (
     <div className="leave-policies-layout">
@@ -78,7 +201,10 @@ const LeavePolicies = () => {
                 <h3 className="leave-policies-modal-title">Add New Leave</h3>
                 <button
                   className="leave-policies-close-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={() =>  {
+                      resetForm();
+                      setShowModal(false);
+                      }}
                 >
                   ×
                 </button>
@@ -92,15 +218,24 @@ const LeavePolicies = () => {
                       <label>Leave Name</label>
                       <input
                         type="text"
+                        name="leaveName"
+                        value={formData.leaveName}
+                        onChange={handleChange}
                         placeholder="Please enter name"
                         className="leave-policies-input"
                       />
+                      {errors.leaveName && (
+                         <p className="leave-policies-error">{errors.leaveName}</p>
+                      )}
                     </div>
 
                     <div className="leave-policies-field">
                       <label>Description</label>
                       <input
                         type="text"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                         placeholder="Please enter description"
                         className="leave-policies-input"
                       />
@@ -109,18 +244,36 @@ const LeavePolicies = () => {
                     <div className="leave-policies-field">
                       <label>Maximum Days Allowed</label>
                       <input
-                        type="text"
+                        type="number"
+                        name="maxDays"
+                        value={formData.maxDays}
+                        onChange={handleChange}
                         placeholder="Please enter number of days"
                         className="leave-policies-input"
+                        onWheel={(e) => e.target.blur()}
+                        min="1"
                       />
+                      {errors.maxDays && (
+                         <p className="leave-policies-error">{errors.maxDays}</p>
+                      )}
                     </div>
 
                     <div className="leave-policies-field">
                       <label>Applicability</label>
-                      <select className="leave-policies-select">
-                        <option>All Employee</option>
-                        <option>Specific Employee</option>
+                      <select 
+                      className="leave-policies-select"
+                      name="applicability"
+                      value={formData.applicability}
+                      onChange={handleChange}
+                      >
+                        <option value="">Select</option>
+                        <option value="All">All Employee</option>
+                        <option value="Specific" >Specific Employee</option>
+                        <option value="Department">Department-wise</option> 
                       </select>
+                      {errors.applicability && (
+                       <p className="leave-policies-error">{errors.applicability}</p>
+                      )}
                     </div>
 
                     <div className="leave-policies-field">
@@ -137,13 +290,29 @@ const LeavePolicies = () => {
                       <label>Gender</label>
                       <div className="leave-policies-checkbox-group">
                         <label className="leave-policies-checkbox-label">
-                          <input type="checkbox" className="leave-policies-checkbox" />
+                          <input 
+                          type="checkbox"
+                          value="Male"
+                          checked={formData.gender.includes("Male")}
+                          onChange={handleGenderChange} 
+                          className="leave-policies-checkbox" 
+                          />
                           <span>Male</span>
                         </label>
+
                         <label className="leave-policies-checkbox-label">
-                          <input type="checkbox" className="leave-policies-checkbox" />
+                          <input 
+                          type="checkbox"
+                          value="Female"
+                          checked={formData.gender.includes("Female")}
+                          onChange={handleGenderChange} 
+                          className="leave-policies-checkbox" 
+                          />
                           <span>Female</span>
                         </label>
+                        {errors.gender && (
+                           <p className="leave-policies-error">{errors.gender}</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -152,13 +321,20 @@ const LeavePolicies = () => {
 
               {/* Footer */}
               <div className="leave-policies-modal-footer">
-                <button type="submit" className="leave-policies-save-btn">
+                <button 
+                 type="button" 
+                 className="leave-policies-save-btn"
+                 onClick={handleSave}
+                 >
                   Save
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
                   className="leave-policies-cancel-btn"
+                  onClick={() => {
+                    resetForm();
+                    setShowModal(false);
+                  }}
                 >
                   Cancel
                 </button>
