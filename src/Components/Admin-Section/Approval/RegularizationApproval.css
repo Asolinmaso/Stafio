@@ -7,8 +7,10 @@
 
 .regularization-main {
   flex: 1;
-  padding: 20px 30px;
+  padding: 1px 10px !important;
   background: #eff5ff;
+  margin-top: 2px !important;
+  width: 90% !important;
 }
 
 .regularization-container {
@@ -25,7 +27,7 @@
 .header-top h2 {
   font-size: 30px;
   color: #222;
-  margin-bottom: 15px;
+  margin-bottom: 35px !important ;
   font-weight:600;
 }
 
@@ -232,8 +234,8 @@
 }
 
 .filter-icon-btn {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 36px;
   border-radius: 12px;
   background:transparent;
   border: 1px solid #b8b4b4ff;  

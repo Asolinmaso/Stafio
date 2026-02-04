@@ -30,8 +30,8 @@
 }
 
 .leave-approval-layout .topbar {
-   padding-top: 15px !important;    /* modified */
-   padding-bottom: 15px !important;   /* modified */
+   padding-top: 13px !important;    /* modified */
+   padding-bottom: 13px !important;   /* modified */
   margin-top: 30px ; 
   padding-bottom: 8px;
   width: 95%;
@@ -39,7 +39,6 @@
   margin-right: auto ; /* centers horizontally */
   display: block;
 }
-
 
 .leave-approval-page {
   flex: 1;
@@ -186,11 +185,11 @@
 /* =========================
    FILTER POPUP FIXES
 ========================= */
-.filter-dropdown1 {
+.filter-dropdown {
   position: absolute;
   top: 70px; /* adjust to align with search/filter bar */
   right: 0px; /* align with Filter button */
-  left: 700px;        /* modified */
+  
   width: 320px;
   background: #ffffff;
   border-radius: 12px;

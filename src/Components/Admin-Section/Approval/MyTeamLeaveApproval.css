@@ -6,11 +6,12 @@
 }
 
 .myteam-layout .topbar{
-  padding-top: 5px;
+  padding-top: 13px !important;   /* modified */
+  padding-bottom: 13px !important;   /* modified */
   margin-top: 30px;
   padding-bottom: 8px;
   width: 95%;
-  margin-left: auto;
+  margin-left: auto !important;     /* modified */
   margin-right: auto; /* centers horizontally */
   display: block;
 }

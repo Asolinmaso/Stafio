@@ -85,7 +85,7 @@ export default function RegularizationApproval() {
 
                 {/* 🔹 FILTER BUTTON */}
                 <button
-                  className="right-butn-filter"
+                  className="right-butn-filterr"
                   onClick={() => setShowFilterPopup(true)}
                 >
                   <FaFilter /> Filter

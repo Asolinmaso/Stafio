@@ -277,7 +277,7 @@ const LeaveApproval = () => {
         {showFilterPopup && (
           <div className="modal-overlay" onClick={() => setShowFilterPopup(false)}>
             <div
-              className="filter-dropdown1"
+              className="filter-dropdown"
               onClick={(e) => e.stopPropagation()}
             >
               <h4 className="filter-title">Filter</h4>

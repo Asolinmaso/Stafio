@@ -190,7 +190,6 @@
 }
 
 
-
 .showing select {
   margin-left: 5px;
   padding: 4px;
@@ -215,6 +214,7 @@
   background: #19bde8;
   color: #fff;
 }
+
 
 /* =========================
    FILTER POPUP – IMAGE MATCH FIX
@@ -271,7 +271,7 @@
 .filter-popup {
   position: absolute;
   top: 52px;          /* directly below Filter button */
-  right: 100;
+  right: 0;
   width: 360px;
   background: #fff;
   border-radius: 18px;
@@ -279,3 +279,8 @@
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
   z-index: 9999;
 }
+
+/* .filter-dropdown{
+  margin-left: 900px ;
+  margin-top: 200px !important;
+}  */
