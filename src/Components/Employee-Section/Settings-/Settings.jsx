@@ -230,7 +230,7 @@ const handleBasicCancel = () => {
                     <span className="theme-text">
                      {theme === "light" ? "Light Theme" : "Dark Theme"}
                     </span>
-                   <label className="switch switch1">
+                   <label className="switch">
                     <input
                       type="checkbox"
                       checked={theme === "dark"}

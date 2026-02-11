@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Card, Dropdown } from "react-bootstrap";
+import React from "react";
+import { Card } from "react-bootstrap";
 import {
   BarChart,
   Bar,
@@ -7,80 +7,51 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
+  LabelList,
 } from "recharts";
-import { FaSlidersH } from "react-icons/fa";
 
 // ✅ Employee Attendance Card Component
-const EmployeeAttendanceCard = ({ dataSets }) => {
-const [view, setView] = useState("months");
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  const data = dataSets[view];
+const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
+  attendanceData,
+}) {
+  const data = Array.isArray(attendanceData) ? attendanceData : [];
+  const highlighted = data.filter((d) => d.highlight);
 
   return (
-    <Card className="attendance-card">
+    <Card className="employee-attendance-card">
       <Card.Body>
-        {/* Header */}
-        <div className="attendance-header1">
-          <h5>Monthly Attendance</h5>
-
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="light" className="settings-btn">
-              <FaSlidersH />
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setView("months")}>
-                Months
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => setView("weeks")}>
-                Weeks
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => setView("days")}>
-                Days
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Card.Title>Employee Attendance Overview</Card.Title>
         </div>
 
-        {/* Chart */}
-        <ResponsiveContainer width="100%" height={220}>
+        <ResponsiveContainer width="100%" height={200}>
           <BarChart data={data}>
-            <XAxis dataKey="label" />
+            <XAxis dataKey="month" />
+            <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+            <Tooltip formatter={(v) => `${v}%`} />
 
-            <YAxis
-              domain={[0, 100]}
-              tickFormatter={(value) => `${value}%`}
-              axisLine={false}
-              tickLine={false}
-            />
-
-            <Tooltip
-              cursor={{ fill: "transparent" }}
-              formatter={(v) => `${v}%`}
-            />
-
+            {/* Default Bars */}
             <Bar
               dataKey="value"
-              barSize={28}
-              radius={[8, 8, 0, 0]}
-              onMouseLeave={() => setActiveIndex(null)}
-            >
-              {data.map((_, index) => (
-                <Cell
-                  key={index}
-                  fill={index === activeIndex ? "#19BDE8" : "#E6EEF3"}
-                  onMouseEnter={() => setActiveIndex(index)}
-                />
-              ))}
-            </Bar>
+              radius={[4, 4, 0, 0]}
+              fill="#19bde8"
+              barSize={30}
+            ></Bar>
+
+            {/* Highlighted Bar */}
+            {
+              <Bar
+                dataKey="value"
+                radius={[4, 4, 0, 0]}
+                fill="#19bde8"
+                barSize={30}
+              ></Bar>
+            }
           </BarChart>
         </ResponsiveContainer>
       </Card.Body>
     </Card>
   );
-};
-
+});
 
 export default EmployeeAttendanceCard;

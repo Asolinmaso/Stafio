@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./MyRegularization.css";
 import { FaEdit, FaTimesCircle, FaFilter, FaUpload } from "react-icons/fa";
 import illustration from "../../../assets/timemgnt.png"; // Add your illustration image
@@ -6,79 +6,156 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
-
+import axios from "axios";
 
 export default function MyRegularization() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-      const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
-      const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
-  const regularizationData = [
-    {
-      id: 1,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      attendanceType: "Present",
-      date: "11-07-2025/Half Day(AN)",
-      reason: "Forgot Clock In",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Approved",
-    },
-    {
-      id: 4,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Approved",
-    },
-    {
-      id: 5,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Approved",
-    },
-  ];
+  const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
+  const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  const [regularizationData, setRegularizationData] = useState([]);
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    user_id: "",
+    date: "",
+    session_type: "Full Day",
+    attendance_type: "Present",
+    reason: "",
+  });
+  const [isEdit, setIsEdit] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-const filteredAndSortedLeaves = regularizationData
-  
-  // FILTER by status
-  .filter((leave) =>
-    filterStatus === "All" ? true : leave.status === filterStatus
-  )
+  const filteredAndSortedLeaves = regularizationData
 
+    // FILTER by status
+    .filter((leave) =>
+      filterStatus === "All" ? true : leave.status === filterStatus,
+    );
 
+  useEffect(() => {
+    const fetchMyRegularizations = async () => {
+      try {
+        const userId = sessionStorage.getItem("current_user_id");
 
+        if (!userId) return;
 
-useEffect(() => {
-  if (showModal) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "auto";
-  }
+        const response = await axios.get(
+          "http://127.0.0.1:5001/api/myregularization",
+          {
+            headers: {
+              "X-User-ID": userId,
+            },
+          },
+        );
 
-  return () => {
-    document.body.style.overflow = "auto";
+        setRegularizationData(response.data);
+      } catch (error) {
+        console.error("Error fetching admin regularization data:", error);
+      }
+    };
+
+    fetchMyRegularizations();
+  }, []);
+
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showModal]);
+
+  const handleSubmitRegularization = async () => {
+    const userId = sessionStorage.getItem("current_user_id");
+    console.log(userId);
+    try {
+      if (isEdit) {
+        // ✏️ EDIT
+        await axios.put(
+          `http://127.0.0.1:5001/api/regularization/${editId}`,
+          formData,
+          { headers: { "X-User-ID": userId } },
+        );
+
+        alert("Regularization updated successfully");
+      } else {
+        // ➕ ADD
+        await axios.post("http://127.0.0.1:5001/api/regularization", formData, {
+          headers: { "X-User-ID": userId },
+        });
+
+        alert("Regularization added successfully");
+      }
+
+      // Reset modal & state
+      setShowModal(false);
+      setIsEdit(false);
+      setEditId(null);
+      setFormData({
+        user_id:
+          localStorage.getItem("employee_user_id") ||
+          sessionStorage.getItem("current_user_id"),
+        date: "",
+        session_type: "Full Day",
+        attendance_type: "Present",
+        reason: "",
+      });
+
+      // Refresh table
+      const res = await axios.get(
+        "http://127.0.0.1:5001/api/myregularization",
+        { headers: { "X-User-ID": userId } },
+      );
+      setRegularizationData(res.data);
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
+    }
   };
-}, [showModal]);
+
+  const handleEdit = (row) => {
+    if (row.status !== "Pending") return;
+
+    setIsEdit(true);
+    setEditId(row.id);
+
+    setFormData({
+      user_id:
+        localStorage.getItem("employee_user_id") ||
+        sessionStorage.getItem("current_user_id"),
+      date: row.date.split("/")[0].split("-").reverse().join("-"),
+      session_type: row.date.split("/")[1] || "Full Day",
+      attendance_type: row.attendanceType,
+      reason: row.reason,
+    });
+
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id, status) => {
+    if (status !== "Pending") return;
+
+    if (!window.confirm("Delete this regularization?")) return;
+
+    const userId = sessionStorage.getItem("current_user_id");
+
+    await axios.delete(`http://127.0.0.1:5001/api/regularization/${id}`, {
+      headers: { "X-User-ID": userId },
+    });
+
+    setRegularizationData((prev) => prev.filter((item) => item.id !== id));
+  };
 
   return (
     <div className="layout">
       <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="regularization-container">
@@ -90,7 +167,18 @@ useEffect(() => {
         <div className="regularization-actions">
           <button
             className="btn-regularization-add"
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setFormData({
+                user_id:
+                  localStorage.getItem("employee_user_id") ||
+                  sessionStorage.getItem("current_user_id"),
+                date: "",
+                session_type: "Full Day",
+                attendance_type: "Present",
+                reason: "",
+              });
+              setShowModal(true);
+            }}
           >
             + Add Regularization
           </button>
@@ -101,15 +189,15 @@ useEffect(() => {
             My Leaves
           </button>
           <select
-                className="right-butn-filters"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
+            className="right-butn-filters"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="All">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
         </div>
 
         {/* Regularization Table */}
@@ -138,16 +226,28 @@ useEffect(() => {
                         row.status === "Approved"
                           ? "approved"
                           : row.status === "Pending"
-                          ? "pending"
-                          : "rejected"
+                            ? "pending"
+                            : "rejected"
                       }`}
                     >
                       {row.status}
                     </span>
                   </td>
                   <td className="action-icons">
-                    <FaEdit className="edit-icon" />
-                    <FaTimesCircle className="delete-icon" />
+                    {row.status === "Pending" ? (
+                      <>
+                        <FaEdit
+                          className="edit-icon"
+                          onClick={() => handleEdit(row)}
+                        />
+                        <FaTimesCircle
+                          className="delete-icon"
+                          onClick={() => handleDelete(row.id, row.status)}
+                        />
+                      </>
+                    ) : (
+                      <span className="disabled-text">—</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -175,7 +275,7 @@ useEffect(() => {
             <div className="regularization-modal">
               {/* Header */}
               <div className="regularization-headers">
-                <h3>Add Regularization</h3>
+                <h3>{isEdit ? "Edit Regularization" : "Add Regularization"}</h3>
                 <button
                   className="regularization-close"
                   onClick={() => setShowModal(false)}
@@ -190,20 +290,43 @@ useEffect(() => {
                   {/* Left Form Section */}
                   <div className="regularization-left">
                     <label>Employee ID:</label>
-                    <input type="text"/>
+                    <input type="text" value={formData.user_id} readOnly />
 
                     <label>Leave Type:</label>
-                    <select>
+                    <select
+                      value={formData.session_type}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          session_type: e.target.value,
+                        })
+                      }
+                    >
                       <option>Full Day</option>
                       <option>Half Day (FN)</option>
                       <option>Half Day (AN)</option>
                     </select>
 
                     <label>Select Date:</label>
-                    <input type="date" placeholder="DD-MM-YYYY" />
+                    <input
+                      type="date"
+                      placeholder="DD-MM-YYYY"
+                      value={formData.date}
+                      onChange={(e) =>
+                        setFormData({ ...formData, date: e.target.value })
+                      }
+                    />
 
                     <label>Attendance:</label>
-                    <select>
+                    <select
+                      value={formData.attendance_type}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          attendance_type: e.target.value,
+                        })
+                      }
+                    >
                       <option>Present</option>
                       <option>Absent</option>
                     </select>
@@ -212,6 +335,10 @@ useEffect(() => {
                     <textarea
                       placeholder="ex: Forgot to Clock In"
                       maxLength={30}
+                      value={formData.reason}
+                      onChange={(e) =>
+                        setFormData({ ...formData, reason: e.target.value })
+                      }
                     ></textarea>
                   </div>
 
@@ -224,8 +351,10 @@ useEffect(() => {
 
               {/* Footer */}
               <div className="regularization-footer">
-                <button type="submit" className="regularization-submit"
-                 onClick={() => setShowModal(false)}
+                <button
+                  type="button"
+                  className="regularization-submit"
+                  onClick={handleSubmitRegularization}
                 >
                   Submit
                 </button>

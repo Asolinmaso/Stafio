@@ -1,3 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.admin-login-container {
+  background: linear-gradient(to right, #ffffff, #eaf9fd);
+  height: 100vh;
+}
+/* ===== LEFT SIDE (same as Employee login) ===== */
 .login-left {
   position: relative;
   background: #e8edfaff;
@@ -26,19 +37,19 @@
 }
 
 .login-logos {
-  margin-top:40px;
+  margin-top: 10px !important;
   display: flex;
   align-items: center;
   justify-content: flex-start; /* keep logos left */
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 0px !important;
   margin-left:30px;
 }
 
-.teampluss-logo {
-  height: 55px;
-  width:55px;
-
+.teampluss-logo {       /* modified */
+  height: 22% !important;  
+  margin-right:180px;     
+  margin-bottom:10px !important;
 }
 
 .stafio-logo {
@@ -49,7 +60,7 @@
   margin-top: 10px;
   font-size: 35px;
   font-weight: 600;
-  color: #1e2a5a;
+  color: #030303;
   width:100%;
   text-align:left;
   margin-left:30px;
@@ -66,22 +77,24 @@
 }
 
 .login-description  {
-  font-size: 18px;
-  color: #0a0a0aff;
+  font-size: 16px;     /* modified */
+  color: #0a0a0a;
   margin-bottom: 20px;
   line-height: 1.5;
    margin-left:30px;
   
 }
 
-.login-illustration {
-  max-width: 60%;
+.login-illustrations {
+  width: 530px !important;    /* modified */
+  height: 530px !important;   /* modified */
   z-index: 2;
   position: relative;
-  margin-top: -20px;
-  align-self: center; /* center only the main illustration */
+  margin-top: -260px !important;  /* modified */
+  align-self: center;
 }
 
+/* ===== RIGHT SIDE (same as Employee login alignment) ===== */
 .login-form-wrapper {
   background: #ffffff; /* white background */
   padding: 50px;
@@ -94,27 +107,125 @@
 .login-form-wrapper h5{
   color: #36baeeff;
   font-weight:500;
-  font-size:23px;
-  padding-bottom:20px;
+  font-size: 24px;         /* modified */
+  padding-bottom: 10px;    /* modified */
 
 }
 .login-form-wrapper h3{
   font-weight:600;
-  font-size:30px;
-}
-.email-input{
-  background: #e9eaeaff;
-  width:400px;
-  height:40px;
+  font-size: 36px;         /* modified */
 }
 
+.email-input {
+  background: #e9eaea;
+  width: 450px !important;    /* modified */
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+}
+
+.email-input:focus {
+  border-color: #19BDE8;
+  box-shadow: 0 0 0 0.2rem rgba(25, 189, 232, 0.25);
+}
+
+.login-btn {
+  width: 450px !important;      /* modified */
+  background-color: #19BDE8;
+  border: none;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;      /* modified */
+}
+
+.login-btn:hover {
+  background-color: #17a8d3;
+}
+
+.signup-page {
+  color: #36baee;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-page:hover {
+  text-decoration: underline;
+}
+
+.signup-text {
+  text-align:center;
+  font-size: 15px;
+  font-weight:500;
+}
 .signup-page{
-  color: #36baeeff;
-}
-.login-btn{
-  width:400px;
+  font-weight:600;
 }
 
-.signup-text{
-  font-size:15px;
+.text-center a {
+  color: #19BDE8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.text-center a:hover {
+  text-decoration: underline;
+}
+
+
+.remember-me-checkbox label {
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom:-2px ;
+  padding-left:5px;
+
+}
+
+.forgot-password-link {
+  font-size: 14px;
+  color: #000;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.custom-google-btn {
+  width: 450px;
+  height: 45px;
+  background: #e7faff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content:left;
+  gap: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: 0.2s ease;
+  
+}
+
+.custom-google-btn:hover {
+  background: #d9f4ff;
+}
+
+.custom-google-btn span {
+  font-size: 18px;
+  font-weight: 600;
+  color: #00b5e2;
+}
+
+.google-icon {
+  width: 30px !important;
+  height: 20px !important;
+}
+
+.google-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }

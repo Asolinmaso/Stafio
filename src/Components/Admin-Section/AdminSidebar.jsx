@@ -339,8 +339,6 @@ const AdminSidebar = () => {
     localStorage.removeItem("remember_google_email");
     localStorage.removeItem("remember_google_name");
     sessionStorage.removeItem("tab_id");
-
-
     window.location.href = "/";
   };
 

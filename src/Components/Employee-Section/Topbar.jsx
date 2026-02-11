@@ -1,49 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FaBell, FaChevronDown, FaPlus, FaTimes , FaFilePdf, FaDownload } from "react-icons/fa";
+import { FaBell, FaChevronDown, FaFilePdf, FaDownload } from "react-icons/fa";
 
 import profileimg2 from "../../assets/profileimg2.png";
 import stafiologoimg from "../../assets/stafiologoimg.png";
-import { Navigate, useNavigate } from "react-router-dom";
-import { searchData } from "./searchData";
-
 import "./Topbar.css";
+
 
 const Topbar = () => {
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
   const [showProfilePopup, setShowProfilePopup] = useState(false);
-  const [query, setQuery] = useState("");
-  const [searchItems, setSearchItems] = useState(searchData);
-  const [showPopup, setShowPopup] = useState(false);
-  const [announcements, setAnnouncements] = useState([]);
-    const [showAddForm, setShowAddForm] = useState(false);
-    const popupRef = useRef(null);
-  
- useEffect(() => {
-    const storedAdminusername = localStorage.getItem("admin_username");
-    if (storedAdminusername) {
-      setAdminusername(storedAdminusername);
-    }
+  const popupRef = useRef(null);
 
-    // Load saved announcements
-    const savedAnnouncements = localStorage.getItem("announcements");
-    if (savedAnnouncements && savedAnnouncements !== "undefined") {
-      try {
-        setAnnouncements(JSON.parse(savedAnnouncements));
-      } catch (err) {
-        console.error("Error parsing announcements:", err);
-        setAnnouncements([]);
-      }
-    }
-  }, []);
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("employee_username");
+    if (storedUsername) setUsername(storedUsername);
 
-   useEffect(() => {
-    // Read values from sessionStorage
-    const storedUsername = sessionStorage.getItem("current_username");
-    const storedRole = sessionStorage.getItem("current_role");
-
-    setUsername(storedUsername);
-    setRole(storedRole);
+    const storedUserrole = localStorage.getItem("employee_role");
+    if (storedUserrole) setRole(storedUserrole);
   }, []);
 
   useEffect(() => {
@@ -56,70 +30,6 @@ const Topbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
- const navigate = useNavigate();
-
- const handleSelect = (item) => {
-  setQuery("");
-
-  if (item.type === "employee") {
-    navigate("/employees-list", {
-      state: {
-        highlightName: item.label,
-        empId: item.subLabel,
-      },
-    });
-  } else {
-    navigate(item.path);
-  }
-};
-
- const filteredResults = searchItems.filter((item) =>
-     item.label.toLowerCase().includes(query.toLowerCase()) ||
-  item.subLabel?.toLowerCase().includes(query.toLowerCase())
-);
-
-
-  useEffect(() =>{
-    try{
-    setSearchItems([...searchData]);
-          } catch (err) {
-            console.error("Search fetch error:", err);
-          }
-  },[]);
-
-
-const handleAddNewClick = () => {
-    setShowAddForm(true);
-  };
-
-const togglePopup = () => {
-    setShowPopup(!showPopup);
-    setShowAddForm(false);
-  };
-
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      popupRef.current &&
-      !popupRef.current.contains(event.target)
-    ) {
-      setShowPopup(false);
-      setShowAddForm(false);
-    }
-  };
-
-  if (showPopup) {
-    document.addEventListener("mousedown", handleClickOutside);
-  }
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [showPopup]);
-
-
-
-
   return (
     <div className="topbar shadow-sm d-flex align-items-center justify-content-between px-3">
       {/* Left logo */}
@@ -128,41 +38,13 @@ useEffect(() => {
       </div>
 
       {/* Search box */}
-      <div className="topbar-searches flex-grow-1 mx-3 position-relative">
-          <input
-            type="text"
-            className="form-controler"
-            placeholder="Search modules..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              console.log(e.target.value);
-            }}
-          />
-
-          {query && (
-            <div className="search-dropdown">
-              {filteredResults.length > 0 ? (
-                filteredResults.map((item, index) => (
-                  <div
-                    key={index}
-                    className="search-item"
-                    onClick={() => handleSelect(item)}
-                  >
-                    <span className="search-type">{item.type}</span>
-                    <span>{item.label}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="search-item no-result">No results found</div>
-              )}
-            </div>
-          )}
-        </div>
+      <div className="topbar-searches flex-grow-1 mx-3">
+        <input type="text" className="form-controler" placeholder="Quick Search..." />
+      </div>
 
       {/* Right side user + bell */}
       <div className="profile d-flex align-items-center  position-relative" ref={popupRef}>
-        <FaBell size={20} className="text-dark" onClick={togglePopup} style={{ cursor: "pointer" }} />
+        <FaBell size={20} className="text-dark" style={{ cursor: "pointer" }} />
 
         <div
           className="profile-data d-flex align-items-center "
@@ -176,7 +58,6 @@ useEffect(() => {
           </div>
           <FaChevronDown className="ms-2" />
         </div>
-    
 
         {/* Full Profile Popup */}
         {showProfilePopup && (
@@ -274,54 +155,6 @@ useEffect(() => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-        {showPopup && (
-          <div className="announcement-popup1 shadow-lg" ref={popupRef}>
-            <div className="popup-header d-flex align-items-center justify-content-between">
-              <div className="fw-bold fs-5">Announcement</div>
-              <div className="d-flex align-items-center gap-3">
-                
-              </div>
-            </div>
-
-            <hr />
-
-            <div className="popup-content">
-              {announcements && announcements.length === 0 ? (
-                <div className="text-center text-muted py-5">
-                  No announcements yet.
-                </div>
-              ) : (
-                <ul className="announcement-list">
-                  {announcements && announcements.map((a, i) => (
-                    <li key={i} className="announcement-item">
-                      <div className="announcement-header">
-                        <div className="announcement-name fw-bold">
-                          {a.name || "Unknown"}
-                        </div>
-                      </div>
-                      <div className="announcement-meta text-muted small">
-                        <span>{a.designation || "No Designation"}</span>
-                        
-                      </div>
-                      <div className="announcement-eventname">
-                        <span className="eventname">
-                          {a.eventName || "Untitled Event"}
-                          <span className="dot"> : </span>
-                          <span>{a.date || "No Date"}</span>
-                          <span className="dot">, </span>
-                          <span>{a.time || "No Time"}</span>
-                        </span>
-                      </div>
-                      <div className="announcement-message mt-2">
-                        {a.message || "No message provided."}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </div>
         )}

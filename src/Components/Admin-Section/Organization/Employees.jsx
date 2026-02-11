@@ -8,23 +8,137 @@ import axios from "axios";
 import group10 from "../../../assets/Group10.png";
 import { useLocation } from "react-router-dom";
 
+import { FaUserFriends } from "react-icons/fa"; //new
+import { FaSearch } from 'react-icons/fa';   //new
+
 const Employee = () => {
   const [showModal, setShowModal] = useState(false);
-  const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
+  name: "",
   department: "all",
   position: "all",
   status: "all",
 });
+
+//new state
+const [allEmployees, setAllEmployees] = useState([]);
+const [formData, setFormData] = useState({
+  firstName: "",
+  lastName: "",
+  employeeId: "",
+  joiningDate: "",
+  email: "",
+  phone: "",
+  employmentType: "",
+  supervisor: "",
+  hrManager: "",
+  department: "",
+  designation: "",
+  status: "Active",
+});
+
+const [errors, setErrors] = useState({});
+
+const initialFormState = {
+  firstName: "",
+  lastName: "",
+  employeeId: "",
+  joiningDate: "",
+  email: "",
+  phone: "",
+  employmentType: "",
+  supervisor: "",
+  hrManager: "",
+  department: "",
+  designation: "",
+  status: "Active",
+};
+
+const resetForm = () => {
+  setFormData(initialFormState);
+  setErrors({});
+};
+
+
 
 
   const navigate = useNavigate();
 
   const location = useLocation();
   const highlightName = location.state?.highlightName || "";
+
+
+// Handle input change
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({ ...formData, [name]: value });
+  setErrors({ ...errors, [name]: "" });
+};
+
+//Validation logic for new employee form
+
+const validateForm = () => {
+  let newErrors = {};
+
+  if (!formData.firstName.trim() || formData.firstName.length < 3) {
+    newErrors.firstName = "*First name is required";
+  }
+
+  if (!formData.lastName.trim() || formData.lastName.length < 1) {
+    newErrors.lastName = "*Last name must contain at least one letter";
+  }
+
+  if (!formData.employeeId.trim()) {
+    newErrors.employeeId = "*Employee ID is required";
+  }
+
+  if (!formData.joiningDate) {
+    newErrors.joiningDate = "*Please select a joining date";
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    newErrors.email = "*Enter a valid email address";
+  }
+
+  const phoneRegex = /^[6-9]\d{9}$/;
+  if (!phoneRegex.test(formData.phone)) {
+    newErrors.phone = "*Enter a valid 10-digit phone number";
+  }
+
+  const selectFields = [
+    "employmentType",
+    "supervisor",
+    "hrManager",
+    "department",
+    "designation",
+  ];
+
+  selectFields.forEach((field) => {
+    if (!formData[field]) {
+      newErrors[field] = "*Please select an option";
+    }
+  });
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+//  Handle submit
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (validateForm()) {
+    console.log("Form Submitted:", formData);
+    // API call here
+  }
+};
+
+
+
 
   // ✅ Fetch employees from backend
   useEffect(() => {
@@ -33,7 +147,8 @@ const Employee = () => {
         const response = await axios.get(
           "http://127.0.0.1:5001/api/employeeslist"
         );
-        setEmployees(response.data);
+        console.log("API DATA:", response.data);
+        setAllEmployees(response.data);
       } catch (error) {
         console.error("Error fetching employees:", error);
       }
@@ -41,61 +156,70 @@ const Employee = () => {
 
     fetchEmployees();
   }, []);
+  //  Filtered + Sorted Employees
+  const finalEmployees = React.useMemo(() => {
+  let data = [...allEmployees];
 
-  const filteredEmployees = highlightName
-    ? employees.filter((emp) =>
-        emp.name.toLowerCase().includes(highlightName.toLowerCase())
-      )
-    : employees;
-
-  // for searching employees
-  const baseEmployees = highlightName
-    ? employees.filter((emp) =>
-        emp.name.toLowerCase().includes(highlightName.toLowerCase())
-      )
-    : employees;
-
-  const searchedEmployees = baseEmployees.filter((emp) =>
-    `${emp.name} ${emp.email} ${emp.empId}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
-
-  // for filtering the employees
-  const filteredEmployee = searchedEmployees.filter((emp) => {
-    return (
-      (filters.department === "all" ||
-        emp.department === filters.department) &&
-      (filters.position === "all" ||
-        emp.position === filters.position) &&
-      (filters.status === "all" ||
-        emp.status === filters.status)
+  //  Highlight name
+  if (highlightName.trim()) {
+    data = data.filter(emp =>
+      emp.name.toLowerCase().includes(highlightName.toLowerCase())
     );
-  });
+  }
+
+  //  Search
+  if (searchTerm.trim()) {
+    data = data.filter(emp =>
+      `${emp.name} ${emp.email} ${emp.empId}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+  }
+
+    // Name filter (from filter panel)
+if (filters.name.trim()) {
+  data = data.filter(emp =>
+    emp.name.toLowerCase().includes(filters.name.toLowerCase())
+  );
+}
 
 
-  // for filtering the employees
-  const sortedEmployees = [...filteredEmployee].sort((a, b) => {
+  // Department
+  if (filters.department !== "all") {
+    data = data.filter(emp => emp.department === filters.department);
+  }
+
+  //  Position
+  if (filters.position !== "all") {
+    data = data.filter(emp => emp.position === filters.position);
+  }
+
+  // Status
+  if (filters.status !== "all") {
+    data = data.filter(emp => emp.status === filters.status);
+  }
+
+  // Sorting
+  data.sort((a, b) => {
     switch (sortBy) {
       case "name":
         return a.name.localeCompare(b.name);
-
       case "department":
         return a.department.localeCompare(b.department);
-
       case "status":
         return a.status.localeCompare(b.status);
-
       case "newest":
-        return (b.id ?? 0) - (a.id ?? 0); // fallback
-
+        return (b.id ?? 0) - (a.id ?? 0);
       case "oldest":
         return (a.id ?? 0) - (b.id ?? 0);
-
       default:
         return 0;
     }
   });
+
+  return data;
+}, [allEmployees, highlightName, searchTerm, filters, sortBy]);
+
 
   return (
     <div className="employee-page">
@@ -127,15 +251,17 @@ const Employee = () => {
                 >
                   My Team
                 </button>
-              </div>
-
+              </div> 
+              <div className="search-container">
+              <FaSearch className="search-icon" size={16} />
               <input
                 type="text"
-                placeholder="🔍 Search..."
-                className="search-inputt"
+                placeholder= "Search..."
+                className="search-input0"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              </div>
             </div>
 
             {/* RIGHT SIDE */}
@@ -144,65 +270,112 @@ const Employee = () => {
                 + New Employee
               </button>
 
-              <div className="filter-sort">
+            <div className="filter-sort">
+                {/* FILTER BUTTON */}
+              <div className="filter-wrapper">
                 <button
                   className="right-butn-filterr"
-                  onClick={() => setShowFilters(!showFilters)}
-                >
-                  <FaFilter /> Filter
+                  onClick={() => setShowFilters(prev => !prev)}
+                 >
+                 <FaFilter /> Filter
                 </button>
-                {showFilters && (
-                  <div className="filter-panel">
-                    <select
-                      value={filters.department}
-                      onChange={(e) =>
-                        setFilters({ ...filters, department: e.target.value })
-                      }
-                    >
-                      <option value="all">All Departments</option>
-                      <option value="Human Resource">Human Resource</option>
-                      <option value="Development">Development</option>
-                      <option value="Design">Design</option>
-                      <option value="Sales">Sales</option>
-                    </select>
 
-                    <select
-                      value={filters.position}
-                      onChange={(e) =>
-                        setFilters({ ...filters, position: e.target.value })
-                      }
-                    >
-                      <option value="all">All Positions</option>
-                      <option value="Designer">Designer</option>
-                      <option value="Developer">Developer</option>
-                      <option value="UIUX">UIUX</option>
-                    </select>
+                 {/* DROPDOWN PANEL */}
+                 {showFilters && (
+              <div className="filter-dropdown">
+                <h4>Filter</h4>
 
-                    <select
-                      value={filters.status}
-                      onChange={(e) =>
-                        setFilters({ ...filters, status: e.target.value })
+              {/* NAME */}
+            <div className="filter-field">
+                 <label>Name</label>
+                   <input
+                       type="text"
+                       placeholder="Please enter name"
+                       value={filters.name}
+                       onChange={(e) =>
+                       setFilters({ ...filters, name: e.target.value })
                       }
-                    >
-                      <option value="all">All Status</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </select>
-                  </div>
-                )}
+                     />
+                </div>
 
+                       {/* DEPARTMENT + POSITION */}
+                    <div className="filter-row">
+                        <div className="filter-field">
+                          <label>Department</label>
+                           <select
+                             value={filters.department}
+                             onChange={(e) =>
+                             setFilters({ ...filters, department: e.target.value })
+                            }
+                        >
+                            <option value="all">Select</option>
+                            <option value="Human Resource">Human Resource</option>
+                         <option value="Development">Development</option>
+                       <option value="Design">Design</option>
+                         <option value="Sales">Sales</option>
+                       </select>
+               </div>
+
+                <div className="filter-field">
+                <label>Position</label>
                 <select
-                  className="sort-select1"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="newest">Sort By : Newest</option>
-                  <option value="oldest">Sort By : Oldest</option>
-                  <option value="name">Sort By : Name</option>
-                  <option value="department">Sort By : Department</option>
-                  <option value="status">Sort By : Status</option>
-                </select>
-              </div>
+                  value={filters.position}
+                  onChange={(e) =>
+                   setFilters({ ...filters, position: e.target.value })
+                }
+               >
+                  <option value="all">Select</option>
+                  <option value="Designer">Designer</option>
+                  <option value="Developer">Developer</option>
+                  <option value="UIUX">UIUX</option>
+                 </select>
+             </div>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="filter-actions">
+          <button
+           className="reset-btn"
+            onClick={() => {
+                 setFilters({
+                  name: "",
+                  department: "all",
+                  position: "all",
+                  status: "all",
+                  });
+                  setSearchTerm("");
+                  setShowFilters(false);
+                  }}
+                 >
+                  Reset
+                </button>
+
+
+          <button
+            className="apply-btn"
+            onClick={() => setShowFilters(false)}
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+
+  {/* SORT */}
+  <select
+    className="sort-select1"
+    value={sortBy}
+    onChange={(e) => setSortBy(e.target.value)}
+  >
+    <option value="newest">Sort By : Newest</option>
+    <option value="oldest">Sort By : Oldest</option>
+    <option value="name">Sort By : Name</option>
+    <option value="department">Sort By : Department</option>
+    <option value="status">Sort By : Status</option>
+  </select>
+         </div>
+
             </div>
           </div>
 
@@ -219,7 +392,14 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody>
-              {sortedEmployees.map((emp) => (
+              {finalEmployees.length === 0 ? (
+               <tr>
+               <td colSpan="6" style={{ textAlign: "center" }}>
+                 No employees found
+               </td>
+             </tr>
+               ) : (
+              finalEmployees.map((emp) => (
                 <tr key={emp.id}>
                   <td>
                     <div className="emp-info">
@@ -234,7 +414,7 @@ const Employee = () => {
                               ? "highlight"
                               : ""
                           }`}
-                        >
+                          >
                           {emp.name}
                         </p>
 
@@ -252,6 +432,7 @@ const Employee = () => {
                     <button className="view-btn">View Details</button>
                   </td>
                 </tr>
+               ) 
               ))}
             </tbody>
           </table>
@@ -282,19 +463,23 @@ const Employee = () => {
                 <h3>Add New Employee</h3>
                 <button
                   className="close-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                  resetForm();
+                  setShowModal(false)
+                }}
                 >
                   ×
                 </button>
               </div>
 
               <div className="modal-body">
-                <form className="add-employee-form">
+                <form className="add-employee-form" onSubmit={handleSubmit}>
                   <div className="form-left">
                     {/* Profile Upload Section */}
                     <div className="profile-upload-section">
                       <div className="profile-placeholder">
-                        <i className="profile-icon">👤</i>
+                        <i className="profile-icon">
+                          <FaUserFriends size="2em" /> </i>
                       </div>
                       <div className="upload-info">
                         <h4>Upload Profile Image</h4>
@@ -309,11 +494,25 @@ const Employee = () => {
                     <div className="form-row1">
                       <div className="form-group">
                         <label>First Name</label>
-                        <input type="text" placeholder="Please enter name" />
+                        <input 
+                        type="text"
+                        name="firstName" 
+                        placeholder="Please enter name"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                         />
+                  {errors.firstName && <p className="error-text">{errors.firstName}</p>}
                       </div>
                       <div className="form-group">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Please enter name" />
+                        <input 
+                        type="text"
+                        name="lastName"
+                        placeholder="Please enter name"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                         />
+                  {errors.lastName && <p className="error-text">{errors.lastName}</p>}
                       </div>
                     </div>
 
@@ -322,84 +521,141 @@ const Employee = () => {
                         <label>Employee ID</label>
                         <input
                           type="text"
+                          name="employeeId"
                           placeholder="Please enter employee ID"
+                          value={formData.employeeId}
+                          onChange={handleChange}
                         />
+                  {errors.employeeId && <p className="error-text">{errors.employeeId}</p>}
                       </div>
                       <div className="form-group">
                         <label>Joining Date</label>
-                        <input type="date" placeholder="dd/mm/yyyy" />
+                        <input 
+                        type="date"
+                        name="joiningDate"
+                        placeholder="dd/mm/yyyy"
+                        value={formData.joiningDate}
+                        onChange={handleChange}
+                         />
+                  {errors.joiningDate && <p className="error-text">{errors.joiningDate}</p>}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Email</label>
-                        <input type="email" placeholder="Please enter email" />
+                        <input 
+                        type="email"
+                        name="email" 
+                        placeholder="Please enter email"
+                        value={formData.email}
+                        onChange={handleChange}
+                         />
+                  {errors.email && <p className="error-text">{errors.email}</p>}
                       </div>
                       <div className="form-group">
                         <label>Phone Number</label>
                         <input
                           type="tel"
+                          name="phone"
                           placeholder="Please enter phone number"
+                          value={formData.phone}
+                          onChange={handleChange}
                         />
+                  {errors.phone && <p className="error-text">{errors.phone}</p>}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Employment Type</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Full Time</option>
-                          <option>Part Time</option>
-                          <option>Contract</option>
-                          <option>Intern</option>
+                        <select 
+                        name="employmentType"
+                        value={formData.employmentType}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Full Time">Full Time</option>
+                          <option value="Part Time">Part Time</option>
+                          <option value="Contract">Contract</option>
+                          <option value="Intern">Intern</option>
                         </select>
+                  {errors.employmentType && (
+                  <p className="error-text">{errors.employmentType}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Primary Supervisor</label>
-                        <select>
-                          <option>Select</option>
-                          <option>John Doe</option>
-                          <option>Jane Smith</option>
-                          <option>Mike Johnson</option>
+                        <select 
+                        name="supervisor"
+                        value={formData.supervisor}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="John Doe">John Doe</option>
+                          <option value="Jane Smith">Jane Smith</option>
+                          <option value="Mike Johnson">Mike Johnson</option>
                         </select>
+                  {errors.supervisor && (
+                  <p className="error-text">{errors.supervisor}</p>
+               )}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>HR Manager</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Sarah Wilson</option>
-                          <option>David Brown</option>
-                          <option>Lisa Taylor</option>
+                        <select 
+                        name="hrManager"
+                        value={formData.hrManager}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Sarah Wilson">Sarah Wilson</option>
+                          <option value="David Brown">David Brown</option>
+                          <option value="Lisa Taylor">Lisa Taylor</option>
                         </select>
+                  {errors.hrManager && (
+                  <p className="error-text">{errors.hrManager}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Department</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Engineering</option>
-                          <option>Marketing</option>
-                          <option>Sales</option>
-                          <option>HR</option>
-                          <option>Finance</option>
+                        <select
+                        name="department"
+                        value={formData.department}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Engineering">Engineering</option>
+                          <option value="Marketing">Marketing</option>
+                          <option value="Sales">Sales</option>
+                          <option value="HR">HR</option>
+                          <option value="Finance">Finance</option>
                         </select>
+                  {errors.department && (
+                  <p className="error-text">{errors.department}</p>
+               )}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Designation</label>
-                        <select>
-                          <option>Select</option>
-                          <option>Software Engineer</option>
-                          <option>Senior Engineer</option>
-                          <option>Team Lead</option>
-                          <option>Manager</option>
+                        <select
+                        name="designation"
+                        value={formData.designation}
+                        onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="Software Engineer">Software Engineer</option>
+                          <option value="Senior Engineer">Senior Engineer</option>
+                          <option value="Team Lead">Team Lead</option>
+                          <option value="Manager">Manager</option>
                         </select>
+                  {errors.designation && (
+                  <p className="error-text">{errors.designation}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Status</label>
@@ -418,8 +674,10 @@ const Employee = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setShowModal(false)}
                         className="cancel-btn"
+                        onClick={() => {
+                        setShowModal(false)
+                      }}
                       >
                         Cancel
                       </button>
