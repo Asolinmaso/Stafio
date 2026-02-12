@@ -36,7 +36,7 @@ export default function MyRegularization() {
     const fetchMyRegularizations = async () => {
       try {
         const userId = sessionStorage.getItem("current_user_id");
-
+        const userRole = sessionStorage.getItem("current_role");
         if (!userId) return;
 
         const response = await axios.get(
@@ -44,6 +44,7 @@ export default function MyRegularization() {
           {
             headers: {
               "X-User-ID": userId,
+              "X-User-Role": userRole,
             },
           },
         );
@@ -71,6 +72,7 @@ export default function MyRegularization() {
 
   const handleSubmitRegularization = async () => {
     const userId = sessionStorage.getItem("current_user_id");
+    const userRole = sessionStorage.getItem("current_role");
     console.log(userId);
     try {
       if (isEdit) {
@@ -78,15 +80,19 @@ export default function MyRegularization() {
         await axios.put(
           `http://127.0.0.1:5001/api/regularization/${editId}`,
           formData,
-          { headers: { "X-User-ID": userId } },
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
 
         alert("Regularization updated successfully");
       } else {
         // ➕ ADD
-        await axios.post("http://127.0.0.1:5001/api/regularization", formData, {
-          headers: { "X-User-ID": userId },
-        });
+        await axios.post(
+          "http://localhost:5001/api/admin/regularization",
+          formData,
+          {
+            headers: { "X-User-ID": userId, "X-User-Role": userRole },
+          },
+        );
 
         alert("Regularization added successfully");
       }
@@ -108,7 +114,7 @@ export default function MyRegularization() {
       // Refresh table
       const res = await axios.get(
         "http://127.0.0.1:5001/api/myregularization",
-        { headers: { "X-User-ID": userId } },
+        { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
       );
       setRegularizationData(res.data);
     } catch (error) {

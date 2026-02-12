@@ -22,6 +22,15 @@ export default function Myleave() {
   const [leaveBalance, setLeaveBalance] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    employee_id: "",
+    leave_type: "",
+    start_date: "",
+    end_date: "",
+    day_type: "Full Day",
+    notify_to: "",
+    reason: "",
+  });
 
   const filteredAndSortedLeaves = leaveData
     // SEARCH by employee name
@@ -31,37 +40,37 @@ export default function Myleave() {
       filterStatus === "All" ? true : leave.status === filterStatus,
     );
 
-  useEffect(() => {
-    const fetchMyLeaves = async () => {
-      try {
-        const userId = sessionStorage.getItem("current_user_id");
+  const fetchMyLeaves = async () => {
+    try {
+      const userId = sessionStorage.getItem("current_user_id");
 
-        if (!userId) return;
+      if (!userId) return;
 
-        const response = await axios.get("http://127.0.0.1:5001/api/myleave", {
+      const response = await axios.get("http://127.0.0.1:5001/api/myleave", {
+        headers: {
+          "X-User-ID": userId,
+          "X-User-Role": "admin", // optional but safe
+        },
+      });
+
+      setLeaveData(response.data);
+
+      // 🔹 Fetch leave balance (SAME AS EMPLOYEE)
+      const balanceResponse = await axios.get(
+        "http://127.0.0.1:5001/api/leave_balance",
+        {
           headers: {
             "X-User-ID": userId,
-            "X-User-Role": "admin", // optional but safe
           },
-        });
+        },
+      );
+      setLeaveBalance(balanceResponse.data);
+    } catch (error) {
+      console.error("Error fetching admin leave data:", error);
+    }
+  };
 
-        setLeaveData(response.data);
-
-        // 🔹 Fetch leave balance (SAME AS EMPLOYEE)
-        const balanceResponse = await axios.get(
-          "http://127.0.0.1:5001/api/leave_balance",
-          {
-            headers: {
-              "X-User-ID": userId,
-            },
-          },
-        );
-        setLeaveBalance(balanceResponse.data);
-      } catch (error) {
-        console.error("Error fetching admin leave data:", error);
-      }
-    };
-
+  useEffect(() => {
     fetchMyLeaves();
   }, []);
 
@@ -76,6 +85,62 @@ export default function Myleave() {
       document.body.style.overflow = "auto";
     };
   }, [showModal]);
+
+  useEffect(() => {
+    if (showModal) {
+      const userId = sessionStorage.getItem("current_user_id");
+
+      setFormData((prev) => ({
+        ...prev,
+        employee_id: userId || "",
+      }));
+    }
+  }, [showModal]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const userId = sessionStorage.getItem("current_user_id");
+      const userRole = sessionStorage.getItem("current_role");
+
+      await axios.post(
+        "http://localhost:5001/api/admin/leave-requests",
+        {
+          employee_id: formData.employee_id,
+          leave_type_id: formData.leave_type,
+          start_date: formData.start_date,
+          end_date: formData.end_date,
+          notify_to: formData.notify_to,
+          day_type: formData.day_type === "Full Day" ? "full_day" : "half_day",
+          reason: formData.reason,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-User-ID": userId,
+            "X-User-Role": userRole,
+          },
+        },
+      );
+
+      alert("Leave applied successfully ✅");
+      setShowModal(false);
+      // 🔥 Refresh table
+      fetchMyLeaves();
+    } catch (error) {
+      console.error("Error applying leave:", error);
+      alert("Failed to apply leave ❌");
+    }
+  };
 
   return (
     <div className="layout">
@@ -202,35 +267,63 @@ export default function Myleave() {
               </div>
 
               <div className="modal-body">
-                <form className="apply-leave-form">
+                <form className="apply-leave-form" onSubmit={handleSubmit}>
                   <div className="form-left">
                     <label>Employee ID:</label>
-                    <input type="text" />
+                    <input
+                      type="text"
+                      name="employee_id"
+                      value={formData.employee_id}
+                      readOnly
+                    />
 
                     <label>Leave Type:</label>
-                    <select>
-                      <option>Select</option>
-                      <option>Casual Leave</option>
-                      <option>Sick Leave</option>
-                      <option>Annual Leave</option>
+                    <select
+                      name="leave_type"
+                      value={formData.leave_type}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select</option>
+                      <option value="1">Casual Leave</option>
+                      <option value="2">Sick Leave</option>
+                      <option value="3">Annual Leave</option>
                     </select>
 
                     <label>Select Date:</label>
                     <div className="date-row">
-                      <input type="date" />
-                      <input type="date" />
-                      <select>
-                        <option>Full Day</option>
-                        <option>Half Day (FN)</option>
-                        <option>Half Day (AN)</option>
+                      <input
+                        type="date"
+                        name="start_date"
+                        value={formData.start_date}
+                        onChange={handleChange}
+                      />
+                      <input
+                        type="date"
+                        name="end_date"
+                        value={formData.end_date}
+                        onChange={handleChange}
+                      />
+                      <select
+                        name="day_type"
+                        value={formData.day_type}
+                        onChange={handleChange}
+                      >
+                        <option value="Full Day">Full Day</option>
+                        <option value="Half Day (FN)">Half Day (FN)</option>
+                        <option value="Half Day (AN)">Half Day (AN)</option>
                       </select>
                     </div>
 
                     <label>Notify Others:</label>
                     <div className="notify-row">
-                      <select>
-                        <option>Team Lead</option>
-                        <option>HR</option>
+                      <select
+                        name="notify_to"
+                        value={formData.notify_to}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select</option>
+                        <option value="Team Lead">Team Lead</option>
+                        <option value="HR">HR</option>
                       </select>
                       <button type="button" className="upload-btn">
                         <FaUpload /> Upload File
@@ -239,9 +332,12 @@ export default function Myleave() {
 
                     <label>Reason:</label>
                     <textarea
+                      name="reason"
+                      value={formData.reason}
+                      onChange={handleChange}
                       placeholder="ex: I am travelling to"
                       maxLength={30}
-                    ></textarea>
+                    />
 
                     <div className="modal-actions">
                       <button type="submit" className="apply-btn">
