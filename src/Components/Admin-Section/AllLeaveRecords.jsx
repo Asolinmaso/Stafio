@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -7,38 +7,71 @@ import {
   Button,
   Table,
   Form,
-  Dropdown,
+  Spinner,
 } from "react-bootstrap";
 import AdminSidebar from "./AdminSidebar";
-import { LeaveContext } from "../../context/LeaveContext"; // Adjust the path as needed
+import axios from "axios";
+
+const API_BASE = "http://127.0.0.1:5001";
 
 const AllLeaveRecords = () => {
-  const { leaveRecords, setLeaveRecords } = useContext(LeaveContext);
+  const [leaveRecords, setLeaveRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
 
+  // Fetch leave records from API on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [recordsRes, deptRes] = await Promise.all([
+          axios.get(`${API_BASE}/api/all_leave_records`, {
+            headers: {
+              "X-User-Role": "admin",
+              "X-User-ID": localStorage.getItem("userId") || "1",
+            },
+          }),
+          axios.get(`${API_BASE}/api/departments`),
+        ]);
+
+        setLeaveRecords(recordsRes.data);
+        setDepartments(deptRes.data);
+      } catch (error) {
+        console.error("Error fetching leave records:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleExport = () => {
     const headers = [
-      "Employee ID",
+      "Employee Name",
       "Leave Type",
       "Start Date",
       "End Date",
+      "Days",
       "Reason",
       "Status",
       "Department",
     ];
     const rows = filteredRecords.map((r) =>
       [
-        r.employeeId,
+        r.employeeName,
         r.leaveType,
         r.startDate,
         r.endDate,
+        r.days,
         r.reason,
         r.status || "Pending",
         r.department || "N/A",
-      ].join(",")
+      ].join(","),
     );
 
     const csvContent = [headers.join(","), ...rows].join("\n");
@@ -53,18 +86,19 @@ const AllLeaveRecords = () => {
     document.body.removeChild(link);
   };
 
-  const handleDelete = (index) => {
-    const updatedRecords = [...leaveRecords];
-    updatedRecords.splice(index, 1);
-    setLeaveRecords(updatedRecords);
-  };
-
   const filteredRecords = leaveRecords.filter((record) => {
     const matchesSearch =
-      record.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.reason.toLowerCase().includes(searchTerm.toLowerCase());
+      (record.employeeName?.toLowerCase() || "").includes(
+        searchTerm.toLowerCase(),
+      ) ||
+      (record.reason?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (record.leaveType?.toLowerCase() || "").includes(
+        searchTerm.toLowerCase(),
+      );
 
-    const matchesStatus = statusFilter ? record.status === statusFilter : true;
+    const matchesStatus = statusFilter
+      ? record.status?.toLowerCase() === statusFilter.toLowerCase()
+      : true;
     const matchesDepartment = departmentFilter
       ? record.department === departmentFilter
       : true;
@@ -94,7 +128,7 @@ const AllLeaveRecords = () => {
                 <Col md={3}>
                   <Form.Control
                     type="text"
-                    placeholder="Search by ID or Reason"
+                    placeholder="Search by Name, Type or Reason"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -105,9 +139,9 @@ const AllLeaveRecords = () => {
                     onChange={(e) => setStatusFilter(e.target.value)}
                   >
                     <option value="">Filter by Status</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="declined">Declined</option>
+                    <option value="pending">Pending</option>
                   </Form.Select>
                 </Col>
                 <Col md={3}>
@@ -116,53 +150,73 @@ const AllLeaveRecords = () => {
                     onChange={(e) => setDepartmentFilter(e.target.value)}
                   >
                     <option value="">Filter by Department</option>
-                    <option value="HR">HR</option>
-                    <option value="IT">IT</option>
-                    <option value="Sales">Sales</option>
+                    {departments.map((dept, idx) => (
+                      <option key={idx} value={dept.name}>
+                        {dept.name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Col>
               </Row>
 
-              <Table striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Employee ID</th>
-                    <th>Leave Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Department</th>
-                    <th className="text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRecords.length === 0 ? (
+              {loading ? (
+                <div className="text-center py-4">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              ) : (
+                <Table striped bordered hover responsive>
+                  <thead>
                     <tr>
-                      <td colSpan="9" className="text-center">
-                        No leave records found.
-                      </td>
+                      <th>#</th>
+                      <th>Employee Name</th>
+                      <th>Leave Type</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Days</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                      <th>Department</th>
                     </tr>
-                  ) : (
-                    filteredRecords.map((record, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{record.employeeId}</td>
-                        <td>{record.leaveType}</td>
-                        <td>{record.startDate}</td>
-                        <td>{record.endDate}</td>
-                        <td>{record.reason}</td>
-                        <td>{record.status || "Pending"}</td>
-                        <td>{record.department || "N/A"}</td>
-                        <td className="text-center align-middle">
-                         
+                  </thead>
+                  <tbody>
+                    {filteredRecords.length === 0 ? (
+                      <tr>
+                        <td colSpan="9" className="text-center">
+                          No leave records found.
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
+                    ) : (
+                      filteredRecords.map((record, index) => (
+                        <tr key={record.id || index}>
+                          <td>{index + 1}</td>
+                          <td>{record.employeeName}</td>
+                          <td>{record.leaveType}</td>
+                          <td>{record.startDate}</td>
+                          <td>{record.endDate}</td>
+                          <td>{record.days}</td>
+                          <td>{record.reason || "-"}</td>
+                          <td>
+                            <span
+                              className={`badge bg-${
+                                record.status === "approved"
+                                  ? "success"
+                                  : record.status === "declined"
+                                    ? "danger"
+                                    : "warning"
+                              }`}
+                            >
+                              {record.status}
+                            </span>
+                          </td>
+                          <td>{record.department || "N/A"}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </Table>
+              )}
             </Card.Body>
           </Card>
         </Container>

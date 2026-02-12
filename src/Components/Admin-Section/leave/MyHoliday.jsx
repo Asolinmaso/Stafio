@@ -1,21 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./MyHoliday.css";
 import EmployeeSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-
+import axios from "axios";
 
 const Myholiday = () => {
-  const holidayData = [
-    { id: 1, date: "01 January, Wednesday", title: "New Year's Day" },
-    { id: 2, date: "26 January, Sunday", title: "Republic Day" },
-    { id: 3, date: "18 April, Friday", title: "Good Friday" },
-    { id: 4, date: "21 April, Monday", title: "Easter Monday" },
-    { id: 5, date: "06 July, Sunday", title: "Muharram" },
-    { id: 6, date: "15 August, Friday", title: "Independence Day" },
-    { id: 7, date: "20 October, Monday", title: "Diwali" },
-  ];
+   const [holidayData, setHolidayData] = useState([]);
 
+   useEffect(() => {
+  const fetchHolidays = async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:5001/api/myholidays"
+      );
+      setHolidayData(response.data);
+    } catch (error) {
+      console.error("Error fetching holidays:", error);
+    }
+  };
+
+  fetchHolidays();
+}, []);
   return (
     <div className="layout">
       <div className="rightside-logo ">

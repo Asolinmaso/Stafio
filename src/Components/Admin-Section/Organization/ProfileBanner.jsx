@@ -20,6 +20,7 @@ const ProfileBanner = ({ profileData }) => {
 
   return (
     <div className="profile-banner-wrapper">
+      <div className="my-profile-title"><h1>My Profile</h1>{/* added new my profile title */}</div>
       <div className="profile-banner-container">
         {/* Top Gradient Banner */}
         <div className="profile-banner-top">
@@ -52,7 +53,7 @@ const ProfileBanner = ({ profileData }) => {
                 <span className="profile-name">{name || 'Name not set'}</span>
                 <span className="profile-id">(ID {empId || 'Not assigned'})</span>
               </div>
-              <div className="profile-role">{empType || 'Position not set'}</div>
+               <div className="profile-role">{empType || 'Position not set'}</div>
               <div className="profile-location">{location || 'Location not set'}</div>
             </div>
 

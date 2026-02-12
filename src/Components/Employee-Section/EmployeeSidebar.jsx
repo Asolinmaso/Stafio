@@ -3,7 +3,7 @@ import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import "./EmployeeSidebar.css";
-import stafioimg from "../../assets/stafio-bg-dark.png";
+import stafioimg from "../../assets/stafioimg.png";
 import booking from "../../assets/booking.png";
 import Group from "../../assets/Group.png";
 import Group1 from "../../assets/Group1.png";
@@ -12,8 +12,6 @@ import Vector from "../../assets/Vector.png";
 import Vector1 from "../../assets/Vector1.svg";
 import Vector2 from "../../assets/Vector2.svg";
 import { useLocation } from "react-router-dom";
-import { logoutCurrentTab } from "../../utils/sessionManager";
-
 
 // LeaveMenu code here
 
@@ -106,8 +104,6 @@ const EmployeeSidebar = () => {
     localStorage.removeItem("remember_employee");
     localStorage.removeItem("employee_email");
     localStorage.removeItem("employee_password");
-    logoutCurrentTab();
-    sessionStorage.removeItem("tab_id");
     window.location.href = "/employee-login";
   };
   return (

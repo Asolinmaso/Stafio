@@ -6,6 +6,7 @@ import {
   FaTimes,
   FaFilePdf,
   FaDownload,
+  FaEdit,
 } from "react-icons/fa";
 import profileimg from "../../assets/profileimg.png";
 import profileimg2 from "../../assets/profileimg2.png";
@@ -15,6 +16,490 @@ import topbarsettings from "../../assets/topbarsettings.png";
 import { Navigate, useNavigate } from "react-router-dom";
 import { searchData } from "./searchData";
 import axios from "axios";
+
+import { getCurrentSession } from "../../utils/sessionManager";
+
+const API_BASE = "http://127.0.0.1:5001";
+
+// ProfilePopup Component - fetches data from backend
+const ProfilePopup = ({ onClose, username }) => {
+  const [profileData, setProfileData] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableData, setEditableData] = useState(null);
+  const getAuthHeaders = () => {
+    return {
+      "X-User-Role": sessionStorage.getItem("current_role"),
+      "X-User-ID":
+        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("employee_user_id"),
+    };
+  };
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userId =
+          sessionStorage.getItem("current_user_id") ||
+          localStorage.getItem("employee_user_id");
+        console.log(userId || "nothing");
+        const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
+          headers: {
+            ...getAuthHeaders(),
+          },
+        });
+        setProfileData(res.data);
+        setEditableData(res.data);
+        console.log(res.data);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const profile = profileData?.profile || {};
+  const education = profileData?.education || {};
+  const experience = profileData?.experience || {};
+  const bank = profileData?.bank || {};
+
+  const handleChange = (section, field, value) => {
+    setEditableData((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const userId =
+        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("employee_user_id");
+
+      await axios.put(`${API_BASE}/admin_profile/${userId}`, editableData, {
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+      });
+
+      // 🔥 Re-fetch
+      const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
+        headers: {
+          ...getAuthHeaders(),
+        },
+      });
+      setProfileData(res.data);
+      setEditableData(res.data);
+
+      setIsEditing(false);
+
+      alert("Profile Updated Successfully");
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Failed to update profile");
+    }
+  };
+
+  return (
+    <div className="full-profile-popups">
+      <div className="popup-header">
+        <h5>
+          Profile Details
+          {!isEditing ? (
+            <FaEdit
+              style={{ cursor: "pointer", marginLeft: "15px" }}
+              onClick={() => setIsEditing(true)}
+            />
+          ) : (
+            <button
+              className="btn btn-success btn-sm ms-2"
+              onClick={handleUpdate}
+            >
+              Save
+            </button>
+          )}
+        </h5>
+
+        <button className="btn-close" onClick={onClose}>
+          x
+        </button>
+      </div>
+
+      <div className="popup-content">
+        {loading ? (
+          <div className="text-center py-5">Loading...</div>
+        ) : (
+          <div className="profile-section">
+            <div className="profile-photo">
+              <img src={profileimg2} alt="Profile" />
+              <h6>{profile.name || username || "User"}</h6>
+              <p className="text-success">● {profile.status || "Active"}</p>
+            </div>
+
+            <div className="details-grid">
+              <div>
+                <h6>Personal Details</h6>
+                <strong>Position:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData?.profile?.position || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "position", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.position || "-"}</p>
+                )}
+                <strong>Employment Type:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData?.profile?.empType || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "empType", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{editableData.profile.empType || "-"}</p>
+                )}
+                <strong>
+                  {isEditing ? "Supervisor ID" : "Primary Supervisor"}
+                </strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.supervisor_id || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "supervisor_id", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.supervisor || "-"}</p>
+                )}
+                <strong>Department:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.department || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "department", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.department || "-"}</p>
+                )}
+                <strong>{isEditing ? "HR Manager ID" : "HR Manager"}</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.hr_manager_id || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "hr_manager_id", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.hrManager || "-"}</p>
+                )}
+              </div>
+              <div>
+                <h6>Personal Details</h6>
+                <strong>Gender:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.gender || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "gender", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.gender || "-"}</p>
+                )}
+                <strong>Date of Birth:</strong>
+                {isEditing ? (
+                  <input
+                    type="date"
+                    value={editableData.profile.dob || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "dob", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.dob || "-"}</p>
+                )}
+                <strong>Blood Group:</strong>
+                <p>{profile.bloodGroup || "-"}</p>
+                <strong>Marital Status:</strong>
+                <p>{profile.maritalStatus || "-"}</p>
+                <strong>Portfolio:</strong>
+                <p>
+                    {isEditing ? (
+                      <input
+                        value={editableData.education.portfolio || " "}
+                        onChange={(e) =>
+                          handleChange("education", "portfolio", e.target.value)
+                        }
+                      />
+                    ) : (
+                      <p>{education.portfolio || "-"}</p>
+                    )}
+                </p>
+              </div>
+              <div>
+                <h6>Educational Qualification</h6>
+                <strong>Institution:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.education.institution || ""}
+                    onChange={(e) =>
+                      handleChange("education", "institution", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{education.institution || "-"}</p>
+                )}
+                <strong>Start & End Date:</strong>
+
+                {isEditing ? (
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <input
+                      type="date"
+                      value={editableData?.education?.eduStartDate || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "education",
+                          "eduStartDate",
+                          e.target.value,
+                        )
+                      }
+                    />
+
+                    <input
+                      type="date"
+                      value={editableData?.education?.eduEndDate || ""}
+                      onChange={(e) =>
+                        handleChange("education", "eduEndDate", e.target.value)
+                      }
+                    />
+                  </div>
+                ) : (
+                  <p>
+                    {education.eduStartDate && education.eduEndDate
+                      ? `${education.eduStartDate} & ${education.eduEndDate}`
+                      : "-"}
+                  </p>
+                )}
+
+                <strong>Course:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.education.qualification || ""}
+                    onChange={(e) =>
+                      handleChange("education", "qualification", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{education.qualification || "-"}</p>
+                )}
+                <strong>Specialization:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.education.specialization || ""}
+                    onChange={(e) =>
+                      handleChange(
+                        "education",
+                        "specialization",
+                        e.target.value,
+                      )
+                    }
+                  />
+                ) : (
+                  <p>{education.specialization || "-"}</p>
+                )}
+                <strong>Skills:</strong>
+                <p>
+                  {Array.isArray(education.skills)
+                    ? education.skills.join(", ")
+                    : education.skills || "-"}
+                </p>
+              </div>
+            </div>
+
+            <div className="details-grid">
+              <div>
+                <h6>Address</h6>
+                <strong>Address:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.address || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "address", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.address || "-"}</p>
+                )}
+                <strong>Location:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.location || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "location", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.location || "-"}</p>
+                )}
+              </div>
+              <div>
+                <h6>Contact Details</h6>
+                <strong>Phone:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.profile.phone || ""}
+                    onChange={(e) =>
+                      handleChange("profile", "phone", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{profile.phone || "-"}</p>
+                )}
+                <strong>Email:</strong>
+                <p>{profile.email || "-"}</p>
+              </div>
+              <div>
+                <h6>Previous Experience</h6>
+                <strong>Company:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.experience.company || ""}
+                    onChange={(e) =>
+                      handleChange("experience", "company", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{experience.company || "-"}</p>
+                )}
+                <strong>Start & End:</strong>
+
+                {isEditing ? (
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <input
+                      type="date"
+                      value={editableData?.experience?.expStartDate || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "experience",
+                          "expStartDate",
+                          e.target.value,
+                        )
+                      }
+                    />
+
+                    <input
+                      type="date"
+                      value={editableData?.experience?.expEndDate || ""}
+                      onChange={(e) =>
+                        handleChange("experience", "expEndDate", e.target.value)
+                      }
+                    />
+                  </div>
+                ) : (
+                  <p>
+                    {experience.expStartDate && experience.expEndDate
+                      ? `${experience.expStartDate} – ${experience.expEndDate}`
+                      : "-"}
+                  </p>
+                )}
+                <strong>Job Title:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.experience.jobTitle || ""}
+                    onChange={(e) =>
+                      handleChange("experience", "jobTitle", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{experience.jobTitle || "-"}</p>
+                )}
+                <strong>Description:</strong>
+                {isEditing ? (
+                  <textarea
+                    value={editableData.experience.responsibilities || ""}
+                    onChange={(e) =>
+                      handleChange(
+                        "experience",
+                        "responsibilities",
+                        e.target.value,
+                      )
+                    }
+                  />
+                ) : (
+                  <p>{experience.responsibilities || "-"}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="details-grid">
+              <div>
+                <h6>Bank Details</h6>
+                <strong>Bank Name:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.bank.bankName || ""}
+                    onChange={(e) =>
+                      handleChange("bank", "bankName", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{bank.bankName || "-"}</p>
+                )}
+                <strong>Branch:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.bank.branch || ""}
+                    onChange={(e) =>
+                      handleChange("bank", "branch", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{bank.branch || "-"}</p>
+                )}
+                <strong>Account Number:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.bank.accountNumber || ""}
+                    onChange={(e) =>
+                      handleChange("bank", "accountNumber", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{bank.accountNumber || "-"}</p>
+                )}
+                <strong>IFSC Code:</strong>
+                {isEditing ? (
+                  <input
+                    value={editableData.bank.ifsc || ""}
+                    onChange={(e) =>
+                      handleChange("bank", "ifsc", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p>{bank.ifsc || "-"}</p>
+                )}
+              </div>
+              <div className="submitted-docs">
+                <h6>Submitted Documents</h6>
+                <div className="doc-item">No documents uploaded</div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Topbar = () => {
   const [adminusername, setAdminusername] = useState("");
@@ -41,10 +526,10 @@ const Topbar = () => {
   });
 
   useEffect(() => {
-    const storedAdminusername = localStorage.getItem("admin_username");
-    if (storedAdminusername) {
-      setAdminusername(storedAdminusername);
-    }
+    // const storedAdminusername = localStorage.getItem("admin_username");
+    // if (storedAdminusername) {
+    //   setAdminusername(storedAdminusername);
+    // }
 
     // Load saved announcements
     const savedAnnouncements = localStorage.getItem("announcements");
@@ -59,13 +544,23 @@ const Topbar = () => {
   }, []);
 
   useEffect(() => {
-    // Read values from sessionStorage
-    const storedUsername = sessionStorage.getItem("current_username");
-    const storedRole = sessionStorage.getItem("current_role");
+    const session = getCurrentSession();
 
-    setUsername(storedUsername);
-    setRole(storedRole);
+    if (session) {
+      setAdminusername(session.username);
+      setUsername(session.username);
+      setRole(session.role);
+    }
   }, []);
+
+  // useEffect(() => {
+  //   // Read values from sessionStorage
+  //   const storedUsername = localStorage.getItem("admin_username");
+  //   const storedRole = localStorage.getItem("admin_role");
+
+  //   if (storedUsername) setUsername(storedUsername);
+  //   if (storedRole) setRole(storedRole);
+  // }, []);
 
   useEffect(() => {
     if (announcements.length > 0) {
@@ -150,7 +645,7 @@ const Topbar = () => {
   const filteredResults = searchItems.filter(
     (item) =>
       item.label.toLowerCase().includes(query.toLowerCase()) ||
-      item.subLabel?.toLowerCase().includes(query.toLowerCase())
+      item.subLabel?.toLowerCase().includes(query.toLowerCase()),
   );
 
   useEffect(() => {
@@ -187,7 +682,7 @@ const Topbar = () => {
           <input
             type="text"
             className="form-controler"
-            placeholder="Search employees, documents, modules..."
+            placeholder="Quick Search..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -440,133 +935,10 @@ const Topbar = () => {
       )}
       {/* Full Profile Popup */}
       {showProfilePopup && (
-        <div className="full-profile-popups">
-          <div className="popup-header">
-            <h5>Profile Details</h5>
-            <button
-              className="btn-close"
-              onClick={() => setShowProfilePopup(false)}
-            ></button>
-          </div>
-
-          <div className="popup-content">
-            {/* Profile section */}
-            <div className="profile-section">
-              <div className="profile-photo">
-                <img src={profileimg2} alt="Profile" />
-                <h6>{adminusername || "User"}</h6>
-                <p className="text-success">● Active</p>
-              </div>
-
-              <div className="details-grid">
-                <div>
-                  <h6>Personal Details</h6>
-                  <strong>Position:</strong>
-                  <p> UI/UX Designer</p>
-                  <strong>Employment Type:</strong>
-                  <p> Internship</p>
-                  <strong>Primary Supervisor:</strong> <p>Sakshi</p>
-                  <strong>Department:</strong>
-                  <p> Design</p>
-                  <strong>HR Manager:</strong>
-                  <p> Santhana Lakshmi</p>
-                </div>
-                <div>
-                  <h6>Personal Details</h6>
-                  <strong>Gender:</strong>
-                  <p> Female</p>
-                  <strong>Date of Birth:</strong>
-                  <p> 22/07/1993</p>
-                  <strong>Blood Group:</strong>
-                  <p> A+</p>
-                  <strong>Marital Status:</strong>
-                  <p> Married</p>
-                  <strong>Portfolio:</strong>
-                  <p> http://www.behance.com</p>
-                </div>
-                <div>
-                  <h6>Educational Qualification</h6>
-                  <strong>Institution:</strong>
-                  <p> CEMP Punnapra</p>
-                  <strong>Start & End Date:</strong>
-                  <p> 22/07/2012 – 22/07/2016</p>
-                  <strong>Course:</strong>
-                  <p> B.Tech</p>
-                  <strong>Specialization:</strong>
-                  <p> CSE</p>
-                  <strong>Skills:</strong> <p> Figma, Adobe XD, Photoshop</p>
-                </div>
-              </div>
-
-              <div className="details-grid">
-                <div>
-                  <h6>Address</h6>
-                  <strong>Address Line:</strong>
-                  <p>Kattasseri House</p>
-                  <strong>City:</strong>
-                  <p> Alappuzha</p>
-                  <strong>State:</strong> <p>Kerala</p>
-                  <strong>Country:</strong>
-                  <p> India</p>
-                </div>
-                <div>
-                  <h6>Contact Details</h6>
-                  <strong>Phone:</strong> <p>9895195971</p>
-                  <strong>Emergency Contact:</strong>
-                  <p> 9895195971</p>
-                  <strong>Relationship:</strong>
-                  <p> Husband</p>
-                  <strong>Email:</strong> <p>aiswarya@gmail.com</p>
-                </div>
-                <div>
-                  <h6>Previous Experience</h6>
-                  <strong>Company:</strong>
-                  <p> Azym Technology</p>
-                  <strong>Start & End:</strong>
-                  <p> 22/07/2018 – 22/07/2022</p>
-                  <strong>Job Title:</strong>
-                  <p> UI/UX Designer</p>
-                  <strong>Description:</strong>
-                  <p>
-                    {" "}
-                    Conducted user research, interviews, and usability testing.
-                  </p>
-                </div>
-              </div>
-              <div className="details-grid">
-                <div>
-                  <h6>Bank Details</h6>
-                  <strong>Bank Name:</strong>
-                  <p> SBI</p>
-                  <strong>Branch:</strong>
-                  <p> Alappuzha</p>
-                  <strong>Account Number:</strong>
-                  <p> 12345678910</p>
-                  <strong>IFSC Code:</strong>
-                  <p> IFSC12345</p>
-                </div>
-
-                <div className="submitted-docs">
-                  <h6>Submitted Documents</h6>
-                  <div className="doc-item">
-                    <FaFilePdf className="text-danger me-2" /> Signed
-                    OfferLetter.pdf
-                    <FaDownload className="float-end" />
-                  </div>
-                  <div className="doc-item">
-                    <FaFilePdf className="text-danger me-2" />{" "}
-                    DegreeCertificate.pdf
-                    <FaDownload className="float-end" />
-                  </div>
-                  <div className="doc-item">
-                    <FaFilePdf className="text-danger me-2" /> PAN CARD.pdf
-                    <FaDownload className="float-end" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProfilePopup
+          onClose={() => setShowProfilePopup(false)}
+          username={adminusername}
+        />
       )}
     </>
   );

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 import illustration from "../../../assets/Formsbro.png";
 import tick from "../../../assets/tickicon.png";
+import { getCurrentSession } from "../../../utils/sessionManager";
 
 import axios from "axios";
 
@@ -21,12 +22,16 @@ const LeaveApproval = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
   const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  const session = getCurrentSession();
+const currentAdminId = session?.user_id;
+
+
 
   useEffect(() => {
     const fetchLeaveapprova = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:5001/api/leaveapproval"
+          "http://127.0.0.1:5001/api/leaveapproval",
         );
         setLeaves(response.data);
       } catch (error) {
@@ -36,6 +41,17 @@ const LeaveApproval = () => {
 
     fetchLeaveapprova();
   }, []);
+
+  // Auto-close success modal after 2 seconds
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+        setShowModal(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal]);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -53,12 +69,12 @@ const LeaveApproval = () => {
   const filteredAndSortedLeaves = leaves
     // SEARCH by employee name
     .filter((leave) =>
-      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
 
     // FILTER by status
     .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus
+      filterStatus === "All" ? true : leave.status === filterStatus,
     )
 
     // SORT by request date
@@ -68,6 +84,18 @@ const LeaveApproval = () => {
 
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
+
+    const pendingCount = leaves.filter(
+  (leave) => leave.status === "Pending"
+).length;
+
+const approvedCount = leaves.filter(
+  (leave) => leave.status === "Approved"
+).length;
+
+const rejectedCount = leaves.filter(
+  (leave) => leave.status === "Rejected"
+).length;
 
   return (
     <div className="leave-approval-layout">
@@ -89,7 +117,7 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
-                <strong>02 Request Pending</strong>
+                <strong>{pendingCount} Request Pending</strong>
                 <br />
                 Awaiting
               </p>
@@ -97,7 +125,7 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
-                <strong>07 Request Approved</strong>
+                <strong>{approvedCount} Request Approved</strong>
                 <br />
                 In this Month
               </p>
@@ -105,7 +133,7 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
-                <strong>03 Request Rejected</strong>
+                <strong>{rejectedCount} Request Rejected</strong>
                 <br />
                 In this Month
               </p>
@@ -172,7 +200,7 @@ const LeaveApproval = () => {
                     <div className="emp-avatar">
                       <img
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          leave.name
+                          leave.name,
                         )}&background=random`}
                         alt={leave.name}
                       />
@@ -338,9 +366,30 @@ const LeaveApproval = () => {
               <div className="modal-actions">
                 <button
                   className="apply-btn"
-                  onClick={() => {
-                    setShowReasonModal(false);
-                    setShowSuccessModal(true);
+                  onClick={async () => {
+                    try {
+                      const endpoint =
+                        actionType === "Approval"
+                          ? `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/approve`
+                          : `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/reject`;
+
+                      await axios.put(endpoint, { reason: approvalReason,approved_by: currentAdminId, });
+
+                      // Refresh the leave list
+                      const response = await axios.get(
+                        "http://127.0.0.1:5001/api/leaveapproval",
+                      );
+                      setLeaves(response.data);
+
+                      setShowReasonModal(false);
+                      setShowSuccessModal(true);
+                      setApprovalReason("");
+                    } catch (error) {
+                      console.error("Error processing leave request:", error);
+                      alert(
+                        "Failed to process leave request. Please try again.",
+                      );
+                    }
                   }}
                 >
                   Submit

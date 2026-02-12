@@ -2,22 +2,27 @@ import React, { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa";
 import "./LeaveReport.css";
 import AdminSidebar from "../AdminSidebar";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import AttendanceCard from "../Dashboard/AttendanceCard";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
+const API_BASE = "http://127.0.0.1:5001";
+
 export default function LeaveReport() {
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
-
   const [employees, setEmployees] = useState([]);
+  const [leaveSummary, setLeaveSummary] = useState([]);
+  const [loadingBalance, setLoadingBalance] = useState(false);
 
+  // Fetch employees on mount
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:5001/api/employeeslist");
+        const res = await axios.get(`${API_BASE}/api/employeeslist`);
         setEmployees(res.data);
       } catch (err) {
         console.error("Error fetching employees", err);
@@ -27,12 +32,61 @@ export default function LeaveReport() {
     fetchEmployees();
   }, []);
 
-  const leaveSummary = [
-    { type: "Casual Leave", days: "6/7 Day(s)", color: "casual" },
-    { type: "Annual Leave", days: "7/8 Day(s)", color: "annual" },
-    { type: "Sick Leave", days: "3/5 Day(s)", color: "sick" },
-    { type: "LOP", days: "0", color: "lop" },
-  ];
+  // Fetch leave balance when employee is selected
+  useEffect(() => {
+    if (!selectedEmployeeId) {
+      setLeaveSummary([]);
+      return;
+    }
+
+    const fetchLeaveBalance = async () => {
+      setLoadingBalance(true);
+      try {
+        const res = await axios.get(
+          `${API_BASE}/api/employee_leave_balance/${selectedEmployeeId}`,
+          {
+            headers: {
+              "X-User-Role": "admin",
+              "X-User-ID": localStorage.getItem("userId") || "1",
+            },
+          },
+        );
+
+        // Map API response to display format
+        const colorMap = {
+          "Casual Leave": "casual",
+          "Annual Leave": "annual",
+          "Sick Leave": "sick",
+          LOP: "lop",
+          "Earned Leave": "annual",
+          "Maternity Leave": "casual",
+        };
+
+        const summary = res.data.map((item) => ({
+          type: item.leaveType,
+          days: `${item.remaining}/${item.allocated} Day(s)`,
+          color: colorMap[item.leaveType] || "casual",
+        }));
+
+        setLeaveSummary(summary);
+      } catch (err) {
+        console.error("Error fetching leave balance", err);
+        setLeaveSummary([]);
+      } finally {
+        setLoadingBalance(false);
+      }
+    };
+
+    fetchLeaveBalance();
+  }, [selectedEmployeeId]);
+
+  const handleEmployeeChange = (e) => {
+    const selectedId = e.target.value;
+    setSelectedEmployeeId(selectedId);
+
+    const emp = employees.find((emp) => String(emp.id) === selectedId);
+    setSelectedEmployeeName(emp ? emp.name : "");
+  };
 
   const attendanceDataSets = {
     months: [
@@ -71,13 +125,13 @@ export default function LeaveReport() {
           <h2>Leave Report</h2>
           <select
             className="leave-report-dropdown"
-            value={selectedEmployeeName}
-            onChange={(e) => setSelectedEmployeeName(e.target.value)}
+            value={selectedEmployeeId}
+            onChange={handleEmployeeChange}
           >
             <option value="">Select Employee</option>
 
             {employees.map((emp) => (
-              <option key={emp.id} value={emp.name}>
+              <option key={emp.id} value={emp.id}>
                 {emp.name} ({emp.empId})
               </option>
             ))}
@@ -86,23 +140,39 @@ export default function LeaveReport() {
 
         {/* Leave Summary Cards */}
         <div className="leave-summary-container">
-          {leaveSummary.map((leave, idx) => (
-            <div key={idx} className={`leave-summary-card ${leave.color}`}>
-              <div className="leave-icon-wrapper">
-                <div className="leave-icon">✓</div>
-              </div>
-              <div className="leave-content">
-                <div className="leave-days">{leave.days}</div>
-                <div className="leave-type">{leave.type}</div>
-              </div>
+          {loadingBalance ? (
+            <div className="text-center w-100 py-4">
+              <Spinner animation="border" size="sm" /> Loading leave balance...
             </div>
-          ))}
+          ) : leaveSummary.length === 0 ? (
+            <div className="text-center w-100 py-4 text-muted">
+              {selectedEmployeeId
+                ? "No leave data available"
+                : "Select an employee to view leave balance"}
+            </div>
+          ) : (
+            leaveSummary.map((leave, idx) => (
+              <div key={idx} className={`leave-summary-card ${leave.color}`}>
+                <div className="leave-icon-wrapper">
+                  <div className="leave-icon">✓</div>
+                </div>
+                <div className="leave-content">
+                  <div className="leave-days">{leave.days}</div>
+                  <div className="leave-type">{leave.type}</div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
-        {/* Monthly Leave Chart */}
-        <Col md={4} className="attendance-graph">
-          <AttendanceCard dataSets={attendanceDataSets} />
-        </Col>
+        {/* Attendance Stats Card */}
+        <div className="leave-report-card">
+          <AttendanceCard
+            title="Attendance"
+            dataSets={attendanceDataSets}
+            periodOptions={["months", "weeks", "days"]}
+          />
+        </div>
       </div>
     </div>
   );

@@ -4,9 +4,11 @@ import arrow3 from "../../../assets/arrow3.png"; // Paper plane arrow
 import Rectangle6 from "../../../assets/Rectangle6.png"; // Human illustration
 import "./ProfileBanner.css";
 
+
 const ProfileBanner = () => {
   return (
-    <div className="profile-banner-wrapper">
+    <div className="profile-banner-wrapper" >
+      <div className="my-profile-title"><h1>My Profile</h1>{/* added new my profile title */}</div>
       <div className="profile-banner-container">
         {/* Top Gradient Banner */}
         <div className="profile-banner-top">

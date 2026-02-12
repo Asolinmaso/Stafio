@@ -1,47 +1,65 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Table, Card } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Table,
+  Card,
+  Spinner,
+} from "react-bootstrap";
 import AdminSidebar from "./AdminSidebar";
+import axios from "axios";
+
+const API_BASE = "http://127.0.0.1:5001";
 
 const DepartmentLeaveView = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [leaveRecords, setLeaveRecords] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🔁 Replace this mock data with API or database later
-  const leaveRecords = [
-    {
-      employeeId: "EMP001",
-      name: "Alice",
-      department: "IT",
-      leaveType: "Sick Leave",
-      startDate: "2025-07-10",
-      endDate: "2025-07-12",
-      status: "Approved",
-    },
-    {
-      employeeId: "EMP002",
-      name: "Bob",
-      department: "HR",
-      leaveType: "Casual Leave",
-      startDate: "2025-07-15",
-      endDate: "2025-07-16",
-      status: "Pending",
-    },
-    {
-      employeeId: "EMP003",
-      name: "Charlie",
-      department: "Finance",
-      leaveType: "Earned Leave",
-      startDate: "2025-07-20",
-      endDate: "2025-07-22",
-      status: "Approved",
-    },
-  ];
+  // Fetch departments on mount
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get(`${API_BASE}/api/departments`);
+        setDepartments(["All", ...response.data.map((d) => d.name)]);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+        setDepartments(["All"]);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
-  const departments = ["All", "HR", "IT", "Finance", "Marketing", "Operations"];
+  // Fetch leave records when department changes
+  useEffect(() => {
+    const fetchLeaveRecords = async () => {
+      setLoading(true);
+      try {
+        let url = `${API_BASE}/api/all_leave_records`;
 
-  const filteredRecords =
-    selectedDepartment === "All"
-      ? leaveRecords
-      : leaveRecords.filter((record) => record.department === selectedDepartment);
+        if (selectedDepartment !== "All") {
+          url = `${API_BASE}/api/leave_by_department?department=${encodeURIComponent(selectedDepartment)}`;
+        }
+
+        const response = await axios.get(url, {
+          headers: {
+            "X-User-Role": "admin",
+            "X-User-ID": localStorage.getItem("userId") || "1",
+          },
+        });
+        setLeaveRecords(response.data);
+      } catch (error) {
+        console.error("Error fetching leave records:", error);
+        setLeaveRecords([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaveRecords();
+  }, [selectedDepartment]);
 
   return (
     <Container fluid>
@@ -66,40 +84,62 @@ const DepartmentLeaveView = () => {
               </Form.Select>
             </Form.Group>
 
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Employee ID</th>
-                  <th>Name</th>
-                  <th>Department</th>
-                  <th>Leave Type</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRecords.length > 0 ? (
-                  filteredRecords.map((record, index) => (
-                    <tr key={index}>
-                      <td>{record.employeeId}</td>
-                      <td>{record.name}</td>
-                      <td>{record.department}</td>
-                      <td>{record.leaveType}</td>
-                      <td>{record.startDate}</td>
-                      <td>{record.endDate}</td>
-                      <td>{record.status}</td>
-                    </tr>
-                  ))
-                ) : (
+            {loading ? (
+              <div className="text-center py-4">
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            ) : (
+              <Table striped bordered hover>
+                <thead>
                   <tr>
-                    <td colSpan="7" className="text-center">
-                      No records found.
-                    </td>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Leave Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Days</th>
+                    <th>Status</th>
                   </tr>
-                )}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {leaveRecords.length > 0 ? (
+                    leaveRecords.map((record, index) => (
+                      <tr key={record.id || index}>
+                        <td>{record.employeeId}</td>
+                        <td>{record.employeeName}</td>
+                        <td>{record.department}</td>
+                        <td>{record.leaveType}</td>
+                        <td>{record.startDate}</td>
+                        <td>{record.endDate}</td>
+                        <td>{record.days}</td>
+                        <td>
+                          <span
+                            className={`badge bg-${
+                              record.status === "approved"
+                                ? "success"
+                                : record.status === "declined"
+                                  ? "danger"
+                                  : "warning"
+                            }`}
+                          >
+                            {record.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="text-center">
+                        No records found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            )}
           </Card>
         </Col>
       </Row>
