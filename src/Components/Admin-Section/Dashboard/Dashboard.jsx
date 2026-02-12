@@ -119,13 +119,20 @@ const Dashboard = () => {
 		});
 	};
 
-	const calculateDuration = (start, end) => {
-		const diff = Math.floor((end - start - pausedDurationRef.current) / 1000);
-		const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
-		const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
-		const secs = String(diff % 60).padStart(2, "0");
-		return `${hrs}:${mins}:${secs}`;
-	};
+const calculateDuration = (start, end) => {
+  if (!start) return "00:00:00";
+
+  const totalMs = end - start - pausedDurationRef.current;
+
+  const diff = Math.max(0, Math.floor(totalMs / 1000)); // prevent negative
+
+  const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
+  const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+  const secs = String(diff % 60).padStart(2, "0");
+
+  return `${hrs}:${mins}:${secs}`;
+};
+
 
 	//newly added functions
 	const getCurrentTimeInMinutes = () => {
@@ -177,33 +184,39 @@ const Dashboard = () => {
 	//handlePunchIn
 	const handlePunchIn = (e) => {
 		e.preventDefault();
+
 		const now = new Date();
 		setIsPunchedIn(true);
 		setPunchInTime(now);
+		
 		startTimeRef.current = now;
 		pausedDurationRef.current = 0;
+		setTotalHours("00:00:00");
 
 		// Start timer
 		timerRef.current = setInterval(() => {
-			setTotalHours(calculateDuration(startTimeRef.current, new Date()));
+			setTotalHours(
+				calculateDuration(startTimeRef.current, new Date()));
 		}, 1000);
 	};
 
 	//handleStartBreak
 	const handleStartBreak = (breakItem = null) => {
-		//modified newly and added
-		//END BREAK
-		if (!isBreak) {
-			setIsBreak(false);
-			setActiveBreak(null);
-			
-			const breakEnd = new Date();
-            pausedDurationRef.current += breakEnd - breakStartRef.current;
 
-            clearTimeout(breakTimerRef.current);
-            setShowAlert(false);
+  // ===== END BREAK =====
+  if (isBreak) {
+    const breakEnd = new Date();
 
-    // resume working timer
+    // Add this break duration to paused total
+    pausedDurationRef.current += breakEnd - breakStartRef.current;
+
+    clearTimeout(breakTimerRef.current);
+    setShowAlert(false);
+
+    setIsBreak(false);
+    setActiveBreak(null);
+
+    // Resume working timer
     timerRef.current = setInterval(() => {
       setTotalHours(
         calculateDuration(startTimeRef.current, new Date())
@@ -213,11 +226,12 @@ const Dashboard = () => {
     return;
   }
 
-  // START BREAK
+  // ===== START BREAK =====
   setIsBreak(true);
   setActiveBreak(breakItem);
   breakStartRef.current = new Date();
-  clearInterval(timerRef.current);
+
+  clearInterval(timerRef.current); // Pause working timer
   setShowBreakDropdown(false);
 
   const isCoffeeOrCustom =
@@ -231,24 +245,22 @@ const Dashboard = () => {
 };
 
 
+
 	//handlePunchOut
-	const handlePunchOut = (e) => {
-		setIsPunchedIn(false);
-		clearInterval(timerRef.current);
-		clearTimeout(breakTimerRef.current);
-		setShowAlert(false);
-		e.preventDefault();
-		if (punchInTime) {
-			const now = new Date();
-			const diff = now - punchInTime;
-			const hours = Math.floor(diff / 3600000);
-			const minutes = Math.floor((diff % 3600000) / 60000);
-			const seconds = Math.floor((diff % 60000) / 1000);
-			setTotalHours(`${hours}:${minutes}:${seconds}`);
-		}
-		setIsPunchedIn(false);
-		setPunchInTime(null);
-	};
+const handlePunchOut = () => {
+  clearInterval(timerRef.current);
+  clearTimeout(breakTimerRef.current);
+
+  setIsBreak(false);
+  setActiveBreak(null);
+
+  // Final calculation
+  setTotalHours(
+    calculateDuration(startTimeRef.current, new Date())
+  );
+
+  setIsPunchedIn(false);
+};
 
 	useEffect(() => {
 		return () => {
@@ -468,25 +480,24 @@ const Dashboard = () => {
 
 												<div className="button-row">
 													<button
-														className="btn-punch-out"
+														className="btn-punch-out1"
 														onClick={handlePunchOut}
 													>
 														Punch Out
 													</button>
 													<button
-														className="btn-start-break"
+														className="break-btn-st-en"
 														onClick={() => {
 															if (isBreak) {
 																// ✅ END BREAK
-																handleStartBreak();
+																handleStartBreak();  //end break
 															} else {
 																// ✅ OPEN DROPDOWN
-																setShowBreakDropdown((prev) => !prev);
+																setShowBreakDropdown(true);  // Open dropdown
 															}
 														}}
 													>
-														{isBreak ? "End Break" : "Start Break"}{" "}
-														<span>▼</span>
+														{isBreak ? "End Break" : "Start Break ▼"}
 													</button>
 												</div>
 
