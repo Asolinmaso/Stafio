@@ -23,9 +23,7 @@ const LeaveApproval = () => {
   const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
   const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
   const session = getCurrentSession();
-const currentAdminId = session?.user_id;
-
-
+  const currentAdminId = session?.user_id;
 
   useEffect(() => {
     const fetchLeaveapprova = async () => {
@@ -85,17 +83,17 @@ const currentAdminId = session?.user_id;
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
-    const pendingCount = leaves.filter(
-  (leave) => leave.status === "Pending"
-).length;
+  const pendingCount = leaves.filter(
+    (leave) => leave.status === "Pending",
+  ).length;
 
-const approvedCount = leaves.filter(
-  (leave) => leave.status === "Approved"
-).length;
+  const approvedCount = leaves.filter(
+    (leave) => leave.status === "Approved",
+  ).length;
 
-const rejectedCount = leaves.filter(
-  (leave) => leave.status === "Rejected"
-).length;
+  const rejectedCount = leaves.filter(
+    (leave) => leave.status === "Rejected",
+  ).length;
 
   return (
     <div className="leave-approval-layout">
@@ -373,7 +371,10 @@ const rejectedCount = leaves.filter(
                           ? `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/approve`
                           : `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/reject`;
 
-                      await axios.put(endpoint, { reason: approvalReason,approved_by: currentAdminId, });
+                      await axios.put(endpoint, {
+                        reason: approvalReason,
+                        approved_by: currentAdminId,
+                      });
 
                       // Refresh the leave list
                       const response = await axios.get(
@@ -385,9 +386,12 @@ const rejectedCount = leaves.filter(
                       setShowSuccessModal(true);
                       setApprovalReason("");
                     } catch (error) {
-                      console.error("Error processing leave request:", error);
+                      console.error(
+                        "Error processing leave request:",
+                        error.response.data.message,
+                      );
                       alert(
-                        "Failed to process leave request. Please try again.",
+                        `Failed to process leave request. Please try again.\n ${error.response.data.message}`,
                       );
                     }
                   }}
