@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaCheckCircle, FaFilter } from "react-icons/fa";
 import "./LeaveApproval.css";
 import AdminSidebar from "../AdminSidebar";
@@ -7,27 +7,27 @@ import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 import illustration from "../../../assets/Formsbro.png";
 import tick from "../../../assets/tickicon.png";
-
 import axios from "axios";
 
 const LeaveApproval = () => {
   const [leaves, setLeaves] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
-  const [showReasonModal, setShowReasonModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [actionType, setActionType] = useState(""); // "Approval" | "Rejection"
-  const [approvalReason, setApprovalReason] = useState("");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
 
-  // New states for filter popup
+  // Filter states
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterLeaveType, setFilterLeaveType] = useState("All");
   const [filterDate, setFilterDate] = useState("");
 
   const navigate = useNavigate();
+
+  // REF for filter popup (outside click close)
+  const filterPopupRef = useRef(null);
 
   useEffect(() => {
     const fetchLeaveapprova = async () => {
@@ -37,31 +37,48 @@ const LeaveApproval = () => {
         );
         setLeaves(response.data);
       } catch (error) {
-        console.error("Error fetching attendance data:", error);
+        console.error("Error fetching leave data:", error);
       }
     };
 
     fetchLeaveapprova();
   }, []);
 
+  // Outside click close for filter popup
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        showFilterPopup &&
+        filterPopupRef.current &&
+        !filterPopupRef.current.contains(e.target)
+      ) {
+        setShowFilterPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showFilterPopup]);
+
   const filteredAndSortedLeaves = leaves
-    // SEARCH by employee name
+    // Search by name
     .filter((leave) =>
-      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+      leave.name?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    // FILTER by status
+    // Filter by status
     .filter((leave) =>
       filterStatus === "All" ? true : leave.status === filterStatus
     )
-    // FILTER by leave type
+    // Filter by leave type
     .filter((leave) =>
       filterLeaveType === "All" ? true : leave.type === filterLeaveType
     )
-    // FILTER by date
-    .filter((leave) =>
-      filterDate ? leave.requestDate === filterDate : true
-    )
-    // SORT by request date
+    // Filter by date
+    .filter((leave) => (filterDate ? leave.requestDate === filterDate : true))
+    // Sort by date
     .sort((a, b) => {
       const dateA = new Date(a.requestDate);
       const dateB = new Date(b.requestDate);
@@ -70,7 +87,7 @@ const LeaveApproval = () => {
 
   return (
     <div className="leave-approval-layout">
-      <div className="rightside-logo ">
+      <div className="rightside-logo">
         <img src={group10} alt="logo" className="rightside-logos" />
       </div>
 
@@ -93,6 +110,7 @@ const LeaveApproval = () => {
                 Awaiting
               </p>
             </div>
+
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
@@ -101,6 +119,7 @@ const LeaveApproval = () => {
                 In this Month
               </p>
             </div>
+
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
@@ -111,7 +130,7 @@ const LeaveApproval = () => {
             </div>
           </div>
 
-          {/* Right - Action Buttons */}
+          {/* Right Side Actions */}
           <div className="right-leave-actions">
             <div className="right-top-buttons">
               <button className="right-btn-apply">All</button>
@@ -122,6 +141,8 @@ const LeaveApproval = () => {
                 My Team
               </button>
             </div>
+
+            {/* Search + Filter + Sort */}
             <div className="right-bottom-button">
               <input
                 type="text"
@@ -131,14 +152,86 @@ const LeaveApproval = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
-              {/* FILTER BUTTON */}
-              <button
-                className="right-btn-filter"
-                onClick={() => setShowFilterPopup(true)}
-              >
-                <FaFilter /> Filter
-              </button>
+              {/* FILTER WRAPPER (IMPORTANT) */}
+              <div className="filter-wrapper" ref={filterPopupRef}>
+                <button
+                  className="right-btn-filter"
+                  onClick={() => setShowFilterPopup((prev) => !prev)}
+                >
+                  <FaFilter /> Filter
+                </button>
 
+                {/* FILTER POPUP */}
+                {showFilterPopup && (
+                  <div className="filter-dropdown">
+                    <h4 className="filter-title">Filter</h4>
+
+                    <div className="filter-grid">
+                      {/* Name */}
+                      <div className="filter-field">
+                        <label>Name</label>
+                        <input
+                          type="text"
+                          placeholder="Please enter name"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                      </div>
+
+                      {/* Leave Type */}
+                      <div className="filter-field">
+                        <label>Leave Type</label>
+                        <select
+                          value={filterLeaveType}
+                          onChange={(e) => setFilterLeaveType(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Sick Leave">Sick</option>
+                          <option value="Casual Leave">Casual</option>
+                          <option value="Earned Leave">Earned</option>
+                        </select>
+                      </div>
+
+                      {/* Status */}
+                      <div className="filter-field">
+                        <label>Status</label>
+                        <select
+                          value={filterStatus}
+                          onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="filter-actions">
+                      <button
+                        className="reset-btn"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setFilterLeaveType("All");
+                          setFilterStatus("All");
+                          setFilterDate("");
+                        }}
+                      >
+                        Reset
+                      </button>
+
+                      <button
+                        className="apply-btn"
+                        onClick={() => setShowFilterPopup(false)}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* SORT */}
               <select
                 className="right-sort-select"
                 value={sortOrder}
@@ -151,7 +244,7 @@ const LeaveApproval = () => {
           </div>
         </div>
 
-        {/* LEAVE TABLE */}
+        {/* TABLE */}
         <table className="leave-table">
           <thead>
             <tr>
@@ -162,6 +255,7 @@ const LeaveApproval = () => {
               <th>Action</th>
             </tr>
           </thead>
+
           <tbody>
             {filteredAndSortedLeaves.map((leave, index) => (
               <tr key={index}>
@@ -181,12 +275,15 @@ const LeaveApproval = () => {
                     </div>
                   </div>
                 </td>
+
                 <td>
                   {leave.type} <br />
                   <span>{leave.days}</span>
                 </td>
+
                 <td>{leave.dates}</td>
                 <td>{leave.requestDate}</td>
+
                 <td>
                   <button
                     className="view-btn"
@@ -213,6 +310,7 @@ const LeaveApproval = () => {
               <option>15</option>
             </select>
           </div>
+
           <div className="page-nav">
             <button>Prev</button>
             <span className="page-num">01</span>
@@ -236,13 +334,16 @@ const LeaveApproval = () => {
                   ×
                 </button>
               </div>
+
               <div className="modal-body">
                 <form className="apply-leave-form">
                   <div className="form-left">
                     <label>Employee ID:</label>
                     <input type="text" value={selectedLeave.id} readOnly />
+
                     <label>Leave Type:</label>
                     <input type="text" value={selectedLeave.type} readOnly />
+
                     <label>Date Of Leave:</label>
                     <div className="date-row">
                       <input type="text" value={selectedLeave.from} readOnly />
@@ -253,17 +354,21 @@ const LeaveApproval = () => {
                         readOnly
                       />
                     </div>
+
                     <label>Notify Others:</label>
                     <input type="text" value={selectedLeave.notify} readOnly />
+
                     <label>Uploaded Document:</label>
                     <input
                       type="text"
                       value={selectedLeave.document || "No File Uploaded"}
                       readOnly
                     />
+
                     <label>Reason:</label>
                     <textarea value={selectedLeave.reason} readOnly />
                   </div>
+
                   <div className="form-right">
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
@@ -272,83 +377,6 @@ const LeaveApproval = () => {
             </div>
           </div>
         )}
-
-       {/* FILTER POPUP */}
-        {showFilterPopup && (
-          <div className="modal-overlay" onClick={() => setShowFilterPopup(false)}>
-            <div
-              className="filter-dropdown"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h4 className="filter-title">Filter</h4>
-
-              <div className="filter-grid">
-                {/* Name */}
-                <div className="filter-field">
-                  <label>Name</label>
-                  <input
-                    type="text"
-                    placeholder="Please enter name"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-
-              {/* Leave Type */}
-              <div className="filter-field">
-                <label>Leave Type</label>
-                <select
-                  value={filterLeaveType} // link with state
-                  onChange={(e) => setFilterLeaveType(e.target.value)} // update state
-                >
-                  <option value="All">All</option>
-                  <option value="Sick Leave">Sick</option>
-                  <option value="Casual Leave">Casual</option>
-                  <option value="Earned Leave">Earned</option>
-                </select>
-              </div>
-
-              {/* Status */}
-              <div className="filter-field">
-                <label>Status</label>
-                <select
-                  value={filterStatus} // link with state
-                  onChange={(e) => setFilterStatus(e.target.value)} // update state
-                >
-                  <option value="All">All</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Rejected">Rejected</option>
-                </select>
-              </div>
-
-              </div>
-
-              <div className="filter-actions">
-                <button
-                  className="reset-btn"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setFilterLeaveType("All");
-                    setFilterStatus("All");
-                    setFilterDate("");
-                  }}
-                >
-                  Reset
-                </button>
-
-
-                <button
-                  className="apply-btn"
-                  onClick={() => setShowFilterPopup(false)}
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
 
         {/* SUCCESS MODAL */}
         {showSuccessModal && (

@@ -7,11 +7,19 @@
   overflow-x: hidden;
 }
 
+.myholiday-container .topbar{
+  width: 100%;
+  margin-left: -1px !important;
+  margin-top: 10px !important;
+}
+
 .page-title {
   font-size: 22px;
   font-weight: 600;
   color: #333;
   margin: 40px 0 20px;
+  padding-top: 15px;
+  padding-bottom: 30px;
 }
 
 /* Table styling */

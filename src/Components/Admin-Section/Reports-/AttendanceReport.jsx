@@ -1,118 +1,136 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaFilter,
-  FaCalendarAlt,
-  FaChevronDown,
-  FaDownload,
-  FaSearch,
-} from "react-icons/fa";
+import { FaFilter, FaCalendarAlt, FaDownload } from "react-icons/fa";
 import "./AttendanceReport.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
-import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card } from "react-bootstrap";
 import axios from "axios";
 import group10 from "../../../assets/Group10.png";
 
-
-
 export default function AttendanceReport() {
   const [attendanceData, setAttendanceData] = useState([]);
-  const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
   const [sortDays, setSortDays] = useState(7);
-  const navigate = useNavigate();
 
+  /* FILTER POPUP STATES */
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [popupName, setPopupName] = useState("");
+  const [popupStatus, setPopupStatus] = useState("On Time");
+  const [popupSortDays, setPopupSortDays] = useState(7);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const [statusFilter, setStatusFilter] = useState("On Time");
+  const [employees, setEmployees] = useState([]);
+
+  // ✅ NEW: date picker value
+  const [selectedDate, setSelectedDate] = useState("");
+
+  /* FETCH ATTENDANCE */
   useEffect(() => {
-    const fetchAttendanceData = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/attendancelist"
-        );
-        setAttendanceData(response.data);
-      } catch (error) {
-        console.error("Error fetching attendance data:", error);
-      }
-    };
-
-    fetchAttendanceData();
+    axios
+      .get("http://127.0.0.1:5001/api/attendancelist")
+      .then((res) => setAttendanceData(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
+  /* FETCH EMPLOYEES */
   useEffect(() => {
-    // Function to update time & date every second
-    const updateTime = () => {
-      const now = new Date();
+    axios
+      .get("http://127.0.0.1:5001/api/employeeslist")
+      .then((res) => setEmployees(res.data))
+      .catch((err) => console.error(err));
+  }, []);
 
-      // Format time (e.g., 9:01:09 AM)
-      const time = now.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
-
-      // Format date (e.g., 10 Aug 2025)
-      const date = now.toLocaleDateString("en-GB", {
+  /* DATE */
+  useEffect(() => {
+    const now = new Date();
+    setCurrentDate(
+      now.toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "short",
         year: "numeric",
-      });
+      })
+    );
 
-      setCurrentTime(time);
-      setCurrentDate(date);
-    };
-
-    updateTime(); // run immediately
-    const timer = setInterval(updateTime, 1000); // update every 1s
-
-    return () => clearInterval(timer); // cleanup on unmount
+    // ✅ default for date input (yyyy-mm-dd)
+    setSelectedDate(now.toISOString().split("T")[0]);
   }, []);
 
+  const parseDate = (dateStr) => {
+    const d = new Date(dateStr);
+    return isNaN(d) ? null : d;
+  };
+
+  /* FILTER LOGIC */
   const filteredAttendance = attendanceData
-    // SEARCH BY EMPLOYEE NAME
-    .filter((record) =>
-      record.employee.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((r) =>
+      r.employee?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-
-    // FILTER BY STATUS
-    .filter((record) =>
-      statusFilter === "All" ? true : record.status === statusFilter
+    .filter(
+      (r) =>
+        r.status?.toLowerCase().trim() === statusFilter.toLowerCase().trim()
     )
+    .filter((r) =>
+      selectedEmployeeName ? r.employee === selectedEmployeeName : true
+    )
+    .filter((r) => {
+      const today = new Date();
+      const rd = parseDate(r.date);
+      if (!rd) return true;
+      return (today.getTime() - rd.getTime()) / (1000 * 60 * 60 * 24) <= sortDays;
+    })
+    .filter((r) => {
+      if (!fromDate && !toDate) return true;
+      const rd = parseDate(r.date);
+      if (!rd) return true;
+      if (fromDate && rd < new Date(fromDate)) return false;
+      if (toDate && rd > new Date(toDate + "T23:59:59")) return false;
+      return true;
+    })
+    // ✅ NEW: selectedDate filter
+    .filter((r) => {
+      if (!selectedDate) return true;
+      const rd = parseDate(r.date);
+      if (!rd) return true;
 
-    // SORT BY LAST N DAYS
+      const picked = new Date(selectedDate);
+      return (
+        rd.getDate() === picked.getDate() &&
+        rd.getMonth() === picked.getMonth() &&
+        rd.getFullYear() === picked.getFullYear()
+      );
+    });
 
-    .filter(() => true);
+  /* FILTER ACTIONS */
+  const handleResetFilters = () => {
+    setPopupName("");
+    setPopupStatus("On Time");
+    setPopupSortDays(7);
+    setFromDate("");
+    setToDate("");
+  };
 
-
-const [employees, setEmployees] = useState([]);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await axios.get("http://127.0.0.1:5001/api/employeeslist");
-        setEmployees(res.data);
-      } catch (err) {
-        console.error("Error fetching employees", err);
-      }
-    };
-
-    fetchEmployees();
-  }, []);
-
+  const handleApplyFilters = () => {
+    setSearchTerm(popupName);
+    setStatusFilter(popupStatus);
+    setSortDays(popupSortDays);
+    setShowFilterPopup(false);
+  };
 
   return (
     <div className="att-report-layout">
-      <div className="rightside-logo ">
+      <div className="rightside-logo">
         <img src={group10} alt="logo" className="rightside-logos" />
       </div>
+
       <AdminSidebar />
+
       <div className="att-report-main">
         <Topbar />
 
-        {/* Header Section */}
+        {/* HEADER */}
         <div className="att-report-header">
           <h2>Attendance Report</h2>
           <select
@@ -121,7 +139,6 @@ const [employees, setEmployees] = useState([]);
             onChange={(e) => setSelectedEmployeeName(e.target.value)}
           >
             <option value="">Select Employee</option>
-
             {employees.map((emp) => (
               <option key={emp.id} value={emp.name}>
                 {emp.name} ({emp.empId})
@@ -130,50 +147,138 @@ const [employees, setEmployees] = useState([]);
           </select>
         </div>
 
-        {/* Filter Bar */}
+        {/* FILTER BAR */}
         <div className="att-report-filterbar">
           <div className="att-report-search-box">
-            
             <input
               type="text"
-              placeholder="Search by employee..."
+              placeholder="🔍 Search..."
               className="search-input2"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          <select
-            className="select-filter"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="All">All</option>
-            <option value="On Time">On Time</option>
-            <option value="Late Login">Late Login</option>
-            <option value="Absent">Absent</option>
-          </select>
+          {/* FILTER BUTTON */}
+          <div style={{ position: "relative" }}>
+            <button
+              className="att-report-filter-btn"
+              onClick={() => setShowFilterPopup(!showFilterPopup)}
+            >
+              <FaFilter /> Filter
+            </button>
 
+            {showFilterPopup && (
+              <div className="att-filter-popup">
+                <h3 className="att-filter-title">Filter</h3>
+
+                <label className="att-filter-label">Name</label>
+                <input
+                  className="att-filter-input"
+                  value={popupName}
+                  onChange={(e) => setPopupName(e.target.value)}
+                />
+
+                <div className="att-filter-row">
+                  <div className="att-filter-col">
+                    <label>Status</label>
+                    <select
+                      className="att-filter-select"
+                      value={popupStatus}
+                      onChange={(e) => setPopupStatus(e.target.value)}
+                    >
+                      <option value="On Time">On Time</option>
+                      <option value="Late Login">Late Login</option>
+                      <option value="Absent">Absent</option>
+                    </select>
+                  </div>
+
+                  <div className="att-filter-col">
+                    <label>Days</label>
+                    <select
+                      className="att-filter-select"
+                      value={popupSortDays}
+                      onChange={(e) => setPopupSortDays(Number(e.target.value))}
+                    >
+                      <option value={5}>Last 5 Days</option>
+                      <option value={10}>Last 10 Days</option>
+                      <option value={20}>Last 20 Days</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="att-filter-row">
+                  <div className="att-filter-col">
+                    <label>From</label>
+                    <input
+                      type="date"
+                      className="att-filter-select"
+                      value={fromDate}
+                      onChange={(e) => setFromDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="att-filter-col">
+                    <label>To</label>
+                    <input
+                      type="date"
+                      className="att-filter-select"
+                      value={toDate}
+                      onChange={(e) => setToDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="att-filter-footer">
+                  <button className="att-filter-reset" onClick={handleResetFilters}>
+                    Reset
+                  </button>
+                  <button className="att-filter-apply" onClick={handleApplyFilters}>
+                    Apply
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* SORT */}
           <select
             className="sort-dropdown"
             value={sortDays}
             onChange={(e) => setSortDays(Number(e.target.value))}
           >
-            <option value={5}>Last 5 Days</option>
-            <option value={10}>Last 10 Days</option>
-            <option value={20}>Last 20 Days</option>
+            <option value="Newest">Sort By : Newest</option>
+            <option value="Oldest">Sort By : Oldest</option>
           </select>
         </div>
 
-        {/* Table Section */}
+        {/* TABLE */}
         <div className="att-report-table-wrapper">
           <div className="att-report-table-header">
             <h3>Attendance Overview</h3>
+
+            {/* ✅ UPDATED: search + calendar + download */}
             <div className="header-controls">
+              {/* Search bar (right side) */}
+              <input
+                type="text"
+                className="att-header-search"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+
+              {/* Calendar working */}
               <div className="att-report-date">
                 <FaCalendarAlt />
-                <span>{currentDate}</span>
+                <input
+                  type="date"
+                  className="att-date-input"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
               </div>
+
               <button className="att-report-download-btn">
                 <FaDownload /> Download
               </button>
@@ -194,39 +299,18 @@ const [employees, setEmployees] = useState([]);
               </tr>
             </thead>
             <tbody>
-              {filteredAttendance .length > 0 ? (
-                filteredAttendance .map((record, index) => {
-                  const statusClass = record.status
-                    .toLowerCase()
-                    .replace(/\s+/g, "-");
-                  return (
-                    <tr key={index}>
-                      <td>{record.id}</td>
-                      <td>{record.employee}</td>
-                      <td>{record.role}</td>
-                      <td>
-                        <span className={`att-report-status ${statusClass}`}>
-                          {record.status}
-                        </span>
-                      </td>
-                      <td>{record.date}</td>
-                      <td className={`att-report-time ${statusClass}`}>
-                        {record.checkIn}
-                      </td>
-                      <td className={`att-report-time ${statusClass}`}>
-                        {record.checkOut}
-                      </td>
-                      <td>{record.workHours}</td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="8" style={{ textAlign: "center" }}>
-                    No attendance records found.
-                  </td>
+              {filteredAttendance.map((r, i) => (
+                <tr key={i}>
+                  <td>{r.id}</td>
+                  <td>{r.employee}</td>
+                  <td>{r.role}</td>
+                  <td>{r.status}</td>
+                  <td>{r.date}</td>
+                  <td>{r.checkIn}</td>
+                  <td>{r.checkOut}</td>
+                  <td>{r.workHours}</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>

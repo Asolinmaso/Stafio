@@ -1,16 +1,33 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaFilter, FaCalendarAlt } from "react-icons/fa";
 import "./WhoIsOnLeave.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
-import { useState,useEffect } from "react";
-
 
 const WhoIsOnLeave = () => {
-   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
+
+  // ✅ Calendar state
+  const [selectedDate, setSelectedDate] = useState("");
+
+  // ✅ IMPORTANT: date input ref
+  const dateRef = useRef(null);
+
+  // ✅ Filter popup state
+  const [showFilter, setShowFilter] = useState(false);
+
+  // ✅ Filter input states
+  const [filterSearch, setFilterSearch] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [filterDuration, setFilterDuration] = useState("");
+  const [filterFromDate, setFilterFromDate] = useState("");
+  const [filterToDate, setFilterToDate] = useState("");
+
+  const filterRef = useRef(null);
+  const navigate = useNavigate();
+
   const leaveList = [
     { id: "2244", employee: "Akshya", type: "Casual Leave", from: "10 Aug 2025", to: "11 Aug 2025", days: "1 Day" },
     { id: "2244", employee: "Rhugmini", type: "Casual Leave", from: "06 Aug 2025", to: "07 Aug 2025", days: "1 Day" },
@@ -20,69 +37,204 @@ const WhoIsOnLeave = () => {
     { id: "2244", employee: "Akshya", type: "Sick Leave", from: "10 Aug 2025", to: "10 Aug 2025", days: "1 Day" },
   ];
 
-   const navigate = useNavigate();
-
- useEffect(() => {
-    // Function to update time & date every second
-    const updateTime = () => {
+  // ✅ Live Date
+  useEffect(() => {
+    const updateDate = () => {
       const now = new Date();
-
-      // Format time (e.g., 9:01:09 AM)
-      const time = now.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
-
-      // Format date (e.g., 10 Aug 2025)
       const date = now.toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "short",
         year: "numeric",
       });
-
-      setCurrentTime(time);
       setCurrentDate(date);
     };
 
-    updateTime(); // run immediately
-    const timer = setInterval(updateTime, 1000); // update every 1s
-
-    return () => clearInterval(timer); // cleanup on unmount
+    updateDate();
+    const timer = setInterval(updateDate, 1000);
+    return () => clearInterval(timer);
   }, []);
 
+  // ✅ Outside click close
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setShowFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  const handleClearFilters = () => {
+    setFilterSearch("");
+    setFilterType("");
+    setFilterDuration("");
+    setFilterFromDate("");
+    setFilterToDate("");
+    setShowFilter(false);
+  };
+
+  const handleApplyFilters = () => {
+    setShowFilter(false);
+  };
 
   return (
     <div className="whoisleave-layout">
-      <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
+
       <AdminSidebar />
+
       <div className="whoisleave-main">
         <Topbar />
 
+        {/* ===== Header ===== */}
         <div className="whoisleave-header">
           <h2>Leave List</h2>
-          <button className="whoisleave-filter-btn">
-            <FaFilter /> Filter
-          </button>
+
+          <div className="whoisleave-filter-wrapper" ref={filterRef}>
+            <button
+              className="whoisleave-filter-btn"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <FaFilter /> Filter
+            </button>
+
+            {showFilter && (
+              <div className="whoisleave-filter-popup">
+                <div className="filter-popup-header">
+                  <h3>Filter By</h3>
+                  <button
+                    className="filter-close-btn"
+                    onClick={() => setShowFilter(false)}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="filter-popup-body">
+                  <div className="filter-group">
+                    <label>Search</label>
+                    <input
+                      type="text"
+                      placeholder="Search employee..."
+                      value={filterSearch}
+                      onChange={(e) => setFilterSearch(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="filter-row">
+                    <div className="filter-group">
+                      <label>Leave Type</label>
+                      <select
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                      >
+                        <option value="">All</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Earned Leave">Earned Leave</option>
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <label>Duration</label>
+                      <select
+                        value={filterDuration}
+                        onChange={(e) => setFilterDuration(e.target.value)}
+                      >
+                        <option value="">All</option>
+                        <option value="1 Day">1 Day</option>
+                        <option value="2 Days">2 Days</option>
+                        <option value="3 Days">3 Days</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="filter-row">
+                    <div className="filter-group">
+                      <label>From</label>
+                      <div className="date-input-wrapper">
+                        <input
+                          type="date"
+                          value={filterFromDate}
+                          onChange={(e) => setFilterFromDate(e.target.value)}
+                        />
+                        <FaCalendarAlt className="date-icon" />
+                      </div>
+                    </div>
+
+                    <div className="filter-group">
+                      <label>To</label>
+                      <div className="date-input-wrapper">
+                        <input
+                          type="date"
+                          value={filterToDate}
+                          onChange={(e) => setFilterToDate(e.target.value)}
+                        />
+                        <FaCalendarAlt className="date-icon" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="filter-actions">
+                  <button className="filter-clear" onClick={handleClearFilters}>
+                    Reset
+                  </button>
+                  <button className="filter-apply" onClick={handleApplyFilters}>
+                    Apply
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
+        {/* ===== Section ===== */}
         <div className="whoisleave-section">
           <div className="whoisleave-section-header">
             <h3>Employees On Leave</h3>
+
             <div className="whoisleave-controls">
-              <input type="text" placeholder="🔍 Quick Search..." className="whoisleave-search" />
-              <div className="whoisleave-date">
-                <FaCalendarAlt />
-                <span>{currentDate}</span>
+              <input
+                type="text"
+                placeholder="🔍 Quick Search..."
+                className="whoisleave-search"
+              />
+
+              {/* ✅ FIXED Calendar with working icon */}
+              <div className="whoisleave-date-picker">
+                <input
+                  ref={dateRef}
+                  type="date"
+                  className="whoisleave-date-input"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+
+                <FaCalendarAlt
+                  className="calendar-icon"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Open calendar"
+                  onClick={() => dateRef.current?.showPicker()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      dateRef.current?.showPicker();
+                    }
+                  }}
+                />
               </div>
-              <button className="whoisleave-view-btn"
-               onClick={() => navigate("/attendance")}
-               >
-                View Attendance</button>
+
+              <button
+                className="whoisleave-view-btn"
+                onClick={() => navigate("/attendance")}
+              >
+                View Attendance
+              </button>
             </div>
           </div>
 
@@ -112,6 +264,7 @@ const WhoIsOnLeave = () => {
           </table>
         </div>
 
+        {/* ===== Pagination ===== */}
         <div className="whoisleave-pagination">
           <div className="whoisleave-showing">
             <span>Showing</span>
@@ -121,6 +274,7 @@ const WhoIsOnLeave = () => {
               <option>15</option>
             </select>
           </div>
+
           <div className="whoisleave-page-controls">
             <button className="whoisleave-page-btn">Prev</button>
             <button className="whoisleave-page-btn active">01</button>

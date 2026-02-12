@@ -1,286 +1,478 @@
-.regularization-page {
+/* ===========================
+   PAGE LAYOUT
+=========================== */
+.ra-page {
   display: flex;
   background: #eff5ff;
   min-height: 100vh;
+  position: relative;
   overflow: hidden;
 }
 
-.regularization-main {
+/* Background logo (right side) */
+.ra-bg-logo {
+  position: absolute;
+  top: 80px;
+  right: 30px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ra-bg-logo-img {
+  width: 380px;
+}
+
+/* Main right section */
+.ra-main {
   flex: 1;
   padding: 20px 30px;
-  background: #eff5ff;
+  position: relative;
+  z-index: 1;
 }
 
-.regularization-container {
-  background: #f3f7fd;
-  margin-top: 20px;
+.ra-main .topbar {
+  margin-top: 1px !important;
+  margin-left: -5px !important;
+  width: 100%;
 }
 
-.regularization-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
+/* Content container */
+.ra-container {
+  margin-top: 15px;
 }
 
-.header-top h2 {
+/* ===========================
+   HEADER
+=========================== */
+.ra-header {
+  margin: 20px 10px 15px 10px;
+}
+
+.ra-title {
   font-size: 30px;
-  color: #222;
-  margin-bottom: 15px;
-  font-weight:600;
+  font-weight: 600;
+  color: #1f2b3d;
+  margin-top: 38px !important;
+  margin-bottom: 18px;
 }
 
-.header-bottom {
+/* Tabs + controls row */
+.ra-header-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 35px !important;
+  margin-bottom: 20px !important;
 }
 
-.left-tabs {
-    margin-top:40px;
-  display: flex;
-  gap: 0px;
+/* ===========================
+   TABS
+=========================== */
+/* ===== EXACT SEGMENTED TABS (like your 1st image) ===== */
+.ra-tabs {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #bfc7d5;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
 }
 
-.tab-btn {
-  background: #ffffffff !important;
-  color: #000000ff !important;
-  border: 1px solid #b8b4b4ff !important;
-  padding: 10px 28px !important;
-  border-radius: 15px 0 0 15px !important;
+/* Base button */
+.ra-tab {
+  border: none;
+  background: transparent;
+  padding: 12px 10px;
+  width: 95px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
+  color: #111827;
 }
 
-.tab-btn.active {
- background: #19bde8 !important;
-  color: #ffffffff !important;
-  border: 1px solid #b8b4b4ff;
-  padding: 8px 12px !important;
-  border-radius: 0 15px 15px 0 !important;
-  cursor: pointer;
+/* Left button */
+.ra-tab:first-child {
+  border-right: 1px solid #bfc7d5; /* middle divider */
+  border-radius: 16px 0 0 16px;
 }
 
-.right-controls {
+/* Right button */
+.ra-tab:last-child {
+  border-radius: 0 16px 16px 0;
+}
+
+/* Active button */
+.ra-tab.active {
+  background: #12b3e6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* IMPORTANT:
+   When right tab is active, divider should not show inside blue */
+.ra-tab.active:last-child {
+  margin-left: -1px; /* hides the divider line */
+}
+
+
+/* ===========================
+   RIGHT CONTROLS
+=========================== */
+.ra-controls {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.search-input {
-  padding: 8px 12px;
-  border: 1px solid #acababff;
-  border-radius: 16px;
-  width: 180px;
-  font-size: 14px;
-  background:transparent;
-}
-
-.right-btn-filter {
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  background: transparent;
-  border-radius: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-  margin-bottom:-10px;
-  color: #000;
-}
-
-.sort-select{
-    background:transparent;
-}
-
-
-
-.tab-btn {
-  padding: 8px 18px;
-  border: none;
-  background: #e6ecf8;
-  color: #2c3e50;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.tab-btn.active {
-  background: #007bff;
-  color: #fff;
-}
-
-.right-bottom-button {
-  display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
+  margin-top: 50px !important;
 }
 
+/* Search */
+.ra-search {
+  width: 220px;
+  height: 36px;
+  border: 1px solid #d6e3ff;
+  border-radius: 20px;
+  padding: 0 14px;
+  outline: none;
+  background: #ffffff;
+  font-size: 13px;
+  color: #1f2b3d;
+}
 
+.ra-search::placeholder {
+  color: #9aa7bd;
+}
 
-.table-container {
-  background: #fff;
+/* Filter button */
+.ra-filter-btn {
+  height: 36px;
+  padding: 0 14px;
   border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #d6e3ff;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #1f2b3d;
+  transition: 0.2s;
 }
 
-.regularization-table {
+.ra-filter-btn:hover {
+  background: #f4f8ff;
+}
+
+/* Sort */
+.ra-sort {
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #d6e3ff;
+  background: #ffffff;
+  padding: 0 12px;
+  outline: none;
+  font-size: 13px;
+  color: #1f2b3d;
+  cursor: pointer;
+}
+
+/* ===========================
+   TABLE CARD
+=========================== */
+.ra-table-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 0;
+  margin-top: 14px;
+  box-shadow: 0 10px 25px rgba(30, 70, 140, 0.08);
+  overflow: hidden;
+}
+
+/* Table */
+.ra-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.regularization-table th {
+.ra-table thead th {
   text-align: left;
-  padding: 12px;
-  font-size: 14px;
-  color: #6c757d;
-  border-bottom: 1px solid #eee;
-}
-
-.regularization-table td {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
-  color: #2c3e50;
-}
-
-.emp-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.emp-info img {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-}
-
-.emp-name {
+  font-size: 13px;
   font-weight: 600;
+  color: #1f2b3d;
+  padding: 18px 18px;
+  border-bottom: 1px solid #e7efff;
+  background: #ffffff;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-left: 10px;
+.ra-table tbody td {
+  padding: 18px 18px;
+  border-bottom: 1px solid #eef3ff;
+  font-size: 13px;
+  color: #1f2b3d;
+  vertical-align: middle;
 }
 
-.status-badge.pending {
-  background: #fff6db;
-  color: #f5b100;
+.ra-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.status-badge.approved {
-  background: #e7fff2;
-  color: #00c26d;
-}
-
-.view-btn {
-  padding: 6px 12px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  cursor: pointer;
+/* Muted */
+.ra-muted {
+  color: #6b7280;
   font-weight: 500;
 }
 
-
-.showing select {
-  margin-left: 5px;
-  padding: 4px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+/* ===========================
+   EMPLOYEE CELL
+=========================== */
+.ra-emp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.page-btns {
-  display: block;
+.ra-emp-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e6f2ff;
+}
+
+.ra-emp-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ra-emp-name {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  color: #1f2b3d;
+}
+
+.ra-emp-id {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ===========================
+   REQUEST + STATUS
+=========================== */
+.ra-request {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.page-btns button {
-  border: none;
-  background: #e6ecf8;
+/* Status pill */
+.ra-status {
+  width: fit-content;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Pending */
+.ra-status.pending {
+  background: #fff2cc;
+  color: #c58b00;
+  border: 1px solid #ffe08a;
+}
+
+/* Approved */
+.ra-status.approved {
+  background: #e8fff2;
+  color: #18a957;
+  border: 1px solid #bdf3d5;
+}
+
+/* Rejected */
+.ra-status.rejected {
+  background: #ffecec;
+  color: #e53935;
+  border: 1px solid #ffc1c1;
+}
+
+/* ===========================
+   VIEW DETAILS BUTTON
+=========================== */
+.ra-view-btn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #1f2b3d;
+  transition: 0.2s;
+}
+
+.ra-view-btn:hover {
+  background: #f4f8ff;
+}
+
+/* ===========================
+   PAGINATION
+=========================== */
+.ra-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 8px 10px;
+}
+
+.ra-showing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1f2b3d;
+  font-size: 13px;
+}
+
+.ra-showing-select {
+  border: 1px solid #d6e3ff;
+  border-radius: 6px;
   padding: 5px 10px;
-  border-radius: 4px;
+  background: #12b3e6;
+  color: #ffffff;
+  cursor: pointer;
+  outline: none;
+}
+
+.ra-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ra-page-btn {
+  border: 1px solid #d6e3ff;
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ra-page-number {
+  border: 1px solid #d6e3ff;
+  background: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ra-page-number.active {
+  background: #12b3e6;
+  color: #ffffff;
+  border-color: #12b3e6;
+}
+
+/* ===== FILTER BUTTON AREA ===== */
+.ra-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===== MODAL BACKDROP ===== */
+.ra-modal {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 999;
+}
+
+/* ===== FILTER CARD ===== */
+.ra-filter-card {
+  position: absolute;
+  top: 220px;       /* 👈 exact vertical alignment */
+  right: 230px;     /* 👈 button keezha correct position */
+  width: 340px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== TITLE ===== */
+.ra-filter-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+/* ===== INPUT GROUP ===== */
+.ra-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Name full width */
+.ra-filter-field:first-child {
+  grid-column: span 2;
+}
+
+.ra-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ra-filter-field label {
+  font-size: 14px;
+  color: #555;
+}
+
+/* INPUTS */
+.ra-filter-field input,
+.ra-filter-field select {
+  height: 38px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #cfcfcf;
+  font-size: 14px;
+  outline: none;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.ra-filter-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;     /* 👈 buttons kizha pogum */
+  padding-top: 6px;     /* 👈 card bottom spacing feel */
+}
+
+
+/* Reset */
+.ra-reset-btn {
+  background: #f3f3f3;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.page-btns .active {
-  background: #19bde8;
-  color: #fff;
+/* Apply */
+.ra-apply-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
 }
-
-
-/* =========================
-   FILTER POPUP – IMAGE MATCH FIX
-   (Popup below Filter button)
-========================= */
-
-.filter-wrapper {
-  position: relative; /* anchor for popup */
-}
-
-/* Popup aligned exactly under Filter button */
-.filter-popup {
-  position: absolute;
-  top: calc(100% + 12px); /* space below button */
-  right: 0;              /* align to Filter button */
-  width: 360px;
-
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px;
-  
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
-  z-index: 9999;
-}
-
-/* Smooth entrance (optional but matches UI feel) */
-.filter-popup {
-  animation: filterFadeIn 0.25s ease;
-}
-
-@keyframes filterFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Allow filter popup to escape container */
-.regularization-page,
-.regularization-main,
-.regularization-container {
-  overflow: visible !important;
-}
-
-.filter-wrapper {
-  position: relative;
-}
-
-/* Exact position like design */
-.filter-popup {
-  position: absolute;
-  top: 52px;          /* directly below Filter button */
-  right: 0;
-  width: 360px;
-  background: #fff;
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
-  z-index: 9999;
-}
-
-/* .filter-dropdown{
-  margin-left: 900px ;
-  margin-top: 200px !important;
-}  */

@@ -29,15 +29,17 @@
   overflow-y: auto;
 }
 
+.leave-approval-main h2 {
+  margin-top : 20px !important; 
+}
 .leave-approval-layout .topbar {
-   padding-top: 13px !important;    /* modified */
-   padding-bottom: 13px !important;   /* modified */
-  margin-top: 30px ; 
-  padding-bottom: 8px;
+  margin-top: 30px;
   width: 95%;
-  margin-left: auto !important;     /* modified */
-  margin-right: auto ; /* centers horizontally */
+  margin-left: 20px !important;
+  margin-right: auto; /* centers horizontally */
   display: block;
+  padding-bottom: 12px !important;
+  padding-top: 12px !important;
 }
 
 .leave-approval-page {
@@ -47,7 +49,6 @@
 }
 
 .page-title{
-  margin-top: 27px !important; /* modified */
   font-size: 30px !important;
   margin-left:40px !important;
 }
@@ -63,12 +64,11 @@
 
 .leave-summary {
   display: flex;
-  gap: 20px !important;  /* modified */
-  margin-left:40px ;
+  gap: 20px;
+  margin-left:40px;
   padding:0px !important;
 }
 .summary-card-leave{
-  margin-left: -15px;  /* modified */
   padding:0px !important;
 }
 .summary-card-leave  strong {
@@ -144,8 +144,7 @@
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
-  margin-top: 10px !important;
-  margin-left:25px !important;
+  margin-left:40px;
 }
 
 .leave-table th, .leave-table td {
@@ -185,19 +184,27 @@
 /* =========================
    FILTER POPUP FIXES
 ========================= */
+.filter-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .filter-dropdown {
   position: absolute;
-  top: 70px; /* adjust to align with search/filter bar */
-  right: 0px; /* align with Filter button */
-  
+  top: 45px;
+  right: 0;
   width: 320px;
-  background: #ffffff;
+  background: #fff;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  animation: fadeSlideIn 0.25s ease;
+
+  /* 🔥 FORCE MOVE TO RIGHT */
+  transform: translateX(-240px);
 }
+
+
 
 .filter-dropdown .filter-title {
   font-size: 18px;
@@ -270,20 +277,7 @@
   background: #1e40af;
 }
 
-/* Modal overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.2);
-  z-index: 999;
-  display: flex;
-  justify-content: flex-end; /* aligns popup to the right */
-  align-items: flex-start;
-  padding: 70px 40px 0 0; /* matches topbar and right spacing */
-}
+
 
 /* Animation */
 @keyframes fadeSlideIn {
