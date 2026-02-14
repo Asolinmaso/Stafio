@@ -271,19 +271,19 @@ export default function Myleave() {
 
         {/* Modal Popup */}
         {showModal && (
-          <div className="modal-overlay">
+          <div className="app-leave-modal-overlay">
             <div className="apply-leave-modal">
-              <div className="modal-header-blue">
+              <div className="app-leave-modal-header-blue">
                 <h3>Apply Leave</h3>
                 <button
-                  className="close-btn"
+                  className="apply-leave-close-btn"
                   onClick={() => setShowModal(false)}
                 >
                   x
                 </button>
               </div>
 
-              <div className="modal-body">
+              <div className="app-leave-modal-body">
                 <form className="apply-leave-form">
                   <div className="form-left">
                     <label>Employee ID:</label>
@@ -298,7 +298,7 @@ export default function Myleave() {
                     </select>
 
                     <label>Select Date:</label>
-                    <div className="date-row">
+                    <div className="app-leave-date-row">
                       <input type="date" />
                       <input type="date" />
                       <select>
@@ -309,12 +309,12 @@ export default function Myleave() {
                     </div>
 
                     <label>Notify Others:</label>
-                    <div className="notify-row">
+                    <div className="app-leave-notify-row">
                       <select>
                         <option>Team Lead</option>
                         <option>HR</option>
                       </select>
-                      <button type="button" className="upload-btn">
+                      <button type="button" className="apply-leave-upload-btn">
                         <FaUpload /> Upload File
                       </button>
                     </div>
@@ -325,14 +325,14 @@ export default function Myleave() {
                       maxLength={30}
                     ></textarea>
 
-                    <div className="modal-actions">
-                      <button type="submit" className="apply-btn">
+                    <div className="app-leave-modal-actions">
+                      <button type="submit" className="apply-leave-btn">
                         Apply
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowModal(false)}
-                        className="cancel-btn"
+                        className="app-leave-cancel-btn"
                       >
                         Cancel
                       </button>

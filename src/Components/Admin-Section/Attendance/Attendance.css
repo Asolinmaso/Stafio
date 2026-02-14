@@ -30,11 +30,21 @@
   flex: 1;
   padding: 20px 30px;
   position: relative;
+<<<<<<< HEAD
   margin-left: 0;
   padding-left: 280px;
   /* modified: padding instead of margin to fix white gaps */
   padding-top: 100px;
+=======
+>>>>>>> origin/ajith-frontend
 }
+
+.attendance-main .topbar {
+  margin-top: 10px !important;
+  width: 100%;
+  margin-left: 2px !important;
+}
+
 
 /* ===== Header Section ===== */
 .attendance-header {
@@ -51,6 +61,7 @@
   font-size: 30px;
   font-weight: 600;
   color: #222;
+  margin-top: 5px !important;
 }
 
 .attendance-controls {
@@ -58,6 +69,10 @@
   align-items: center;
   gap: 20px;
   position: relative;
+<<<<<<< HEAD
+=======
+  margin-top: 40px !important;
+>>>>>>> origin/ajith-frontend
 }
 
 .select-filter {
@@ -125,12 +140,12 @@ select.sort-dropdown {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
+  padding: 22px 26px;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .section-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #222;
   margin: 0;
@@ -272,7 +287,11 @@ select.sort-dropdown {
   font-weight: 500;
 }
 
+<<<<<<< HEAD
 .status.on-time+.time-cell,
+=======
+.status.on-time + .time-cell,
+>>>>>>> origin/ajith-frontend
 tr:has(.status.on-time) .time-cell {
   color: #2060d7ff;
 }
@@ -372,7 +391,10 @@ tr:has(.status.late-login) .time-cell {
     opacity: 0;
     transform: translateY(-10px);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/ajith-frontend
   to {
     opacity: 1;
     transform: translateY(0);

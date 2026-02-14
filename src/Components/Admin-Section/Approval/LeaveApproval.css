@@ -35,7 +35,11 @@
   padding-top: 100px;
 }
 
+.leave-approval-main h2 {
+  margin-top : 20px !important; 
+}
 .leave-approval-layout .topbar {
+<<<<<<< HEAD
   padding-top: 5px;
   margin-top: 30px;
   padding-bottom: 8px;
@@ -43,7 +47,15 @@
   margin-left: auto;
   margin-right: auto;
   /* centers horizontally */
+=======
+  margin-top: 30px;
+  width: 95%;
+  margin-left: 20px !important;
+  margin-right: auto; /* centers horizontally */
+>>>>>>> origin/ajith-frontend
   display: block;
+  padding-bottom: 12px !important;
+  padding-top: 12px !important;
 }
 
 
@@ -53,7 +65,11 @@
   background: #f8fafc;
 }
 
+<<<<<<< HEAD
 .page-title {
+=======
+.page-title{
+>>>>>>> origin/ajith-frontend
   font-size: 30px !important;
   margin-left: 40px !important;
 }
@@ -71,12 +87,20 @@
 .leave-summary {
   display: flex;
   gap: 20px;
+<<<<<<< HEAD
   margin-left: 40px;
   padding: 0px !important;
 }
 
 .summary-card-leave {
   padding: 0px !important;
+=======
+  margin-left:40px;
+  padding:0px !important;
+}
+.summary-card-leave{
+  padding:0px !important;
+>>>>>>> origin/ajith-frontend
 }
 
 .summary-card-leave strong {
@@ -152,7 +176,11 @@
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
+<<<<<<< HEAD
   margin-left: 40px;
+=======
+  margin-left:40px;
+>>>>>>> origin/ajith-frontend
 }
 
 .leave-table th,

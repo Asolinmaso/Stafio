@@ -9,8 +9,13 @@
 }
 
 .myteam-layout .topbar {
+<<<<<<< HEAD
   padding-top: 13px !important;
   padding-bottom: 13px !important;
+=======
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+>>>>>>> origin/ajith-frontend
   margin-top: 30px;
   width: 95%;
   margin-left: auto !important;
@@ -56,6 +61,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 15px;
 }
 
 /* Filter Button */
@@ -178,20 +184,21 @@
    TABLE
 ========================= */
 .myteam-table {
-  width: 95%;
+  width: 98%;
   border-collapse: collapse;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
-  margin-left: 40px;
+  margin-left: 10px;
 }
 
 .myteam-table th,
 .myteam-table td {
-  padding: 14px;
+  padding: 18px;
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
 }
+
 
 .myteam-table th {
   background: #f9fafb;

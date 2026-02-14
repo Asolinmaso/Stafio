@@ -116,7 +116,11 @@ export default function MyRegularization() {
       <AdminSidebar />
       <div className="regularization-container">
         <Topbar />
+<<<<<<< HEAD
         <h2 className="page-title">Regularization Listing</h2>
+=======
+        <h2 className="page-title">My Regularization Listing</h2>
+>>>>>>> origin/ajith-frontend
 
         {/* Action Buttons */}
         <div className="regularization-actions">

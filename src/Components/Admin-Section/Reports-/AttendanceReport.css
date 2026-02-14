@@ -4,6 +4,7 @@
   min-height: 100vh;
 }
 
+
 .att-report-main {
   flex: 1;
   padding: 20px 30px;
@@ -11,6 +12,12 @@
   padding-left: 280px;
   /* modified: padding instead of margin to fix white gaps */
   padding-top: 100px;
+}
+
+.att-report-main .topbar{
+  margin-top: 10px !important;
+  width: 99%;
+  margin-left: 1px !important;
 }
 
 /* ===== Header ===== */
@@ -266,7 +273,10 @@ input.search-input2 {
   color: #fff;
   border: 1px solid #19bde8;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/ajith-frontend
 /* ============================= */
 /* Filter Popup like uploaded UI */
 /* ============================= */
@@ -353,7 +363,10 @@ input.search-input2 {
   font-weight: 600;
   cursor: pointer;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/ajith-frontend
 /* ============================= */
 /* Attendance Overview - Header Controls UI Fix */
 /* ============================= */
@@ -368,8 +381,12 @@ input.search-input2 {
 .att-header-search {
   width: 580px;
   height: 42px;
+<<<<<<< HEAD
   padding: 10px 14px 10px 42px;
   /* left space for icon */
+=======
+  padding: 10px 14px 10px 42px; /* left space for icon */
+>>>>>>> origin/ajith-frontend
   border: 1px solid #c3c5c7;
   border-radius: 10px;
   outline: none;
@@ -466,8 +483,12 @@ input.search-input2 {
 /* Search wrapper inside card */
 .att-overview-search {
   position: relative;
+<<<<<<< HEAD
   width: 420px;
   /* 2nd image maari long */
+=======
+  width: 420px; /* 2nd image maari long */
+>>>>>>> origin/ajith-frontend
 }
 
 .att-overview-search input {
@@ -523,4 +544,9 @@ input.search-input2 {
 
 .att-download-btn:hover {
   background: #0284c7;
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> origin/ajith-frontend

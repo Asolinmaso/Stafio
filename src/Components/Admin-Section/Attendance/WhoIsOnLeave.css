@@ -13,10 +13,19 @@
   padding: 20px 30px;
   position: relative;
   z-index: 1;
+<<<<<<< HEAD
   padding-left: 280px;
   /* Account for fixed sidebar width */
   padding-top: 100px;
   /* Account for fixed topbar */
+=======
+}
+
+.whoisleave-main .topbar{
+  margin-top: 10px !important;
+  width: 100%;
+  margin-left: -5px !important;
+>>>>>>> origin/ajith-frontend
 }
 
 /* Right side logo */
@@ -45,7 +54,12 @@
   font-size: 28px;
   font-weight: 600;
   color: #1a1a1a;
+<<<<<<< HEAD
   letter-spacing: -0.3px;
+=======
+  letter-spacing: -0.2px;
+  margin-top: 10px !important;
+>>>>>>> origin/ajith-frontend
 }
 
 /* ===== Filter Button ===== */
@@ -66,6 +80,10 @@
   color: #2c3e50;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05);
   font-size: 14px;
+<<<<<<< HEAD
+=======
+  margin-top: 40px !important;
+>>>>>>> origin/ajith-frontend
 }
 
 .whoisleave-filter-btn:hover {
@@ -439,19 +457,74 @@
 .whoisleave-page-btn:hover:not(.active) {
   background: #f9fafb;
 }
+<<<<<<< HEAD
 
 
 
+=======
+/* ===== Calendar wrapper ===== */
+.whoisleave-date-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+/* Calendar icon */
+.whoisleave-date-picker .calendar-icon {
+  font-size: 16px;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* Date input */
+.whoisleave-date-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Remove default browser icon */
+.whoisleave-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Focus effect */
+.whoisleave-date-picker:focus-within {
+  border-color: #0ec8de;
+  box-shadow: 0px 0px 0px 3px rgba(14, 200, 222, 0.12);
+}
+
+/* ===== Calendar Wrapper ===== */
+>>>>>>> origin/ajith-frontend
 .whoisleave-date-picker {
   position: relative;
   display: flex;
   align-items: center;
   height: 40px;
+<<<<<<< HEAD
   padding: 0 36px 0 12px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   cursor: pointer;
+=======
+  padding: 0 36px 0 12px; /* right space for icon */
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+>>>>>>> origin/ajith-frontend
 }
 
 /* Date input */
@@ -466,6 +539,7 @@
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 .whoisleave-date-input::-webkit-calendar-picker-indicator {
   opacity: 0;
   position: absolute;
@@ -473,6 +547,13 @@
   top: 0;
   width: 100%;
   height: 100%;
+=======
+/* REMOVE browser default calendar icon */
+.whoisleave-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+>>>>>>> origin/ajith-frontend
   cursor: pointer;
 }
 
@@ -481,13 +562,20 @@
   display: none;
 }
 
+<<<<<<< HEAD
+=======
+/* Custom calendar icon */
+>>>>>>> origin/ajith-frontend
 .whoisleave-date-picker .calendar-icon {
   position: absolute;
   right: 12px;
   color: #9ca3af;
   font-size: 16px;
   pointer-events: none;
+<<<<<<< HEAD
   z-index: 1;
+=======
+>>>>>>> origin/ajith-frontend
 }
 
 /* Focus */
@@ -501,6 +589,7 @@
   right: 12px;
   color: #9ca3af;
   font-size: 16px;
+<<<<<<< HEAD
   cursor: pointer;
   /* IMPORTANT */
 }
@@ -508,4 +597,10 @@
 .calendar-icon {
   cursor: pointer;
   /* hand cursor varum */
+=======
+  cursor: pointer;        /* IMPORTANT */
+}
+.calendar-icon {
+  cursor: pointer;   /* hand cursor varum */
+>>>>>>> origin/ajith-frontend
 }

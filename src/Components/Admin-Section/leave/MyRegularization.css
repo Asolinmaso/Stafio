@@ -13,10 +13,16 @@
   padding-top: 100px !important;
 }
 
+.regularization-container .topbar{
+  margin-top: 10px !important;
+  width: 99%;
+  margin-left: 2px !important;
+}
+
 .page-title {
   font-size: 25px;
   font-weight: 600;
-  margin: 40px 0 20px;
+  margin: 25px 0 10px !important;
   color: black;
 }
 
@@ -206,7 +212,12 @@
 /* ====== EXACT MODAL MATCHING THE IMAGE ====== */
 .regularization-modal-exact {
   background: #fff;
+<<<<<<< HEAD
   width: 870px;
+=======
+  width: 750px;
+  height: 560px;
+>>>>>>> origin/ajith-frontend
   max-width: 95vw;
   border-radius: 0;
   overflow: hidden;
@@ -218,14 +229,22 @@
 .regularization-header-exact {
   background: #19bde8;
   color: #fff;
+<<<<<<< HEAD
   padding: 16px 30px;
+=======
+  padding: 8px 30px;
+>>>>>>> origin/ajith-frontend
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .regularization-header-exact h3 {
+<<<<<<< HEAD
   font-size: 24px;
+=======
+  font-size: 18px;
+>>>>>>> origin/ajith-frontend
   font-weight: 600;
   margin: 0;
   letter-spacing: 0.3px;
@@ -235,7 +254,11 @@
   background: none;
   border: none;
   color: #fff;
+<<<<<<< HEAD
   font-size: 28px;
+=======
+  font-size: 20px;
+>>>>>>> origin/ajith-frontend
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -248,7 +271,11 @@
 
 /* ====== Body ====== */
 .regularization-body-exact {
+<<<<<<< HEAD
   padding: 50px 60px 40px 60px;
+=======
+  padding: 40px 70px 20px 60px;
+>>>>>>> origin/ajith-frontend
   background: #f5f7fa;
 }
 
@@ -270,13 +297,21 @@
   display: grid;
   grid-template-columns: 140px 1fr;
   align-items: center;
+<<<<<<< HEAD
   gap: 30px;
+=======
+  gap: 10px;
+>>>>>>> origin/ajith-frontend
 }
 
 .form-row-exact label {
   font-weight: 600;
   color: #000;
+<<<<<<< HEAD
   font-size: 16px;
+=======
+  font-size: 15px;
+>>>>>>> origin/ajith-frontend
   text-align: left;
 }
 
@@ -290,6 +325,10 @@
   outline: none;
   background: #fff;
   color: #374151;
+<<<<<<< HEAD
+=======
+  margin-bottom: -15px;
+>>>>>>> origin/ajith-frontend
 }
 
 .form-row-exact input::placeholder {
@@ -392,10 +431,18 @@
   background: #19bde8;
   color: #fff;
   border: none;
+<<<<<<< HEAD
   padding: 12px 38px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+=======
+  padding: 8px 30px;
+  height: 45px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+>>>>>>> origin/ajith-frontend
   font-size: 16px;
   transition: 0.2s;
 }
@@ -407,10 +454,18 @@
 .regularization-cancel-exact {
   background: #fff;
   border: 2px solid #000;
+<<<<<<< HEAD
   padding: 12px 32px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+=======
+  padding: 8px 30px;
+  height: 45px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+>>>>>>> origin/ajith-frontend
   font-size: 16px;
   color: #000;
   transition: 0.2s;
@@ -478,7 +533,10 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/ajith-frontend
   to {
     opacity: 1;
     transform: translateY(0);

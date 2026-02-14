@@ -323,11 +323,18 @@
   margin-bottom: 10px;
 }
 
+<<<<<<< HEAD
 .form-group3 select {
   /*new*/
   padding: 9px 12px 10px 10px;
   width: 362px;
+=======
+.form-group3 select{     /*new*/
+  padding: 9px 12px 10px 12px;
+  width: 400px ;
+>>>>>>> origin/ajith-frontend
   height: 44px;
+  margin-left: -10px !important;
   border-color: #d6cfcf;
   border-style: solid;
   border-radius: 7px !important;
@@ -337,13 +344,39 @@
   background: #f9fafb;
 }
 
+<<<<<<< HEAD
 .form-group3 select:focus {
   /*new*/
+=======
+
+.form-group3 select:focus{    /*new*/
+>>>>>>> origin/ajith-frontend
   border-color: #19bde8;
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
 
-.theme-input-box {
+
+.form-group4{                 /*new*/
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.form-group4 select{     /*new*/
+  padding: 9px 12px 10px 12px;
+  width: 430px ;    /*modified*/
+  height: 44px;
+  margin-left: 20px !important;
+  border-color: #d6cfcf;
+  border-style:solid;
+  border-radius:7px !important ;/*modified*/
+  font-size: 15px;
+  outline:none;
+  background: #f9fafb ;
+}
+
+
+.theme-input-box0 {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -363,6 +396,8 @@
   width: 46px;
   height: 24px;
   margin-right: 10px;
+  margin-bottom: 5px;    /* modified */
+  margin-top: -10px ;
 }
 
 .switch input {
@@ -403,10 +438,63 @@ input:checked+.slider:before {
   transform: translateX(22px);
 }
 
+/* defaultThemeforUsers */
+.dtucname{                 /*new*/
+  margin-bottom: -25px; 
+}
+
 /* Basic info image & upload */
 
+<<<<<<< HEAD
 .profile-upload {
   /*new*/
+=======
+
+
+.form-group0 .form-groupp {       /* new */
+   padding: 9px 12px 10px 10px ;    /*padding: 10px 12px;*/
+  border: 1px solid #d1d5db;
+  margin-left:-10px;
+  margin-bottom: 10px;
+  border-radius:8px !important ;/*modified*/
+  font-size: 14px;
+  outline: none;
+  background: #f3f1f1 ;     /*modified*/
+   /* new */
+  height: 45px;
+  width: 400px !important;    /*modified*/
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto; 
+}
+
+
+.form-groupp input:focus,
+.form-groupp select:focus {
+  border-color: #19bde8;
+  box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
+}
+ 
+.form-group01 .form-groupp1 {       /* new */
+   padding: 9px 12px 10px 10px ;    /*padding: 10px 12px;*/
+  border: 1px solid #d1d5db;
+  margin-left:20px;
+  margin-bottom: 10px;
+  border-radius:8px !important ;/*modified*/
+  font-size: 14px;
+  outline: none;
+  background: #f3f1f1 ;     /*modified*/
+   /* new */
+  height: 45px;
+  width: 430px !important;    /*modified*/
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto; 
+}
+
+
+.profile-upload {        /*new*/
+>>>>>>> origin/ajith-frontend
   display: flex;
   align-items: center;
   gap: 15px;
@@ -488,16 +576,25 @@ input:checked+.slider:before {
 
 /* team tab */
 
+<<<<<<< HEAD
 .team-table {
   /*modified  */
   margin: -30px;
+=======
+ .team-table{      /*modified  */
+  margin: -30px;
+  margin-top: -25px !important; 
+>>>>>>> origin/ajith-frontend
 }
 
 .team-table table,
 .department-table table {
   width: 100%;
   border-collapse: collapse;
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/ajith-frontend
 }
 
 .team-table table {
@@ -514,6 +611,15 @@ input:checked+.slider:before {
   text-align: left;
   border-bottom: 1px solid #eee;
 
+<<<<<<< HEAD
+=======
+}
+.team-table th {              /*modified  */
+    background: #e7e4e4ff;
+    margin: -10px;
+    border-top-left-radius: 5px;   /*new  */
+    border-top-right-radius: 5px;     /*new  */
+>>>>>>> origin/ajith-frontend
 }
 
 .team-table th {
@@ -595,6 +701,14 @@ input:checked+.slider:before {
 
 .department-table th {
   background: #e7e4e4ff;
+<<<<<<< HEAD
+=======
+  font-weight: 600;              /*new  */
+  border-top-left-radius: 5px;   /*new  */
+  border-top-right-radius: 5px;     /*new  */
+
+ } 
+>>>>>>> origin/ajith-frontend
 
   font-weight: 600;
   /*new  */
@@ -609,6 +723,11 @@ input:checked+.slider:before {
 .department-table {
   /*new  */
   margin: -30px;
+<<<<<<< HEAD
+=======
+  margin-top: -25px !important;
+ }
+>>>>>>> origin/ajith-frontend
 
 }
 
@@ -634,13 +753,27 @@ input:checked+.slider:before {
 
 .break-item {
   margin-bottom: 20px;
+  display: flex;          /*new  */
+  flex-direction: column;   /*new  */
 }
 
+<<<<<<< HEAD
 .time-input-group {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 5px;
+=======
+.break-item label {    /*new  */
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px; /* space between text & input */
+  color: #111827;
+}
+
+
+.time-input-group {      
+>>>>>>> origin/ajith-frontend
   width: 500px;
 }
 
@@ -651,6 +784,7 @@ input:checked+.slider:before {
   border-radius: 4px;
 }
 
+<<<<<<< HEAD
 .time-input-wrapper {
   /*new  */
   position: relative;
@@ -662,6 +796,16 @@ input:checked+.slider:before {
   width: 100%;
   padding: 10px 40px 10px 12px;
   /* space for icon */
+=======
+.time-input-wrapper {          /*new  */
+  position:relative;
+  width: 95%;
+}
+
+.time-input-wrapper input {       /*new  */
+  width: 100%;
+  padding: 10px 40px 10px 12px; /* space for icon */
+>>>>>>> origin/ajith-frontend
   border: 1px solid #dadada;
   border-radius: 10px;
   height: 46px;
@@ -702,5 +846,226 @@ input:checked+.slider:before {
   cursor: pointer;
   margin-bottom: 20px;
   height: 40px;
+<<<<<<< HEAD
 
 }
+=======
+}
+
+
+/* create new breaktime */
+
+.break-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.break-modal-box {
+  background: #fff;
+  width: 530px;
+  height: 70%;
+  border-radius: 12px;
+  padding: 35px 0px 0px 40px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.break-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.break-modal-header h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.break-close-btn {
+  background: none;
+  border: none;
+  color: black !important;
+  font-size: 14px !important;
+  cursor: pointer;
+  padding: 1px 25px 30px 10px; 
+}
+
+.break-modal-body {
+  margin-top: 15px;
+}
+
+.break-form-group {
+  margin-bottom: 12px;
+}
+
+.break-form-group label {
+  font-size: 15px;
+  color: #000000;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.break-form-group input {
+  width: 60%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  margin-bottom:5px;
+  padding: 0 10px;
+}
+.break-form-group input:focus {
+  outline: none;
+  border-color: #19bde8;
+  box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
+}
+
+.break-modal-footer {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 18px !important;
+}
+
+.break-btn-cancel {
+  background: #ffffff;
+  color: #19bde8;
+  border-style:solid;
+  border-color: #00c9cc;
+  padding: 4px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 80px;
+}
+
+.break-btn-save {
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 80px;
+}
+
+
+/* create new department */
+
+/* Overlay */
+.dept-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal box */
+.dept-modal-box {
+  background: #fff;
+  width: 530px;
+  height: 70%;
+  border-radius: 12px;
+  padding: 35px 0px 0px 40px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Header */
+.dept-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dept-modal-header h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.dept-close-btn {
+  background: none;
+  border: none;
+  color: black !important;
+  font-size: 14px !important;
+  cursor: pointer;
+  padding: 1px 25px 30px 10px; 
+  
+}
+
+/* Body */
+.dept-modal-body {
+  margin-top: 15px;
+  
+}
+
+.dept-form-group {
+  margin-bottom: 12px;
+}
+
+.dept-form-group label {
+  font-size: 15px;
+  color: #000000;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.dept-form-group input,
+.dept-form-group select {
+  width: 60%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  margin-bottom:10px;
+  padding: 0 10px;
+}
+.dept-form-group input ,
+.dept-form-group select :focus{
+  outline: none;
+  border-color: #19bde8;
+  box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
+}
+
+/* Footer */
+.dept-modal-footer {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.dept-btn-cancel {
+  background: #ffffff;
+  color: #19bde8;
+  border-style:solid;
+  border-color: #00c9cc;
+  padding: 4px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 80px;
+}
+
+.dept-btn-save {
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 80px;
+}
+>>>>>>> origin/ajith-frontend

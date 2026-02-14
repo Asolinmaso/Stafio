@@ -54,12 +54,15 @@ const WhoIsOnLeave = () => {
     return () => clearInterval(timer);
   }, []);
 
+<<<<<<< HEAD
   // ✅ Set today's date for date picker
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
     setSelectedDate(today);
   }, []);
 
+=======
+>>>>>>> origin/ajith-frontend
   // ✅ Outside click close
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -211,7 +214,11 @@ const WhoIsOnLeave = () => {
                 className="whoisleave-search"
               />
 
+<<<<<<< HEAD
               {/* ✅ Calendar with working icon */}
+=======
+              {/* ✅ FIXED Calendar with working icon */}
+>>>>>>> origin/ajith-frontend
               <div className="whoisleave-date-picker">
                 <input
                   ref={dateRef}
@@ -220,7 +227,23 @@ const WhoIsOnLeave = () => {
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                 />
+<<<<<<< HEAD
                 <FaCalendarAlt className="calendar-icon" />
+=======
+
+                <FaCalendarAlt
+                  className="calendar-icon"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Open calendar"
+                  onClick={() => dateRef.current?.showPicker()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      dateRef.current?.showPicker();
+                    }
+                  }}
+                />
+>>>>>>> origin/ajith-frontend
               </div>
 
               <button

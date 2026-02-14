@@ -97,6 +97,7 @@ const Attendance = () => {
     };
 
     setSortDays(daysMap[filterDays] || 7);
+<<<<<<< HEAD
 
     // ✅ Clear selectedDate when using advanced filters
     setSelectedDate("");
@@ -104,6 +105,11 @@ const Attendance = () => {
     setShowFilterModal(false);
   };
 
+=======
+    setShowFilterModal(false);
+  };
+
+>>>>>>> origin/ajith-frontend
   const handleResetFilter = () => {
     setFilterName("");
     setFilterStatus("All");
@@ -132,6 +138,7 @@ const Attendance = () => {
       statusFilter === "All" ? true : record.status === statusFilter
     )
 
+<<<<<<< HEAD
     // ✅ NEW: FILTER BY SELECTED DATE (highest priority)
     .filter((record) => {
       if (!selectedDate) return true; // If no date selected, show all
@@ -153,6 +160,10 @@ const Attendance = () => {
     .filter((record) => {
       if (selectedDate) return true; // Skip this filter if selectedDate is active
 
+=======
+    // FILTER BY FROM-TO DATE
+    .filter((record) => {
+>>>>>>> origin/ajith-frontend
       const recordDate = parseRecordDate(record.date);
       if (!recordDate) return true;
 
@@ -172,10 +183,15 @@ const Attendance = () => {
       return true;
     })
 
+<<<<<<< HEAD
     // FILTER BY LAST N DAYS (only if selectedDate is not set)
     .filter((record) => {
       if (selectedDate) return true; // Skip this filter if selectedDate is active
 
+=======
+    // FILTER BY LAST N DAYS
+    .filter((record) => {
+>>>>>>> origin/ajith-frontend
       const recordDate = parseRecordDate(record.date);
       if (!recordDate) return true;
 
@@ -251,6 +267,7 @@ const Attendance = () => {
                 />
               </div>
 
+<<<<<<< HEAD
               {/* ✅ DATE PICKER WITH CALENDAR ACCESS */}
               <div className="date-picker">
                 <FaCalendarAlt />
@@ -260,6 +277,24 @@ const Attendance = () => {
                   className="date-input"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
+=======
+              {/* ✅ ONLY CHANGE: DATE PICKER ACCESS */}
+              <div
+                className="date-picker"
+                style={{ cursor: "pointer" }}
+                onClick={() => dateInputRef.current.click()}
+              >
+                <FaCalendarAlt />
+                <span>{formatDisplayDate(selectedDate)}</span>
+
+                {/* hidden input */}
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  style={{ display: "none" }}
+>>>>>>> origin/ajith-frontend
                 />
               </div>
 

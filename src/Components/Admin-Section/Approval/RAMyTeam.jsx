@@ -94,12 +94,23 @@ export default function RegularizationApprovalMyTeam() {
                   </button>
 
                   {isFilterOpen && (
+<<<<<<< HEAD
                     <>
                       <div
                         className="ra-modal"
                         onClick={() => setIsFilterOpen(false)}
                       />
                       <div className="ra-filter-card">
+=======
+                    <div
+                      className="ra-modal"
+                      onClick={() => setIsFilterOpen(false)}
+                    >
+                      <div
+                        className="ra-filter-card"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+>>>>>>> origin/ajith-frontend
                         <h3 className="ra-filter-title">Filter</h3>
 
                         <div className="ra-filter-grid">
@@ -109,7 +120,13 @@ export default function RegularizationApprovalMyTeam() {
                               type="text"
                               placeholder="Please enter name"
                               value={searchTerm}
+<<<<<<< HEAD
                               onChange={(e) => setSearchTerm(e.target.value)}
+=======
+                              onChange={(e) =>
+                                setSearchTerm(e.target.value)
+                              }
+>>>>>>> origin/ajith-frontend
                             />
                           </div>
 
@@ -126,7 +143,13 @@ export default function RegularizationApprovalMyTeam() {
                             <label>Status</label>
                             <select
                               value={filterStatus}
+<<<<<<< HEAD
                               onChange={(e) => setFilterStatus(e.target.value)}
+=======
+                              onChange={(e) =>
+                                setFilterStatus(e.target.value)
+                              }
+>>>>>>> origin/ajith-frontend
                             >
                               <option>All</option>
                               <option>Pending</option>
@@ -155,7 +178,11 @@ export default function RegularizationApprovalMyTeam() {
                           </button>
                         </div>
                       </div>
+<<<<<<< HEAD
                     </>
+=======
+                    </div>
+>>>>>>> origin/ajith-frontend
                   )}
                 </div>
 
