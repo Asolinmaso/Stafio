@@ -1,3 +1,6 @@
+/* =========================
+   LAYOUT
+========================= */
 .myteam-layout {
   display: flex;
   background: #eff5ff;
@@ -5,14 +8,13 @@
   overflow: hidden;
 }
 
-.myteam-layout .topbar{
-  padding-top: 13px !important;   /* modified */
-  padding-bottom: 13px !important;   /* modified */
+.myteam-layout .topbar {
+  padding-top: 13px !important;
+  padding-bottom: 13px !important;
   margin-top: 30px;
-  padding-bottom: 8px;
   width: 95%;
-  margin-left: auto !important;     /* modified */
-  margin-right: auto; /* centers horizontally */
+  margin-left: auto !important;
+  margin-right: auto;
   display: block;
 }
 
@@ -21,13 +23,15 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  padding-left: 280px;
+  /* modified: fix sidebar overlap */
+  padding-top: 100px;
 }
 
 .myteam-page {
   flex: 1;
   padding: 25px;
   background: #eff5ff;
-
 }
 
 .myteam-title {
@@ -38,6 +42,9 @@
   margin-bottom: 5px;
 }
 
+/* =========================
+   CONTROLS
+========================= */
 .myteam-controls {
   display: flex;
   justify-content: flex-end;
@@ -51,34 +58,125 @@
   gap: 12px;
 }
 
-.filter-btn {
+/* Filter Button */
+.right-btn-filter {
   display: flex;
   align-items: center;
   gap: 6px;
   background: transparent;
   border: 1px solid #cecece;
-  border-radius: 10px;
-  padding: 6px 12px;
+  border-radius: 12px;
+  padding: 8px 14px;
   font-size: 14px;
   cursor: pointer;
 }
 
-.filter-btn:hover {
+.right-btn-filter:hover {
   background: #e7f0ff;
 }
 
-.sorts-select {
-  padding: 9px 10px ;
+/* Sort Dropdown */
+.right-sort-select {
+  padding: 9px 12px;
   border-radius: 14px;
-  border: 1px solid #aaa8a8ff ;
+  border: 1px solid #aaa8a8ff;
   font-size: 14px;
-  background:transparent !important;
+  background: transparent;
   cursor: pointer;
-  
-  
-  
 }
 
+/* =========================
+   FILTER POPUP
+========================= */
+.filter-wrapper {
+  position: relative;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 340px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+}
+
+.filter-heading {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #1f2937;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.filter-field label {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.filter-field input,
+.filter-field select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  outline: none;
+}
+
+.filter-field input::placeholder {
+  color: #9ca3af;
+}
+
+/* Leave Type + Status row */
+.filter-row {
+  display: flex;
+  gap: 14px;
+}
+
+/* Filter Actions */
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.reset-btn {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.apply-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.apply-btn:hover {
+  background: #1d4ed8;
+}
+
+/* =========================
+   TABLE
+========================= */
 .myteam-table {
   width: 95%;
   border-collapse: collapse;
@@ -101,6 +199,7 @@
   color: #374151;
 }
 
+/* Employee Info */
 .employee-info {
   display: flex;
   align-items: center;
@@ -130,30 +229,33 @@
   color: #6b7280;
 }
 
+/* =========================
+   STATUS
+========================= */
 .status-badge {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
-   border: 1px solid ;
+  border: 1px solid;
 }
 
 .status-approved {
-  background: transparent;
   color: #16a34a;
 }
 
 .status-pending {
-  background: transparent;
   color: #eab308;
 }
 
 .status-rejected {
-  background: transparent;
   color: #dc2626;
 }
 
+/* =========================
+   BUTTONS
+========================= */
 .view-btn {
   background: transparent;
   border: 1px solid #353535ff;
@@ -169,6 +271,9 @@
   color: white;
 }
 
+/* =========================
+   PAGINATION
+========================= */
 .pagination {
   display: flex;
   justify-content: space-between;

@@ -1,0 +1,9 @@
+.performance-container {
+    padding-left: 280px !important;
+    /* fix sidebar overlap */
+    padding-top: 100px !important;
+
+    min-height: 100vh;
+    background-color: #eff5ff;
+    /* Match other pages */
+}

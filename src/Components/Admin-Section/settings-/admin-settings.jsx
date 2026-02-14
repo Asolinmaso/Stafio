@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
-import profileimg from "../../../assets/profileimg.png"; 
-import user from "../../../assets/user.png"; 
+import profileimg from "../../../assets/profileimg.png";
+import user from "../../../assets/user.png";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import penicon from "../../../assets/penicon2.png";
-import deletebox from "../../../assets/deletebox.png"; 
+import deletebox from "../../../assets/deletebox.png";
 
 const translations = {
   english: {
@@ -15,8 +15,8 @@ const translations = {
     general: "General Settings",
     basic: "Basic Info",
     team: "Team",
-    department : "Department",
-    breaktimes : "Break Times",
+    department: "Department",
+    breaktimes: "Break Times",
     systemLanguage: "System Language",
     dashboardTheme: "Admin Dashboard Theme",
     systemFont: "System Font",
@@ -126,19 +126,19 @@ export default function AdminSettings() {
   const [lunchBreak, setLunchBreak] = useState('1:00 PM - 2:00 PM');
   const [coffeeBreak, setCoffeeBreak] = useState('4:00 PM - 4:15 PM');
 
-  
 
-  const [basicForm, setBasicForm] = useState({ /* new for validation*/ 
+
+  const [basicForm, setBasicForm] = useState({ /* new for validation*/
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
   });
-  
+
   const [basicErrors, setBasicErrors] = useState({});
 
-    useEffect(() => {
-      // Example: auto-save when language changes
+  useEffect(() => {
+    // Example: auto-save when language changes
     console.log("Auto-saving general settings", {
       language,
       theme,
@@ -147,51 +147,51 @@ export default function AdminSettings() {
     });
   }, [language, theme, font, dateFormat]);
 
-          //handle input change
+  //handle input change
 
-const handleBasicChange = (e) => {
-  const { name, value } = e.target;
+  const handleBasicChange = (e) => {
+    const { name, value } = e.target;
 
-  setBasicForm({
-    ...basicForm,
-    [name]: value
-  });
+    setBasicForm({
+      ...basicForm,
+      [name]: value
+    });
 
-  // clear error on change
-  setBasicErrors({
-    ...basicErrors,
-    [name]: ""
-  });
-};
+    // clear error on change
+    setBasicErrors({
+      ...basicErrors,
+      [name]: ""
+    });
+  };
 
-           //validation logic   new
+  //validation logic   new
 
-const validateBasicInfo = () => {
-  const errors = {};
+  const validateBasicInfo = () => {
+    const errors = {};
 
-  if (!basicForm.firstName.trim()) {
-    errors.firstName = "*First name is required";
-  }
+    if (!basicForm.firstName.trim()) {
+      errors.firstName = "*First name is required";
+    }
 
-  if (!basicForm.lastName.trim()) {
-    errors.lastName = "*Last name is required";
-  }
+    if (!basicForm.lastName.trim()) {
+      errors.lastName = "*Last name is required";
+    }
 
-  if (!basicForm.email.trim()) {
-    errors.email = "*Email is required";
-  } else if (!/^\S+@\S+\.\S+$/.test(basicForm.email)) {
-    errors.email = "*Enter a valid email address";
-  }
+    if (!basicForm.email.trim()) {
+      errors.email = "*Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(basicForm.email)) {
+      errors.email = "*Enter a valid email address";
+    }
 
-  if (!basicForm.phone.trim()) {
-    errors.phone = "*Phone number is required";
-  } else if (!/^[0-9]{10}$/.test(basicForm.phone)) {
-    errors.phone = "*Enter a valid 10-digit phone number";
-  }
+    if (!basicForm.phone.trim()) {
+      errors.phone = "*Phone number is required";
+    } else if (!/^[0-9]{10}$/.test(basicForm.phone)) {
+      errors.phone = "*Enter a valid 10-digit phone number";
+    }
 
-  if (!basicForm.position) {
-  errors.position = "Please select a position";
-}
+    if (!basicForm.position) {
+      errors.position = "Please select a position";
+    }
 
 
     setBasicErrors(errors);
@@ -200,46 +200,44 @@ const validateBasicInfo = () => {
 
   //save Button logic
 
-const handleBasicSave = () => {
-  if (validateBasicInfo()) {
-    console.log("Basic info saved:", basicForm);
-    // API call later
-  }
-};
+  const handleBasicSave = () => {
+    if (validateBasicInfo()) {
+      console.log("Basic info saved:", basicForm);
+      // API call later
+    }
+  };
 
-//cancel button logic (reset)
+  //cancel button logic (reset)
 
-const handleBasicCancel = () => {
-  setBasicForm({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: ""
+  const handleBasicCancel = () => {
+    setBasicForm({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: ""
+    });
+    setBasicErrors({});
+  };
+
+  //team and department checkbox selectsall/de-selectsall
+  // state added
+  const [selectedRows, setSelectedRows] = useState({
+    row1: false,
+    row2: false,
+    row3: false
   });
-  setBasicErrors({});
-};
 
-//team and department checkbox selectsall/de-selectsall
-// state added
-const [selectedRows, setSelectedRows] = useState({
-  row1: false,
-  row2: false,
-  row3: false
-});
 
-  
 
- 
+
   return (                                                      // new
-    <div className={`dashboard-wrapper d-flex admin-${theme}`}>  
+    <div className={`dashboard-wrapper d-flex admin-${theme}`}>
       <div className="rightside-logo ">
         <img src={group10} alt="logo"
-        className="rightside-logos" />
+          className="rightside-logos" />
       </div>
       {/* Sidebar */}
-      <div className="sidebar">
-        <AdminSidebar />
-      </div>
+      <AdminSidebar />
 
       {/* Main content */}
       <div className="main-content flex-grow-1">
@@ -253,10 +251,10 @@ const [selectedRows, setSelectedRows] = useState({
           </div>
 
           {/* Create New button – only for Department tab */}{/*new modified */}
-     {activeTab === "departments" && (
-         <div className="department-top-action">
-           <button className="btn-create-new">Create new</button>
-         </div>
+          {activeTab === "departments" && (
+            <div className="department-top-action">
+              <button className="btn-create-new">Create new</button>
+            </div>
           )}
 
 
@@ -273,12 +271,12 @@ const [selectedRows, setSelectedRows] = useState({
                   {tab === "general"
                     ? t("general")
                     : tab === "basic"
-                    ? t("basic")
-                    : tab === "team"
-                    ? t("team")
-                    : tab === "departments"
-                    ? t("department")
-                    : t("breaktimes")}
+                      ? t("basic")
+                      : tab === "team"
+                        ? t("team")
+                        : tab === "departments"
+                          ? t("department")
+                          : t("breaktimes")}
                 </button>
               )
             )}
@@ -286,9 +284,8 @@ const [selectedRows, setSelectedRows] = useState({
 
 
           {/* Tab Content */}
-          <div className={`settings-card ${
-            activeTab === "breaktimes" ? "breaktimes-no-card" : ""
-          }`}>
+          <div className={`settings-card ${activeTab === "breaktimes" ? "breaktimes-no-card" : ""
+            }`}>
             {/* General Settings */}
             {activeTab === "general" && (
               <div>
@@ -304,28 +301,28 @@ const [selectedRows, setSelectedRows] = useState({
                         <option value="english">English</option>
                         <option value="hindi">Hindi</option>
                         <option value="tamil">Tamil</option>
-                        
-                     </select>
+
+                      </select>
                     </div>
 
                     <div className="form-groupz">           {/* modified   */}
                       <label>{t("dashboardTheme")}</label>
                       <div className="theme-input-box">    {/*new check box inside the input*/}
                         <span className="theme-label">
-                         {theme === "light" ? "Light Theme" : "Dark Theme"}
+                          {theme === "light" ? "Light Theme" : "Dark Theme"}
                         </span>
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={theme === "dark"}
-                          onChange={() =>
-                            setTheme(theme === "light" ? "dark" : "light")
-                          }
-                        />
-                        <span className="slider round"></span>
-                      </label>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={theme === "dark"}
+                            onChange={() =>
+                              setTheme(theme === "light" ? "dark" : "light")
+                            }
+                          />
+                          <span className="slider round"></span>
+                        </label>
                       </div>
-                      
+
                     </div>
 
                     <div className="form-group2">
@@ -343,17 +340,17 @@ const [selectedRows, setSelectedRows] = useState({
                     <div className="form-groupz">        {/* modified   */}
                       <label>{t("allowManagertoeditemployeerecord")}</label>
                       <div className="theme-input-box">     {/*new check box inside the input*/}
-                       <span className="theme-label">
-                        {theme === "Enable" ? "Enable" : "Disable"}
+                        <span className="theme-label">
+                          {theme === "Enable" ? "Enable" : "Disable"}
                         </span>
                         <label className="switch">
-                         <input 
+                          <input
                             type="checkbox"
                             checked={allowManagerEdit}
                             onChange={() =>
                               setAllowManagerEdit(!allowManagerEdit)}
-                         />
-                         <span className="slider round"></span>
+                          />
+                          <span className="slider round"></span>
                         </label>
                       </div>
                     </div>
@@ -362,9 +359,9 @@ const [selectedRows, setSelectedRows] = useState({
                   <div className="form-column">  {/* modified   */}
                     <div className="form-groupz">
                       <label>{t("userSignup")}</label>
-                       <div className="theme-input-box">
+                      <div className="theme-input-box">
                         <span className="theme-label">
-                           Allow new users to sign up
+                          Allow new users to sign up
                         </span>
                         <label className="switch">
                           <input type="checkbox" />
@@ -375,17 +372,17 @@ const [selectedRows, setSelectedRows] = useState({
 
                     <div className="form-group1">
                       <label>{t("defaultThemeforUsers")}</label>
-                      <input 
-                      type="text" 
-                      placeholder="Light Theme"  />
+                      <input
+                        type="text"
+                        placeholder="Light Theme" />
                     </div>
 
-                     <div className="form-group2">     {/* modified   */}
+                    <div className="form-group2">     {/* modified   */}
                       <label>{t("dateFormat")}
-                      <label className="switch">
-                         <input type="checkbox" /> {/*checked={true} readOnly*/} 
-                        <span className="slider round"></span>
-                      </label></label>
+                        <label className="switch">
+                          <input type="checkbox" /> {/*checked={true} readOnly*/}
+                          <span className="slider round"></span>
+                        </label></label>
 
                       <select
                         value={dateFormat}
@@ -418,8 +415,8 @@ const [selectedRows, setSelectedRows] = useState({
                         onChange={handleBasicChange}
                       />
                       {basicErrors.firstName && (
-                         <span className="error-text">{basicErrors.firstName}</span>
-                       )}
+                        <span className="error-text">{basicErrors.firstName}</span>
+                      )}
                     </div>
 
                     <div className="form-group">
@@ -432,8 +429,8 @@ const [selectedRows, setSelectedRows] = useState({
                         onChange={handleBasicChange}
                       />
                       {basicErrors.email && (
-                         <span className="error-text">{basicErrors.email}</span>
-                       )}
+                        <span className="error-text">{basicErrors.email}</span>
+                      )}
                     </div>
 
                     <div className="form-group3">
@@ -449,8 +446,8 @@ const [selectedRows, setSelectedRows] = useState({
                         <option value="designer">Designer</option>
                       </select>
                       {basicErrors.position && (
-                         <span className="error-text">{basicErrors.position}</span>
-                       )}
+                        <span className="error-text">{basicErrors.position}</span>
+                      )}
 
                       {/* {submitted && basicErrors.position && (
                          <span className="error-text">{basicErrors.position}</span>
@@ -465,7 +462,7 @@ const [selectedRows, setSelectedRows] = useState({
                       </p>
                       <div className="profile-upload">
                         <img
-                           src={profileimg}
+                          src={profileimg}
                           alt="Profile"
                           className="profile-preview"
                         />
@@ -487,8 +484,8 @@ const [selectedRows, setSelectedRows] = useState({
                         onChange={handleBasicChange}
                       />
                       {basicErrors.lastName && (
-                         <span className="error-text">{basicErrors.lastName}</span>
-                       )}
+                        <span className="error-text">{basicErrors.lastName}</span>
+                      )}
                     </div>
 
                     <div className="form-group">
@@ -520,18 +517,18 @@ const [selectedRows, setSelectedRows] = useState({
                 </div>
 
                 <div className="form-actions">
-                  <button 
-                  type="button"
-                  className="btn-cancel"
-                  onClick={handleBasicCancel}
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={handleBasicCancel}
                   >
                     Cancel
                   </button>
-                  <button 
-                  type="submit" 
-                  className="btn-save"
-                  onClick={handleBasicSave}
-                  
+                  <button
+                    type="submit"
+                    className="btn-save"
+                    onClick={handleBasicSave}
+
                   >
                     Save
                   </button>
@@ -541,26 +538,26 @@ const [selectedRows, setSelectedRows] = useState({
 
             {/* Team */}
             {activeTab === "team" && (
-              <div > 
-        
+              <div >
+
                 <div className="team-table">
                   <table>
                     <thead>
                       <tr>
                         <th>
                           <input type="checkbox"
-                          className="checkbbig"
-                          checked={Object.values(selectedRows).every(Boolean)}
-                           onChange={(e) => {
-                            const isChecked = e.target.checked;
+                            className="checkbbig"
+                            checked={Object.values(selectedRows).every(Boolean)}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
 
                               setSelectedRows({
-                                  row1: isChecked,
-                                  row2: isChecked,
-                                  row3: isChecked
-                                });
-                               }} 
-                           />
+                                row1: isChecked,
+                                row2: isChecked,
+                                row3: isChecked
+                              });
+                            }}
+                          />
                         </th>
                         <th>{t("name")}</th>
                         <th>{t("datejoined")}</th>
@@ -570,13 +567,13 @@ const [selectedRows, setSelectedRows] = useState({
                     <tbody>
                       <tr>
                         <td>
-                          <input 
-                          type="checkbox"
-                          className="checkbsmall"
-                          checked={selectedRows.row1}
-                          onChange={(e) =>
-                            setSelectedRows({ ...selectedRows, row1: e.target.checked })
-                         }
+                          <input
+                            type="checkbox"
+                            className="checkbsmall"
+                            checked={selectedRows.row1}
+                            onChange={(e) =>
+                              setSelectedRows({ ...selectedRows, row1: e.target.checked })
+                            }
                           />
                         </td>
                         <td className="team-member">
@@ -597,13 +594,13 @@ const [selectedRows, setSelectedRows] = useState({
                       </tr>
                       <tr>
                         <td>
-                          <input 
-                          type="checkbox" 
-                          className="checkbsmall" 
-                          checked={selectedRows.row2}
-                          onChange={(e) =>
-                            setSelectedRows({ ...selectedRows, row2: e.target.checked })
-                          }
+                          <input
+                            type="checkbox"
+                            className="checkbsmall"
+                            checked={selectedRows.row2}
+                            onChange={(e) =>
+                              setSelectedRows({ ...selectedRows, row2: e.target.checked })
+                            }
                           />
                         </td>
                         <td className="team-member">
@@ -626,13 +623,13 @@ const [selectedRows, setSelectedRows] = useState({
                       </tr>
                       <tr>
                         <td>
-                          <input 
-                          type="checkbox" 
-                          className="checkbsmall"
-                          checked={selectedRows.row3}
-                          onChange={(e) =>
-                            setSelectedRows({ ...selectedRows, row3: e.target.checked })
-                           }
+                          <input
+                            type="checkbox"
+                            className="checkbsmall"
+                            checked={selectedRows.row3}
+                            onChange={(e) =>
+                              setSelectedRows({ ...selectedRows, row3: e.target.checked })
+                            }
                           />
                         </td>
                         <td className="team-member">
@@ -670,18 +667,18 @@ const [selectedRows, setSelectedRows] = useState({
                     <thead>
                       <tr>
                         <th>
-                          <input 
-                          type="checkbox"
-                          className="checkbbig"
-                          checked={Object.values(selectedRows).every(Boolean)}
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            setSelectedRows({
-                              row1: isChecked,
-                              row2: isChecked,
-                              row3: isChecked
-                          });
-                        }}
+                          <input
+                            type="checkbox"
+                            className="checkbbig"
+                            checked={Object.values(selectedRows).every(Boolean)}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              setSelectedRows({
+                                row1: isChecked,
+                                row2: isChecked,
+                                row3: isChecked
+                              });
+                            }}
                           />
                         </th>
                         <th>{t("department")}</th>
@@ -693,13 +690,13 @@ const [selectedRows, setSelectedRows] = useState({
                     <tbody>
                       <tr>
                         <td>
-                          <input 
-                          type="checkbox"
-                          className="checkbsmall"
-                          checked={selectedRows.row1}
-                          onChange={(e) =>
-                            setSelectedRows({ ...selectedRows, row1: e.target.checked })
-                          }
+                          <input
+                            type="checkbox"
+                            className="checkbsmall"
+                            checked={selectedRows.row1}
+                            onChange={(e) =>
+                              setSelectedRows({ ...selectedRows, row1: e.target.checked })
+                            }
                           />
                         </td>
                         <td>HR</td>
@@ -709,43 +706,43 @@ const [selectedRows, setSelectedRows] = useState({
                           <button className="action-btn edit">
                             <img className="pen-icon" src={penicon} alt="tick-icon" />
                           </button>
-                          <button className="action-btn delete"> 
+                          <button className="action-btn delete">
                             <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
                           </button>
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <input 
-                          type="checkbox"
-                          className="checkbsmall"
-                          checked={selectedRows.row2}
-                          onChange={(e) =>
-                            setSelectedRows({ ...selectedRows, row2: e.target.checked })
-                          }
+                          <input
+                            type="checkbox"
+                            className="checkbsmall"
+                            checked={selectedRows.row2}
+                            onChange={(e) =>
+                              setSelectedRows({ ...selectedRows, row2: e.target.checked })
+                            }
                           />
                         </td>
                         <td>Design</td>
                         <td>5</td>
                         <td>Sakshi</td>
                         <td>
-                          <button className="action-btn edit"> 
+                          <button className="action-btn edit">
                             <img className="pen-icon" src={penicon} alt="tick-icon" />
-                            </button>
+                          </button>
                           <button className="action-btn delete">
-                             <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
+                            <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
                           </button>
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <input 
-                          type="checkbox" 
-                          className="checkbsmall"
-                          checked={selectedRows.row3}
-                          onChange={(e) =>
-                            setSelectedRows({ ...selectedRows, row3: e.target.checked })
-                          }
+                          <input
+                            type="checkbox"
+                            className="checkbsmall"
+                            checked={selectedRows.row3}
+                            onChange={(e) =>
+                              setSelectedRows({ ...selectedRows, row3: e.target.checked })
+                            }
                           />
                         </td>
                         <td>Development</td>
@@ -754,10 +751,10 @@ const [selectedRows, setSelectedRows] = useState({
                         <td>
                           <button className="action-btn edit">
                             <img className="pen-icon" src={penicon} alt="tick-icon" />
-                            </button>
+                          </button>
                           <button className="action-btn delete">
                             <img className="deletebox-icon" src={deletebox} alt="tick-icon" />
-                            </button>
+                          </button>
                         </td>
                       </tr>
                     </tbody>
@@ -774,17 +771,17 @@ const [selectedRows, setSelectedRows] = useState({
                   <div className="break-item">
                     <label>{t("lunchBreak")}</label>
                     <div className="time-input-group">
-                       <div className="time-input-wrapper">
-                      <input
-                        type="text"
-                        value={lunchBreak}
-                        onChange={(e) => setLunchBreak(e.target.value)}
-                        
-                      />
-                      <button className="edit-btn inside">
-                        <img className="pen-icon" src={penicon} alt="tick-icon" />
-                      </button>
-                     </div> 
+                      <div className="time-input-wrapper">
+                        <input
+                          type="text"
+                          value={lunchBreak}
+                          onChange={(e) => setLunchBreak(e.target.value)}
+
+                        />
+                        <button className="edit-btn inside">
+                          <img className="pen-icon" src={penicon} alt="tick-icon" />
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -792,15 +789,15 @@ const [selectedRows, setSelectedRows] = useState({
                     <label>{t("coffeeBreak")}</label>
                     <div className="time-input-group">
                       <div className="time-input-wrapper">
-                       <input
-                        type="text"
-                        value={coffeeBreak}
-                        onChange={(e) => setCoffeeBreak(e.target.value)}
-                       />
+                        <input
+                          type="text"
+                          value={coffeeBreak}
+                          onChange={(e) => setCoffeeBreak(e.target.value)}
+                        />
                         <button className="edit-btn inside">
                           <img className="pen-icon" src={penicon} alt="tick-icon" />
                         </button>
-                    </div>
+                      </div>
                     </div>
                   </div>
 

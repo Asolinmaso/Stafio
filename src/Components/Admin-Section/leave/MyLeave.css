@@ -3,7 +3,7 @@
   display: flex;
   min-height: 100vh;
   background: #f0f2f5;
-  
+
 }
 
 /* ===== Sidebar ===== */
@@ -22,15 +22,20 @@
 /* ===== Main Container ===== */
 .myleave-container {
   flex: 1;
-  padding: 10px !important ;   /* modified */
+  padding: 10px !important;
+  /* modified */
   background: #eff5ff;
   min-height: 100vh;
   overflow-y: auto;
+  padding-left: 280px !important;
+  /* modified: fix sidebar overlap */
+  padding-top: 100px !important;
 }
 
 /* ===== Topbar ===== */
 .myleave-container .topbar {
-  width: 97%;    /* modified */
+  width: 97%;
+  /* modified */
   margin-bottom: 20px;
 }
 
@@ -45,8 +50,10 @@
 /* ===== Leave Summary Cards ===== */
 .leave-summary {
   display: flex;
-  gap: 10px !important;  /* modified */
-  margin-bottom: 10px;   /* modified */
+  gap: 10px !important;
+  /* modified */
+  margin-bottom: 10px;
+  /* modified */
 
 }
 
@@ -54,14 +61,20 @@
   background: #fff;
   flex: 1;
   min-width: 200px;
-  border-radius: 3px !important; /* modified */
+  border-radius: 3px !important;
+  /* modified */
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
-  text-align: left;   /* modified */
-  margin-left: -25px; /* modified */
-  margin-right: 20px;   /* modified */
-  padding-top: 13px !important;   /* modified */
-  padding-bottom: 5px !important;  /* modified */
-  
+  text-align: left;
+  /* modified */
+  margin-left: -25px;
+  /* modified */
+  margin-right: 20px;
+  /* modified */
+  padding-top: 13px !important;
+  /* modified */
+  padding-bottom: 5px !important;
+  /* modified */
+
 }
 
 .summary-icon {
@@ -107,7 +120,7 @@
   background: #fff;
   color: #000;
   border: 1px solid #ddd;
-  padding: 8px 18px;
+  padding: 10px 18px;
   border-radius: 0 15px 15px 0;
   cursor: pointer;
   transition: 0.3s;
@@ -280,9 +293,10 @@
   color: #fff;
   font-size: 30px;
   cursor: pointer;
-  border:none;
-  
+  border: none;
+
 }
+
 /* ===== Modal Body ===== */
 .modal-body {
   padding: 25px;
@@ -292,9 +306,12 @@
 .apply-leave-form {
   display: flex;
   justify-content: space-between;
-  align-items: stretch; /* stretch left and right sections */
-  min-height: 400px; /* adjust based on modal size */
-  gap: 10px; /* spacing between left and right */
+  align-items: stretch;
+  /* stretch left and right sections */
+  min-height: 400px;
+  /* adjust based on modal size */
+  gap: 10px;
+  /* spacing between left and right */
 }
 
 /* ===== Left Form Section ===== */
@@ -354,9 +371,11 @@ textarea {
 
 /* ===== Right Image Section ===== */
 .form-right {
-  flex: 0 0 180px; /* width of right section */
+  flex: 0 0 180px;
+  /* width of right section */
   display: flex;
-  align-items: flex-end; /* align image to bottom */
+  align-items: flex-end;
+  /* align image to bottom */
   justify-content: center;
 }
 
@@ -409,9 +428,198 @@ textarea {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
+/* ====== Filter Button Update ====== */
+.btn-filter {
+  color: #000;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #cecece;
+  border-radius: 8px;
+  padding: 8px 14px;
+  transition: 0.3s;
+  height: 38px;
+  font-weight: 500;
+}
+
+.btn-filter:hover {
+  background: #f9fafb;
+}
+
+.btn-filter svg {
+  font-size: 14px;
+}
+
+/* ====== Filter Dropdown Box ====== */
+.filter-dropdown-box {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  width: 340px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  animation: filterSlideDown 0.2s ease-out;
+  border: 1px solid #e5e7eb;
+}
+
+@keyframes filterSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ====== Filter Popup Header ====== */
+.filter-popup-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.filter-popup-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.filter-popup-close {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: #6b7280;
+}
+
+.filter-popup-close:hover {
+  background: #f3f4f6;
+}
+
+/* ====== Filter Popup Body ====== */
+.filter-popup-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.filter-field input::placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+  border-color: #19bde8;
+  box-shadow: 0px 0px 0px 3px rgba(25, 189, 232, 0.1);
+}
+
+/* ====== Filter Row ====== */
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ====== Filter Popup Footer ====== */
+.filter-popup-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-top: 1px solid #e6e6e6;
+}
+
+.filter-reset-btn {
+  flex: 1;
+  height: 38px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #4b5563;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.filter-reset-btn:hover {
+  background: #f3f4f6;
+}
+
+.filter-apply-btn {
+  flex: 1;
+  height: 38px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.filter-apply-btn:hover {
+  background: #1d4ed8;
+}
+
+/* ====== Remove old filter select styles ====== */
+.right-butn-filter {
+  display: none;
+  /* Hide the old dropdown */
+}

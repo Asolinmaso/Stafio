@@ -53,7 +53,7 @@ const ProfileBanner = ({ profileData }) => {
                 <span className="profile-name">{name || 'Name not set'}</span>
                 <span className="profile-id">(ID {empId || 'Not assigned'})</span>
               </div>
-               <div className="profile-role">{empType || 'Position not set'}</div>
+              <div className="profile-role">{empType || 'Position not set'}</div>
               <div className="profile-location">{location || 'Location not set'}</div>
             </div>
 

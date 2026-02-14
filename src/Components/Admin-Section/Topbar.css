@@ -1,13 +1,21 @@
 .topbar {
-    margin-top: 20px !important;
-  height: 70px ;
+  position: fixed !important;
+  top: 10px !important;
+  left: 290px !important;
+  /* 280 sidebar + 10 gap */
+  right: 15px !important;
+  z-index: 1040 !important;
+  height: 70px;
   background: #fff;
   border-radius: 10px;
-  margin: 10px;
-  padding-top: 5px !important;       /* new */
-  padding-bottom: 5px !important;    /* new */
-  width: auto;
-  margin-left: 13px !important;        /* modified */
+  margin: 0 !important;
+  /* Reset margin since we use fixed positioning */
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  width: auto !important;
+  /* Width is handled by left/right */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* Add shadow since it floats now */
 }
 
 .topbar-img {
@@ -16,23 +24,25 @@
   object-fit: contain;
 }
 
-.form-controler{
+.form-controler {
   border-radius: 20px !important;
-  width:40% !important;
+  width: 40% !important;
   height: 35px !important;
-  padding:10px 12px !important;
-  border:1px solid #ccc;
+  padding: 10px 12px !important;
+  border: 1px solid #ccc;
   outline: none;
-   transition: all 0.2s ease;
-}
-.form-controler:focus {
-  border-color: #19bde8 !important;
-  box-shadow: 0 0 0 3px rgba(25, 189, 232, 0.25); /* optional glow */
+  transition: all 0.2s ease;
 }
 
-.topbar-search{
-    width:40%;
-    background-color:  #F6F6F6;
+.form-controler:focus {
+  border-color: #19bde8 !important;
+  box-shadow: 0 0 0 3px rgba(25, 189, 232, 0.25);
+  /* optional glow */
+}
+
+.topbar-search {
+  width: 40%;
+  background-color: #F6F6F6;
 }
 
 .topbar-avatar {
@@ -41,20 +51,20 @@
   object-fit: cover;
 }
 
-.profile{
-    margin-right:50px;
+.profile {
+  margin-right: 50px;
 }
 
 /* NEW CSS part */
 /* Admin profile popup  */
 
-.profile0{
-    margin-right:25px;
-    /* gap:10px; */
+.profile0 {
+  margin-right: 25px;
+  /* gap:10px; */
 }
 
-.profile-data1{
-  gap:5px;
+.profile-data1 {
+  gap: 5px;
 }
 
 .full-profile-popup1 {
@@ -66,7 +76,7 @@
   overflow-y: auto;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   padding: 20px;
   z-index: 1000;
   animation: fadeIn 0.2s ease-in-out;
@@ -83,7 +93,7 @@
 
 .popup-content {
   padding: 10px 15px;
-  background: #ffffffff ;
+  background: #ffffffff;
 }
 
 .profile-section {
@@ -94,7 +104,7 @@
 
 .profile-photo {
   text-align: center;
-  
+
 }
 
 .profile-photo img {
@@ -117,12 +127,14 @@
   background: #ffffffff;
   padding: 10px 15px;
   border-radius: 10px;
-  text-align:left;
+  text-align: left;
 }
 
 .details-grid p {
-  color: #000;          /* Makes it darker (pure black) */
-  font-weight: 700;     /* Ensures boldness */
+  color: #000;
+  /* Makes it darker (pure black) */
+  font-weight: 700;
+  /* Ensures boldness */
 }
 
 
@@ -140,8 +152,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
@@ -168,6 +187,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -353,6 +373,7 @@
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -377,14 +398,15 @@
 .announcement-item:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.announcement-header{
-  text-align:left;
+
+.announcement-header {
+  text-align: left;
 }
 
 .announcement-name {
   font-size: 15px;
   color: #222;
-  padding-left:50px;
+  padding-left: 50px;
 }
 
 .announcement-meta {
@@ -395,14 +417,14 @@
   font-size: 13px;
   color: #6c757d;
   margin-top: 3px;
-  padding-left:50px;
+  padding-left: 50px;
 }
 
-.announcement-eventname{
-  margin-top:20px;
-  text-align:left;
+.announcement-eventname {
+  margin-top: 20px;
+  text-align: left;
   color: #000000ff;
-  font-weight:600;
+  font-weight: 600;
 }
 
 .announcement-meta .dot {
@@ -414,11 +436,8 @@
   font-size: 14px;
   color: #333;
   line-height: 1.5;
-  text-align:left;
+  text-align: left;
 }
-
-
-
 
 .search-dropdown {
   position: absolute;
@@ -426,7 +445,7 @@
   width: 100%;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   max-height: 300px;
   overflow-y: auto;
   z-index: 999;
@@ -458,14 +477,14 @@
 
 .full-profile-popups {
   position: absolute;
-  top: 100px ;
+  top: 100px;
   right: 100px;
   width: 900px;
   max-height: 90vh;
   overflow-y: auto;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   padding: 20px;
   z-index: 1000;
   animation: fadeIn 0.2s ease-in-out;
@@ -482,7 +501,7 @@
 
 .popup-content {
   padding: 10px 15px;
-  background: #ffffffff ;
+  background: #ffffffff;
 }
 
 .profile-section {
@@ -493,7 +512,7 @@
 
 .profile-photo {
   text-align: center;
-  
+
 }
 
 .profile-photo img {
@@ -516,12 +535,14 @@
   background: #ffffffff;
   padding: 10px 15px;
   border-radius: 10px;
-  text-align:left;
+  text-align: left;
 }
 
 .details-grid p {
-  color: #000;          /* Makes it darker (pure black) */
-  font-weight: 700;     /* Ensures boldness */
+  color: #000;
+  /* Makes it darker (pure black) */
+  font-weight: 700;
+  /* Ensures boldness */
 }
 
 
@@ -547,6 +568,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

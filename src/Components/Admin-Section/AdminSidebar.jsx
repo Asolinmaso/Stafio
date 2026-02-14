@@ -25,7 +25,6 @@ export const OrganizationMenu = () => {
     location.pathname.startsWith("/admin-profile");
   const [open, setOpen] = useState(false);
 
-  // Paths that belong to Organization
   const orgPaths = ["/employees-list", "/admin-profile", "/el-myteam"];
   const isOrgActive = orgPaths.includes(location.pathname);
 
@@ -39,20 +38,17 @@ export const OrganizationMenu = () => {
 
   return (
     <div className="org-menu">
-      {/* Main Organization Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${
-          isOrgActive ? "active" : ""
-        }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${isOrgActive ? "active" : ""
+          }`}
         onClick={handleOrgClick}
       >
         <div className="d-flex align-items-center">
           <img
             src={Vector4}
             alt="Organization Icon"
-            className={`me-2 sidebar-icon ${
-              isOrganizationActive ? "active" : ""
-            }`}
+            className={`me-2 sidebar-icon ${isOrganizationActive ? "active" : ""
+              }`}
           />
           <div className="org">Organization</div>
         </div>
@@ -61,9 +57,8 @@ export const OrganizationMenu = () => {
         </div>
       </div>
 
-      {/* Submenu Links */}
       {open && (
-        <div className="submenu ms-4 mt-2">
+        <div className="submenu mt-2">
           <NavLink
             to="/employees-list"
             className={({ isActive }) =>
@@ -98,7 +93,6 @@ export const ApprovalMenu = () => {
     location.pathname.startsWith("/leave-policies");
   const [open, setOpen] = useState(false);
 
-  // Paths that belong to Approval
   const approvalPaths = [
     "/leave-approval",
     "/regularization-approval",
@@ -118,11 +112,9 @@ export const ApprovalMenu = () => {
 
   return (
     <div className="approval-menu">
-      {/* Main Approval Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${
-          isApprovalActive ? "active" : ""
-        }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${isApprovalActive ? "active" : ""
+          }`}
         onClick={handleApprovalClick}
       >
         <div className="d-flex align-items-center">
@@ -138,9 +130,8 @@ export const ApprovalMenu = () => {
         </div>
       </div>
 
-      {/* Submenu Links */}
       {open && (
-        <div className="submenu ms-4 mt-2">
+        <div className="submenu mt-2">
           <NavLink
             to="/leave-approval"
             className={({ isActive }) =>
@@ -183,7 +174,6 @@ export const LeaveMenu = () => {
     location.pathname.startsWith("/admin-my-holidays");
   const [open, setOpen] = useState(false);
 
-  // Paths that belong to Leave
   const leavePaths = [
     "/admin-my-leave",
     "/admin-my-regularization",
@@ -201,11 +191,9 @@ export const LeaveMenu = () => {
 
   return (
     <div className="leave-menu">
-      {/* Main Leave Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${
-          isLeaveActive ? "active" : ""
-        }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${isLeaveActive ? "active" : ""
+          }`}
         onClick={handleLeaveClick}
       >
         <div className="d-flex align-items-center">
@@ -221,9 +209,8 @@ export const LeaveMenu = () => {
         </div>
       </div>
 
-      {/* Submenu Links */}
       {open && (
-        <div className="submenu ms-4 mt-2">
+        <div className="submenu mt-2">
           <NavLink
             to="/admin-my-leave"
             className={({ isActive }) =>
@@ -253,6 +240,7 @@ export const LeaveMenu = () => {
     </div>
   );
 };
+
 export const ReportMenu = () => {
   const location = useLocation();
   const isReportsActive =
@@ -260,7 +248,6 @@ export const ReportMenu = () => {
     location.pathname.startsWith("/leave-report");
   const [open, setOpen] = useState(false);
 
-  // Paths that belong to Reports
   const reportPaths = ["/admin-attendance-report", "/leave-report"];
   const isReportActive = reportPaths.includes(location.pathname);
 
@@ -274,11 +261,9 @@ export const ReportMenu = () => {
 
   return (
     <div className="report-menu">
-      {/* Main Report Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${
-          isReportActive ? "active" : ""
-        }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${isReportActive ? "active" : ""
+          }`}
         onClick={handleReportClick}
       >
         <div className="d-flex align-items-center">
@@ -294,9 +279,8 @@ export const ReportMenu = () => {
         </div>
       </div>
 
-      {/* Submenu Links */}
       {open && (
-        <div className="submenu ms-4 mt-2">
+        <div className="submenu mt-2">
           <NavLink
             to="/admin-attendance-report"
             className={({ isActive }) =>
@@ -330,11 +314,9 @@ const AdminSidebar = () => {
   const handleLogout = () => {
     logoutCurrentTab();
     localStorage.removeItem("announcements");
-    // Remove Remember Me data
     localStorage.removeItem("remember_admin");
     localStorage.removeItem("remember_email");
     localStorage.removeItem("remember_password");
-    // 🔥 Remove Google Remember Me
     localStorage.removeItem("remember_google");
     localStorage.removeItem("remember_google_email");
     localStorage.removeItem("remember_google_name");
@@ -352,86 +334,84 @@ const AdminSidebar = () => {
 
   return (
     <div
-      className={`employee-sidebar d-flex flex-column ${
-        showSidebar ? "show" : ""
-      }`}
+      className={`employee-sidebar d-flex flex-column ${showSidebar ? "show" : ""
+        }`}
     >
-      {/* Sidebar Header */}
+      {/* Sidebar Header - Fixed */}
       <div className="employee-sidebar-header text-center">
         <img src={stafioimg} alt="StafiO Logo" className="sidebar-logo" />
       </div>
 
-      {/* Sidebar Links */}
-      <Nav className="flex-column">
-        <Nav.Link
-          as={NavLink}
-          to="/admin-dashboard"
-          className={`sidebar-link ${isDashboardActive ? "active" : ""}`}
-        >
-          <img
-            src={Group}
-            alt="Dashboard Logo"
-            className={`me-2 sidebar-icon ${isDashboardActive ? "active" : ""}`}
-          />
-          Dashboard
-        </Nav.Link>
+      {/* Scrollable Menu Area */}
+      <div className="sidebar-scroll-area">
+        <Nav className="flex-column">
+          <Nav.Link
+            as={NavLink}
+            to="/admin-dashboard"
+            className={`sidebar-link ${isDashboardActive ? "active" : ""}`}
+          >
+            <img
+              src={Group}
+              alt="Dashboard Logo"
+              className={`me-2 sidebar-icon ${isDashboardActive ? "active" : ""}`}
+            />
+            Dashboard
+          </Nav.Link>
 
-        {/* Leave Menu */}
-        <NavLink to="/employees-list" className="sidebar-leave-link">
-          <OrganizationMenu />
-        </NavLink>
-        <NavLink to="/leave-approval" className="sidebar-leave-link">
-          <ApprovalMenu />
-        </NavLink>
-        <NavLink to="/admin-my-leave" className="sidebar-leave-link">
-          <LeaveMenu />
-        </NavLink>
-        <NavLink to="/admin-attendance-report" className="sidebar-leave-link">
-          <ReportMenu />
-        </NavLink>
-        <Nav.Link
-          as={NavLink}
-          to="/performance"
-          className={`sidebar-link ${isDocumentationActive ? "active" : ""}`}
-        >
-          <img
-            src={Vector5}
-            alt="Profile Logo"
-            className={`me-2 sidebar-icon ${
-              isDocumentationActive ? "active" : ""
-            }`}
-          />
-          Documentation
-        </Nav.Link>
-        <Nav.Link
-          as={NavLink}
-          to="/attendance"
-          className={`sidebar-link ${isAttendanceActive ? "active" : ""}`}
-        >
-          <img
-            src={Group2}
-            alt="Attendance Logo"
-            className={`me-2 sidebar-icon ${
-              isAttendanceActive ? "active" : ""
-            }`}
-          />
-          Attendance
-        </Nav.Link>
-        <Nav.Link
-          as={NavLink}
-          to="/admin-settings"
-          className={`sidebar-link ${isSettingsActive ? "active" : ""}`}
-        >
-          <img
-            src={Vector2}
-            alt="Settings"
-            className={`me-2 sidebar-icon ${isSettingsActive ? "active" : ""}`}
-          />
-          Settings
-        </Nav.Link>
-      </Nav>
+          <div className="sidebar-leave-link">
+            <OrganizationMenu />
+          </div>
+          <div className="sidebar-leave-link">
+            <ApprovalMenu />
+          </div>
+          <div className="sidebar-leave-link">
+            <LeaveMenu />
+          </div>
+          <div className="sidebar-leave-link">
+            <ReportMenu />
+          </div>
+          <Nav.Link
+            as={NavLink}
+            to="/performance"
+            className={`sidebar-link ${isDocumentationActive ? "active" : ""}`}
+          >
+            <img
+              src={Vector5}
+              alt="Profile Logo"
+              className={`me-2 sidebar-icon ${isDocumentationActive ? "active" : ""
+                }`}
+            />
+            Documentation
+          </Nav.Link>
+          <Nav.Link
+            as={NavLink}
+            to="/attendance"
+            className={`sidebar-link ${isAttendanceActive ? "active" : ""}`}
+          >
+            <img
+              src={Group2}
+              alt="Attendance Logo"
+              className={`me-2 sidebar-icon ${isAttendanceActive ? "active" : ""
+                }`}
+            />
+            Attendance
+          </Nav.Link>
+          <Nav.Link
+            as={NavLink}
+            to="/admin-settings"
+            className={`sidebar-link ${isSettingsActive ? "active" : ""}`}
+          >
+            <img
+              src={Vector2}
+              alt="Settings"
+              className={`me-2 sidebar-icon ${isSettingsActive ? "active" : ""}`}
+            />
+            Settings
+          </Nav.Link>
+        </Nav>
+      </div>
 
-      {/* Logout Button */}
+      {/* Logout Button - Fixed */}
       <div className="sidebar-logout" onClick={handleLogout}>
         <img
           src={Vector1}
@@ -442,6 +422,7 @@ const AdminSidebar = () => {
         Logout
       </div>
 
+      {/* Footer - Fixed */}
       <div className="employee-sidebar-footer text-center">
         <img src={booking} alt="Booking Logo" className="sidebar-logo1" />
       </div>

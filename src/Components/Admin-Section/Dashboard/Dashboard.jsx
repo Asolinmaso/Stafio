@@ -288,9 +288,7 @@ const Dashboard = () => {
 			<div className="rightside-logo ">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
-			<div className="sidebar">
-				<AdminSidebar />
-			</div>
+			<AdminSidebar />
 			<div className="main-content flex-grow-1">
 				<Topbar />
 				<Container fluid className="p-4">

@@ -14,24 +14,31 @@ export default function MyTeamLeaveApproval() {
   const [showModal, setShowModal] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [showReasonModal, setShowReasonModal] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [actionType, setActionType] = useState(""); // "Approve" | "Reject"
-    const [approvalReason, setApprovalReason] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-      const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
-      const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [actionType, setActionType] = useState("");
+  const [approvalReason, setApprovalReason] = useState("");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [sortOrder, setSortOrder] = useState("Newest");
+
+  // FILTER POPUP STATES
+  const [showFilter, setShowFilter] = useState(false);
+  const [tempStatus, setTempStatus] = useState("All");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMyTeamLA = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/myteamla");
+        const response = await axios.get(
+          "http://127.0.0.1:5001/api/myteamla"
+        );
         setLeaveData(response.data);
       } catch (error) {
-        console.error("Error fetching attendance data:", error);
+        console.error("Error fetching data:", error);
       }
     };
-
     fetchMyTeamLA();
   }, []);
 
@@ -41,52 +48,112 @@ export default function MyTeamLeaveApproval() {
     if (status === "Rejected") return "status-rejected";
   };
 
-
- const filteredAndSortedLeaves = leaveData
-  // SEARCH by employee name
-  .filter((leave) =>
-    leave.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  // FILTER by status
-  .filter((leave) =>
-    filterStatus === "All" ? true : leave.status === filterStatus
-  )
-
-  // SORT by request date
-  .sort((a, b) => {
-    const dateA = new Date(a.requestDate);
-    const dateB = new Date(b.requestDate);
-
-    return sortOrder === "Newest"
-      ? dateB - dateA
-      : dateA - dateB;
-  });
- 
+  const filteredAndSortedLeaves = leaveData
+    .filter((leave) =>
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((leave) =>
+      filterStatus === "All" ? true : leave.status === filterStatus
+    )
+    .sort((a, b) => {
+      const dateA = new Date(a.requestDate);
+      const dateB = new Date(b.requestDate);
+      return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
+    });
 
   return (
     <div className="myteam-layout">
-      <div className="rightside-logo ">
+      <div className="rightside-logo">
         <img src={group10} alt="logo" className="rightside-logos" />
       </div>
+
       <AdminSidebar />
+
       <div className="myteam-main">
         <Topbar />
+
         <div className="myteam-page">
           <h2 className="myteam-title">My Team Leave Approval</h2>
 
           <div className="myteam-controls">
             <div className="filter-sort">
-               <select
-                className="right-butn-filter"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
+              {/* FILTER BUTTON */}
+              <div className="filter-wrapper">
+                <button
+                  className="right-btn-filter"
+                  onClick={() => setShowFilter(!showFilter)}
+                >
+                  <FaFilter /> Filter
+                </button>
+
+                {/* FILTER POPUP */}
+                {showFilter && (
+                  <div className="filter-dropdown">
+                    <h3 className="filter-heading">Filter</h3>
+
+                    <div className="filter-field">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        placeholder="Enter employee name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="filter-row">
+                      <div className="filter-field">
+                        <label>Leave Type</label>
+                        <select>
+                          <option>All</option>
+                          <option>Casual</option>
+                          <option>Sick</option>
+                          <option>WFH</option>
+                        </select>
+                      </div>
+
+                      <div className="filter-field">
+                        <label>Status</label>
+                        <select
+                          value={tempStatus}
+                          onChange={(e) => setTempStatus(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="filter-actions">
+                      <button
+                        className="reset-btn"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setTempStatus("All");
+                          setFilterStatus("All");
+                          setShowFilter(false);
+                        }}
+                      >
+                        Reset
+                      </button>
+
+                      <button
+                        className="apply-btn"
+                        onClick={() => {
+                          setFilterStatus(tempStatus);
+                          setShowFilter(false);
+                        }}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* SORT */}
               <select
                 className="right-sort-select"
                 value={sortOrder}
@@ -109,24 +176,22 @@ export default function MyTeamLeaveApproval() {
                 <th>Action</th>
               </tr>
             </thead>
+
             <tbody>
               {filteredAndSortedLeaves.map((item) => (
                 <tr key={item.id}>
                   <td>
                     <div className="employee-info">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="emp-avatar"
-                      />
-                      <div className="emp-details">
+                      <img src={item.image} alt="" className="emp-avatar" />
+                      <div>
                         <p className="emp-name">{item.name}</p>
                         <p className="emp-id">{item.empId}</p>
                       </div>
                     </div>
                   </td>
                   <td>
-                    {item.type} <br />
+                    {item.type}
+                    <br />
                     <span className="days">{item.days}</span>
                   </td>
                   <td>{item.date}</td>
@@ -153,179 +218,7 @@ export default function MyTeamLeaveApproval() {
               ))}
             </tbody>
           </table>
-
-          <div className="pagination">
-            <div className="showing">
-              Showing{" "}
-              <select>
-                <option>07</option>
-                <option>10</option>
-                <option>20</option>
-              </select>
-            </div>
-            <div className="page-nav">
-              <button className="page-btn">Prev</button>
-              <button className="page-btn active">01</button>
-              <button className="page-btn">Next</button>
-            </div>
-          </div>
         </div>
-        {showModal && selectedLeave && (
-          <div className="modal-overlay" onClick={() => setShowModal(false)}>
-            <div
-              className="apply-leave-modal"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="modal-header-blue">
-                <h3>Leave Approval</h3>
-                <button
-                  className="close-btn"
-                  onClick={() => setShowModal(false)}
-                >
-                  ×
-                </button>
-              </div>
-
-              {/* Body */}
-              <div className="modal-body">
-                <form className="apply-leave-form">
-                  <div className="form-left">
-                    <label>Employee ID:</label>
-                    <input type="text" value={selectedLeave.empId} readOnly />
-
-                    <label>Leave Type:</label>
-                    <input type="text" value={selectedLeave.type} readOnly />
-
-                    <label>Date Of Leave:</label>
-                    <div className="date-row">
-                      <input type="text" value={selectedLeave.from} readOnly />
-                      <input type="text" value={selectedLeave.to} readOnly />
-                      <input
-                        type="text"
-                        value={selectedLeave.session}
-                        readOnly
-                      />
-                    </div>
-
-                    <label>Notify Others:</label>
-                    <input type="text" value={selectedLeave.notify} readOnly />
-
-                    <label>Uploaded Document:</label>
-                    <input
-                      type="text"
-                      value={selectedLeave.document || "No File Uploaded"}
-                      readOnly
-                    />
-
-                    <label>Reason:</label>
-                    <textarea value={selectedLeave.reason} readOnly />
-
-                    {/* ACTION BUTTONS – ONLY IF PENDING */}
-                    {/* ACTION BUTTONS – ONLY IF PENDING */}
-                    {selectedLeave.status === "Pending" && (
-                      <div className="modal-actions">
-                        <button
-                          type="button"
-                          className="apply-btn"
-                          onClick={() => {
-                            setActionType("Approval");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Approve
-                        </button>
-
-                        <button
-                          type="button"
-                          className="cancel-btn"
-                          onClick={() => {
-                            setActionType("Rejection");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    
-                    )}
-                  </div>
-
-                  {/* Right Image */}
-                  <div className="form-right">
-                    <img src={illustration} alt="Leave Illustration" />
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-        {showReasonModal && (
-          <div className="modal-overlay">
-            <div className="reason-modal">
-              <button
-                className="close-btn"
-                onClick={() => setShowReasonModal(false)}
-              >
-                ×
-              </button>
-
-              <h3>Reason For {actionType}</h3>
-
-              <textarea
-                placeholder="Please fill out the note for approvals"
-                maxLength={250}
-                value={approvalReason}
-                onChange={(e) => setApprovalReason(e.target.value)}
-              />
-
-              <small>maximum character limit 250</small>
-
-              <div className="modal-actions">
-                <button
-                  className="apply-btn"
-                  onClick={() => {
-                    setShowReasonModal(false);
-                    setShowSuccessModal(true);
-                  }}
-                >
-                  Submit
-                </button>
-
-                <button
-                  className="cancel-btn"
-                  onClick={() => setShowReasonModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showSuccessModal && (
-          <div className="modal-overlay">
-            <div className="success-modal">
-              <button
-                className="close-btn"
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  setShowModal(false);
-                }}
-              >
-                ×
-              </button>
-
-              <img className="tick-icon" src={tick} alt="tick-icon" />
-
-              <h2>Success</h2>
-              <p>
-                Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
-                Successfully
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

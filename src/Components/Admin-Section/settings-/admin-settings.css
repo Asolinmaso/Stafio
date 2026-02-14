@@ -1,15 +1,17 @@
 /* Main page container */
 .settings-page {
-  padding: 10px 5px !important;   /*modified*/
+  padding: 10px 5px !important;
+  /*modified*/
   background: #eff5ff;
   min-height: 100vh;
   font-family: "Montserrat", sans-serif;
   width: 100%;
+  padding-left: 0px !important;
 }
 
 /* Header */
 .settings-header h1 {
-/*   font-size: 32px !important; modified */
+  /*   font-size: 32px !important; modified */
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 5px;
@@ -58,7 +60,7 @@
   color: #cbd5f5;
 }
 
-.admin-dark select{
+.admin-dark select {
   color: black;
 }
 
@@ -88,27 +90,32 @@
   background-color: #334155;
   color: #e5e7eb;
 }
-.admin-dark .form-group2 label{
+
+.admin-dark .form-group2 label {
   color: black;
 }
-.admin-dark .form-group1 label{
+
+.admin-dark .form-group1 label {
   color: black;
 }
-.admin-dark .form-group3 label{
+
+.admin-dark .form-group3 label {
   color: black;
 }
-.admin-dark .team-table th,.admin-dark .department-table th{
+
+.admin-dark .team-table th,
+.admin-dark .department-table th {
   /* color: black; */
   background: #303033;
 }
 
-.admin-dark .break-item label{
+.admin-dark .break-item label {
   color: black;
 }
 
-.admin-dark .break-times-content{
+.admin-dark .break-times-content {
   background: #4d4e53;
-  border-color:grey;
+  border-color: grey;
   padding: 10px;
 }
 
@@ -119,7 +126,7 @@
   border-bottom: 1px solid #e5e7eb;
   margin-bottom: 20px;
   margin-left: 20px;
-  
+
 }
 
 .tab-link {
@@ -149,7 +156,8 @@
 }
 
 /* Top right Create New button (Department tab only) */
-.department-top-action {       /*new modified*/
+.department-top-action {
+  /*new modified*/
   display: flex;
   justify-content: flex-end;
   margin-right: 46px;
@@ -157,7 +165,8 @@
 }
 
 /* Button styling (for department tab) */
-.btn-create-new {             /*new modified*/
+.btn-create-new {
+  /*new modified*/
   background: #19bde8;
   color: white;
   border: none;
@@ -166,7 +175,7 @@
   cursor: pointer;
   height: 40px;
   margin-bottom: -30px;
-  margin-right:50px;
+  margin-right: 50px;
 
 }
 
@@ -180,7 +189,7 @@
   width: 90%;
   max-width: 90%;
   margin-left: 20px;
-  
+
 }
 
 .settings-card h3 {
@@ -188,7 +197,7 @@
   font-weight: 600;
   color: #111827;
   margin-bottom: 25px;
-  margin-top:0px !important;
+  margin-top: 0px !important;
 }
 
 /* Form */
@@ -204,15 +213,15 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  
+
 }
 
 .form-groupz {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
-  
-  
+
+
 
 }
 
@@ -225,20 +234,22 @@
 
 .form-groupz input,
 .form-groupz select {
-   padding: 9px 12px 10px 10px;    /*padding: 10px 12px;*/
+  padding: 9px 12px 10px 10px;
+  /*padding: 10px 12px;*/
   /* border: 1px solid #d1d5db; */
-  border-radius:4px !important ;/*modified*/
+  border-radius: 4px !important;
+  /*modified*/
   font-size: 14px;
   outline: none;
-  background: #f9fafb ;
-   /* new */
-   height: 80px;
-  width: 100%  ;
+  background: #f9fafb;
+  /* new */
+  height: 80px;
+  width: 100%;
   max-width: 600px;
   appearance: auto;
   -webkit-appearance: auto;
   -moz-appearance: auto;
-  
+
 }
 
 
@@ -247,75 +258,87 @@
   border-color: #19bde8;
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
- 
 
-.form-group1{            /*new*/
+
+.form-group1 {
+  /*new*/
   display: flex;
   flex-direction: column;
   margin-bottom: 32px;
   margin-top: -10px;
-  
+
 }
 
-.form-group1 input{     /*new*/
+.form-group1 input {
+  /*new*/
   padding: 9px 12px 10px 10px;
-  width: 340px ;
+  width: 340px;
   height: 40px;
   border-color: #d6cfcf;
-  border-style:solid;
-  border-radius:4px !important ;/*modified*/
+  border-style: solid;
+  border-radius: 4px !important;
+  /*modified*/
   font-size: 15px;
-  outline:none;
-  background: #f9fafb ;
+  outline: none;
+  background: #f9fafb;
 }
 
-.form-group1 input:focus{    /*new*/
+.form-group1 input:focus {
+  /*new*/
   border-color: #19bde8;
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
 
-.form-group2{             /*new*/
+.form-group2 {
+  /*new*/
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
 }
 
-.form-group2 select{     /*new*/
+.form-group2 select {
+  /*new*/
   padding: 9px 12px 10px 10px;
-  width: 340px ;
+  width: 340px;
   height: 40px;
   border-color: #d6cfcf;
-  border-style:solid;
-  border-radius:4px !important ;/*modified*/
+  border-style: solid;
+  border-radius: 4px !important;
+  /*modified*/
   font-size: 15px;
-  outline:none;
-  background: #f9fafb ;
+  outline: none;
+  background: #f9fafb;
 }
 
-.form-group2 select:focus{    /*new*/
+.form-group2 select:focus {
+  /*new*/
   border-color: #19bde8;
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
 
-.form-group3{                 /*new*/
+.form-group3 {
+  /*new*/
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
 }
 
-.form-group3 select{     /*new*/
+.form-group3 select {
+  /*new*/
   padding: 9px 12px 10px 10px;
-  width: 362px ;
+  width: 362px;
   height: 44px;
   border-color: #d6cfcf;
-  border-style:solid;
-  border-radius:7px !important ;/*modified*/
+  border-style: solid;
+  border-radius: 7px !important;
+  /*modified*/
   font-size: 15px;
-  outline:none;
-  background: #f9fafb ;
+  outline: none;
+  background: #f9fafb;
 }
 
-.form-group3 select:focus{    /*new*/
+.form-group3 select:focus {
+  /*new*/
   border-color: #19bde8;
   box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.2);
 }
@@ -328,8 +351,9 @@
   padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  background-color:#f7f8f8;
-  width: 340px; /* adjust if needed */
+  background-color: #f7f8f8;
+  width: 340px;
+  /* adjust if needed */
 }
 
 /* Toggle Switch */
@@ -371,17 +395,18 @@
   transition: 0.3s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #19bde8;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(22px);
 }
 
 /* Basic info image & upload */
 
-.profile-upload {        /*new*/
+.profile-upload {
+  /*new*/
   display: flex;
   align-items: center;
   gap: 15px;
@@ -389,14 +414,17 @@ input:checked + .slider:before {
 }
 
 .profile-preview {
-  width: 80px;   /* modified  */
-  height: 80px;  /* modified  */
+  width: 80px;
+  /* modified  */
+  height: 80px;
+  /* modified  */
   border-radius: 50%;
   object-fit: cover;
 }
 
-.upload-btn {               /*new*/
-  padding: 6px 14px;           
+.upload-btn {
+  /*new*/
+  padding: 6px 14px;
   border: 1px solid #ddd;
   background: white;
   border-radius: 14px;
@@ -404,7 +432,8 @@ input:checked + .slider:before {
   color: #7c7c7cff;
 }
 
-.file-info {                /*new*/
+.file-info {
+  /*new*/
   font-size: 0.9em;
   color: #666;
   margin-top: 5px;
@@ -416,28 +445,34 @@ input:checked + .slider:before {
   gap: 10px;
 }
 
-.btn-cancel, .btn-save {
+.btn-cancel,
+.btn-save {
   padding: 1px 2px !important;
   border: none;
-  border-radius: none; /* border-radius: 8px; */
+  border-radius: none;
+  /* border-radius: 8px; */
   cursor: pointer;
-   height: 40px !important;
+  height: 40px !important;
 }
 
 .btn-cancel {
   background: #19bde8;
   color: #ffffffff;
-    /*  font-weight:500; modified */
-  font-size:15px;   /* modified */
+  /*  font-weight:500; modified */
+  font-size: 15px;
+  /* modified */
   border-radius: none;
 }
 
 .btn-save {
   background: #19bde8;
-  color:  #ffffffff;
-  /* border-radius: 8px !important; */  /* modified */
-  font-weight:500; /* modified */  
-  font-size:15px;   /* modified */
+  color: #ffffffff;
+  /* border-radius: 8px !important; */
+  /* modified */
+  font-weight: 500;
+  /* modified */
+  font-size: 15px;
+  /* modified */
   border-radius: none;
 }
 
@@ -453,39 +488,46 @@ input:checked + .slider:before {
 
 /* team tab */
 
- .team-table{      /*modified  */
-  margin: -30px; 
+.team-table {
+  /*modified  */
+  margin: -30px;
 }
 
-.team-table table, .department-table table {
+.team-table table,
+.department-table table {
   width: 100%;
   border-collapse: collapse;
-  
+
 }
 
-.team-table table{
-    border: 0px solid #f8f8f8ff;
-    border-radius: 10px ;
+.team-table table {
+  border: 0px solid #f8f8f8ff;
+  border-radius: 10px;
 }
 
 
-.team-table th, .team-table td,
-.department-table th, .department-table td {
+.team-table th,
+.team-table td,
+.department-table th,
+.department-table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
-  
-}
-.team-table th {              /*modified  */
-    background: #e7e4e4ff;
-    
-    
+
 }
 
-.checkbbig{            /*new  */
-    height: 16px;
-    width: 16px;
- }
+.team-table th {
+  /*modified  */
+  background: #e7e4e4ff;
+
+
+}
+
+.checkbbig {
+  /*new  */
+  height: 16px;
+  width: 16px;
+}
 
 .team-member {
   display: flex;
@@ -494,30 +536,38 @@ input:checked + .slider:before {
 }
 
 .member-avatar {
-  width: 50px;     /*  modified */
-  height: 50px;    /*  modified */
-  
+  width: 50px;
+  /*  modified */
+  height: 50px;
+  /*  modified */
+
 }
 
 .member-name {
-  font-weight: 600;   /*  modified */
-  font-size: 13px;   /*  modified */
+  font-weight: 600;
+  /*  modified */
+  font-size: 13px;
+  /*  modified */
 }
 
 .member-email {
-  font-size: 12px;  /*  modified */
-  color: #666;   
+  font-size: 12px;
+  /*  modified */
+  color: #666;
 }
 
-.member-joined{      /*  new */
+.member-joined {
+  /*  new */
   font-size: 14px;
   color: rgb(136, 134, 134);
 }
 
-.role-badge {            /*modified  */
+.role-badge {
+  /*modified  */
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.7em;   /* font-size: 0.9em; */
+  font-size: 0.7em;
+  /* font-size: 0.9em; */
 }
 
 .role-badge.hr {
@@ -539,35 +589,43 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-/* Department Tab */            /*new  */
+/* Department Tab */
+/*new  */
 
 
- .department-table th {
+.department-table th {
   background: #e7e4e4ff;
-  
-  font-weight: 600;              /*new  */
- } 
 
- .department-table td{    /*new  */
+  font-weight: 600;
+  /*new  */
+}
+
+.department-table td {
+  /*new  */
   font-size: 14px;
 
- }
+}
 
- .department-table{     /*new  */
+.department-table {
+  /*new  */
   margin: -30px;
-  
- }
 
-.pen-icon{      /*new  */
-  width:20px;
-}
-.deletebox-icon{       /*new  */
-  width:20px;
 }
 
- 
- /* Remove white card ONLY for Break Times tab */
-.breaktimes-no-card {                   /*new  */
+.pen-icon {
+  /*new  */
+  width: 20px;
+}
+
+.deletebox-icon {
+  /*new  */
+  width: 20px;
+}
+
+
+/* Remove white card ONLY for Break Times tab */
+.breaktimes-no-card {
+  /*new  */
   background: transparent !important;
   box-shadow: none !important;
   padding: 0 !important;
@@ -578,7 +636,7 @@ input:checked + .slider:before {
   margin-bottom: 20px;
 }
 
-.time-input-group {      
+.time-input-group {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -586,21 +644,24 @@ input:checked + .slider:before {
   width: 500px;
 }
 
-.time-input-group input {  
+.time-input-group input {
   flex: 1;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.time-input-wrapper {          /*new  */
+.time-input-wrapper {
+  /*new  */
   position: relative;
   width: 95%;
 }
 
-.time-input-wrapper input {       /*new  */
-  width: 100%;          
-  padding: 10px 40px 10px 12px; /* space for icon */
+.time-input-wrapper input {
+  /*new  */
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  /* space for icon */
   border: 1px solid #dadada;
   border-radius: 10px;
   height: 46px;
@@ -608,7 +669,8 @@ input:checked + .slider:before {
   color: #6b7280;
 }
 
-.edit-btn.inside {          /*new  */
+.edit-btn.inside {
+  /*new  */
   position: absolute;
   right: 10px;
   top: 50%;
@@ -618,7 +680,7 @@ input:checked + .slider:before {
   cursor: pointer;
   font-size: 16px;
   color: #6b7280;
-  
+
 }
 
 .edit-btn {
@@ -627,10 +689,11 @@ input:checked + .slider:before {
   background: transparent;
   cursor: pointer;
   padding-right: 10px;
-  
+
 }
 
-.btn-create-new1 {         /*new  */
+.btn-create-new1 {
+  /*new  */
   background: #19bde8;
   color: white;
   border: none;
@@ -639,5 +702,5 @@ input:checked + .slider:before {
   cursor: pointer;
   margin-bottom: 20px;
   height: 40px;
-  
+
 }

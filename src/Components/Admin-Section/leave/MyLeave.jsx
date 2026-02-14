@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./MyLeave.css";
 import {
   FaCheckCircle,
@@ -7,18 +7,25 @@ import {
   FaTimesCircle,
   FaUpload,
 } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
-import illustration from "../../../assets/Formsbro.png"; // Add your illustration image
+import illustration from "../../../assets/Formsbro.png";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 
-
 export default function Myleave() {
   const [showModal, setShowModal] = useState(false);
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-        const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
-        const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  
+  // Filter states
+  const [filterName, setFilterName] = useState("");
+  const [filterLeaveType, setFilterLeaveType] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("All");
+  
+  const filterRef = useRef(null);
+  const filterButtonRef = useRef(null);
 
   const leaveData = [
     {
@@ -38,37 +45,59 @@ export default function Myleave() {
       status: "Approved",
     },
   ];
-   const navigate = useNavigate();
 
-const filteredAndSortedLeaves = leaveData
-  // SEARCH by employee name
- 
+  const navigate = useNavigate();
 
-  // FILTER by status
-  .filter((leave) =>
+  const filteredAndSortedLeaves = leaveData.filter((leave) =>
     filterStatus === "All" ? true : leave.status === filterStatus
-  )
+  );
 
-  
-
-useEffect(() => {
-  if (showModal) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "auto";
-  }
-
-  return () => {
-    document.body.style.overflow = "auto";
+  const handleResetFilter = () => {
+    setFilterName("");
+    setFilterLeaveType("All");
+    setFilterStatus("All");
   };
-}, [showModal]);
 
+  const handleApplyFilter = () => {
+    setShowFilterPopup(false);
+  };
+
+  // Close filter popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        showFilterPopup &&
+        filterRef.current &&
+        !filterRef.current.contains(event.target) &&
+        filterButtonRef.current &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
+        setShowFilterPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilterPopup]);
+
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showModal]);
 
   return (
     <div className="layout">
-      <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="myleave-container">
@@ -110,21 +139,98 @@ useEffect(() => {
               <button className="btn-apply" onClick={() => setShowModal(true)}>
                 Apply Leave
               </button>
-              <button className="btn-regularization"
-              onClick={() => navigate("/admin-my-regularization")}
-              >Regularization</button>
-            </div>
-            <div className="bottom-button">
-              <select
-                className="right-butn-filter"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+              <button
+                className="btn-regularization"
+                onClick={() => navigate("/admin-my-regularization")}
               >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
+                Regularization
+              </button>
+            </div>
+            
+            {/* Filter Button with Dropdown */}
+            <div className="bottom-button" style={{ position: 'relative' }}>
+              <button
+                ref={filterButtonRef}
+                className="btn-filter"
+                onClick={() => setShowFilterPopup(!showFilterPopup)}
+              >
+                <FaFilter /> Filter
+              </button>
+
+              {/* Filter Dropdown */}
+              {showFilterPopup && (
+                <div ref={filterRef} className="filter-dropdown-box">
+                  {/* Header */}
+                  <div className="filter-popup-header">
+                    <h3>Filter</h3>
+                    <button
+                      className="filter-popup-close"
+                      onClick={() => setShowFilterPopup(false)}
+                    >
+                      <IoClose />
+                    </button>
+                  </div>
+
+                  {/* Body */}
+                  <div className="filter-popup-body">
+                    {/* Name Field */}
+                    <div className="filter-field">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        placeholder="Please enter name"
+                        value={filterName}
+                        onChange={(e) => setFilterName(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Leave Type and Status Row */}
+                    <div className="filter-row">
+                      <div className="filter-field">
+                        <label>Leave Type</label>
+                        <select
+                          value={filterLeaveType}
+                          onChange={(e) => setFilterLeaveType(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Casual Leave">Casual Leave</option>
+                          <option value="Sick Leave">Sick Leave</option>
+                          <option value="Annual Leave">Annual Leave</option>
+                        </select>
+                      </div>
+
+                      <div className="filter-field">
+                        <label>Status</label>
+                        <select
+                          value={filterStatus}
+                          onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="filter-popup-footer">
+                    <button
+                      className="filter-reset-btn"
+                      onClick={handleResetFilter}
+                    >
+                      Reset
+                    </button>
+                    <button
+                      className="filter-apply-btn"
+                      onClick={handleApplyFilter}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -181,7 +287,7 @@ useEffect(() => {
                 <form className="apply-leave-form">
                   <div className="form-left">
                     <label>Employee ID:</label>
-                    <input type="text"  />
+                    <input type="text" />
 
                     <label>Leave Type:</label>
                     <select>
@@ -233,7 +339,6 @@ useEffect(() => {
                     </div>
                   </div>
 
-                  {/* Right illustration */}
                   <div className="form-right">
                     <img src={illustration} alt="Leave Illustration" />
                   </div>

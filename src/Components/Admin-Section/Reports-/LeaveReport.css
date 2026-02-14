@@ -6,19 +6,22 @@
 
 .leave-report-main {
   flex: 1;
-  margin-left: 26px;
-  margin-top:20px;
-  margin-right:20px;
+  margin-left: 0;
+  padding-left: 280px;
+  /* modified: padding instead of margin to fix white gaps */
+  margin-top: 20px;
+  margin-right: 20px;
+  padding-top: 100px;
 }
 
 .leave-report-main.topbar {
-    margin:20px !important;
+  margin: 20px !important;
 }
 
 /* Header Section */
 .leave-report-header {
   display: flex;
-  
+
   align-items: center;
   padding: 24px 30px;
 
@@ -40,7 +43,7 @@
   color: #374151;
   min-width: 180px;
   outline: none;
-  margin-left:20px;
+  margin-left: 20px;
 }
 
 /* Leave Summary Cards */
@@ -50,7 +53,7 @@
   gap: 10px;
   padding: 30px;
   margin-bottom: 0;
-  width:80%;
+  width: 80%;
 }
 
 .leave-summary-card {
@@ -85,7 +88,7 @@
   font-size: 12px;
   font-weight: 600;
   color: #ffffff;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 
 .leave-summary-card .leave-icon {
@@ -109,6 +112,7 @@
   color: #6b7280;
   line-height: 1.2;
 }
-.attendance-graph{
-  margin-left:30px;
+
+.attendance-graph {
+  margin-left: 30px;
 }
