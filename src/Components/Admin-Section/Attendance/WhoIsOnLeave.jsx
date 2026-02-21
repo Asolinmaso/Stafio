@@ -1,14 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaFilter, FaCalendarAlt } from "react-icons/fa";
+import axios from "axios";
 import "./WhoIsOnLeave.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 
+const API_BASE = "http://127.0.0.1:5001";
 const WhoIsOnLeave = () => {
   const [currentDate, setCurrentDate] = useState("");
-
+  const [currentTime, setCurrentTime] = useState("");
+  const [leaveList, setLeaveList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   // ✅ Calendar state
   const [selectedDate, setSelectedDate] = useState("");
 
@@ -28,16 +33,23 @@ const WhoIsOnLeave = () => {
   const filterRef = useRef(null);
   const navigate = useNavigate();
 
-  const leaveList = [
-    { id: "2244", employee: "Akshya", type: "Casual Leave", from: "10 Aug 2025", to: "11 Aug 2025", days: "1 Day" },
-    { id: "2244", employee: "Rhugmini", type: "Casual Leave", from: "06 Aug 2025", to: "07 Aug 2025", days: "1 Day" },
-    { id: "2244", employee: "Shalom", type: "Sick Leave", from: "07 Aug 2025", to: "09 Aug 2025", days: "2 Days" },
-    { id: "2244", employee: "Tamil", type: "Sick Leave", from: "10 Aug 2025", to: "10 Aug 2025", days: "3 Days" },
-    { id: "2244", employee: "Lakshmi", type: "Casual Leave", from: "10 Aug 2025", to: "10 Aug 2025", days: "1 Day" },
-    { id: "2244", employee: "Akshya", type: "Sick Leave", from: "10 Aug 2025", to: "10 Aug 2025", days: "1 Day" },
-  ];
-
   // ✅ Live Date
+  useEffect(() => {
+     const fetchLeaveData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE}/api/who_is_on_leave`);
+        setLeaveList(response.data);
+      } catch (error) {
+        console.error("Error fetching leave data:", error);
+        setLeaveList([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaveData();
+  }, []);
+  // Update time every second
   useEffect(() => {
     const updateDate = () => {
       const now = new Date();

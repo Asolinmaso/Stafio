@@ -22,6 +22,8 @@ const LeavePolicies = () => {
   
   const [showModal, setShowModal] = useState(false);  
   const [errors, setErrors] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   //initial state + reset function
   const initialFormState = {
@@ -103,20 +105,21 @@ const validateForm = () => {
   return Object.keys(newErrors).length === 0;
 };
 
-//Save button handler (NO refresh)
-const handleSave = (e) => {
-  e.preventDefault();
+const buildApplicabilityType = (applicability, gender) => {
+    if (!applicability) return "All";
 
-  if (!validateForm()) return;
+    if (gender.length === 1) {
+      return `${applicability} (${gender[0]} only)`;
+    }
 
-  // API call here (later)
-  resetForm();
-  setShowModal(false);
-};
+    if (gender.length > 1) {
+      return `${applicability} (Male & Female)`;
+    }
 
-
-  useEffect(() => {
-    const  fetchleavepolicies = async () => {
+    return applicability;
+  };
+  
+  const  fetchleavepolicies = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:5001/api/leavepolicies");
         setLeavePolicies(response.data);
@@ -124,6 +127,50 @@ const handleSave = (e) => {
         console.error("Error fetching attendance data:", error);
       }
     };
+
+//Save button handler (NO refresh)
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const payload = {
+      name: formData.leaveName,
+      description: formData.description,
+      max_days: Number(formData.maxDays),
+      type: buildApplicabilityType(
+        formData.applicability || "All",
+        formData.gender,
+      ),
+    };
+
+    try {
+      if (isEdit) {
+        // 🔄 UPDATE
+        await axios.put(
+          `http://127.0.0.1:5001/api/leavepolicies/${editId}`,
+          payload,
+        );
+      } else {
+        // ➕ CREATE (future-ready)
+        await axios.post("http://127.0.0.1:5001/api/leavepolicies", payload);
+      }
+
+      // Refresh table
+      const res = await axios.get("http://127.0.0.1:5001/api/leavepolicies");
+      setLeavePolicies(res.data);
+
+      resetForm();
+      setIsEdit(false);
+      setEditId(null);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Save error:", error);
+    }
+  };
+
+  useEffect(() => {
+    
 
     fetchleavepolicies();
   }, []);
@@ -141,6 +188,33 @@ useEffect(() => {
   };
 }, [showModal]);
 
+const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this leave policy?"))
+      return;
+
+    await fetch(`http://127.0.0.1:5001/api/leavepolicies/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchleavepolicies(); // refresh list
+  };
+
+  const openEditModal = (policy) => {
+    setIsEdit(true);
+    setEditId(policy.id);
+
+    setFormData({
+      leaveName: policy.name || "",
+      description: policy.description || "",
+      maxDays: policy.max_days || 0,
+      applicability: policy.type || "All", // mapping backend → frontend
+      leaveType: policy.name || "",
+      gender: [], // backend doesn’t have gender yet
+    });
+
+    setErrors({});
+    setShowModal(true);
+  };
 
   return (
     <div className="leave-policies-layout">
@@ -180,10 +254,14 @@ useEffect(() => {
                 <td>{policy.createdOn}</td>
                 <td>{policy.type}</td>
                 <td className="leave-policies-actions">
-                  <button className="leave-policies-edit-btn">
+                  <button className="leave-policies-edit-btn"
+                    onClick={() => openEditModal(policy)}
+                  >
                     <FaEdit />
                   </button>
-                  <button className="leave-policies-delete-btn">
+                  <button className="leave-policies-delete-btn"
+                   onClick={() => handleDelete(policy.id)}
+                  >
                     <FaTimes />
                   </button>
                 </td>
@@ -198,11 +276,13 @@ useEffect(() => {
             <div className="leave-policies-modal">
               {/* Header */}
               <div className="leave-policies-modal-header">
-                <h3 className="leave-policies-modal-title">Add New Leave</h3>
+                <h3 className="leave-policies-modal-title">{isEdit ? "Edit Leave Policy" : "Add New Leave"}</h3>
                 <button
                   className="leave-policies-close-btn"
                   onClick={() =>  {
                       resetForm();
+                      setIsEdit(false);
+                      setEditId(null);
                       setShowModal(false);
                       }}
                 >

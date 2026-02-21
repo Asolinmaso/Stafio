@@ -8,13 +8,16 @@ import group10 from "../../../assets/Group10.png";
 import illustration from "../../../assets/Formsbro.png";
 import tick from "../../../assets/tickicon.png";
 import axios from "axios";
+import { getCurrentSession } from "../../../utils/sessionManager";
 
 const LeaveApproval = () => {
   const [leaves, setLeaves] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  const [showReasonModal, setShowReasonModal] = useState(false);
+  const [actionType, setActionType] = useState(""); // "Approve" | "Reject"
+  const [approvalReason, setApprovalReason] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
 
@@ -33,7 +36,7 @@ const LeaveApproval = () => {
     const fetchLeaveapprova = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:5001/api/leaveapproval"
+          "http://127.0.0.1:5001/api/leaveapproval",
         );
         setLeaves(response.data);
       } catch (error) {
@@ -43,6 +46,28 @@ const LeaveApproval = () => {
 
     fetchLeaveapprova();
   }, []);
+
+    // Auto-close success modal after 2 seconds
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+        setShowModal(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal]);
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Approved":
+        return "status-approved";
+      case "Rejected":
+        return "status-rejected";
+      default:
+        return "status-pending";
+    }
+  };
 
   // Outside click close for filter popup
   useEffect(() => {
@@ -66,11 +91,11 @@ const LeaveApproval = () => {
   const filteredAndSortedLeaves = leaves
     // Search by name
     .filter((leave) =>
-      leave.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      leave.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     // Filter by status
     .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus
+      filterStatus === "All" ? true : leave.status === filterStatus,
     )
     // Filter by leave type
     .filter((leave) =>
@@ -84,6 +109,16 @@ const LeaveApproval = () => {
       const dateB = new Date(b.requestDate);
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
+
+    const pendingCount = leaves.filter(
+    (leave) => leave.status === "Pending",
+  ).length;
+  const approvedCount = leaves.filter(
+    (leave) => leave.status === "Approved",
+  ).length;
+  const rejectedCount = leaves.filter(
+    (leave) => leave.status === "Rejected",
+  ).length;
 
   return (
     <div className="leave-approval-layout">
@@ -105,7 +140,7 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
-                <strong>02 Request Pending</strong>
+                <strong>{pendingCount} Request Pending</strong>
                 <br />
                 Awaiting
               </p>
@@ -114,7 +149,7 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
-                <strong>07 Request Approved</strong>
+                <strong>{approvedCount} Request Approved</strong>
                 <br />
                 In this Month
               </p>
@@ -123,7 +158,7 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon" />
               <p>
-                <strong>03 Request Rejected</strong>
+                <strong>{rejectedCount} Request Rejected</strong>
                 <br />
                 In this Month
               </p>
@@ -282,7 +317,14 @@ const LeaveApproval = () => {
                 </td>
 
                 <td>{leave.dates}</td>
-                <td>{leave.requestDate}</td>
+                <td>
+                  {leave.requestDate} <br />
+                  <span
+                    className={`status-badge ${getStatusClass(leave.status)}`}
+                  >
+                    {leave.status}
+                  </span>
+                </td>
 
                 <td>
                   <button
@@ -367,12 +409,103 @@ const LeaveApproval = () => {
 
                     <label>Reason:</label>
                     <textarea value={selectedLeave.reason} readOnly />
+
+                    {/* ACTION BUTTONS – ONLY IF PENDING */}
+                    {selectedLeave.status === "Pending" && (
+                      <div className="modal-actions">
+                        <button
+                          type="button"
+                          className="apply-btn"
+                          onClick={() => {
+                            setActionType("Approval");
+                            setShowReasonModal(true);
+                          }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          type="button"
+                          className="cancel-btn"
+                          onClick={() => {
+                            setActionType("Rejection");
+                            setShowReasonModal(true);
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+
                   </div>
 
                   <div className="form-right">
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+        {showReasonModal && (
+          <div className="modal-overlay">
+            <div className="reason-modal">
+              <button
+                className="close-btn"
+                onClick={() => setShowReasonModal(false)}
+              >
+                ×
+              </button>
+              <h3>Reason For {actionType}</h3>
+
+              <textarea
+                placeholder="Please fill out the note for approvals"
+                maxLength={250}
+                value={approvalReason}
+                onChange={(e) => setApprovalReason(e.target.value)}
+              />
+              <small>maximum character limit 250</small>
+              <div className="modal-actions">
+                <button
+                  className="apply-btn"
+                  onClick={async () => {
+                    try {
+                      const endpoint =
+                        actionType === "Approval"
+                          ? `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/approve`
+                          : `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/reject`;
+                      await axios.put(endpoint, {
+                        reason: approvalReason,
+                        approved_by: currentAdminId,
+                      });
+                      // Refresh the leave list
+                      const response = await axios.get(
+                        "http://127.0.0.1:5001/api/leaveapproval",
+                      );
+                      setLeaves(response.data);
+                      setShowReasonModal(false);
+                      setShowSuccessModal(true);
+                      setApprovalReason("");
+                    } catch (error) {
+                      console.error(
+                        "Error processing leave request:",
+                        error.response.data.message,
+                      );
+                      alert(
+                        `Failed to process leave request. Please try again.\n ${error.response.data.message}`,
+                      );
+                    }
+                  }}
+                >
+                  Submit
+                </button>
+                <button
+                  className="cancel-btn"
+                  onClick={() => setShowReasonModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -393,7 +526,10 @@ const LeaveApproval = () => {
               </button>
               <img className="tick-icon" src={tick} alt="tick-icon" />
               <h2>Success</h2>
-              <p>Action completed successfully</p>
+              <p>
+                Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
+                Successfully
+              </p>
             </div>
           </div>
         )}

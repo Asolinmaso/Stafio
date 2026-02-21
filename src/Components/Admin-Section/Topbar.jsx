@@ -129,8 +129,20 @@ const Topbar = () => {
       alert("Please enter a message.");
       return;
     }
+    
+    const updatedAnnouncements = [...announcements, { ...formData }];
 
-    setAnnouncements([...announcements, { ...formData }]);
+    // Update state
+    setAnnouncements(updatedAnnouncements);
+
+      // Save to localStorage
+  localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+
+  
+  // 🔥 Notify other components immediately
+  window.dispatchEvent(new Event("announcementUpdated"));
+
+  // Reset form
     setFormData({
       date: "",
       eventName: "",
@@ -272,31 +284,73 @@ const Topbar = () => {
       </div>
 
       {/* Announcement Popup */}
-      {showPopup && (
-        <div className="announcement-popup shadow-lg" ref={popupRef}>
-          <div className="popup-header d-flex align-items-center justify-content-between">
-            <div className="fw-bold fs-5">Announcement</div>
-            <div className="d-flex align-items-center gap-3">
-              <button
-                className="btn btn-primary btn-sm d-flex align-items-center gap-2"
-                onClick={handleAddNewClick}
-              >
-                <FaPlus /> Add New
-              </button>
-            </div>
-          </div>
+      {/* 🔔 Announcement List Popup */}
+{showPopup && !showAddForm && (
+  <div className="announcement-popup shadow-lg" ref={popupRef}>
+    <div className="popup-header d-flex align-items-center justify-content-between">
+      <div className="fw-bold fs-5">Announcement</div>
 
-          <hr />
+      <button
+        className="btn btn-primary btn-sm d-flex align-items-center gap-2"
+        onClick={() => {
+          setShowPopup(false);
+          setShowAddForm(true);
+        }}
+      >
+        <FaPlus /> Add New
+      </button>
+    </div>
 
-          {/* Add Announcement Form */}
-          {showAddForm ? (
-            <div className="add-form-container">
-              <div className="form-header d-flex justify-content-between align-items-center">
-                <h5 className="fw-bold">Add New Announcement</h5>
-                <FaTimes className="close-icon" onClick={handleCancel} />
+    <hr />
+
+    <div className="popup-content">
+      {announcements.length === 0 ? (
+        <div className="text-center text-muted py-5">
+          No announcements yet.
+        </div>
+      ) : (
+        <ul className="announcement-list">
+          {announcements.map((a, i) => (
+            <li key={i} className="announcement-item">
+              <div className="announcement-name">
+                {a.name || "Unknown"}
               </div>
 
-              <form onSubmit={handleSubmit} className="announcement-form">
+              <div className="announcement-meta">
+                {a.designation || "No Designation"}
+              </div>
+
+              <div className="announcement-eventname">
+                {a.eventName}
+              </div>
+
+              <div className="announcement-message">
+                {a.message}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+)}
+
+{/* 🟦 Add New Announcement Modal */}
+{showAddForm && (
+  <div className="add-announcement-overlay">
+    <div className="add-form-container">
+
+      <div className="form-header">
+        <h5>Add New Announcement</h5>
+        <FaTimes
+          className="close-icon"
+          onClick={() => setShowAddForm(false)}
+        />
+      </div>
+
+      <form onSubmit={handleSubmit} className="announcement-form">
+        {/* your full form grid here */}
+        {/* Add Announcement Form */}
                 <div className="form-grid">
                   <div>
                     <label>Event Date</label>
@@ -414,45 +468,11 @@ const Topbar = () => {
                   </button>
                 </div>
               </form>
-            </div>
-          ) : (
-            <div className="popup-content">
-              {announcements.length === 0 ? (
-                <div className="text-center text-muted py-5">
-                  No announcements yet.
-                </div>
-              ) : (
-                <ul className="announcement-list">
-                  {announcements.map((a, i) => (
-                    <li key={i} className="announcement-item">
-                      <div className="announcement-header">
-                        <div className="announcement-name fw-bold">
-                          {a.name || "Unknown"}
-                        </div>
-                      </div>
-                      <div className="announcement-meta text-muted small">
-                        <span>{a.designation || "No Designation"}</span>
-                      </div>
-                      <div className="announcement-eventname">
-                        <span className="eventname">
-                          {a.eventName || "Untitled Event"}
-                          <span className="dot"> : </span>
-                          <span>{a.date || "No Date"}</span>
-                          <span className="dot">, </span>
-                          <span>{a.time || "No Time"}</span>
-                        </span>
-                      </div>
-                      <div className="announcement-message mt-2">
-                        {a.message || "No message provided."}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-        </div>
+             </div>
+          </div>
       )}
+
+
       {/* Full Profile Popup */}
       {showProfilePopup && (
         <div className="full-profile-popups">
