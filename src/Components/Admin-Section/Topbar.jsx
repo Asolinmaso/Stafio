@@ -51,6 +51,7 @@ const Topbar = () => {
 	const [showReactions, setShowReactions] = useState(null);
 	const [selectedDate, setSelectedDate] = useState("");
 	const dateInputRef = useRef(null);
+	const eventDateRef = useRef(null);
 
 	useEffect(() => {
 		// const storedAdminusername = localStorage.getItem("admin_username");
