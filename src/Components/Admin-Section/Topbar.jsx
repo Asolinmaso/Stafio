@@ -471,7 +471,21 @@ const Topbar = () => {
 											onFocus={(e) => (e.target.type = "date")}
 											onBlur={(e) => (e.target.type = "text")}
 										/>
-										<div className="icon-right"><MdEvent /></div>
+										<div className="icon-right"><MdEvent />
+										<div
+											className="icon-right"
+											style={{ cursor: "pointer" }}
+											onClick={() => {
+												if (eventDateRef.current) {
+													eventDateRef.current.focus();
+													if ('showPicker' in HTMLInputElement.prototype) {
+														eventDateRef.current.showPicker();
+													}
+												}
+											}}
+										>
+											<MdEvent />
+										</div>
 									</div>
 								</div>
 
