@@ -574,6 +574,7 @@
 	transform: translateY(-50%);
 	color: #4a5568;
 	pointer-events: none;
+	cursor: pointer;
 }
 
 .select-wrapper {
