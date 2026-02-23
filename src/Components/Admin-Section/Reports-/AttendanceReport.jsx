@@ -8,23 +8,9 @@ import group10 from "../../../assets/Group10.png";
 
 export default function AttendanceReport() {
   const [attendanceData, setAttendanceData] = useState([]);
-  const [currentDate, setCurrentDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
-  const [sortDays, setSortDays] = useState(7);
-
-  /* FILTER POPUP STATES */
-  const [showFilterPopup, setShowFilterPopup] = useState(false);
-  const [popupName, setPopupName] = useState("");
-  const [popupStatus, setPopupStatus] = useState("On Time");
-  const [popupSortDays, setPopupSortDays] = useState(7);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-
-  const [statusFilter, setStatusFilter] = useState("On Time");
   const [employees, setEmployees] = useState([]);
-
-  // ✅ NEW: date picker value
   const [selectedDate, setSelectedDate] = useState("");
 
   /* FETCH ATTENDANCE */
@@ -43,80 +29,80 @@ export default function AttendanceReport() {
       .catch((err) => console.error(err));
   }, []);
 
-  /* DATE */
+  /* DEFAULT DATE */
   useEffect(() => {
     const now = new Date();
-    setCurrentDate(
-      now.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
-    );
-
-    // ✅ default for date input (yyyy-mm-dd)
     setSelectedDate(now.toISOString().split("T")[0]);
   }, []);
 
-  const parseDate = (dateStr) => {
-    const d = new Date(dateStr);
-    return isNaN(d) ? null : d;
-  };
-
-  /* FILTER LOGIC */
+  /* FILTERED DATA */
   const filteredAttendance = attendanceData
     .filter((r) =>
       r.employee?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter(
-      (r) =>
-        r.status?.toLowerCase().trim() === statusFilter.toLowerCase().trim()
     )
     .filter((r) =>
       selectedEmployeeName ? r.employee === selectedEmployeeName : true
     )
     .filter((r) => {
-      const today = new Date();
-      const rd = parseDate(r.date);
-      if (!rd) return true;
-      return (today.getTime() - rd.getTime()) / (1000 * 60 * 60 * 24) <= sortDays;
-    })
-    .filter((r) => {
-      if (!fromDate && !toDate) return true;
-      const rd = parseDate(r.date);
-      if (!rd) return true;
-      if (fromDate && rd < new Date(fromDate)) return false;
-      if (toDate && rd > new Date(toDate + "T23:59:59")) return false;
-      return true;
-    })
-    // ✅ NEW: selectedDate filter
-    .filter((r) => {
       if (!selectedDate) return true;
-      const rd = parseDate(r.date);
-      if (!rd) return true;
 
-      const picked = new Date(selectedDate);
+      const recordDate = new Date(r.date);
+      const pickedDate = new Date(selectedDate);
+
       return (
-        rd.getDate() === picked.getDate() &&
-        rd.getMonth() === picked.getMonth() &&
-        rd.getFullYear() === picked.getFullYear()
+        recordDate.getDate() === pickedDate.getDate() &&
+        recordDate.getMonth() === pickedDate.getMonth() &&
+        recordDate.getFullYear() === pickedDate.getFullYear()
       );
     });
 
-  /* FILTER ACTIONS */
-  const handleResetFilters = () => {
-    setPopupName("");
-    setPopupStatus("On Time");
-    setPopupSortDays(7);
-    setFromDate("");
-    setToDate("");
-  };
+  /* DOWNLOAD FUNCTION */
+  const handleDownload = () => {
+    if (filteredAttendance.length === 0) {
+      alert("No data available to download");
+      return;
+    }
 
-  const handleApplyFilters = () => {
-    setSearchTerm(popupName);
-    setStatusFilter(popupStatus);
-    setSortDays(popupSortDays);
-    setShowFilterPopup(false);
+    const headers = [
+      "ID",
+      "Employee",
+      "Role",
+      "Status",
+      "Date",
+      "Check-in",
+      "Check-out",
+      "Work hours",
+    ];
+
+    const rows = filteredAttendance.map((r) => [
+      r.id,
+      r.employee,
+      r.role,
+      r.status,
+      r.date,
+      r.checkIn,
+      r.checkOut,
+      r.workHours,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows]
+        .map((row) => row.join(","))
+        .join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `attendance_report_${new Date().toISOString().split("T")[0]}.csv`
+    );
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -130,9 +116,9 @@ export default function AttendanceReport() {
       <div className="att-report-main">
         <Topbar />
 
-        {/* HEADER */}
         <div className="att-report-header">
           <h2>Attendance Report</h2>
+
           <select
             className="leave-report-dropdown"
             value={selectedEmployeeName}
@@ -147,119 +133,11 @@ export default function AttendanceReport() {
           </select>
         </div>
 
-        {/* FILTER BAR */}
-        <div className="att-report-filterbar">
-          <div className="att-report-search-box">
-            <input
-              type="text"
-              placeholder="🔍 Search..."
-              className="search-input2"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {/* FILTER BUTTON */}
-          <div style={{ position: "relative" }}>
-            <button
-              className="att-report-filter-btn"
-              onClick={() => setShowFilterPopup(!showFilterPopup)}
-            >
-              <FaFilter /> Filter
-            </button>
-
-            {showFilterPopup && (
-              <div className="att-filter-popup">
-                <h3 className="att-filter-title">Filter</h3>
-
-                <label className="att-filter-label">Name</label>
-                <input
-                  className="att-filter-input"
-                  value={popupName}
-                  onChange={(e) => setPopupName(e.target.value)}
-                />
-
-                <div className="att-filter-row">
-                  <div className="att-filter-col">
-                    <label>Status</label>
-                    <select
-                      className="att-filter-select"
-                      value={popupStatus}
-                      onChange={(e) => setPopupStatus(e.target.value)}
-                    >
-                      <option value="On Time">On Time</option>
-                      <option value="Late Login">Late Login</option>
-                      <option value="Absent">Absent</option>
-                    </select>
-                  </div>
-
-                  <div className="att-filter-col">
-                    <label>Days</label>
-                    <select
-                      className="att-filter-select"
-                      value={popupSortDays}
-                      onChange={(e) => setPopupSortDays(Number(e.target.value))}
-                    >
-                      <option value={5}>Last 5 Days</option>
-                      <option value={10}>Last 10 Days</option>
-                      <option value={20}>Last 20 Days</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="att-filter-row">
-                  <div className="att-filter-col">
-                    <label>From</label>
-                    <input
-                      type="date"
-                      className="att-filter-select"
-                      value={fromDate}
-                      onChange={(e) => setFromDate(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="att-filter-col">
-                    <label>To</label>
-                    <input
-                      type="date"
-                      className="att-filter-select"
-                      value={toDate}
-                      onChange={(e) => setToDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="att-filter-footer">
-                  <button className="att-filter-reset" onClick={handleResetFilters}>
-                    Reset
-                  </button>
-                  <button className="att-filter-apply" onClick={handleApplyFilters}>
-                    Apply
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* SORT */}
-          <select
-            className="sort-dropdown"
-            value={sortDays}
-            onChange={(e) => setSortDays(Number(e.target.value))}
-          >
-            <option value="Newest">Sort By : Newest</option>
-            <option value="Oldest">Sort By : Oldest</option>
-          </select>
-        </div>
-
-        {/* TABLE */}
         <div className="att-report-table-wrapper">
           <div className="att-report-table-header">
             <h3>Attendance Overview</h3>
 
-            {/* ✅ UPDATED: search + calendar + download */}
             <div className="header-controls">
-              {/* Search bar (right side) */}
               <input
                 type="text"
                 className="att-header-search"
@@ -268,7 +146,6 @@ export default function AttendanceReport() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
-              {/* Calendar working */}
               <div className="att-report-date">
                 <FaCalendarAlt />
                 <input
@@ -279,7 +156,10 @@ export default function AttendanceReport() {
                 />
               </div>
 
-              <button className="att-report-download-btn">
+              <button
+                className="att-report-download-btn"
+                onClick={handleDownload}
+              >
                 <FaDownload /> Download
               </button>
             </div>
@@ -315,7 +195,6 @@ export default function AttendanceReport() {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="att-report-pagination">
           <div className="att-report-showing">
             <span>Showing</span>

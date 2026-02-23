@@ -437,25 +437,41 @@ const Topbar = () => {
 				<div className="add-announcement-overlay">
 					<div className="add-form-container">
 						<div className="form-header">
-							<h5>Add New Announcement</h5>
+							<h5 className="text-white">Add New Announcement</h5>
 							<FaTimes
-								className="close-icon"
+								className="close-icon text-white"
 								onClick={() => setShowAddForm(false)}
 							/>
 						</div>
 
 						<form onSubmit={handleSubmit} className="announcement-form">
-							{/* your full form grid here */}
-							{/* Add Announcement Form */}
+							{/* Upload Image Section */}
+							<div className="upload-section d-flex align-items-center gap-3">
+								<div className="upload-avatar-placeholder">
+									<img src={profileimg} alt="Upload Placeholder" />
+								</div>
+								<div className="upload-info">
+									<div className="upload-title">Upload Image</div>
+									<div className="upload-subtitle">Image should be below 4 mb</div>
+									<button type="button" className="btn-upload">Upload</button>
+								</div>
+							</div>
+
 							<div className="form-grid">
 								<div>
 									<label>Event Date</label>
-									<input
-										type="date"
-										name="date"
-										value={formData.date}
-										onChange={handleChange}
-									/>
+									<div className="input-with-icon">
+										<input
+											type="text"
+											name="date"
+											value={formData.date}
+											onChange={handleChange}
+											placeholder="dd/mm/yyyy"
+											onFocus={(e) => (e.target.type = "date")}
+											onBlur={(e) => (e.target.type = "text")}
+										/>
+										<div className="icon-right"><MdEvent /></div>
+									</div>
 								</div>
 
 								<div>
@@ -470,52 +486,65 @@ const Topbar = () => {
 								</div>
 
 								<div>
-									<label>Time Of The Event</label>
+									<label>Time Of the Event</label>
 									<input
-										type="time"
+										type="text"
 										name="time"
+										placeholder="Enter name of event"
 										value={formData.time}
 										onChange={handleChange}
+										onFocus={(e) => (e.target.type = "time")}
+										onBlur={(e) => (e.target.type = "text")}
 									/>
 								</div>
 
 								<div>
 									<label>Event Type</label>
-									<select
-										name="eventType"
-										value={formData.eventType}
-										onChange={handleChange}
-									>
-										<option value="">Select</option>
-										<option value="Meeting">Meeting</option>
-										<option value="Holiday">Holiday</option>
-										<option value="General">General</option>
-									</select>
+									<div className="select-wrapper">
+										<select
+											name="eventType"
+											value={formData.eventType}
+											onChange={handleChange}
+										>
+											<option value="" disabled selected>Select</option>
+											<option value="Meeting">Meeting</option>
+											<option value="Holiday">Holiday</option>
+											<option value="General">General</option>
+										</select>
+										<FaChevronDown className="select-chevron" />
+									</div>
 								</div>
 
-								<div className="full-width">
+								<div>
 									<label>Message</label>
-									<textarea
+									<input
+										type="text"
 										name="message"
 										placeholder="Type message"
 										value={formData.message}
 										onChange={handleChange}
-									></textarea>
+									/>
 								</div>
 
 								<div>
 									<label>Mention Any Employee</label>
-									<input
-										type="text"
-										name="employee"
-										placeholder="Enter employee name"
-										value={formData.employee}
-										onChange={handleChange}
-									/>
+									<div className="select-wrapper">
+										<select
+											name="employee"
+											value={formData.employee}
+											onChange={handleChange}
+										>
+											<option value="" disabled selected>Select</option>
+											{/* Map employees here if available */}
+										</select>
+										<FaChevronDown className="select-chevron" />
+									</div>
 								</div>
 
-								<hr />
-								<h6 className="fw-bold">Your Details</h6>
+								<div className="full-width">
+									<hr className="form-divider" />
+									<h6 className="form-section-title">Your Details</h6>
+								</div>
 
 								<div>
 									<label>Name</label>
@@ -541,23 +570,29 @@ const Topbar = () => {
 
 								<div>
 									<label>Designation</label>
-									<input
-										type="text"
-										name="designation"
-										placeholder="Enter your designation"
-										value={formData.designation}
-										onChange={handleChange}
-									/>
+									<div className="select-wrapper">
+										<select
+											name="designation"
+											value={formData.designation}
+											onChange={handleChange}
+										>
+											<option value="" disabled selected>Select</option>
+											<option value="Designer">Designer</option>
+											<option value="Developer">Developer</option>
+											<option value="HR">HR</option>
+										</select>
+										<FaChevronDown className="select-chevron" />
+									</div>
 								</div>
 							</div>
 
-							<div className="form-buttons">
-								<button type="submit" className="btn btn-primary">
+							<div className="form-footer">
+								<button type="submit" className="btn-submit">
 									Submit
 								</button>
 								<button
 									type="button"
-									className="btn btn-outline-secondary"
+									className="btn-cancel"
 									onClick={handleCancel}
 								>
 									Cancel
