@@ -149,8 +149,8 @@ export default function AdminSettings() {
   const t = (key) => translations[language]?.[key] || key;
 
   const getHeaders = () => ({
-    "X-User-Role": "admin",
-    "X-User-ID": localStorage.getItem("userId") || "1",
+    "X-User-Role":localStorage.getItem("employee_role") || sessionStorage.getItem("current_role"),
+    "X-User-ID": localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id") ,
   });
 
   // Fetch General Settings on mount

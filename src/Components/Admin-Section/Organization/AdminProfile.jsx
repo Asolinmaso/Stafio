@@ -130,7 +130,7 @@ const AdminProfile = () => {
   // =========== GET USER ID ===========
   const getUserId = () => {
     return (
-      localStorage.getItem("userId") || sessionStorage.getItem("userId") || 1
+      localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id")
     );
   };
 
