@@ -21,12 +21,17 @@ const LeaveRequestForm = () => {
   const [variant, setVariant] = useState("success");
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    const role = localStorage.getItem("role");
+    // Check both possible storage locations for user session
+    const userId =
+      localStorage.getItem("employee_user_id") ||
+      sessionStorage.getItem("current_user_id");
+    const role =
+      localStorage.getItem("employee_role") ||
+      sessionStorage.getItem("current_role");
 
     if (!userId || role !== "employee") {
       setResponseMessage(
-        "Please log in as an employee before applying for leave."
+        "Please log in as an employee before applying for leave.",
       );
       setVariant("danger");
     }
@@ -39,20 +44,28 @@ const LeaveRequestForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Get user ID from either storage location
+    const userId =
+      localStorage.getItem("employee_user_id") ||
+      sessionStorage.getItem("current_user_id");
+    const role =
+      localStorage.getItem("employee_role") ||
+      sessionStorage.getItem("current_role");
+
     try {
       const res = await axios.post(
         "http://127.0.0.1:5001/leave_requests",
         {
           ...formData,
-          user_id: localStorage.getItem("userId"),
+          user_id: userId,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            "X-User-Role": localStorage.getItem("role"),
-            "X-User-ID": localStorage.getItem("userId"),
+            "X-User-Role": role,
+            "X-User-ID": userId,
           },
-        }
+        },
       );
 
       setVariant("success");
@@ -76,9 +89,7 @@ const LeaveRequestForm = () => {
       }, 1500);
     } catch (err) {
       setVariant("danger");
-      setResponseMessage(
-        err?.response?.data?.message || "An error occurred."
-      );
+      setResponseMessage(err?.response?.data?.message || "An error occurred.");
     }
   };
 

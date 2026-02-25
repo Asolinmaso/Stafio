@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { FaCheckCircle, FaFilter } from "react-icons/fa";
+  import React, { useState, useEffect, useRef } from "react";
+import { FaCheckCircle, FaFilter, FaEdit, FaTimesCircle } from "react-icons/fa";
 import "./LeaveApproval.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
@@ -20,6 +20,9 @@ const LeaveApproval = () => {
   const [approvalReason, setApprovalReason] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
+
+  const session = getCurrentSession();
+  const currentAdminId = session?.user_id;
 
   // Filter states
   const [showFilterPopup, setShowFilterPopup] = useState(false);
@@ -362,12 +365,12 @@ const LeaveApproval = () => {
 
         {/* LEAVE DETAILS MODAL */}
         {showModal && selectedLeave && (
-          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="approve-modal-overlay" onClick={() => setShowModal(false)}>
             <div
-              className="apply-leave-modal"
+              className="approve-leave-modal"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="modal-header-blue">
+              <div className="approve-modal-header-blue">
                 <h3>Leave Approval</h3>
                 <button
                   className="close-btn"
@@ -377,45 +380,65 @@ const LeaveApproval = () => {
                 </button>
               </div>
 
-              <div className="modal-body">
-                <form className="apply-leave-form">
+              <div className="approve-form-modal-body">
+                <form className="approve-leave-form">
                   <div className="form-left">
+                    <div className="form-row">
                     <label>Employee ID:</label>
                     <input type="text" value={selectedLeave.id} readOnly />
-
-                    <label>Leave Type:</label>
-                    <input type="text" value={selectedLeave.type} readOnly />
-
-                    <label>Date Of Leave:</label>
-                    <div className="date-row">
-                      <input type="text" value={selectedLeave.from} readOnly />
-                      <input type="text" value={selectedLeave.to} readOnly />
-                      <input
-                        type="text"
-                        value={selectedLeave.session}
-                        readOnly
-                      />
                     </div>
 
+                    <div className="form-row">
+                    <label>Leave Type:</label>
+                    <input type="text" value={selectedLeave.type} readOnly />
+                    </div>
+
+                    <div className="form-row">
+                    <label>Date Of Leave:</label>
+                    <div className="date-row">
+                      <div className="date-item">
+                        <p>From</p>
+                        <input type="text" value={selectedLeave.from} readOnly />
+                      </div>
+
+                      <div className="date-item">
+                        <p>To</p>
+                        <input type="text" value={selectedLeave.to} readOnly />
+                      </div>
+
+                      <div className="date-item">
+                        <p>Session</p>
+                        <input
+                          type="text"
+                          value={selectedLeave.session}
+                          readOnly
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                    <div className="form-row">
                     <label>Notify Others:</label>
                     <input type="text" value={selectedLeave.notify} readOnly />
-
-                    <label>Uploaded Document:</label>
                     <input
                       type="text"
+                      className="document-input"
                       value={selectedLeave.document || "No File Uploaded"}
                       readOnly
                     />
+                    </div>
 
+                    <div className="form-row reason-row">
                     <label>Reason:</label>
                     <textarea value={selectedLeave.reason} readOnly />
+                    </div>
 
                     {/* ACTION BUTTONS – ONLY IF PENDING */}
                     {selectedLeave.status === "Pending" && (
-                      <div className="modal-actions">
+                      <div className="action-approve-modal-actions">
                         <button
                           type="button"
-                          className="apply-btn"
+                          className="approve-apply-btn"
                           onClick={() => {
                             setActionType("Approval");
                             setShowReasonModal(true);
@@ -425,7 +448,7 @@ const LeaveApproval = () => {
                         </button>
                         <button
                           type="button"
-                          className="cancel-btn"
+                          className="approve-cancel-btn"
                           onClick={() => {
                             setActionType("Rejection");
                             setShowReasonModal(true);
@@ -449,10 +472,10 @@ const LeaveApproval = () => {
 
 
         {showReasonModal && (
-          <div className="modal-overlay">
+          <div className="reason-modal-overlay">
             <div className="reason-modal">
               <button
-                className="close-btn"
+                className="reason-close-btn"
                 onClick={() => setShowReasonModal(false)}
               >
                 ×
@@ -466,9 +489,9 @@ const LeaveApproval = () => {
                 onChange={(e) => setApprovalReason(e.target.value)}
               />
               <small>maximum character limit 250</small>
-              <div className="modal-actions">
+              <div className="reason-modal-actions">
                 <button
-                  className="apply-btn"
+                  className="reason-apply-btn"
                   onClick={async () => {
                     try {
                       const endpoint =
@@ -501,7 +524,7 @@ const LeaveApproval = () => {
                   Submit
                 </button>
                 <button
-                  className="cancel-btn"
+                  className="reason-cancel-btn"
                   onClick={() => setShowReasonModal(false)}
                 >
                   Cancel
@@ -513,10 +536,10 @@ const LeaveApproval = () => {
 
         {/* SUCCESS MODAL */}
         {showSuccessModal && (
-          <div className="modal-overlay">
+          <div className="success-modal-overlay">
             <div className="success-modal">
               <button
-                className="close-btn"
+                className="success-close-btn"
                 onClick={() => {
                   setShowSuccessModal(false);
                   setShowModal(false);

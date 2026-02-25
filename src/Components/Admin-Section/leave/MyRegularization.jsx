@@ -1,366 +1,509 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./MyRegularization.css";
-import { FaEdit, FaTimesCircle, FaFilter } from "react-icons/fa";
+import { FaEdit, FaTimesCircle, FaFilter, FaUpload } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import illustration from "../../../assets/timemgnt.png";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
+import axios from "axios";
 
 export default function MyRegularization() {
-  const [showModal, setShowModal] = useState(false);
-  const [showFilterPopup, setShowFilterPopup] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // Filter states
-  const [filterName, setFilterName] = useState("");
-  const [filterLeaveType, setFilterLeaveType] = useState("All");
-  const [filterStatus, setFilterStatus] = useState("All");
-  
-  const filterRef = useRef(null);
-  const filterButtonRef = useRef(null);
-  
-  const regularizationData = [
-    {
-      id: 1,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      attendanceType: "Present",
-      date: "11-07-2025/Half Day(AN)",
-      reason: "Forgot Clock In",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Approved",
-    },
-    {
-      id: 4,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Approved",
-    },
-    {
-      id: 5,
-      attendanceType: "Present",
-      date: "11-07-2025/Full Day",
-      reason: "Forgot Clock Out",
-      status: "Approved",
-    },
-  ];
-  
-  const navigate = useNavigate();
+	const [showModal, setShowModal] = useState(false);
+	const [showFilterPopup, setShowFilterPopup] = useState(false);
+	const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredAndSortedLeaves = regularizationData
-    .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus
-    );
+	// Filter states
+	const [filterName, setFilterName] = useState("");
+	const [filterLeaveType, setFilterLeaveType] = useState("All");
+	const [filterStatus, setFilterStatus] = useState("All");
 
-  const handleResetFilter = () => {
-    setFilterName("");
-    setFilterLeaveType("All");
-    setFilterStatus("All");
-  };
+	const filterRef = useRef(null);
+	const filterButtonRef = useRef(null);
 
-  const handleApplyFilter = () => {
-    setShowFilterPopup(false);
-  };
+	const [regularizationData, setRegularizationData] = useState([]);
 
-  // Close filter popup when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        showFilterPopup &&
-        filterRef.current &&
-        !filterRef.current.contains(event.target) &&
-        filterButtonRef.current &&
-        !filterButtonRef.current.contains(event.target)
-      ) {
-        setShowFilterPopup(false);
-      }
-    };
+	const navigate = useNavigate();
+	const [formData, setFormData] = useState({
+		user_id: "",
+		date: "",
+		session_type: "Full Day",
+		attendance_type: "Present",
+		reason: "",
+	});
+	const [isEdit, setIsEdit] = useState(false);
+	const [editId, setEditId] = useState(null);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showFilterPopup]);
+	useEffect(() => {
+		const fetchMyRegularizations = async () => {
+			try {
+				const userId = sessionStorage.getItem("current_user_id");
+				const userRole = sessionStorage.getItem("current_role");
+				if (!userId) return;
 
-  useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+				const response = await axios.get(
+					"http://127.0.0.1:5001/api/myregularization",
+					{
+						headers: {
+							"X-User-ID": userId,
+							"X-User-Role": userRole,
+						},
+					},
+				);
 
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [showModal]);
+				setRegularizationData(response.data);
+			} catch (error) {
+				console.error("Error fetching admin regularization data:", error);
+			}
+		};
 
-  return (
-    <div className="layout">
-      <div className="rightside-logo">
-        <img src={group10} alt="logo" className="rightside-logos" />
-      </div>
-      <AdminSidebar />
-      <div className="regularization-container">
-        <Topbar />
-        <h2 className="page-title">My Regularization Listing</h2>
+		fetchMyRegularizations();
+	}, []);
 
-        {/* Action Buttons */}
-        <div className="regularization-actions">
-          <button
-            className="btn-regularization-add"
-            onClick={() => setShowModal(true)}
-          >
-            + Add Regularization
-          </button>
-          <button
-            className="btn-my-leaves"
-            onClick={() => navigate("/admin-my-leave")}
-          >
-            My Leaves
-          </button>
-          
-          {/* Filter Button with Dropdown */}
-          <div className="filter-wrapper" style={{ position: 'relative' }}>
-            <button
-              ref={filterButtonRef}
-              className="right-butn-filters"
-              onClick={() => setShowFilterPopup(!showFilterPopup)}
-            >
-              <FaFilter /> Filter
-            </button>
+	const filteredAndSortedLeaves = regularizationData.filter((leave) =>
+		filterStatus === "All" ? true : leave.status === filterStatus,
+	);
 
-            {/* Filter Dropdown */}
-            {showFilterPopup && (
-              <div ref={filterRef} className="filter-dropdown-box">
-                {/* Header */}
-                <div className="filter-popup-header">
-                  <h3>Filter</h3>
-                  <button
-                    className="filter-popup-close"
-                    onClick={() => setShowFilterPopup(false)}
-                  >
-                    <IoClose />
-                  </button>
-                </div>
+	const handleResetFilter = () => {
+		setFilterName("");
+		setFilterLeaveType("All");
+		setFilterStatus("All");
+	};
 
-                {/* Body */}
-                <div className="filter-popup-body">
-                  {/* Name Field */}
-                  <div className="filter-field">
-                    <label>Name</label>
-                    <input
-                      type="text"
-                      placeholder="Please enter name"
-                      value={filterName}
-                      onChange={(e) => setFilterName(e.target.value)}
-                    />
-                  </div>
+	const handleApplyFilter = () => {
+		setShowFilterPopup(false);
+	};
 
-                  {/* Leave Type and Status Row */}
-                  <div className="filter-row">
-                    <div className="filter-field">
-                      <label>Leave Type</label>
-                      <select
-                        value={filterLeaveType}
-                        onChange={(e) => setFilterLeaveType(e.target.value)}
-                      >
-                        <option value="All">All</option>
-                        <option value="Full Day">Full Day</option>
-                        <option value="Half Day(FN)">Half Day(FN)</option>
-                        <option value="Half Day(AN)">Half Day(AN)</option>
-                      </select>
-                    </div>
+	// Close filter popup when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (
+				showFilterPopup &&
+				filterRef.current &&
+				!filterRef.current.contains(event.target) &&
+				filterButtonRef.current &&
+				!filterButtonRef.current.contains(event.target)
+			) {
+				setShowFilterPopup(false);
+			}
+		};
 
-                    <div className="filter-field">
-                      <label>Status</label>
-                      <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                      >
-                        <option value="All">All</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [showFilterPopup]);
 
-                {/* Footer */}
-                <div className="filter-popup-footer">
-                  <button className="filter-reset-btn" onClick={handleResetFilter}>
-                    Reset
-                  </button>
-                  <button className="filter-apply-btn" onClick={handleApplyFilter}>
-                    Apply
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+	useEffect(() => {
+		if (showModal) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "auto";
+		}
 
-        {/* Regularization Table */}
-        <div className="regularization-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Sl No</th>
-                <th>Attendance Type</th>
-                <th>Date</th>
-                <th>Reason</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAndSortedLeaves.map((row, index) => (
-                <tr key={row.id}>
-                  <td>{String(index + 1).padStart(2, "0")}</td>
-                  <td>{row.attendanceType}</td>
-                  <td>{row.date}</td>
-                  <td>{row.reason}</td>
-                  <td>
-                    <span
-                      className={`status-badge ${
-                        row.status === "Approved"
-                          ? "approved"
-                          : row.status === "Pending"
-                          ? "pending"
-                          : "rejected"
-                      }`}
-                    >
-                      {row.status}
-                    </span>
-                  </td>
-                  <td className="action-icons">
-                    <FaEdit className="edit-icon" />
-                    <FaTimesCircle className="delete-icon" />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+		return () => {
+			document.body.style.overflow = "auto";
+		};
+	}, [showModal]);
 
-        {/* Pagination */}
-        <div className="pagination">
-          <span>Showing</span>
-          <select>
-            <option>07</option>
-            <option>10</option>
-            <option>15</option>
-          </select>
-          <div className="page-controls">
-            <button>Prev</button>
-            <button className="active">01</button>
-            <button>Next</button>
-          </div>
-        </div>
+	const handleSubmitRegularization = async () => {
+		const userId = sessionStorage.getItem("current_user_id");
+		const userRole = sessionStorage.getItem("current_role");
+		console.log(userId);
+		try {
+			if (isEdit) {
+				// ✏️ EDIT
+				await axios.put(
+					`http://127.0.0.1:5001/api/regularization/${editId}`,
+					formData,
+					{ headers: { "X-User-ID": userId, "X-User-Role": userRole } },
+				);
 
-        {/* Add Regularization Modal */}
-{/* Add Regularization Modal */}
-{showModal && (
-  <div className="regularization-overlay">
-    <div className="regularization-modal-exact">
-      {/* Header */}
-      <div className="regularization-header-exact">
-        <h3>Add Regularization</h3>
-        <button
-          className="regularization-close-exact"
-          onClick={() => setShowModal(false)}
-        >
-          ✕
-        </button>
-      </div>
+				alert("Regularization updated successfully");
+			} else {
+				// ➕ ADD
+				await axios.post(
+					"http://localhost:5001/api/admin/regularization",
+					formData,
+					{
+						headers: { "X-User-ID": userId, "X-User-Role": userRole },
+					},
+				);
 
-      {/* Body */}
-      <div className="regularization-body-exact">
-        <div className="regularization-form-exact">
-          {/* Left Form Section */}
-          <div className="regularization-left-exact">
-            <div className="form-row-exact">
-              <label>Employee ID:</label>
-              <input type="text" defaultValue="Aiswarya(100234)" />
-            </div>
+				alert("Regularization added successfully");
+			}
 
-            <div className="form-row-exact">
-              <label>Leave Type:</label>
-              <select>
-                <option>Full Day</option>
-                <option>Half Day (FN)</option>
-                <option>Half Day (AN)</option>
-              </select>
-            </div>
+			// Reset modal & state
+			setShowModal(false);
+			setIsEdit(false);
+			setEditId(null);
+			setFormData({
+				user_id:
+					localStorage.getItem("employee_user_id") ||
+					sessionStorage.getItem("current_user_id"),
+				date: "",
+				session_type: "Full Day",
+				attendance_type: "Present",
+				reason: "",
+			});
 
-            <div className="form-row-exact">
-              <label>Select Date:</label>
-              <div className="date-input-wrapper-exact">
-                <input type="text" placeholder="DD-MM-YYYY" />
-                <span className="calendar-icon-exact">📅</span>
-              </div>
-            </div>
+			// Refresh table
+			const res = await axios.get(
+				"http://127.0.0.1:5001/api/myregularization",
+				{ headers: { "X-User-ID": userId, "X-User-Role": userRole } },
+			);
+			setRegularizationData(res.data);
+		} catch (error) {
+			alert(
+				error.response?.data?.message ||
+					"Something went wrong. Please try again.",
+			);
+		}
+	};
 
-            <div className="form-row-exact">
-              <label>Attendance</label>
-              <select>
-                <option>Present</option>
-                <option>Absent</option>
-              </select>
-            </div>
+	const handleEdit = (row) => {
+		if (row.status !== "Pending") return;
 
-            <div className="form-row-exact">
-              <label>Reason:</label>
-              <div className="textarea-wrapper-exact">
-                <textarea
-                  placeholder="ex: Forgot to Clock In"
-                  maxLength={30}
-                ></textarea>
-                <span className="char-count-exact">30/30</span>
-              </div>
-            </div>
-          </div>
+		setIsEdit(true);
+		setEditId(row.id);
 
-          {/* Right Image Section */}
-          <div className="regularization-right-exact">
-            <img src={illustration} alt="Regularization Illustration" />
-          </div>
-        </div>
-      </div>
+		setFormData({
+			user_id:
+				localStorage.getItem("employee_user_id") ||
+				sessionStorage.getItem("current_user_id"),
+			date: row.date.split("/")[0].split("-").reverse().join("-"),
+			session_type: row.date.split("/")[1] || "Full Day",
+			attendance_type: row.attendanceType,
+			reason: row.reason,
+		});
 
-      {/* Footer */}
-      <div className="regularization-footer-exact">
-        <button
-          className="regularization-submit-exact"
-          onClick={() => setShowModal(false)}
-        >
-          Submit
-        </button>
-        <button
-          className="regularization-cancel-exact"
-          onClick={() => setShowModal(false)}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-      </div>
-    </div>
-  );
+		setShowModal(true);
+	};
+
+	const handleDelete = async (id, status) => {
+		if (status !== "Pending") return;
+
+		if (!window.confirm("Delete this regularization?")) return;
+
+		const userId = sessionStorage.getItem("current_user_id");
+
+		await axios.delete(`http://127.0.0.1:5001/api/regularization/${id}`, {
+			headers: { "X-User-ID": userId },
+		});
+
+		setRegularizationData((prev) => prev.filter((item) => item.id !== id));
+	};
+
+	return (
+		<div className="layout">
+			<div className="rightside-logo">
+				<img src={group10} alt="logo" className="rightside-logos" />
+			</div>
+			<AdminSidebar />
+			<div className="regularization-container">
+				<Topbar />
+				<h2 className="page-title">My Regularization Listing</h2>
+
+				{/* Action Buttons */}
+				<div className="regularization-actions">
+					<button
+						className="btn-regularization-add"
+						onClick={() => {
+							setFormData({
+								user_id:
+									localStorage.getItem("employee_user_id") ||
+									sessionStorage.getItem("current_user_id"),
+								date: "",
+								session_type: "Full Day",
+								attendance_type: "Present",
+								reason: "",
+							});
+							setShowModal(true);
+						}}
+					>
+						+ Add Regularization
+					</button>
+					<button
+						className="btn-my-leaves"
+						onClick={() => navigate("/admin-my-leave")}
+					>
+						My Leaves
+					</button>
+
+					{/* Filter Button with Dropdown */}
+					<div className="filter-wrapper" style={{ position: "relative" }}>
+						<button
+							ref={filterButtonRef}
+							className="right-butn-filters"
+							onClick={() => setShowFilterPopup(!showFilterPopup)}
+						>
+							<FaFilter /> Filter
+						</button>
+
+						{/* Filter Dropdown */}
+						{showFilterPopup && (
+							<div ref={filterRef} className="filter-dropdown-box">
+								{/* Header */}
+								<div className="filter-popup-header">
+									<h3>Filter</h3>
+									<button
+										className="filter-popup-close"
+										onClick={() => setShowFilterPopup(false)}
+									>
+										<IoClose />
+									</button>
+								</div>
+
+								{/* Body */}
+								<div className="filter-popup-body">
+									{/* Name Field */}
+									<div className="filter-field">
+										<label>Name</label>
+										<input
+											type="text"
+											placeholder="Please enter name"
+											value={filterName}
+											onChange={(e) => setFilterName(e.target.value)}
+										/>
+									</div>
+
+									{/* Leave Type and Status Row */}
+									<div className="filter-row">
+										<div className="filter-field">
+											<label>Leave Type</label>
+											<select
+												value={filterLeaveType}
+												onChange={(e) => setFilterLeaveType(e.target.value)}
+											>
+												<option value="All">All</option>
+												<option value="Full Day">Full Day</option>
+												<option value="Half Day(FN)">Half Day(FN)</option>
+												<option value="Half Day(AN)">Half Day(AN)</option>
+											</select>
+										</div>
+
+										<div className="filter-field">
+											<label>Status</label>
+											<select
+												value={filterStatus}
+												onChange={(e) => setFilterStatus(e.target.value)}
+											>
+												<option value="All">All</option>
+												<option value="Pending">Pending</option>
+												<option value="Approved">Approved</option>
+												<option value="Rejected">Rejected</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								{/* Footer */}
+								<div className="filter-popup-footer">
+									<button
+										className="filter-reset-btn"
+										onClick={handleResetFilter}
+									>
+										Reset
+									</button>
+									<button
+										className="filter-apply-btn"
+										onClick={handleApplyFilter}
+									>
+										Apply
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				</div>
+
+				{/* Regularization Table */}
+				<div className="regularization-table">
+					<table>
+						<thead>
+							<tr>
+								<th>Sl No</th>
+								<th>Attendance Type</th>
+								<th>Date</th>
+								<th>Reason</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{filteredAndSortedLeaves.map((row, index) => (
+								<tr key={row.id}>
+									<td>{String(index + 1).padStart(2, "0")}</td>
+									<td>{row.attendanceType}</td>
+									<td>{row.date}</td>
+									<td>{row.reason}</td>
+									<td>
+										<span
+											className={`status-badge ${
+												row.status === "Approved"
+													? "approved"
+													: row.status === "Pending"
+														? "pending"
+														: "rejected"
+											}`}
+										>
+											{row.status}
+										</span>
+									</td>
+									<td className="action-icons">
+										{row.status === "Pending" ? (
+											<>
+												<FaEdit
+													className="edit-icon"
+													onClick={() => handleEdit(row)}
+												/>
+												<FaTimesCircle
+													className="delete-icon"
+													onClick={() => handleDelete(row.id, row.status)}
+												/>
+											</>
+										) : (
+											<span className="disabled-text">—</span>
+										)}
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+
+				{/* Pagination */}
+				<div className="pagination">
+					<span>Showing</span>
+					<select>
+						<option>07</option>
+						<option>10</option>
+						<option>15</option>
+					</select>
+					<div className="page-controls">
+						<button>Prev</button>
+						<button className="active">01</button>
+						<button>Next</button>
+					</div>
+				</div>
+
+				{/* Add Regularization Modal */}
+				{/* Add Regularization Modal */}
+				{showModal && (
+					<div className="regularization-overlay">
+						<div className="regularization-modal-exact">
+							{/* Header */}
+							<div className="regularization-header-exact">
+								<h3>Add Regularization</h3>
+								<button
+									className="regularization-close-exact"
+									onClick={() => setShowModal(false)}
+								>
+									✕
+								</button>
+							</div>
+
+							{/* Body */}
+							<div className="regularization-body-exact">
+								<div className="regularization-form-exact">
+									{/* Left Form Section */}
+									<div className="regularization-left-exact">
+										<div className="form-row-exact">
+											<label>Employee ID:</label>
+											<input type="text" value={formData.user_id} readOnly />
+										</div>
+
+										<div className="form-row-exact">
+											<label>Leave Type:</label>
+											<select
+												value={formData.session_type}
+												onChange={(e) =>
+													setFormData({
+														...formData,
+														session_type: e.target.value,
+													})
+												}
+											>
+												<option>Full Day</option>
+												<option>Half Day (FN)</option>
+												<option>Half Day (AN)</option>
+											</select>
+										</div>
+
+										<div className="form-row-exact">
+											<label>Select Date:</label>
+											<div className="date-input-wrapper-exact">
+												<input
+													type="date"
+													placeholder="DD-MM-YYYY"
+													value={formData.date}
+													onChange={(e) =>
+														setFormData({ ...formData, date: e.target.value })
+													}
+												/>
+												<span className="calendar-icon-exact">📅</span>
+											</div>
+										</div>
+
+										<div className="form-row-exact">
+											<label>Attendance</label>
+											<select
+												value={formData.attendance_type}
+												onChange={(e) =>
+													setFormData({
+														...formData,
+														attendance_type: e.target.value,
+													})
+												}
+											>
+												<option>Present</option>
+												<option>Absent</option>
+											</select>
+										</div>
+
+										<div className="form-row-exact">
+											<label>Reason:</label>
+											<div className="textarea-wrapper-exact">
+												<textarea
+													placeholder="ex: Forgot to Clock In"
+													maxLength={30}
+													value={formData.reason}
+													onChange={(e) =>
+														setFormData({ ...formData, reason: e.target.value })
+													}
+												></textarea>
+												<span className="char-count-exact">30/30</span>
+											</div>
+										</div>
+									</div>
+
+									{/* Right Image Section */}
+									<div className="regularization-right-exact">
+										<img src={illustration} alt="Regularization Illustration" />
+									</div>
+								</div>
+							</div>
+
+							{/* Footer */}
+							<div className="regularization-footer-exact">
+								<button
+									className="regularization-submit-exact"
+									onClick={handleSubmitRegularization}
+								>
+									Submit
+								</button>
+								<button
+									className="regularization-cancel-exact"
+									onClick={() => setShowModal(false)}
+								>
+									Cancel
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+		</div>
+	);
 }

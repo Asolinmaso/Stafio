@@ -13,7 +13,7 @@ import Topbar from "../Topbar";
 import illustration from "../../../assets/Formsbro.png"; // Add your illustration image
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
-
+import axios from "axios";
 
 export default function Myleave() {
   const [showModal, setShowModal] = useState(false);
@@ -25,28 +25,65 @@ export default function Myleave() {
   const [filterStatus, setFilterStatus] = useState("All")
 
 
+  const [leaveBalance, setLeaveBalance] = useState([]);
+  const [leaveData, setLeaveData] = useState([]);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    employee_id: "",
+    leave_type: "",
+    start_date: "",
+    end_date: "",
+    day_type: "Full Day",
+    notify_to: "",
+    reason: "",
+  });
+
   const filterRef = useRef(null);
   const filterButtonRef = useRef(null);
 
-  const leaveData = [
-    {
-      id: 1,
-      type: "Sick Leave 1 Day(s)",
-      date: "11-07-2025/Full Day",
-      reason: "Hospital Case",
-      requestDate: "11-07-2025",
-      status: "Approved",
-    },
-    {
-      id: 2,
-      type: "Casual Leave 2 Day(s)",
-      date: "12-07-2025/Full Day",
-      reason: "Family Function",
-      requestDate: "12-07-2025",
-      status: "Approved",
-    },
-  ];
-   const navigate = useNavigate();
+const fetchMyLeaves = async () => {
+    try {
+      const userId = sessionStorage.getItem("current_user_id");
+
+      if (!userId) return;
+
+      const response = await axios.get("http://127.0.0.1:5001/api/myleave", {
+        headers: {
+          "X-User-ID": userId,
+          "X-User-Role": "admin", // optional but safe
+        },
+      });
+
+      setLeaveData(response.data);
+
+      // 🔹 Fetch leave balance (SAME AS EMPLOYEE)
+      const balanceResponse = await axios.get(
+        "http://127.0.0.1:5001/api/leave_balance",
+        {
+          headers: {
+            "X-User-ID": userId,
+          },
+        },
+      );
+      setLeaveBalance(balanceResponse.data);
+    } catch (error) {
+      console.error("Error fetching admin leave data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMyLeaves();
+  }, []);
+
+   useEffect(() => {
+    if (showModal) {
+      const userId = sessionStorage.getItem("current_user_id");
+      setFormData((prev) => ({
+        ...prev,
+        employee_id: userId || "",
+      }));
+    }
+  }, [showModal]);
 
 const filteredAndSortedLeaves = leaveData.filter((leave) =>
 
@@ -63,6 +100,51 @@ const filteredAndSortedLeaves = leaveData.filter((leave) =>
 
   const handleApplyFilter = () => {
     setShowFilterPopup(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const userId = sessionStorage.getItem("current_user_id");
+      const userRole = sessionStorage.getItem("current_role");
+
+      await axios.post(
+        "http://localhost:5001/api/admin/leave-requests",
+        {
+          employee_id: formData.employee_id,
+          leave_type_id: formData.leave_type,
+          start_date: formData.start_date,
+          end_date: formData.end_date,
+          notify_to: formData.notify_to,
+          day_type: formData.day_type === "Full Day" ? "full_day" : "half_day",
+          reason: formData.reason,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-User-ID": userId,
+            "X-User-Role": userRole,
+          },
+        },
+      );
+
+      alert("Leave applied successfully ✅");
+      setShowModal(false);
+      // 🔥 Refresh table
+      fetchMyLeaves();
+    } catch (error) {
+      console.error("Error applying leave:", error);
+      alert("Failed to apply leave ❌");
+    }
   };
   
     // Close filter popup when clicking outside
@@ -112,30 +194,29 @@ useEffect(() => {
         {/* Header Section */}
         <div className="leave-header">
           <div className="leave-summary">
-            <div className="summary-card">
-              <FaCheckCircle className="summary-icon" />
-              <p>
-                <strong>6/7 Day(s)</strong>
-                <br />
-                Casual Leave
-              </p>
-            </div>
-            <div className="summary-card">
-              <FaCheckCircle className="summary-icon" />
-              <p>
-                <strong>7/8 Day(s)</strong>
-                <br />
-                Annual Leave
-              </p>
-            </div>
-            <div className="summary-card">
-              <FaCheckCircle className="summary-icon" />
-              <p>
-                <strong>3/5 Day(s)</strong>
-                <br />
-                Sick Leave
-              </p>
-            </div>
+             {leaveBalance.length > 0 ? (
+              leaveBalance.slice(0, 3).map((balance) => (
+                <div className="summary-card" key={balance.id}>
+                  <FaCheckCircle className="summary-icon" />
+                  <p>
+                    <strong>
+                      {balance.remaining}/{balance.total} Day(s)
+                    </strong>
+                    <br />
+                    {balance.name}
+                  </p>
+                </div>
+              ))
+            ) : (
+           <div className="summary-card">
+                <FaCheckCircle className="summary-icon" />
+                <p>
+                  <strong>Loading...</strong>
+                  <br />
+                  Leave Balance
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Right - Buttons */}
@@ -280,33 +361,61 @@ useEffect(() => {
               </div>
 
               <div className="app-leave-modal-body">
-                <form className="apply-leave-form">
+                <form className="apply-leave-form" onSubmit={handleSubmit}>
                   <div className="form-left">
                     <label>Employee ID:</label>
-                    <input type="text"  />
+                    <input 
+                    type="text"
+                    name="employee_id"
+                    value={formData.employee_id}
+                    readOnly 
+                    />
 
                     <label>Leave Type:</label>
-                    <select>
-                      <option>Select</option>
-                      <option>Casual Leave</option>
-                      <option>Sick Leave</option>
-                      <option>Annual Leave</option>
+                    <select
+                      name="leave_type"
+                      value={formData.leave_type}
+                      onChange={handleChange}
+                      >
+                      <option value="">Select</option>
+                      <option value="1">Casual Leave</option>
+                      <option value="2">Sick Leave</option>
+                      <option value="3">Annual Leave</option>
                     </select>
 
                     <label>Select Date:</label>
                     <div className="app-leave-date-row">
-                      <input type="date" />
-                      <input type="date" />
-                      <select>
-                        <option>Full Day</option>
-                        <option>Half Day (FN)</option>
-                        <option>Half Day (AN)</option>
+                      <input 
+                        type="date" 
+                        name="start_date"
+                        value={formData.start_date}
+                        onChange={handleChange}
+                      />
+                      <input 
+                        type="date"
+                        name="end_date"
+                        value={formData.end_date}
+                        onChange={handleChange}
+                       />
+                      <select
+                        name="day_type"
+                        value={formData.day_type}
+                        onChange={handleChange}
+                        >
+                        <option value="Full Day">Full Day</option>
+                        <option value="Half Day (FN)">Half Day (FN)</option>
+                        <option value="Half Day (AN)">Half Day (AN)</option>
                       </select>
                     </div>
 
                     <label>Notify Others:</label>
                     <div className="app-leave-notify-row">
-                      <select>
+                      <select
+                        name="notify_to"
+                        value={formData.notify_to}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select</option>
                         <option>Team Lead</option>
                         <option>HR</option>
                       </select>
@@ -317,6 +426,9 @@ useEffect(() => {
 
                     <label>Reason:</label>
                     <textarea
+                      name="reason"
+                      value={formData.reason}
+                      onChange={handleChange}
                       placeholder="ex: I am travelling to"
                       maxLength={30}
                     ></textarea>
