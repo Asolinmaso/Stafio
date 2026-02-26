@@ -1,0 +1,100 @@
+/* Global Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #A5F3FF;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #19BDE8;
+}
+
+/* Firefox support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #A5F3FF transparent;
+}
+
+/* Global Layout for Fixed Sidebar & Scrollable Content */
+.employee-page,
+.dashboard-wrapper,
+.attendance-layout,
+.performance-layout,
+.letter-generation-layout,
+.leave-approval-layout,
+.admin-broadcast-layout,
+.payroll-layout,
+.regularization-approval-layout,
+.leave-policies-layout,
+.who-is-on-leave-layout,
+.admin-settings-layout,
+.report-layout,
+.att-report-layout,
+.leave-report-layout,
+.layout,
+.myteam-layout,
+.ra-page,
+.d-flex:has(.sidebar),
+.admin-page-container {
+    display: flex !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    overflow: hidden !important;
+    background-color: #eff5ff;
+}
+
+.employee-main,
+.main-content,
+.main-content5,
+.attendance-main,
+.performance-main,
+.letter-generation-main,
+.leave-approval-main,
+.admin-broadcast-main,
+.payroll-main,
+.regularization-approval-main,
+.leave-policies-main,
+.who-is-on-leave-main,
+.admin-settings-main,
+.report-main,
+.att-report-main,
+.leave-report-main,
+.attendance-content,
+.myteam-main,
+.ra-main,
+.admin-main-content {
+    flex: 1 !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-top: 0 !important;
+    /* Force flush with sticky topbar */
+}
+
+/* Ensure Topbar sits at the very top without gaps */
+.topbar {
+    margin: 0 !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    /* Premium flat look at top */
+    border-bottom: 1px solid #eef3ff;
+}
+
+
+
+
+/* Sidebar Specific Scrollable Content Area */
+.sidebar-scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

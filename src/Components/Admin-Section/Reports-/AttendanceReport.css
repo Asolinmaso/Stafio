@@ -7,13 +7,6 @@
 
 .att-report-main {
   flex: 1;
-  padding: 20px 30px;
-}
-
-.att-report-main .topbar{
-  margin-top: 10px !important;
-  width: 99%;
-  margin-left: 1px !important;
 }
 
 /* ===== Header ===== */
@@ -36,8 +29,8 @@
   border-radius: 8px;
   font-size: 14px;
   background: transparent;
-  margin-left:20px;
- 
+  margin-left: 20px;
+
 }
 
 /* ===== Filter Bar ===== */
@@ -47,7 +40,7 @@
   align-items: center;
   gap: 12px;
   margin: 10px 0 15px 0;
-   
+
 }
 
 .att-report-search-box {
@@ -55,14 +48,14 @@
 }
 
 
-input.search-input2{
-   padding: 8px 10px;
+input.search-input2 {
+  padding: 8px 10px;
   border: 1px solid #c3c5c7;
- 
+
   border-radius: 10px;
   font-size: 14px;
   outline: none;
-background: transparent;
+  background: transparent;
   width: 220px;
 }
 
@@ -79,7 +72,7 @@ background: transparent;
   align-items: center;
   gap: 6px;
   border: 1px solid #c3c5c7;
-   background: transparent;
+  background: transparent;
   border-radius: 16px;
   padding: 10px 16px;
   color: #5a5858;
@@ -95,7 +88,7 @@ background: transparent;
   border-radius: 16px;
   padding: 10px 16px;
   color: #5a5858;
-   background: transparent;
+  background: transparent;
 }
 
 /* ===== Table Wrapper ===== */
@@ -128,7 +121,7 @@ background: transparent;
 
 .header-report-search {
   position: relative;
-  
+
 }
 
 .header-report-search input {
@@ -157,7 +150,7 @@ background: transparent;
   color: #64748b;
   font-size: 14px;
   background: #fff;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .att-report-download-btn {
@@ -182,7 +175,7 @@ background: transparent;
 .att-report-table td {
   padding: 20px 20px;
   font-size: 14px;
-  
+
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
 }
@@ -222,7 +215,7 @@ background: transparent;
 }
 
 .att-report-status.late-login {
-   color: #eab308;
+  color: #eab308;
 }
 
 /* ===== Pagination ===== */
@@ -269,6 +262,7 @@ background: transparent;
   color: #fff;
   border: 1px solid #19bde8;
 }
+
 /* ============================= */
 /* Filter Popup like uploaded UI */
 /* ============================= */
@@ -355,6 +349,7 @@ background: transparent;
   font-weight: 600;
   cursor: pointer;
 }
+
 /* ============================= */
 /* Attendance Overview - Header Controls UI Fix */
 /* ============================= */
@@ -369,7 +364,8 @@ background: transparent;
 .att-header-search {
   width: 580px;
   height: 42px;
-  padding: 10px 14px 10px 42px; /* left space for icon */
+  padding: 10px 14px 10px 42px;
+  /* left space for icon */
   border: 1px solid #c3c5c7;
   border-radius: 10px;
   outline: none;
@@ -466,7 +462,8 @@ background: transparent;
 /* Search wrapper inside card */
 .att-overview-search {
   position: relative;
-  width: 420px; /* 2nd image maari long */
+  width: 420px;
+  /* 2nd image maari long */
 }
 
 .att-overview-search input {
@@ -523,4 +520,3 @@ background: transparent;
 .att-download-btn:hover {
   background: #0284c7;
 }
-

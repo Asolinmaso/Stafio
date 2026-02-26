@@ -1,5 +1,5 @@
-  import React, { useState, useEffect, useRef } from "react";
-import { FaCheckCircle, FaFilter, FaEdit, FaTimesCircle } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from "react";
+import { FaCheckCircle, FaFilter, FaEdit, FaTimesCircle, FaCircleNotch, FaSearch } from "react-icons/fa";
 import "./LeaveApproval.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
@@ -50,7 +50,7 @@ const LeaveApproval = () => {
     fetchLeaveapprova();
   }, []);
 
-    // Auto-close success modal after 2 seconds
+  // Auto-close success modal after 2 seconds
   useEffect(() => {
     if (showSuccessModal) {
       const timer = setTimeout(() => {
@@ -113,7 +113,7 @@ const LeaveApproval = () => {
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
-    const pendingCount = leaves.filter(
+  const pendingCount = leaves.filter(
     (leave) => leave.status === "Pending",
   ).length;
   const approvedCount = leaves.filter(
@@ -141,29 +141,29 @@ const LeaveApproval = () => {
         <div className="leave-header">
           <div className="leave-summary">
             <div className="summary-card-leave">
-              <FaCheckCircle className="summary-icon" />
+              <FaCircleNotch className="summary-icon pending" />
               <p>
-                <strong>{pendingCount} Request Pending</strong>
+                <strong>{pendingCount < 10 ? `0${pendingCount}` : pendingCount} Request Pending</strong>
                 <br />
-                Awaiting
+                <span className="sub-text">Awaiting Approval</span>
               </p>
             </div>
 
             <div className="summary-card-leave">
-              <FaCheckCircle className="summary-icon" />
+              <FaCheckCircle className="summary-icon approved" />
               <p>
-                <strong>{approvedCount} Request Approved</strong>
+                <strong>{approvedCount < 10 ? `0${approvedCount}` : approvedCount} Request Approved</strong>
                 <br />
-                In this Month
+                <span className="sub-text">In this Month</span>
               </p>
             </div>
 
             <div className="summary-card-leave">
-              <FaCheckCircle className="summary-icon" />
+              <FaTimesCircle className="summary-icon rejected" />
               <p>
-                <strong>{rejectedCount} Request Rejected</strong>
+                <strong>{rejectedCount < 10 ? `0${rejectedCount}` : rejectedCount} Request Rejected</strong>
                 <br />
-                In this Month
+                <span className="sub-text">In this month</span>
               </p>
             </div>
           </div>
@@ -171,7 +171,7 @@ const LeaveApproval = () => {
           {/* Right Side Actions */}
           <div className="right-leave-actions">
             <div className="right-top-buttons">
-              <button className="right-btn-apply">All</button>
+              <button className="right-btn-apply active">All</button>
               <button
                 onClick={() => navigate("/myTeam-LeaveApproval")}
                 className="right-btn-regularization"
@@ -182,18 +182,21 @@ const LeaveApproval = () => {
 
             {/* Search + Filter + Sort */}
             <div className="right-bottom-button">
-              <input
-                type="text"
-                placeholder="🔍 Search..."
-                className="right-search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <div className="search-wrapper">
+                <FaSearch className="search-icon-inside" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="right-search-input-new"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
               {/* FILTER WRAPPER (IMPORTANT) */}
               <div className="filter-wrapper" ref={filterPopupRef}>
                 <button
-                  className="right-btn-filter"
+                  className="right-btn-filter-new"
                   onClick={() => setShowFilterPopup((prev) => !prev)}
                 >
                   <FaFilter /> Filter
@@ -271,7 +274,7 @@ const LeaveApproval = () => {
 
               {/* SORT */}
               <select
-                className="right-sort-select"
+                className="right-sort-select-new"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
               >
@@ -384,53 +387,53 @@ const LeaveApproval = () => {
                 <form className="approve-leave-form">
                   <div className="form-left">
                     <div className="form-row">
-                    <label>Employee ID:</label>
-                    <input type="text" value={selectedLeave.id} readOnly />
+                      <label>Employee ID:</label>
+                      <input type="text" value={selectedLeave.id} readOnly />
                     </div>
 
                     <div className="form-row">
-                    <label>Leave Type:</label>
-                    <input type="text" value={selectedLeave.type} readOnly />
+                      <label>Leave Type:</label>
+                      <input type="text" value={selectedLeave.type} readOnly />
                     </div>
 
                     <div className="form-row">
-                    <label>Date Of Leave:</label>
-                    <div className="date-row">
-                      <div className="date-item">
-                        <p>From</p>
-                        <input type="text" value={selectedLeave.from} readOnly />
-                      </div>
+                      <label>Date Of Leave:</label>
+                      <div className="date-row">
+                        <div className="date-item">
+                          <p>From</p>
+                          <input type="text" value={selectedLeave.from} readOnly />
+                        </div>
 
-                      <div className="date-item">
-                        <p>To</p>
-                        <input type="text" value={selectedLeave.to} readOnly />
-                      </div>
+                        <div className="date-item">
+                          <p>To</p>
+                          <input type="text" value={selectedLeave.to} readOnly />
+                        </div>
 
-                      <div className="date-item">
-                        <p>Session</p>
-                        <input
-                          type="text"
-                          value={selectedLeave.session}
-                          readOnly
-                        />
+                        <div className="date-item">
+                          <p>Session</p>
+                          <input
+                            type="text"
+                            value={selectedLeave.session}
+                            readOnly
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
                     <div className="form-row">
-                    <label>Notify Others:</label>
-                    <input type="text" value={selectedLeave.notify} readOnly />
-                    <input
-                      type="text"
-                      className="document-input"
-                      value={selectedLeave.document || "No File Uploaded"}
-                      readOnly
-                    />
+                      <label>Notify Others:</label>
+                      <input type="text" value={selectedLeave.notify} readOnly />
+                      <input
+                        type="text"
+                        className="document-input"
+                        value={selectedLeave.document || "No File Uploaded"}
+                        readOnly
+                      />
                     </div>
 
                     <div className="form-row reason-row">
-                    <label>Reason:</label>
-                    <textarea value={selectedLeave.reason} readOnly />
+                      <label>Reason:</label>
+                      <textarea value={selectedLeave.reason} readOnly />
                     </div>
 
                     {/* ACTION BUTTONS – ONLY IF PENDING */}

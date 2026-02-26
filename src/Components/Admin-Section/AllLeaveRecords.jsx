@@ -7,13 +7,14 @@ import {
   Button,
   Table,
   Form,
-  Dropdown,
 } from "react-bootstrap";
 import AdminSidebar from "./AdminSidebar";
-import { LeaveContext } from "../../context/LeaveContext"; // Adjust the path as needed
+import Topbar from "./Topbar";
+import { LeaveContext } from "../../context/LeaveContext";
+import group10 from "../../assets/Group10.png";
 
 const AllLeaveRecords = () => {
-  const { leaveRecords, setLeaveRecords } = useContext(LeaveContext);
+  const { leaveRecords } = useContext(LeaveContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -47,22 +48,16 @@ const AllLeaveRecords = () => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "leave_records.csv";
+    link.download = "all_leave_records.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleDelete = (index) => {
-    const updatedRecords = [...leaveRecords];
-    updatedRecords.splice(index, 1);
-    setLeaveRecords(updatedRecords);
-  };
-
-  const filteredRecords = leaveRecords.filter((record) => {
+  const filteredRecords = (leaveRecords || []).filter((record) => {
     const matchesSearch =
-      record.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.reason.toLowerCase().includes(searchTerm.toLowerCase());
+      (record.employeeId?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (record.reason?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter ? record.status === statusFilter : true;
     const matchesDepartment = departmentFilter
@@ -73,91 +68,117 @@ const AllLeaveRecords = () => {
   });
 
   return (
-    <div className="d-flex">
+    <div className="report-layout">
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
+      </div>
       <AdminSidebar />
-      <div style={{ marginLeft: "240px", width: "100%", padding: "20px" }}>
-        <Container fluid>
-          <Row className="mb-3">
-            <Col>
-              <h4 className="mb-0">All Leave Records</h4>
-            </Col>
-            <Col className="text-end">
-              <Button variant="success" onClick={handleExport}>
-                Export Records
-              </Button>
-            </Col>
-          </Row>
+      <div className="report-main">
+        <Topbar />
+        <Container fluid className="p-4">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h2 className="fw-bold">All Leave Records</h2>
+            <Button
+              variant="info"
+              className="text-white px-4 fw-semibold"
+              style={{ borderRadius: '10px' }}
+              onClick={handleExport}
+            >
+              Export CSV
+            </Button>
+          </div>
 
-          <Card>
-            <Card.Body>
-              <Row className="mb-3">
-                <Col md={3}>
-                  <Form.Control
-                    type="text"
-                    placeholder="Search by ID or Reason"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+          <Card className="border-0 shadow-sm mb-4">
+            <Card.Body className="p-4">
+              <Row className="g-3">
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold text-secondary">Search</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Search ID or Reason..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="border-0 bg-light"
+                      style={{ height: '45px', borderRadius: '10px' }}
+                    />
+                  </Form.Group>
                 </Col>
-                <Col md={3}>
-                  <Form.Select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    <option value="">Filter by Status</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Pending">Pending</option>
-                  </Form.Select>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
+                    <Form.Select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="border-0 bg-light"
+                      style={{ height: '45px', borderRadius: '10px' }}
+                    >
+                      <option value="">All Status</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
+                    </Form.Select>
+                  </Form.Group>
                 </Col>
-                <Col md={3}>
-                  <Form.Select
-                    value={departmentFilter}
-                    onChange={(e) => setDepartmentFilter(e.target.value)}
-                  >
-                    <option value="">Filter by Department</option>
-                    <option value="HR">HR</option>
-                    <option value="IT">IT</option>
-                    <option value="Sales">Sales</option>
-                  </Form.Select>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold text-secondary">Department</Form.Label>
+                    <Form.Select
+                      value={departmentFilter}
+                      onChange={(e) => setDepartmentFilter(e.target.value)}
+                      className="border-0 bg-light"
+                      style={{ height: '45px', borderRadius: '10px' }}
+                    >
+                      <option value="">All Departments</option>
+                      <option value="HR">HR</option>
+                      <option value="IT">IT</option>
+                      <option value="Sales">Sales</option>
+                    </Form.Select>
+                  </Form.Group>
                 </Col>
               </Row>
+            </Card.Body>
+          </Card>
 
-              <Table striped bordered hover responsive>
-                <thead>
+          <Card className="border-0 shadow-sm">
+            <Card.Body className="p-0">
+              <Table hover responsive className="mb-0">
+                <thead className="table-light">
                   <tr>
-                    <th>#</th>
-                    <th>Employee ID</th>
-                    <th>Leave Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Department</th>
-                    <th className="text-center">Action</th>
+                    <th className="py-3 px-4">#</th>
+                    <th className="py-3 px-4">Employee ID</th>
+                    <th className="py-3">Leave Type</th>
+                    <th className="py-3">Period</th>
+                    <th className="py-3">Reason</th>
+                    <th className="py-3">Status</th>
+                    <th className="py-3">Department</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredRecords.length === 0 ? (
                     <tr>
-                      <td colSpan="9" className="text-center">
+                      <td colSpan="7" className="text-center py-5 text-secondary">
                         No leave records found.
                       </td>
                     </tr>
                   ) : (
                     filteredRecords.map((record, index) => (
                       <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{record.employeeId}</td>
-                        <td>{record.leaveType}</td>
-                        <td>{record.startDate}</td>
-                        <td>{record.endDate}</td>
-                        <td>{record.reason}</td>
-                        <td>{record.status || "Pending"}</td>
-                        <td>{record.department || "N/A"}</td>
-                        <td className="text-center align-middle">
-                         
+                        <td className="py-3 px-4">{index + 1}</td>
+                        <td className="py-3 px-4 fw-medium">{record.employeeId}</td>
+                        <td className="py-3">{record.leaveType}</td>
+                        <td className="py-3 small">
+                          {record.startDate} to {record.endDate}
                         </td>
+                        <td className="py-3">{record.reason}</td>
+                        <td className="py-3">
+                          <span className={`badge ${record.status === 'Approved' ? 'bg-success' :
+                              record.status === 'Rejected' ? 'bg-danger' : 'bg-warning'
+                            }`}>
+                            {record.status || "Pending"}
+                          </span>
+                        </td>
+                        <td className="py-3 text-secondary">{record.department || "N/A"}</td>
                       </tr>
                     ))
                   )}
