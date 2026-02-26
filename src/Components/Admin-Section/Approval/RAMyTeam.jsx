@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./RAMyTeam.css";
 import { FaFilter } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
@@ -13,7 +13,7 @@ export default function RegularizationApproval() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
   const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
-  
+
 
   useEffect(() => {
     const fetchMyTeamRA = async () => {
@@ -29,26 +29,32 @@ export default function RegularizationApproval() {
   }, []);
 
   const navigate = useNavigate();
-const filteredAndSortedLeaves = data
-  // SEARCH by employee name
-  .filter((leave) =>
-    leave.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredAndSortedLeaves = data
+    // SEARCH by employee name
+    .filter((leave) =>
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
 
-  // FILTER by status
-  .filter((leave) =>
-    filterStatus === "All" ? true : leave.status === filterStatus
-  )
+    // FILTER by status
+    .filter((leave) =>
+      filterStatus === "All" ? true : leave.status === filterStatus
+    )
 
-  // SORT by request date
-  .sort((a, b) => {
-    const dateA = new Date(a.requestDate);
-    const dateB = new Date(b.requestDate);
+    // SORT by request date
+    .sort((a, b) => {
+      const parseDate = (dateStr) => {
+        if (!dateStr) return new Date(0);
+        const parts = dateStr.split("-");
+        if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        return new Date(dateStr);
+      };
+      const dateA = parseDate(a.requestDate);
+      const dateB = parseDate(b.requestDate);
 
-    return sortOrder === "Newest"
-      ? dateB - dateA
-      : dateA - dateB;
-  });
+      return sortOrder === "Newest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
 
 
 
@@ -56,7 +62,7 @@ const filteredAndSortedLeaves = data
     <div className="regularization-page">
       <div className="rightside-logo ">
         <img src={group10} alt="logo"
-        className="rightside-logos" />
+          className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="regularization-main">
@@ -71,7 +77,7 @@ const filteredAndSortedLeaves = data
               {/* Left side buttons */}
               <div className="left-tabs">
                 <button className="tab-btn "
-                 onClick={() => navigate("/regularization-approval")}
+                  onClick={() => navigate("/regularization-approval")}
                 >All</button>
                 <button className="tab-btn active">My Team</button>
               </div>
@@ -79,30 +85,30 @@ const filteredAndSortedLeaves = data
               {/* Right side search/filter/sort */}
               <div className="right-controls">
                 <input
-                type="text"
-                placeholder="🔍 Search..."
-                className="right-search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                  type="text"
+                  placeholder="🔍 Search..."
+                  className="right-search-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
                 <select
-                className="right-butn-filter"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-                 <select
-                className="right-sort-select"
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-              >
-                <option value="Newest">Sort By : Newest</option>
-                <option value="Oldest">Sort By : Oldest</option>
-              </select>
+                  className="right-butn-filter"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="All">All Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+                <select
+                  className="right-sort-select"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                >
+                  <option value="Newest">Sort By : Newest</option>
+                  <option value="Oldest">Sort By : Oldest</option>
+                </select>
               </div>
             </div>
           </div>
@@ -136,9 +142,8 @@ const filteredAndSortedLeaves = data
                       <div className="request-status">
                         <span>{emp.requestDate}</span>
                         <p
-                          className={`status-badge ${
-                            emp.status === "Pending" ? "pending" : "approved"
-                          }`}
+                          className={`status-badge ${emp.status === "Pending" ? "pending" : "approved"
+                            }`}
                         >
                           {emp.status}
                         </p>
@@ -152,19 +157,19 @@ const filteredAndSortedLeaves = data
               </tbody>
             </table>
           </div>
-           <div className="pagination">
-              <div className="showing">
-                Showing{" "}
-                <select>
-                  <option>07</option>
-                </select>
-              </div>
-              <div className="page-btns">
-                <button className="prev">Prev</button>
-                <button className="page active">01</button>
-                <button className="next">Next</button>
-              </div>
+          <div className="pagination">
+            <div className="showing">
+              Showing{" "}
+              <select>
+                <option>07</option>
+              </select>
             </div>
+            <div className="page-btns">
+              <button className="prev">Prev</button>
+              <button className="page active">01</button>
+              <button className="next">Next</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

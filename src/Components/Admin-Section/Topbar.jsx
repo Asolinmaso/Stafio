@@ -234,16 +234,16 @@ const ProfilePopup = ({ onClose, username }) => {
                 <p>{profile.maritalStatus || "-"}</p>
                 <strong>Portfolio:</strong>
                 <p>
-                    {isEditing ? (
-                      <input
-                        value={editableData.education.portfolio || " "}
-                        onChange={(e) =>
-                          handleChange("education", "portfolio", e.target.value)
-                        }
-                      />
-                    ) : (
-                      <p>{education.portfolio || "-"}</p>
-                    )}
+                  {isEditing ? (
+                    <input
+                      value={editableData.education.portfolio || " "}
+                      onChange={(e) =>
+                        handleChange("education", "portfolio", e.target.value)
+                      }
+                    />
+                  ) : (
+                    <p>{education.portfolio || "-"}</p>
+                  )}
                 </p>
               </div>
               <div>
@@ -525,22 +525,19 @@ const Topbar = () => {
     designation: "",
   });
 
-  useEffect(() => {
-    // const storedAdminusername = localStorage.getItem("admin_username");
-    // if (storedAdminusername) {
-    //   setAdminusername(storedAdminusername);
-    // }
-
-    // Load saved announcements
-    const savedAnnouncements = localStorage.getItem("announcements");
-    if (savedAnnouncements && savedAnnouncements !== "undefined") {
-      try {
-        setAnnouncements(JSON.parse(savedAnnouncements));
-      } catch (err) {
-        console.error("Error parsing announcements:", err);
-        setAnnouncements([]);
-      }
+  const fetchAnnouncements = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/api/broadcast`);
+      setAnnouncements(res.data);
+    } catch (err) {
+      console.error("Error fetching announcements:", err);
+      // fallback to clear array so it doesn't stay undefined or break
+      setAnnouncements([]);
     }
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
   }, []);
 
   useEffect(() => {
@@ -562,13 +559,13 @@ const Topbar = () => {
   //   if (storedRole) setRole(storedRole);
   // }, []);
 
-  useEffect(() => {
-    if (announcements.length > 0) {
-      localStorage.setItem("announcements", JSON.stringify(announcements));
-    }
-  }, [announcements]);
+  // Remove local storage overwrite since it's backend fetched
 
   const togglePopup = () => {
+    if (!showPopup) {
+      // Re-fetch announcements every time the popup is opened
+      fetchAnnouncements();
+    }
     setShowPopup(!showPopup);
     setShowAddForm(false);
   };
@@ -602,7 +599,7 @@ const Topbar = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.message.trim()) {
@@ -610,19 +607,45 @@ const Topbar = () => {
       return;
     }
 
-    setAnnouncements([...announcements, { ...formData }]);
-    setFormData({
-      date: "",
-      eventName: "",
-      time: "",
-      eventType: "",
-      message: "",
-      employee: "",
-      name: "",
-      email: "",
-      designation: "",
-    });
-    setShowAddForm(false);
+    try {
+      const adminId = sessionStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id") || "1";
+      const payload = {
+        event_date: formData.date || null,
+        event_name: formData.eventName || formData.title,
+        event_time: formData.time || null,
+        event_type: formData.eventType || null,
+        message: formData.message,
+        target_audience: "all",
+        mentioned_employee_id: formData.employee ? parseInt(formData.employee) : null,
+        author_name: formData.name || null,
+        author_email: formData.email || null,
+        author_designation: formData.designation || null
+      };
+
+      await axios.post(`${API_BASE}/api/admin/announcements`, payload, {
+        headers: {
+          "X-User-ID": adminId,
+          "X-User-Role": "admin"
+        }
+      });
+      // Also update local state for immediate feedback
+      fetchAnnouncements();
+      setFormData({
+        date: "",
+        eventName: "",
+        time: "",
+        eventType: "",
+        message: "",
+        employee: "",
+        name: "",
+        email: "",
+        designation: "",
+      });
+      setShowAddForm(false);
+    } catch (err) {
+      console.error("Error creating announcement:", err);
+      alert("Failed to send announcement to the backend.");
+    }
   };
 
   const navigate = useNavigate();
@@ -907,19 +930,19 @@ const Topbar = () => {
                     <li key={i} className="announcement-item">
                       <div className="announcement-header">
                         <div className="announcement-name fw-bold">
-                          {a.name || "Unknown"}
+                          {a.author_name || a.name || "Unknown"}
                         </div>
                       </div>
                       <div className="announcement-meta text-muted small">
-                        <span>{a.designation || "No Designation"}</span>
+                        <span>{a.author_designation || a.designation || "No Designation"}</span>
                       </div>
                       <div className="announcement-eventname">
                         <span className="eventname">
-                          {a.eventName || "Untitled Event"}
+                          {a.eventName || a.title || "Untitled Event"}
                           <span className="dot"> : </span>
-                          <span>{a.date || "No Date"}</span>
+                          <span>{a.event_date || a.date || "No Date"}</span>
                           <span className="dot">, </span>
-                          <span>{a.time || "No Time"}</span>
+                          <span>{a.event_time || a.time || "No Time"}</span>
                         </span>
                       </div>
                       <div className="announcement-message mt-2">

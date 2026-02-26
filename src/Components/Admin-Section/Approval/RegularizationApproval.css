@@ -26,7 +26,7 @@
   font-size: 30px;
   color: #222;
   margin-bottom: 15px;
-  font-weight:600;
+  font-weight: 600;
 }
 
 .header-bottom {
@@ -36,7 +36,7 @@
 }
 
 .left-tabs {
-    margin-top:40px;
+  margin-top: 40px;
   display: flex;
   gap: 0px;
 }
@@ -51,7 +51,7 @@
 }
 
 .tab-btn.active {
- background: #19bde8 !important;
+  background: #19bde8 !important;
   color: #ffffffff !important;
   border: 1px solid #b8b4b4ff;
   padding: 8px 12px !important;
@@ -71,7 +71,7 @@
   border-radius: 16px;
   width: 180px;
   font-size: 14px;
-  background:transparent;
+  background: transparent;
 }
 
 .right-btn-filter {
@@ -84,7 +84,7 @@
   align-items: center;
   gap: 5px;
   font-size: 14px;
-  margin-bottom:-10px;
+  margin-bottom: -10px;
   color: #000;
 }
 
@@ -94,8 +94,8 @@
   border-radius: 16px;
   background: #fff;
   font-size: 14px;
-  margin-top:9px;
-  margin-bottom:0px;
+  margin-top: 9px;
+  margin-bottom: 0px;
 }
 
 
@@ -186,6 +186,11 @@
   color: #00c26d;
 }
 
+.status-badge.rejected {
+  background: #ffebeb;
+  color: #ff4d4d;
+}
+
 .view-btn {
   padding: 6px 12px;
   background: #fff;
@@ -220,4 +225,324 @@
 .page-btns .active {
   background: #19bde8;
   color: #fff;
+}
+
+/* Modal Overlay */
+.ra-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Content Box */
+.ra-modal-content {
+  background: #f4f6fc;
+  width: 700px;
+  max-width: 90%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.ra-modal-header {
+  background: #1dc0eb;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.ra-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.ra-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Body */
+.ra-modal-body {
+  display: flex;
+  padding: 30px 40px;
+  background-color: #fcfcfc;
+  background-image: url('../../../assets/BGShape.png');
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-size: 400px;
+}
+
+/* Left side Form */
+.ra-form-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ra-form-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.ra-reason-group {
+  align-items: flex-start;
+}
+
+.ra-form-group label {
+  width: 120px;
+  font-weight: 500;
+  color: #000;
+  font-size: 14px;
+}
+
+.ra-form-group input,
+.ra-form-group select,
+.ra-reason-wrapper textarea {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #c9cdd6;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #555;
+  background: white;
+  outline: none;
+}
+
+.ra-form-group input:disabled,
+.ra-form-group select:disabled,
+.ra-form-group input[readOnly] {
+  background-color: #fff;
+}
+
+.ra-form-group ::placeholder {
+  color: #ccc;
+}
+
+/* custom select */
+.ra-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2316499D%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.ra-date-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.ra-date-input-wrapper input {
+  width: 100%;
+  padding-right: 30px;
+}
+
+.ra-date-input-wrapper svg {
+  position: absolute;
+  right: 10px;
+}
+
+.ra-reason-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ra-reason-wrapper textarea {
+  height: 60px;
+  resize: none;
+}
+
+.ra-char-count {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 12px;
+  color: #999;
+}
+
+/* Right Side Illustration */
+.ra-illustration-section {
+  width: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  z-index: 2;
+}
+
+.ra-illustration-section img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Footer */
+.ra-modal-footer {
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eef3fc;
+}
+
+.ra-watermark {
+  color: #adb5bd;
+  font-size: 12px;
+}
+
+.ra-footer-btns {
+  display: flex;
+  gap: 15px;
+}
+
+.ra-approve-btn {
+  background: #1dc0eb;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.ra-reject-btn {
+  background: white;
+  color: black;
+  border: 1px solid black;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Approval/Rejection Inner Modals (Small Modals) */
+.ra-nested-overlay {
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ra-small-modal {
+  background: #f8fbff;
+  width: 450px;
+  border-radius: 12px;
+  padding: 40px 30px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.ra-small-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+}
+
+.ra-small-modal h3 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+.ra-small-body textarea {
+  width: 100%;
+  height: 120px;
+  border: 1px solid #e0e4ec;
+  border-radius: 8px;
+  padding: 15px;
+  font-size: 14px;
+  resize: none;
+  background: white;
+  margin-bottom: 5px;
+  outline: none;
+}
+
+.ra-char-hint {
+  text-align: left;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 30px;
+}
+
+.ra-small-footer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.ra-submit-btn {
+  background: #1dc0eb;
+  color: white;
+  border: none;
+  padding: 8px 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.ra-cancel-btn {
+  background: white;
+  color: #333;
+  border: 1px solid #333;
+  padding: 8px 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Success/Rejected Result Modals */
+.ra-result-modal {
+  background: #f8fbff;
+  width: 450px;
+  height: 300px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.ra-result-content h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ra-result-content p {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
 }
