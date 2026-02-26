@@ -76,6 +76,16 @@ export default function MyTeamLeaveApproval() {
           <h2 className="myteam-title">My Team Leave Approval</h2>
 
           <div className="myteam-controls">
+            <div className="toggle-tab-container">
+              <button
+                className="toggle-tab-btn"
+                onClick={() => navigate("/leave-approval")}
+              >
+                All
+              </button>
+              <button className="toggle-tab-btn active">My Team</button>
+            </div>
+
             <div className="filter-sort">
               {/* FILTER BUTTON */}
               <div className="filter-wrapper">
@@ -219,7 +229,7 @@ export default function MyTeamLeaveApproval() {
             </tbody>
           </table>
 
-         <div className="pagination">
+          <div className="pagination">
             <div className="showing">
               Showing{" "}
               <select>
@@ -237,7 +247,7 @@ export default function MyTeamLeaveApproval() {
 
         </div>
 
-       {showModal && selectedLeave && (
+        {showModal && selectedLeave && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div
               className="apply-leave-modal"
@@ -306,7 +316,7 @@ export default function MyTeamLeaveApproval() {
                           Reject
                         </button>
                       </div>
-                    
+
                     )}
                   </div>
                   {/* Right Image */}

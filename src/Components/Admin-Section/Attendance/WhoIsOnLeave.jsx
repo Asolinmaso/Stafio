@@ -35,7 +35,7 @@ const WhoIsOnLeave = () => {
 
   // ✅ Live Date
   useEffect(() => {
-     const fetchLeaveData = async () => {
+    const fetchLeaveData = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`${API_BASE}/api/who_is_on_leave`);
@@ -92,14 +92,14 @@ const WhoIsOnLeave = () => {
   };
 
   return (
-    <div className="whoisleave-layout">
+    <div className="who-is-on-leave-layout">
       <div className="rightside-logo">
         <img src={group10} alt="logo" className="rightside-logos" />
       </div>
 
       <AdminSidebar />
 
-      <div className="whoisleave-main">
+      <div className="who-is-on-leave-main">
         <Topbar />
 
         {/* ===== Header ===== */}

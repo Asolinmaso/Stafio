@@ -71,14 +71,14 @@ export default function RegularizationApproval() {
     });
 
   return (
-    <div className="regularization-page">
+    <div className="regularization-approval-layout">
       <div className="rightside-logo">
         <img src={group10} alt="logo" className="rightside-logos" />
       </div>
 
       <AdminSidebar />
 
-      <div className="regularization-main">
+      <div className="regularization-approval-main">
         <Topbar />
 
         <div className="regularization-container">
@@ -226,11 +226,10 @@ export default function RegularizationApproval() {
                       <div className="request-status">
                         <span>{emp.requestDate}</span>
                         <p
-                          className={`status-badge ${
-                            emp.status === "Pending"
+                          className={`status-badge ${emp.status === "Pending"
                               ? "pending"
                               : "approved"
-                          }`}
+                            }`}
                         >
                           {emp.status}
                         </p>
