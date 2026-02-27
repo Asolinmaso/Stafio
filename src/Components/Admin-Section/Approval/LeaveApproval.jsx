@@ -142,39 +142,36 @@ const LeaveApproval = () => {
           <div className="leave-summary">
             <div className="summary-card-leave">
               <FaCircleNotch className="summary-icon pending" />
-              <p>
+              <div className="card-text-block">
                 <strong>{pendingCount < 10 ? `0${pendingCount}` : pendingCount} Request Pending</strong>
-                <br />
                 <span className="sub-text">Awaiting Approval</span>
-              </p>
+              </div>
             </div>
 
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon approved" />
-              <p>
+              <div className="card-text-block">
                 <strong>{approvedCount < 10 ? `0${approvedCount}` : approvedCount} Request Approved</strong>
-                <br />
                 <span className="sub-text">In this Month</span>
-              </p>
+              </div>
             </div>
 
             <div className="summary-card-leave">
               <FaTimesCircle className="summary-icon rejected" />
-              <p>
+              <div className="card-text-block">
                 <strong>{rejectedCount < 10 ? `0${rejectedCount}` : rejectedCount} Request Rejected</strong>
-                <br />
                 <span className="sub-text">In this month</span>
-              </p>
+              </div>
             </div>
           </div>
 
           {/* Right Side Actions */}
           <div className="right-leave-actions">
             <div className="right-top-buttons">
-              <button className="right-btn-apply active">All</button>
+              <button className="right-tab-btn right-tab-btn--active">All</button>
               <button
                 onClick={() => navigate("/myTeam-LeaveApproval")}
-                className="right-btn-regularization"
+                className="right-tab-btn right-tab-btn--cyan"
               >
                 My Team
               </button>
@@ -318,13 +315,13 @@ const LeaveApproval = () => {
                 </td>
 
                 <td>
-                  {leave.type} <br />
-                  <span>{leave.days}</span>
+                  <span className="leave-type-name">{leave.type}</span>
+                  <div className="leave-type-days">{leave.days}</div>
                 </td>
 
                 <td>{leave.dates}</td>
                 <td>
-                  {leave.requestDate} <br />
+                  <div className="req-date-text">{leave.requestDate}</div>
                   <span
                     className={`status-badge ${getStatusClass(leave.status)}`}
                   >
@@ -350,19 +347,17 @@ const LeaveApproval = () => {
 
         {/* PAGINATION */}
         <div className="pagination">
-          <div className="showing">
-            Showing{" "}
-            <select>
-              <option>07</option>
-              <option>10</option>
-              <option>15</option>
-            </select>
+          <div className="la-showing">
+            Showing
+            <span className="la-showing-pill">
+              07 ▾
+            </span>
           </div>
 
-          <div className="page-nav">
-            <button>Prev</button>
-            <span className="page-num">01</span>
-            <button>Next</button>
+          <div className="la-pages">
+            <button className="la-page-btn">Prev</button>
+            <button className="la-page-btn la-page-btn--active">01</button>
+            <button className="la-page-btn">Next</button>
           </div>
         </div>
 

@@ -80,13 +80,13 @@
     /* Force flush with sticky topbar */
 }
 
-/* Ensure Topbar sits at the very top without gaps */
+/* Topbar — floating card style, same across all pages */
 .topbar {
-    margin: 0 !important;
-    width: 100% !important;
-    border-radius: 0 !important;
-    /* Premium flat look at top */
-    border-bottom: 1px solid #eef3ff;
+    margin: 0 16px !important;
+    width: calc(100% - 32px) !important;
+    border-radius: 12px !important;
+    border-bottom: none !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
 
@@ -97,4 +97,198 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* ==========================================================================
+   GLOBAL DARK MODE SYSTEM
+   ========================================================================== */
+
+/* Root and Layout Transitions */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Global Dark Theme Overrides */
+body[data-theme='dark'] {
+    background-color: #0b0f1a !important;
+    color: #ffffff;
+}
+
+body[data-theme='dark'] .employee-page,
+body[data-theme='dark'] .dashboard-wrapper,
+body[data-theme='dark'] .admin-page-container,
+body[data-theme='dark'] .layout,
+body[data-theme='dark'] .attendance-layout,
+body[data-theme='dark'] .performance-layout,
+body[data-theme='dark'] .letter-generation-layout,
+body[data-theme='dark'] .leave-approval-layout,
+body[data-theme='dark'] .admin-broadcast-layout,
+body[data-theme='dark'] .payroll-layout,
+body[data-theme='dark'] .regularization-approval-layout,
+body[data-theme='dark'] .leave-policies-layout,
+body[data-theme='dark'] .who-is-on-leave-layout,
+body[data-theme='dark'] .admin-settings-layout,
+body[data-theme='dark'] .report-layout,
+body[data-theme='dark'] .att-report-layout,
+body[data-theme='dark'] .leave-report-layout,
+body[data-theme='dark'] .myteam-layout,
+body[data-theme='dark'] .ra-page {
+    background-color: #0b0f1a !important;
+}
+
+/* Main Content Area */
+body[data-theme='dark'] .main-content,
+body[data-theme='dark'] .admin-main-content,
+body[data-theme='dark'] .employee-main,
+body[data-theme='dark'] .attendance-main,
+body[data-theme='dark'] .attendance-section,
+body[data-theme='dark'] .admin-settings-main {
+    background-color: #0b0f1a !important;
+}
+
+/* Sidebars and Topbars */
+body[data-theme='dark'] .sidebar,
+body[data-theme='dark'] .admin-sidebar {
+    background-color: #111827 !important;
+    border-right-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .topbar {
+    background-color: #1a1f2e !important;
+    border-bottom: 1px solid #2d334a !important;
+    color: #ffffff !important;
+}
+
+/* Cards and Containers */
+body[data-theme='dark'] .card,
+body[data-theme='dark'] .settings-card,
+body[data-theme='dark'] .summary-card,
+body[data-theme='dark'] .attendance-card,
+body[data-theme='dark'] .meeting-card,
+body[data-theme='dark'] .filter-dropdown-container,
+body[data-theme='dark'] .dept-modal-box,
+body[data-theme='dark'] .break-modal-box {
+    background-color: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Modal Headers/Footers */
+body[data-theme='dark'] .filter-dropdown-header,
+body[data-theme='dark'] .filter-dropdown-footer,
+body[data-theme='dark'] .dept-modal-header,
+body[data-theme='dark'] .break-modal-header {
+    border-bottom-color: #2d334a !important;
+    border-top-color: #2d334a !important;
+    background-color: #1a1f2e !important;
+}
+
+/* Typography Overrides */
+body[data-theme='dark'] h1,
+body[data-theme='dark'] h2,
+body[data-theme='dark'] h3,
+body[data-theme='dark'] h4,
+body[data-theme='dark'] h5,
+body[data-theme='dark'] h6,
+body[data-theme='dark'] .section-label-top,
+body[data-theme='dark'] .username h1 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] p,
+body[data-theme='dark'] span,
+body[data-theme='dark'] label,
+body[data-theme='dark'] .text-muted,
+body[data-theme='dark'] .setting-muted-text {
+    color: #9ca3af !important;
+}
+
+/* Form Elements */
+body[data-theme='dark'] input,
+body[data-theme='dark'] select,
+body[data-theme='dark'] textarea,
+body[data-theme='dark'] .form-control,
+body[data-theme='dark'] .custom-select-wrapper select,
+body[data-theme='dark'] .theme-input-box0,
+body[data-theme='dark'] .search-input,
+body[data-theme='dark'] .page-size-select1 {
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .btn-cancel,
+body[data-theme='dark'] .attendance-filter-button,
+body[data-theme='dark'] .sort-dropdown,
+body[data-theme='dark'] .date-picker,
+body[data-theme='dark'] .page-btn {
+    background-color: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #e5e7eb !important;
+}
+
+body[data-theme='dark'] .btn-cancel:hover,
+body[data-theme='dark'] .attendance-filter-button:hover,
+body[data-theme='dark'] .page-btn:hover {
+    background-color: #262c40 !important;
+}
+
+/* Table styling for dark mode */
+body[data-theme='dark'] table {
+    color: #e5e7eb;
+}
+
+body[data-theme='dark'] th {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+    border-bottom-color: #374151 !important;
+    border-top-color: #374151 !important;
+}
+
+body[data-theme='dark'] td {
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .attendance-table,
+body[data-theme='dark'] .team-table table,
+body[data-theme='dark'] .department-table table {
+    background-color: #1a1f2e !important;
+}
+
+/* Specific component fixes for dark mode */
+body[data-theme='dark'] .slider {
+    background-color: #374151;
+}
+
+body[data-theme='dark'] .tab-link {
+    color: #9ca3af;
+}
+
+body[data-theme='dark'] .tab-link.active {
+    color: #19bde8;
+}
+
+body[data-theme='dark'] .section-header {
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .attendance-main {
+    background-color: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .btn-punch-out1,
+body[data-theme='dark'] .break-btn-st-en {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .break-dropdown {
+    background-color: #1a1f2e !important;
+    color: #ffffff !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .break-item:hover {
+    background-color: #262c40 !important;
 }

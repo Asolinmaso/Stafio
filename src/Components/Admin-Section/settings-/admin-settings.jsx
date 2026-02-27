@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
 import profileimg from "../../../assets/profileimg.png";
 import user from "../../../assets/user.png";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-import penicon from "../../../assets/penicon2.png";
-import deletebox from "../../../assets/deletebox.png";
+import { FaUserFriends, FaSearch, FaFilter, FaEdit, FaPlusCircle, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import { BsUpload } from "react-icons/bs";
+import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
 const translations = {
 	english: {
@@ -35,8 +36,8 @@ const translations = {
 		departmentHead: "Department Head",
 		action: "Action",
 		allowManagertoeditemployeerecord: "Allow Manager to edit employee record",
-		userSignup: "user Sign up",
-		defaultThemeforUsers: "default Theme for Users",
+		userSignup: "User Sign up",
+		defaultThemeforUsers: "Default Theme for Users",
 	},
 
 	tamil: {
@@ -103,10 +104,9 @@ const translations = {
 };
 
 export default function AdminSettings() {
-	const [activeTab, setActiveTab] = useState("general");
-	const [theme, setTheme] = useState("light");
-	const [language, setLanguage] = useState("english");
-	const [font, setFont] = useState("default");
+	const { theme, setTheme, language, setLanguage, font, setFont } = useContext(SettingsContext);
+	const [activeTab, setActiveTab] = useState("department");
+
 	const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
 	//new for validation
 	const [errors, setErrors] = useState({});
@@ -134,17 +134,29 @@ export default function AdminSettings() {
 
 	const [basicErrors, setBasicErrors] = useState({});
 
-	useEffect(() => {
-		// Example: auto-save when language changes
-		console.log("Auto-saving general settings", {
-			language,
-			theme,
-			font,
-			dateFormat,
-		});
-	}, [language, theme, font, dateFormat]);
+	//team and department checkbox selectsall/de-selectsall
+	// state added
+	const [selectedTeamRows, setSelectedTeamRows] = useState({
+		row1: false,
+		row2: false,
+		row3: false,
+	});
 
-	//handle input change
+	const [selectedDepartmentRows, setSelectedDepartmentRows] = useState({
+		row1: false,
+		row2: false,
+		row3: false,
+	});
+
+	//create new department modal state
+	const [showCreateDept, setShowCreateDept] = useState(false);
+
+	//create new break time modal state
+	const [showBreakModal, setShowBreakModal] = useState(false);
+
+	const [breakName, setBreakName] = useState("");
+	const [startTime, setStartTime] = useState("");
+	const [endTime, setEndTime] = useState("");
 
 	const handleBasicChange = (e) => {
 		const { name, value } = e.target;
@@ -215,33 +227,9 @@ export default function AdminSettings() {
 		setBasicErrors({});
 	};
 
-	//team and department checkbox selectsall/de-selectsall
-	// state added
-	const [selectedTeamRows, setSelectedTeamRows] = useState({
-		row1: false,
-		row2: false,
-		row3: false,
-	});
-
-	const [selectedDepartmentRows, setSelectedDepartmentRows] = useState({
-		row1: false,
-		row2: false,
-		row3: false,
-	});
-
-	//create new department modal state
-	const [showCreateDept, setShowCreateDept] = useState(false);
-
-	//create new break time modal state
-	const [showBreakModal, setShowBreakModal] = useState(false);
-
-	const [breakName, setBreakName] = useState("");
-	const [startTime, setStartTime] = useState("");
-	const [endTime, setEndTime] = useState("");
-
 	return (
 		// new
-		<div className={`dashboard-wrapper d-flex admin-${theme}`}>
+		<div className={`dashboard-wrapper d-flex admin-theme-${theme}`}>
 			<div className="rightside-logo ">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
@@ -255,24 +243,21 @@ export default function AdminSettings() {
 				<Topbar />
 
 				<div className="settings-page p-4">
-					{/* Header */}
-					<div className="settings-header">
-						<h1>{t("title")}</h1>
-						<p>{t("subtitle")}</p>
-					</div>
-
-					{/* Create New button – only for Department tab */}
-					{/*new modified */}
-					{activeTab === "departments" && (
-						<div className="department-top-action">
+					{/* Create New button – for Department and Break Times */}
+					<div className="settings-top-row">
+						<div className="settings-header">
+							<h1>{t("title")}</h1>
+							<p>{t("subtitle")}</p>
+						</div>
+						{(activeTab === "department" || activeTab === "breaktimes") && (
 							<button
-								className="btn-create-new"
-								onClick={() => setShowCreateDept(true)}
+								className="btn-create-new-pill"
+								onClick={() => activeTab === "department" ? setShowCreateDept(true) : setShowBreakModal(true)}
 							>
 								Create new
 							</button>
-						</div>
-					)}
+						)}
+					</div>
 
 					{/* Create New department Modal */}
 
@@ -326,7 +311,7 @@ export default function AdminSettings() {
 
 					{/* Tabs */}
 					<div className="settings-tabs">
-						{["general", "basic", "team", "departments", "breaktimes"].map(
+						{["general", "basic", "team", "department", "breaktimes"].map(
 							(tab) => (
 								<button
 									key={tab}
@@ -339,7 +324,7 @@ export default function AdminSettings() {
 											? t("basic")
 											: tab === "team"
 												? t("team")
-												: tab === "departments"
+												: tab === "department"
 													? t("department")
 													: t("breaktimes")}
 								</button>
@@ -349,20 +334,18 @@ export default function AdminSettings() {
 
 					{/* Tab Content */}
 					<div
-						className={`settings-card ${
-							activeTab === "breaktimes" ? "breaktimes-no-card" : ""
-						}`}
+						className={`settings-card ${activeTab === "breaktimes" ? "breaktimes-no-card" : ""
+							}`}
 					>
 						{/* General Settings */}
 						{activeTab === "general" && (
 							<div>
-								<h3>{t("general")}</h3>
-								<div className="form-row">
-									<div className="form-column">
-										<div className="form-group2">
-											{" "}
-											{/* modified   */}
-											<label>{t("systemLanguage")}</label>
+								<h3>General</h3>
+								<div className="form-row-grid">
+									{/* Row 1 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("systemLanguage")}</label>
+										<div className="custom-select-wrapper">
 											<select
 												value={language}
 												onChange={(e) => setLanguage(e.target.value)}
@@ -372,100 +355,74 @@ export default function AdminSettings() {
 												<option value="tamil">Tamil</option>
 											</select>
 										</div>
+									</div>
 
-										<div className="form-groupz">
-											{" "}
-											{/* modified   */}
-											<label>{t("dashboardTheme")}</label>
-											<div className="theme-input-box0">
-												{" "}
-												{/*new check box inside the input*/}
-												<span className="theme-label">
-													{theme === "light" ? "Light Theme" : "Dark Theme"}
-												</span>
-												<label className="switch">
-													<input
-														type="checkbox"
-														checked={theme === "dark"}
-														onChange={() =>
-															setTheme(theme === "light" ? "dark" : "light")
-														}
-													/>
-													<span className="slider round"></span>
-												</label>
-											</div>
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("userSignup")}</label>
+										<div className="setting-item-underline">
+											<span className="setting-muted-text">
+												Allow new users to sign up
+											</span>
+											<label className="switch">
+												<input type="checkbox" defaultChecked />
+												<span className="slider round"></span>
+											</label>
 										</div>
+									</div>
 
-										<div className="form-group2">
-											<label>{t("systemFont")}</label>
+									{/* Row 2 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("dashboardTheme")}</label>
+										<div className="theme-input-box0">
+											<span className="setting-muted-text">
+												{theme === "light" ? "Light Theme" : "Dark Theme"}
+											</span>
+											<label className="switch">
+												<input
+													type="checkbox"
+													checked={theme === "light"}
+													onChange={() =>
+														setTheme(theme === "light" ? "dark" : "light")
+													}
+												/>
+												<span className="slider round"></span>
+											</label>
+										</div>
+									</div>
+
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("defaultThemeforUsers")}</label>
+										<div className="theme-input-box0">
+											<span className="setting-muted-text">
+												Light Theme
+											</span>
+										</div>
+									</div>
+
+									{/* Row 3 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("systemFont")}</label>
+										<div className="custom-select-wrapper">
 											<select
 												value={font}
 												onChange={(e) => setFont(e.target.value)}
 											>
-												<option value="default">Default - Montserrat</option>
+												<option value="default">Default- Montserrat</option>
 												<option value="arial">Arial</option>
 												<option value="roboto">Roboto</option>
 											</select>
 										</div>
-
-										<div className="form-groupz">
-											{" "}
-											{/* modified   */}
-											<label>{t("allowManagertoeditemployeerecord")}</label>
-											<div className="theme-input-box0">
-												{" "}
-												{/*new check box inside the input*/}
-												<span className="theme-label">
-													{theme === "Enable" ? "Enable" : "Disable"}
-												</span>
-												<label className="switch">
-													<input
-														type="checkbox"
-														checked={allowManagerEdit}
-														onChange={() =>
-															setAllowManagerEdit(!allowManagerEdit)
-														}
-													/>
-													<span className="slider round"></span>
-												</label>
-											</div>
-										</div>
 									</div>
 
-									<div className="form-column">
-										{" "}
-										{/* modified   */}
-										<div className="form-groupz">
-											<label>{t("userSignup")}</label>
-											<div className="theme-input-box0">
-												<span className="theme-label">
-													Allow new users to sign up
-												</span>
-												<label className="switch">
-													<input type="checkbox" />
-													<span className="slider round"></span>
-												</label>
-											</div>
-										</div>
-										<div className="form-group1">
-											<label>{t("defaultThemeforUsers")}</label>
-											<input
-												type="text"
-												placeholder="Light Theme"
-												className="dtucname"
-											/>
-										</div>
-										<div className="form-group2">
-											{" "}
-											{/* modified   */}
-											<label>
-												{t("dateFormat")}
-												<label className="switch">
-													<input type="checkbox" />{" "}
-													{/*checked={true} readOnly*/}
-													<span className="slider round"></span>
-												</label>
+									<div className="form-group-custom">
+										<div className="setting-row-label-toggle">
+											<label className="section-label-top" style={{ marginBottom: 0 }}>{t("dateFormat")}</label>
+											<label className="switch">
+												<input type="checkbox" defaultChecked />
+												<span className="slider round"></span>
 											</label>
+										</div>
+										<div className="custom-select-wrapper">
 											<select
 												value={dateFormat}
 												onChange={(e) => setDateFormat(e.target.value)}
@@ -475,52 +432,105 @@ export default function AdminSettings() {
 											</select>
 										</div>
 									</div>
+
+									{/* Row 4 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("allowManagertoeditemployeerecord")}</label>
+										<div className="theme-input-box0">
+											<span className="setting-muted-text">
+												{allowManagerEdit ? "Enable" : "Disable"}
+											</span>
+											<label className="switch">
+												<input
+													type="checkbox"
+													checked={allowManagerEdit}
+													onChange={() =>
+														setAllowManagerEdit(!allowManagerEdit)
+													}
+												/>
+												<span className="slider round"></span>
+											</label>
+										</div>
+									</div>
+									<div className="form-group-custom"></div> {/* Spacer for grid alignment */}
 								</div>
 							</div>
 						)}
 
 						{/* Basic Info */}
 						{activeTab === "basic" && (
-							<div>
-								{/* <h3>Basic Info</h3> */}
-								<div className="form-row">
-									<div className="form-column">
-										<div className="form-group0">
-											<label>{t("firstName")}</label>
-											<input
-												type="text"
-												name="firstName"
-												value={basicForm.firstName}
-												placeholder="Please enter name"
-												className="form-groupp"
-												// value={firstName}
-												// onChange={(e) => setFirstName(e.target.value)}
-												onChange={handleBasicChange}
-											/>
-											{basicErrors.firstName && (
-												<span className="error-text">
-													{basicErrors.firstName}
-												</span>
-											)}
-										</div>
+							<div className="basic-info-tab">
+								<div className="form-row-grid">
+									{/* Row 1 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("firstName")}</label>
+										<input
+											type="text"
+											name="firstName"
+											value={basicForm.firstName}
+											placeholder="Please enter name"
+											className="form-groupp"
+											onChange={handleBasicChange}
+										/>
+										{basicErrors.firstName && (
+											<span className="error-text">
+												{basicErrors.firstName}
+											</span>
+										)}
+									</div>
 
-										<div className="form-group0">
-											<label>{t("email")}</label>
-											<input
-												type="email"
-												name="email"
-												placeholder="Please enter email"
-												className="form-groupp"
-												value={basicForm.email}
-												onChange={handleBasicChange}
-											/>
-											{basicErrors.email && (
-												<span className="error-text">{basicErrors.email}</span>
-											)}
-										</div>
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("lastName")}</label>
+										<input
+											type="text"
+											name="lastName"
+											placeholder="Please enter name"
+											className="form-groupp"
+											value={basicForm.lastName}
+											onChange={handleBasicChange}
+										/>
+										{basicErrors.lastName && (
+											<span className="error-text">
+												{basicErrors.lastName}
+											</span>
+										)}
+									</div>
 
-										<div className="form-group3">
-											<label>{t("position")}</label>
+									{/* Row 2 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("email")}</label>
+										<input
+											type="email"
+											name="email"
+											placeholder="Please enter email"
+											className="form-groupp"
+											value={basicForm.email}
+											onChange={handleBasicChange}
+										/>
+										{basicErrors.email && (
+											<span className="error-text">{basicErrors.email}</span>
+										)}
+									</div>
+
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("phone")}</label>
+										<input
+											type="tel"
+											name="phone"
+											placeholder="Please enter phone number"
+											className="form-groupp"
+											value={basicForm.phone}
+											onChange={handleBasicChange}
+										/>
+										{basicErrors.phone && (
+											<span className="error-text">{basicErrors.phone}</span>
+										)}
+									</div>
+
+									{/* Row 3 */}
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("position")}</label>
+										<div className="custom-select-wrapper">
 											<select
 												name="position"
 												value={basicForm.position}
@@ -531,72 +541,17 @@ export default function AdminSettings() {
 												<option value="developer">Developer</option>
 												<option value="designer">Designer</option>
 											</select>
-											{basicErrors.position && (
-												<span className="error-text">
-													{basicErrors.position}
-												</span>
-											)}
-
-											{/* {submitted && basicErrors.position && (
-                         <span className="error-text">{basicErrors.position}</span>
-                        )} */}
 										</div>
-
-										<div className="form-group">
-											<label>Profile picture</label>
-											<p className="file-info">
-												We support only JPEGs or PNGs under 5MB
-											</p>
-											<div className="profile-upload">
-												<img
-													src={profileimg}
-													alt="Profile"
-													className="profile-preview"
-												/>
-												<button type="button" className="upload-btn">
-													📁 Upload
-												</button>
-											</div>
-										</div>
+										{basicErrors.position && (
+											<span className="error-text">
+												{basicErrors.position}
+											</span>
+										)}
 									</div>
 
-									<div className="form-column">
-										<div className="form-group01">
-											<label style={{ marginLeft: "17px" }}>
-												{t("lastName")}
-											</label>
-											<input
-												type="text"
-												name="lastName"
-												placeholder="Please enter name"
-												className="form-groupp1"
-												value={basicForm.lastName}
-												onChange={handleBasicChange}
-											/>
-											{basicErrors.lastName && (
-												<span className="error-text">
-													{basicErrors.lastName}
-												</span>
-											)}
-										</div>
-
-										<div className="form-group01">
-											<label style={{ marginLeft: "17px" }}>{t("phone")}</label>
-											<input
-												type="tel"
-												name="phone"
-												placeholder="Please enter phone number"
-												className="form-groupp1"
-												value={basicForm.phone}
-												onChange={handleBasicChange}
-											/>
-											{basicErrors.phone && (
-												<span className="error-text">{basicErrors.phone}</span>
-											)}
-										</div>
-
-										<div className="form-group4">
-											<label style={{ marginLeft: "17px" }}>{t("role")}</label>
+									<div className="form-group-custom">
+										<label className="section-label-top">{t("role")}</label>
+										<div className="custom-select-wrapper">
 											<select
 												value={role}
 												onChange={(e) => setRole(e.target.value)}
@@ -609,17 +564,35 @@ export default function AdminSettings() {
 									</div>
 								</div>
 
-								<div className="form-actions">
+								{/* Profile Picture Section */}
+								<div className="profile-section-custom">
+									<label className="section-label-top">Profile picture</label>
+									<p className="file-info-muted">
+										We support only JPEGs or PNGs under 5MB
+									</p>
+									<div className="profile-upload-container">
+										<img
+											src={profileimg}
+											alt="Profile"
+											className="profile-preview-circle"
+										/>
+										<button type="button" className="btn-upload-outline">
+											<BsUpload className="upload-icon" /> Upload
+										</button>
+									</div>
+								</div>
+
+								<div className="form-actions-bottom">
 									<button
 										type="button"
-										className="btn-cancel"
+										className="btn-cyan-action"
 										onClick={handleBasicCancel}
 									>
 										Cancel
 									</button>
 									<button
 										type="submit"
-										className="btn-save"
+										className="btn-cyan-action"
 										onClick={handleBasicSave}
 									>
 										Save
@@ -767,23 +740,17 @@ export default function AdminSettings() {
 							</div>
 						)}
 
-						{/* Department - FIXED: Changed from "department" to "departments" */}
-						{activeTab === "departments" && (
-							<div>
-								{/* <div className="create-new-wrapper">
-                  <button className="btn-create-new">Create new</button>
-                </div> */}
-								<div className="department-table">
-									<table>
-										<thead>
-											<tr>
-												<th>
+						{/* Department tab */}
+						{activeTab === "department" && (
+							<div className="department-table-container">
+								<table className="department-table-new">
+									<thead>
+										<tr>
+											<th width="40">
+												<div className="checkbox-custom">
 													<input
 														type="checkbox"
-														className="checkbbig"
-														checked={Object.values(
-															selectedDepartmentRows,
-														).every(Boolean)}
+														checked={Object.values(selectedDepartmentRows).every(Boolean)}
 														onChange={(e) => {
 															const isChecked = e.target.checked;
 															setSelectedDepartmentRows({
@@ -793,119 +760,48 @@ export default function AdminSettings() {
 															});
 														}}
 													/>
-												</th>
-												<th>{t("department")}</th>
-												<th>{t("numberOfMembers")}</th>
-												<th>{t("departmentHead")}</th>
-												<th>{t("action")}</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
+												</div>
+											</th>
+											<th>{t("department")}</th>
+											<th>{t("numberOfMembers")}</th>
+											<th>{t("departmentHead")}</th>
+											<th className="text-right">{t("action")}</th>
+										</tr>
+									</thead>
+									<tbody>
+										{[
+											{ row: "row1", name: "HR", count: 1, head: "Lakshmi" },
+											{ row: "row2", name: "Design", count: 5, head: "Sakshi" },
+											{ row: "row3", name: "Department", count: 7, head: "Asolin" }
+										].map((item) => (
+											<tr key={item.row}>
 												<td>
-													<input
-														type="checkbox"
-														className="checkbsmall"
-														checked={selectedDepartmentRows.row1}
-														onChange={(e) =>
-															setSelectedDepartmentRows({
-																...selectedDepartmentRows,
-																row1: e.target.checked,
-															})
-														}
-													/>
+													<div className="checkbox-custom">
+														<input
+															type="checkbox"
+															checked={selectedDepartmentRows[item.row]}
+															onChange={(e) =>
+																setSelectedDepartmentRows({
+																	...selectedDepartmentRows,
+																	[item.row]: e.target.checked,
+																})
+															}
+														/>
+													</div>
 												</td>
-												<td>HR</td>
-												<td>1</td>
-												<td>Lakshmi</td>
-												<td>
-													<button className="action-btn edit">
-														<img
-															className="pen-icon"
-															src={penicon}
-															alt="tick-icon"
-														/>
-													</button>
-													<button className="action-btn delete">
-														<img
-															className="deletebox-icon"
-															src={deletebox}
-															alt="tick-icon"
-														/>
-													</button>
+												<td>{item.name}</td>
+												<td>{item.count}</td>
+												<td>{item.head}</td>
+												<td className="text-right">
+													<div className="action-icons-group">
+														<button className="icon-btn-edit"><FaPencilAlt /></button>
+														<button className="icon-btn-delete"><FaTrashAlt /></button>
+													</div>
 												</td>
 											</tr>
-											<tr>
-												<td>
-													<input
-														type="checkbox"
-														className="checkbsmall"
-														checked={selectedDepartmentRows.row2}
-														onChange={(e) =>
-															setSelectedDepartmentRows({
-																...selectedDepartmentRows,
-																row2: e.target.checked,
-															})
-														}
-													/>
-												</td>
-												<td>Design</td>
-												<td>5</td>
-												<td>Sakshi</td>
-												<td>
-													<button className="action-btn edit">
-														<img
-															className="pen-icon"
-															src={penicon}
-															alt="tick-icon"
-														/>
-													</button>
-													<button className="action-btn delete">
-														<img
-															className="deletebox-icon"
-															src={deletebox}
-															alt="tick-icon"
-														/>
-													</button>
-												</td>
-											</tr>
-											<tr>
-												<td>
-													<input
-														type="checkbox"
-														className="checkbsmall"
-														checked={selectedDepartmentRows.row3}
-														onChange={(e) =>
-															setSelectedDepartmentRows({
-																...selectedDepartmentRows,
-																row3: e.target.checked,
-															})
-														}
-													/>
-												</td>
-												<td>Development</td>
-												<td>7</td>
-												<td>Asolin</td>
-												<td>
-													<button className="action-btn edit">
-														<img
-															className="pen-icon"
-															src={penicon}
-															alt="tick-icon"
-														/>
-													</button>
-													<button className="action-btn delete">
-														<img
-															className="deletebox-icon"
-															src={deletebox}
-															alt="tick-icon"
-														/>
-													</button>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
+										))}
+									</tbody>
+								</table>
 							</div>
 						)}
 
@@ -924,11 +820,7 @@ export default function AdminSettings() {
 													onChange={(e) => setLunchBreak(e.target.value)}
 												/>
 												<button className="edit-btn inside">
-													<img
-														className="pen-icon"
-														src={penicon}
-														alt="tick-icon"
-													/>
+													<FaPencilAlt className="pen-icon-new" />
 												</button>
 											</div>
 										</div>
@@ -944,22 +836,11 @@ export default function AdminSettings() {
 													onChange={(e) => setCoffeeBreak(e.target.value)}
 												/>
 												<button className="edit-btn inside">
-													<img
-														className="pen-icon"
-														src={penicon}
-														alt="tick-icon"
-													/>
+													<FaPencilAlt className="pen-icon-new" />
 												</button>
 											</div>
 										</div>
 									</div>
-
-									<button
-										className="btn-create-new1"
-										onClick={() => setShowBreakModal(true)}
-									>
-										Create new
-									</button>
 
 									{/* Create New Break Time Modal */}
 									{showBreakModal && (
