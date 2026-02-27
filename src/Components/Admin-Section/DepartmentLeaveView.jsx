@@ -1,48 +1,52 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Table, Card } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Table,
+  Card,
+  Spinner,
+} from "react-bootstrap";
 import AdminSidebar from "./AdminSidebar";
 import Topbar from "./Topbar";
 import group10 from "../../assets/Group10.png";
 
 const DepartmentLeaveView = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [leaveRecords, setLeaveRecords] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const leaveRecords = [
-    {
-      employeeId: "EMP001",
-      name: "Alice",
-      department: "IT",
-      leaveType: "Sick Leave",
-      startDate: "2025-07-10",
-      endDate: "2025-07-12",
-      status: "Approved",
-    },
-    {
-      employeeId: "EMP002",
-      name: "Bob",
-      department: "HR",
-      leaveType: "Casual Leave",
-      startDate: "2025-07-15",
-      endDate: "2025-07-16",
-      status: "Pending",
-    },
-    {
-      employeeId: "EMP003",
-      name: "Charlie",
-      department: "Finance",
-      leaveType: "Earned Leave",
-      startDate: "2025-07-20",
-      endDate: "2025-07-22",
-      status: "Approved",
-    },
-  ];
+  
 
-  const departments = ["All", "HR", "IT", "Finance", "Marketing", "Operations"];
+  // Fetch leave records when department changes
+  useEffect(() => {
+    const fetchLeaveRecords = async () => {
+      setLoading(true);
+      try {
+        let url = `${API_BASE}/api/all_leave_records`;
 
-  const filteredRecords =
-    selectedDepartment === "All"
-      ? leaveRecords
-      : leaveRecords.filter((record) => record.department === selectedDepartment);
+        if (selectedDepartment !== "All") {
+          url = `${API_BASE}/api/leave_by_department?department=${encodeURIComponent(selectedDepartment)}`;
+        }
+
+        const response = await axios.get(url, {
+          headers: {
+            "X-User-Role": "admin",
+            "X-User-ID": localStorage.getItem("userId") || "1",
+          },
+        });
+        setLeaveRecords(response.data);
+      } catch (error) {
+        console.error("Error fetching leave records:", error);
+        setLeaveRecords([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaveRecords();
+  }, [selectedDepartment]);
 
   return (
     <div className="report-layout">

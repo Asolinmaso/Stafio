@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import "./EmployeesMyTeam.css";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaSearch } from "react-icons/fa";
 import group10 from "../../../assets/Group10.png";
 import { useLocation } from "react-router-dom";
 
-import { FaSearch } from 'react-icons/fa';   //new
 
 const Employee = () => {
 	const [employees] = useState([

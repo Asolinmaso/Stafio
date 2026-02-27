@@ -296,7 +296,6 @@ const LeaveApproval = () => {
               <th>Action</th>
             </tr>
           </thead>
-
           <tbody>
             {filteredAndSortedLeaves.map((leave, index) => (
               <tr key={index}>
@@ -316,12 +315,10 @@ const LeaveApproval = () => {
                     </div>
                   </div>
                 </td>
-
                 <td>
                   {leave.type} <br />
                   <span>{leave.days}</span>
                 </td>
-
                 <td>{leave.dates}</td>
                 <td>
                   {leave.requestDate} <br />
@@ -331,7 +328,6 @@ const LeaveApproval = () => {
                     {leave.status}
                   </span>
                 </td>
-
                 <td>
                   <button
                     className="view-btn"
@@ -358,7 +354,6 @@ const LeaveApproval = () => {
               <option>15</option>
             </select>
           </div>
-
           <div className="page-nav">
             <button>Prev</button>
             <span className="page-num">01</span>

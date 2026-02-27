@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Table,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Row, Col, Card, Table, Button, Form } from "react-bootstrap";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import "./Attendance.css";
@@ -16,12 +9,37 @@ import "bootstrap-icons/font/bootstrap-icons.css"; // ✅ Needed for the filter 
 
 const Attendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
+  const [attendanceStats, setAttendanceStats] = useState({
+    working_days: 0,
+    total_leaves: 0,
+    late_logins: 0,
+    on_time_logins: 0,
+  });
 
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/attendance");
+        const userId =
+          localStorage.getItem("employee_user_id") ||
+          sessionStorage.getItem("current_user_id");
+
+        // Fetch attendance records
+        const response = await axios.get(
+          "http://127.0.0.1:5001/api/attendance",
+          {
+            headers: { "X-User-ID": userId },
+          },
+        );
         setAttendanceData(response.data);
+
+        // Fetch attendance stats
+        const statsResponse = await axios.get(
+          "http://127.0.0.1:5001/api/attendance_stats",
+          {
+            headers: { "X-User-ID": userId },
+          },
+        );
+        setAttendanceStats(statsResponse.data);
       } catch (error) {
         console.error("Error fetching attendance:", error);
       }
@@ -42,7 +60,7 @@ const Attendance = () => {
         <Topbar />
         <h2 className="mb-4 header-text">My Attendance</h2>
 
-        {/* Summary Cards */}
+        {/* Summary Cards - Now Dynamic */}
         <Row className="summary mb-4">
           <Col md={3}>
             <Card className="summary-cards present">
@@ -50,7 +68,9 @@ const Attendance = () => {
                 <div className="summary-icon-circle1">
                   <FaCheck className="summary-icon" />
                 </div>
-                <Card.Title className="summary-title">2</Card.Title>
+                <Card.Title className="summary-title">
+                  {attendanceStats.working_days}
+                </Card.Title>
                 <h3 className="summary-subtitle">Working Days</h3>
               </Card.Body>
             </Card>
@@ -61,7 +81,9 @@ const Attendance = () => {
                 <div className="summary-icon-circle2">
                   <FaCheck className="summary-icon" />
                 </div>
-                <Card.Title className="summary-title">1</Card.Title>
+                <Card.Title className="summary-title">
+                  {attendanceStats.total_leaves}
+                </Card.Title>
                 <h3 className="summary-subtitle">Total Leaves</h3>
               </Card.Body>
             </Card>
@@ -72,7 +94,9 @@ const Attendance = () => {
                 <div className="summary-icon-circle3">
                   <FaCheck className="summary-icon" />
                 </div>
-                <Card.Title className="summary-title">1</Card.Title>
+                <Card.Title className="summary-title">
+                  {attendanceStats.late_logins}
+                </Card.Title>
                 <h3 className="summary-subtitle">Late Login</h3>
               </Card.Body>
             </Card>
@@ -83,7 +107,9 @@ const Attendance = () => {
                 <div className="summary-icon-circle4">
                   <FaCheck className="summary-icon" />
                 </div>
-                <Card.Title className="summary-title">3</Card.Title>
+                <Card.Title className="summary-title">
+                  {attendanceStats.on_time_logins}
+                </Card.Title>
                 <h3 className="summary-subtitle">On Time Login</h3>
               </Card.Body>
             </Card>
@@ -130,7 +156,10 @@ const Attendance = () => {
                   style={{ width: "200px" }}
                 />
                 <Form.Control type="date" style={{ width: "160px" }} />
-                <Button variant="info" className="myleave-btn text-white fw-semibold">
+                <Button
+                  variant="info"
+                  className="myleave-btn text-white fw-semibold"
+                >
                   My Leave Report
                 </Button>
               </div>
@@ -157,16 +186,16 @@ const Attendance = () => {
                     record.status === "On Time"
                       ? "text-success fw-semibold"
                       : record.status === "Absent"
-                      ? "text-danger fw-semibold"
-                      : "text-warning fw-semibold";
+                        ? "text-danger fw-semibold"
+                        : "text-warning fw-semibold";
 
                   // Check-in/out color
                   let checkClass =
                     record.status === "Absent"
                       ? "text-danger fw-semibold"
                       : record.status === "Late Login"
-                      ? "text-warning fw-semibold"
-                      : "text-primary";
+                        ? "text-warning fw-semibold"
+                        : "text-primary";
 
                   return (
                     <tr key={index}>

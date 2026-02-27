@@ -635,6 +635,9 @@ const Employee = () => {
                           <option value="Contract">Contract</option>
                           <option value="Intern">Intern</option>
                         </select>
+                  {errors.hrManager && (
+                  <p className="error-text">{errors.hrManager}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Department</label>
@@ -678,6 +681,9 @@ const Employee = () => {
                           <option value="Married">Married</option>
                           <option value="Divorced">Divorced</option>
                         </select>
+                  {errors.designation && (
+                  <p className="error-text">{errors.designation}</p>
+               )}
                       </div>
                       <div className="form-group">
                         <label>Portfolio Link</label>

@@ -9,6 +9,12 @@ import group10 from "../../../assets/Group10.png";
 
 const Attendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
+  const [currentTime, setCurrentTime] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
+
+
+
+
 
   // ✅ ONLY CHANGE: date picker state
   const [selectedDate, setSelectedDate] = useState("");
@@ -285,7 +291,6 @@ const Attendance = () => {
                         {record.status}
                       </span>
                     </td>
-
                     <td>{record.date}</td>
                     <td className="time-cell">{record.checkIn}</td>
                     <td className="time-cell">{record.checkOut}</td>

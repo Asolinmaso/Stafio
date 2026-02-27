@@ -43,11 +43,10 @@
   align-items: flex-start;
   gap: 30px;
   margin-bottom: 40px;
-
 }
 
 .employee-header h2 {
-  font-size: 26px;
+  font-size: 26px ;
   font-weight: 600;
   color: #222;
   margin-left: 10px;
@@ -67,6 +66,10 @@
   /* modified */
 }
 
+.header-left h2 {
+  margin: auto;
+  padding: 7px 0px 0px 10px;
+}
 .employee-tabs {
   display: flex;
   gap: 10px;
@@ -181,7 +184,7 @@
 }
 
 .sort-select1 {
-  padding: 8px 14px;
+  padding: 8px 14px ;
   border: 1px solid #ccc;
   border-radius: 16px;
   font-size: 15px;
