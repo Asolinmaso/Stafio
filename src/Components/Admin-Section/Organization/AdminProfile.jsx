@@ -1461,6 +1461,7 @@ const AdminProfile = () => {
               </div>
             </Tab.Pane>
 
+
             {/* BANK DETAILS TAB */}
             <Tab.Pane eventKey="bank">
               <div className="update-info-header-box">
