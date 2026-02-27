@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect, useRef } from "react";
 import "./MyLeave.css";
 import {
   FaCheckCircle,
@@ -7,6 +7,7 @@ import {
   FaTimesCircle,
   FaUpload,
 } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import illustration from "../../../assets/Formsbro.png"; // Add your illustration image
@@ -16,9 +17,14 @@ import axios from "axios";
 
 export default function Myleave() {
   const [showModal, setShowModal] = useState(false);
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
-  const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+   // Filter states
+  const [filterName, setFilterName] = useState("");
+  const [filterLeaveType, setFilterLeaveType] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("All")
+
+
   const [leaveBalance, setLeaveBalance] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   const navigate = useNavigate();
@@ -32,15 +38,10 @@ export default function Myleave() {
     reason: "",
   });
 
-  const filteredAndSortedLeaves = leaveData
-    // SEARCH by employee name
+  const filterRef = useRef(null);
+  const filterButtonRef = useRef(null);
 
-    // FILTER by status
-    .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus,
-    );
-
-  const fetchMyLeaves = async () => {
+const fetchMyLeaves = async () => {
     try {
       const userId = sessionStorage.getItem("current_user_id");
 
@@ -74,28 +75,32 @@ export default function Myleave() {
     fetchMyLeaves();
   }, []);
 
-  useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [showModal]);
-
-  useEffect(() => {
+   useEffect(() => {
     if (showModal) {
       const userId = sessionStorage.getItem("current_user_id");
-
       setFormData((prev) => ({
         ...prev,
         employee_id: userId || "",
       }));
     }
   }, [showModal]);
+
+const filteredAndSortedLeaves = leaveData.filter((leave) =>
+
+    filterStatus === "All" ? true : leave.status === filterStatus
+  );
+
+
+   const handleResetFilter = () => {
+    setFilterName("");
+    setFilterLeaveType("All");
+    setFilterStatus("All");
+  
+  };
+
+  const handleApplyFilter = () => {
+    setShowFilterPopup(false);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,7 +110,7 @@ export default function Myleave() {
     });
   };
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -141,6 +146,39 @@ export default function Myleave() {
       alert("Failed to apply leave ❌");
     }
   };
+  
+    // Close filter popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        showFilterPopup &&
+        filterRef.current &&
+        !filterRef.current.contains(event.target) &&
+        filterButtonRef.current &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
+        setShowFilterPopup(false);
+      }
+  };
+
+      document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilterPopup]);
+
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
 
   return (
     <div className="layout">
@@ -155,7 +193,7 @@ export default function Myleave() {
         {/* Header Section */}
         <div className="leave-header">
           <div className="leave-summary">
-            {leaveBalance.length > 0 ? (
+             {leaveBalance.length > 0 ? (
               leaveBalance.slice(0, 3).map((balance) => (
                 <div className="summary-card" key={balance.id}>
                   <FaCheckCircle className="summary-icon" />
@@ -169,7 +207,7 @@ export default function Myleave() {
                 </div>
               ))
             ) : (
-              <div className="summary-card">
+           <div className="summary-card">
                 <FaCheckCircle className="summary-icon" />
                 <p>
                   <strong>Loading...</strong>
@@ -193,17 +231,85 @@ export default function Myleave() {
                 Regularization
               </button>
             </div>
-            <div className="bottom-button">
-              <select
-                className="right-butn-filter"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+            <div className="bottom-button" style={{ position: 'relative' }}>
+              <button
+                ref={filterButtonRef}
+                className="app-btn-filter"
+                onClick={() => setShowFilterPopup(!showFilterPopup)}
               >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
+                <FaFilter /> Filter
+              </button>
+
+              {/* Filter Dropdown */}
+              {showFilterPopup && (
+                <div ref={filterRef} className="filter-dropdown-box">
+                  {/* Header */}
+                  <div className="filter-popup-header">
+                    <h3>Filter</h3>
+                    <button
+                      className="filter-popup-close"
+                      onClick={() => setShowFilterPopup(false)}
+                    >
+                      <IoClose />
+                    </button>
+                  </div>
+                  {/* Body */}
+                  <div className="filter-popup-body">
+                    {/* Name Field */}
+                    <div className="filter-field">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        placeholder="Please enter name"
+                        value={filterName}
+                        onChange={(e) => setFilterName(e.target.value)}
+                      />
+                    </div>
+                    {/* Leave Type and Status Row */}
+                    <div className="filter-row">
+                      <div className="filter-field">
+                        <label>Leave Type</label>
+                        <select
+                          value={filterLeaveType}
+                          onChange={(e) => setFilterLeaveType(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Casual Leave">Casual Leave</option>
+                          <option value="Sick Leave">Sick Leave</option>
+                          <option value="Annual Leave">Annual Leave</option>
+                        </select>
+                      </div>
+                      <div className="filter-field">
+                        <label>Status</label>
+                        <select
+                          value={filterStatus}
+                          onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Footer */}
+                  <div className="filter-popup-footer">
+                    <button
+                      className="filter-reset-btn"
+                      onClick={handleResetFilter}
+                    >
+                      Reset
+                    </button>
+                    <button
+                      className="filter-apply-btn"
+                      onClick={handleApplyFilter}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -222,59 +328,49 @@ export default function Myleave() {
               </tr>
             </thead>
             <tbody>
-              {filteredAndSortedLeaves.length > 0 ? (
-                filteredAndSortedLeaves.map((leave, index) => (
-                  <tr key={leave.id}>
-                    <td>{String(index + 1).padStart(2, "0")}</td>
-                    <td>{leave.type}</td>
-                    <td>{leave.date}</td>
-                    <td>{leave.reason}</td>
-                    <td>
-                      {leave.requestDate}
-                      <span className={`status ${leave.status.toLowerCase()}`}>
-                        {leave.status}
-                      </span>
-                    </td>
-                    <td className="action-icons">
-                      <FaEdit className="edit-icon" />
-                      <FaTimesCircle className="delete-icon" />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="no-data">
-                    No leave records found.
+              {filteredAndSortedLeaves.map((leave, index) => (
+                <tr key={leave.id}>
+                  <td>{String(index + 1).padStart(2, "0")}</td>
+                  <td>{leave.type}</td>
+                  <td>{leave.date}</td>
+                  <td>{leave.reason}</td>
+                  <td>
+                    {leave.requestDate}
+                    <span className="status">{leave.status}</span>
+                  </td>
+                  <td className="action-icons">
+                    <FaEdit className="edit-icon" />
+                    <FaTimesCircle className="delete-icon" />
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
 
         {/* Modal Popup */}
         {showModal && (
-          <div className="modal-overlay">
+          <div className="app-leave-modal-overlay">
             <div className="apply-leave-modal">
-              <div className="modal-header-blue">
+              <div className="app-leave-modal-header-blue">
                 <h3>Apply Leave</h3>
                 <button
-                  className="close-btn"
+                  className="apply-leave-close-btn"
                   onClick={() => setShowModal(false)}
                 >
                   x
                 </button>
               </div>
 
-              <div className="modal-body">
+              <div className="app-leave-modal-body">
                 <form className="apply-leave-form" onSubmit={handleSubmit}>
                   <div className="form-left">
                     <label>Employee ID:</label>
-                    <input
-                      type="text"
-                      name="employee_id"
-                      value={formData.employee_id}
-                      readOnly
+                    <input 
+                    type="text"
+                    name="employee_id"
+                    value={formData.employee_id}
+                    readOnly 
                     />
 
                     <label>Leave Type:</label>
@@ -282,7 +378,7 @@ export default function Myleave() {
                       name="leave_type"
                       value={formData.leave_type}
                       onChange={handleChange}
-                    >
+                      >
                       <option value="">Select</option>
                       <option value="1">Casual Leave</option>
                       <option value="2">Sick Leave</option>
@@ -290,24 +386,24 @@ export default function Myleave() {
                     </select>
 
                     <label>Select Date:</label>
-                    <div className="date-row">
-                      <input
-                        type="date"
+                    <div className="app-leave-date-row">
+                      <input 
+                        type="date" 
                         name="start_date"
                         value={formData.start_date}
                         onChange={handleChange}
                       />
-                      <input
+                      <input 
                         type="date"
                         name="end_date"
                         value={formData.end_date}
                         onChange={handleChange}
-                      />
+                       />
                       <select
                         name="day_type"
                         value={formData.day_type}
                         onChange={handleChange}
-                      >
+                        >
                         <option value="Full Day">Full Day</option>
                         <option value="Half Day (FN)">Half Day (FN)</option>
                         <option value="Half Day (AN)">Half Day (AN)</option>
@@ -315,17 +411,17 @@ export default function Myleave() {
                     </div>
 
                     <label>Notify Others:</label>
-                    <div className="notify-row">
+                    <div className="app-leave-notify-row">
                       <select
                         name="notify_to"
                         value={formData.notify_to}
                         onChange={handleChange}
                       >
                         <option value="">Select</option>
-                        <option value="Team Lead">Team Lead</option>
-                        <option value="HR">HR</option>
+                        <option>Team Lead</option>
+                        <option>HR</option>
                       </select>
-                      <button type="button" className="upload-btn">
+                      <button type="button" className="apply-leave-upload-btn">
                         <FaUpload /> Upload File
                       </button>
                     </div>
@@ -337,20 +433,7 @@ export default function Myleave() {
                       onChange={handleChange}
                       placeholder="ex: I am travelling to"
                       maxLength={30}
-                    />
-
-                    <div className="modal-actions">
-                      <button type="submit" className="apply-btn">
-                        Apply
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowModal(false)}
-                        className="cancel-btn"
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                    ></textarea>
                   </div>
 
                   {/* Right illustration */}
@@ -358,6 +441,19 @@ export default function Myleave() {
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
                 </form>
+                
+                    <div className="app-leave-modal-actions">
+                      <button type="submit" className="apply-leave-btn">
+                        Apply
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowModal(false)}
+                        className="app-leave-cancel-btn"
+                      >
+                        Cancel
+                      </button>
+                    </div>
               </div>
             </div>
           </div>

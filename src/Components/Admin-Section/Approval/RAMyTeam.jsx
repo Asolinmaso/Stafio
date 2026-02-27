@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./RAMyTeam.css";
 import { FaFilter } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
@@ -7,26 +7,14 @@ import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 import axios from "axios";
 
-
-export default function RegularizationApproval() {
+export default function RegularizationApprovalMyTeam() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
-  const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
-  
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [sortOrder, setSortOrder] = useState("Newest");
 
-  useEffect(() => {
-    const fetchMyTeamRA = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:5001/api/myteamra");
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching attendance data:", error);
-      }
-    };
-
-    fetchMyTeamRA();
-  }, []);
+  // Filter popup state
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const navigate = useNavigate();
 const filteredAndSortedLeaves = data
@@ -52,63 +40,168 @@ const filteredAndSortedLeaves = data
 
 
 
-  return (
-    <div className="regularization-page">
-      <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
-      </div>
-      <AdminSidebar />
-      <div className="regularization-main">
-        <Topbar />
-        <div className="regularization-container">
-          <div className="regularization-header">
-            <div className="header-top">
-              <h2>Regularization Approval My Team</h2>
-            </div>
+  useEffect(() => {
+    const fetchMyTeamRA = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:5001/api/myteamra");
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching regularization data:", error);
+      }
+    };
 
-            <div className="header-bottom">
-              {/* Left side buttons */}
-              <div className="left-tabs">
-                <button className="tab-btn "
-                 onClick={() => navigate("/regularization-approval")}
-                >All</button>
-                <button className="tab-btn active">My Team</button>
+    fetchMyTeamRA();
+  }, []);
+
+  // Filter + Search + Sort
+  const filteredAndSortedData = data
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((item) =>
+      filterStatus === "All" ? true : item.status === filterStatus
+    )
+    .sort((a, b) => {
+      const dateA = new Date(a.requestDate);
+      const dateB = new Date(b.requestDate);
+      return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
+    });
+
+  return (
+    <div className="ra-page">
+      {/* Background Logo */}
+      <div className="ra-bg-logo">
+        <img src={group10} alt="logo" className="ra-bg-logo-img" />
+      </div>
+
+      <AdminSidebar />
+
+      <div className="ra-main">
+        <Topbar />
+
+        <div className="ra-container">
+          {/* Page Header */}
+          <div className="ra-header">
+            <h2 className="ra-title">Regularization Approval My Team</h2>
+
+            <div className="ra-header-row">
+              {/* Tabs */}
+              <div className="ra-tabs">
+                <button
+                  className="ra-tab"
+                  onClick={() => navigate("/regularization-approval")}
+                >
+                  All
+                </button>
+                <button className="ra-tab active">My Team</button>
               </div>
 
-              {/* Right side search/filter/sort */}
-              <div className="right-controls">
+              {/* Right Controls */}
+              <div className="ra-controls">
                 <input
-                type="text"
-                placeholder="🔍 Search..."
-                className="right-search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                  type="text"
+                  placeholder="🔍 Search..."
+                  className="ra-search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+
+                {/* FILTER WRAPPER */}
+                <div className="ra-filter-wrapper">
+                  <button
+                    className="ra-filter-btn"
+                    onClick={() => setIsFilterOpen((prev) => !prev)}
+                  >
+                    <FaFilter /> Filter
+                  </button>
+
+                  {isFilterOpen && (
+                    <div
+                      className="ra-modal"
+                      onClick={() => setIsFilterOpen(false)}
+                    >
+                      <div
+                        className="ra-filter-card"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <h3 className="ra-filter-title">Filter</h3>
+
+                        <div className="ra-filter-grid">
+                          <div className="ra-filter-field">
+                            <label>Name</label>
+                            <input
+                              type="text"
+                              placeholder="Please enter name"
+                              value={searchTerm}
+                              onChange={(e) =>
+                                setSearchTerm(e.target.value)
+                              }
+                            />
+                          </div>
+
+                          <div className="ra-filter-field">
+                            <label>Attendance Type</label>
+                            <select>
+                              <option>All</option>
+                              <option>Present</option>
+                              <option>Absent</option>
+                            </select>
+                          </div>
+
+                          <div className="ra-filter-field">
+                            <label>Status</label>
+                            <select
+                              value={filterStatus}
+                              onChange={(e) =>
+                                setFilterStatus(e.target.value)
+                              }
+                            >
+                              <option>All</option>
+                              <option>Pending</option>
+                              <option>Approved</option>
+                              <option>Rejected</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="ra-filter-actions">
+                          <button
+                            className="ra-reset-btn"
+                            onClick={() => {
+                              setSearchTerm("");
+                              setFilterStatus("All");
+                            }}
+                          >
+                            Reset
+                          </button>
+
+                          <button
+                            className="ra-apply-btn"
+                            onClick={() => setIsFilterOpen(false)}
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <select
-                className="right-butn-filter"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-                 <select
-                className="right-sort-select"
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-              >
-                <option value="Newest">Sort By : Newest</option>
-                <option value="Oldest">Sort By : Oldest</option>
-              </select>
+                  className="ra-sort"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                >
+                  <option value="Newest">Sort By : Newest</option>
+                  <option value="Oldest">Sort By : Oldest</option>
+                </select>
               </div>
             </div>
           </div>
 
-          <div className="table-container">
-            <table className="regularization-table">
+          {/* TABLE */}
+          <div className="ra-table-card">
+            <table className="ra-table">
               <thead>
                 <tr>
                   <th>Employee</th>
@@ -118,53 +211,64 @@ const filteredAndSortedLeaves = data
                   <th>Action</th>
                 </tr>
               </thead>
+
               <tbody>
-                {filteredAndSortedLeaves.map((emp) => (
+                {filteredAndSortedData.map((emp) => (
                   <tr key={emp.id}>
                     <td>
-                      <div className="emp-info">
-                        <img src={emp.img} alt={emp.name} />
-                        <div>
-                          <p className="emp-name">{emp.name}</p>
-                          <span>{emp.empId}</span>
+                      <div className="ra-emp">
+                        <img
+                          src={emp.img}
+                          alt={emp.name}
+                          className="ra-emp-img"
+                        />
+                        <div className="ra-emp-text">
+                          <p className="ra-emp-name">{emp.name}</p>
+                          <span className="ra-emp-id">{emp.empId}</span>
                         </div>
                       </div>
                     </td>
-                    <td>{emp.regDate}</td>
-                    <td>{emp.attendance}</td>
+
+                    <td className="ra-muted">{emp.regDate}</td>
+                    <td className="ra-muted">{emp.attendance}</td>
+
                     <td>
-                      <div className="request-status">
-                        <span>{emp.requestDate}</span>
-                        <p
-                          className={`status-badge ${
-                            emp.status === "Pending" ? "pending" : "approved"
-                          }`}
+                      <div className="ra-request">
+                        <span className="ra-muted">{emp.requestDate}</span>
+                        <span
+                          className={`ra-status ${emp.status.toLowerCase()}`}
                         >
                           {emp.status}
-                        </p>
+                        </span>
                       </div>
                     </td>
+
                     <td>
-                      <button className="view-btn">View Details</button>
+                      <button className="ra-view-btn">View Details</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-           <div className="pagination">
-              <div className="showing">
-                Showing{" "}
-                <select>
-                  <option>07</option>
-                </select>
-              </div>
-              <div className="page-btns">
-                <button className="prev">Prev</button>
-                <button className="page active">01</button>
-                <button className="next">Next</button>
-              </div>
+
+          {/* PAGINATION */}
+          <div className="ra-pagination">
+            <div className="ra-showing">
+              <span>Showing</span>
+              <select className="ra-showing-select">
+                <option>07</option>
+                <option>10</option>
+                <option>20</option>
+              </select>
             </div>
+
+            <div className="ra-page-controls">
+              <button className="ra-page-btn">Prev</button>
+              <button className="ra-page-number active">01</button>
+              <button className="ra-page-btn">Next</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

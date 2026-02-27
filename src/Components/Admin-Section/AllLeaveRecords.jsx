@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import {
   Container,
   Row,
@@ -7,71 +7,39 @@ import {
   Button,
   Table,
   Form,
-  Spinner,
 } from "react-bootstrap";
 import AdminSidebar from "./AdminSidebar";
-import axios from "axios";
-
-const API_BASE = "http://127.0.0.1:5001";
+import Topbar from "./Topbar";
+import { LeaveContext } from "../../context/LeaveContext";
+import group10 from "../../assets/Group10.png";
 
 const AllLeaveRecords = () => {
-  const [leaveRecords, setLeaveRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [departments, setDepartments] = useState([]);
+  const { leaveRecords } = useContext(LeaveContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
 
-  // Fetch leave records from API on mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [recordsRes, deptRes] = await Promise.all([
-          axios.get(`${API_BASE}/api/all_leave_records`, {
-            headers: {
-              "X-User-Role": "admin",
-              "X-User-ID": localStorage.getItem("userId") || "1",
-            },
-          }),
-          axios.get(`${API_BASE}/api/departments`),
-        ]);
-
-        setLeaveRecords(recordsRes.data);
-        setDepartments(deptRes.data);
-      } catch (error) {
-        console.error("Error fetching leave records:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   const handleExport = () => {
     const headers = [
-      "Employee Name",
+      "Employee ID",
       "Leave Type",
       "Start Date",
       "End Date",
-      "Days",
       "Reason",
       "Status",
       "Department",
     ];
     const rows = filteredRecords.map((r) =>
       [
-        r.employeeName,
+        r.employeeId,
         r.leaveType,
         r.startDate,
         r.endDate,
-        r.days,
         r.reason,
         r.status || "Pending",
         r.department || "N/A",
-      ].join(","),
+      ].join(",")
     );
 
     const csvContent = [headers.join(","), ...rows].join("\n");
@@ -80,25 +48,18 @@ const AllLeaveRecords = () => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "leave_records.csv";
+    link.download = "all_leave_records.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const filteredRecords = leaveRecords.filter((record) => {
+  const filteredRecords = (leaveRecords || []).filter((record) => {
     const matchesSearch =
-      (record.employeeName?.toLowerCase() || "").includes(
-        searchTerm.toLowerCase(),
-      ) ||
-      (record.reason?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (record.leaveType?.toLowerCase() || "").includes(
-        searchTerm.toLowerCase(),
-      );
+      (record.employeeId?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (record.reason?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter
-      ? record.status?.toLowerCase() === statusFilter.toLowerCase()
-      : true;
+    const matchesStatus = statusFilter ? record.status === statusFilter : true;
     const matchesDepartment = departmentFilter
       ? record.department === departmentFilter
       : true;
@@ -107,116 +68,122 @@ const AllLeaveRecords = () => {
   });
 
   return (
-    <div className="d-flex">
+    <div className="report-layout">
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
+      </div>
       <AdminSidebar />
-      <div style={{ marginLeft: "240px", width: "100%", padding: "20px" }}>
-        <Container fluid>
-          <Row className="mb-3">
-            <Col>
-              <h4 className="mb-0">All Leave Records</h4>
-            </Col>
-            <Col className="text-end">
-              <Button variant="success" onClick={handleExport}>
-                Export Records
-              </Button>
-            </Col>
-          </Row>
+      <div className="report-main">
+        <Topbar />
+        <Container fluid className="p-4">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h2 className="fw-bold">All Leave Records</h2>
+            <Button
+              variant="info"
+              className="text-white px-4 fw-semibold"
+              style={{ borderRadius: '10px' }}
+              onClick={handleExport}
+            >
+              Export CSV
+            </Button>
+          </div>
 
-          <Card>
-            <Card.Body>
-              <Row className="mb-3">
-                <Col md={3}>
-                  <Form.Control
-                    type="text"
-                    placeholder="Search by Name, Type or Reason"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+          <Card className="border-0 shadow-sm mb-4">
+            <Card.Body className="p-4">
+              <Row className="g-3">
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold text-secondary">Search</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Search ID or Reason..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="border-0 bg-light"
+                      style={{ height: '45px', borderRadius: '10px' }}
+                    />
+                  </Form.Group>
                 </Col>
-                <Col md={3}>
-                  <Form.Select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    <option value="">Filter by Status</option>
-                    <option value="approved">Approved</option>
-                    <option value="declined">Declined</option>
-                    <option value="pending">Pending</option>
-                  </Form.Select>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
+                    <Form.Select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="border-0 bg-light"
+                      style={{ height: '45px', borderRadius: '10px' }}
+                    >
+                      <option value="">All Status</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
+                    </Form.Select>
+                  </Form.Group>
                 </Col>
-                <Col md={3}>
-                  <Form.Select
-                    value={departmentFilter}
-                    onChange={(e) => setDepartmentFilter(e.target.value)}
-                  >
-                    <option value="">Filter by Department</option>
-                    {departments.map((dept, idx) => (
-                      <option key={idx} value={dept.name}>
-                        {dept.name}
-                      </option>
-                    ))}
-                  </Form.Select>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="small fw-bold text-secondary">Department</Form.Label>
+                    <Form.Select
+                      value={departmentFilter}
+                      onChange={(e) => setDepartmentFilter(e.target.value)}
+                      className="border-0 bg-light"
+                      style={{ height: '45px', borderRadius: '10px' }}
+                    >
+                      <option value="">All Departments</option>
+                      <option value="HR">HR</option>
+                      <option value="IT">IT</option>
+                      <option value="Sales">Sales</option>
+                    </Form.Select>
+                  </Form.Group>
                 </Col>
               </Row>
+            </Card.Body>
+          </Card>
 
-              {loading ? (
-                <div className="text-center py-4">
-                  <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                </div>
-              ) : (
-                <Table striped bordered hover responsive>
-                  <thead>
+          <Card className="border-0 shadow-sm">
+            <Card.Body className="p-0">
+              <Table hover responsive className="mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th className="py-3 px-4">#</th>
+                    <th className="py-3 px-4">Employee ID</th>
+                    <th className="py-3">Leave Type</th>
+                    <th className="py-3">Period</th>
+                    <th className="py-3">Reason</th>
+                    <th className="py-3">Status</th>
+                    <th className="py-3">Department</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredRecords.length === 0 ? (
                     <tr>
-                      <th>#</th>
-                      <th>Employee Name</th>
-                      <th>Leave Type</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                      <th>Days</th>
-                      <th>Reason</th>
-                      <th>Status</th>
-                      <th>Department</th>
+                      <td colSpan="7" className="text-center py-5 text-secondary">
+                        No leave records found.
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRecords.length === 0 ? (
-                      <tr>
-                        <td colSpan="9" className="text-center">
-                          No leave records found.
+                  ) : (
+                    filteredRecords.map((record, index) => (
+                      <tr key={index}>
+                        <td className="py-3 px-4">{index + 1}</td>
+                        <td className="py-3 px-4 fw-medium">{record.employeeId}</td>
+                        <td className="py-3">{record.leaveType}</td>
+                        <td className="py-3 small">
+                          {record.startDate} to {record.endDate}
                         </td>
+                        <td className="py-3">{record.reason}</td>
+                        <td className="py-3">
+                          <span className={`badge ${record.status === 'Approved' ? 'bg-success' :
+                              record.status === 'Rejected' ? 'bg-danger' : 'bg-warning'
+                            }`}>
+                            {record.status || "Pending"}
+                          </span>
+                        </td>
+                        <td className="py-3 text-secondary">{record.department || "N/A"}</td>
                       </tr>
-                    ) : (
-                      filteredRecords.map((record, index) => (
-                        <tr key={record.id || index}>
-                          <td>{index + 1}</td>
-                          <td>{record.employeeName}</td>
-                          <td>{record.leaveType}</td>
-                          <td>{record.startDate}</td>
-                          <td>{record.endDate}</td>
-                          <td>{record.days}</td>
-                          <td>{record.reason || "-"}</td>
-                          <td>
-                            <span
-                              className={`badge bg-${
-                                record.status === "approved"
-                                  ? "success"
-                                  : record.status === "declined"
-                                    ? "danger"
-                                    : "warning"
-                              }`}
-                            >
-                              {record.status}
-                            </span>
-                          </td>
-                          <td>{record.department || "N/A"}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </Table>
-              )}
+                    ))
+                  )}
+                </tbody>
+              </Table>
             </Card.Body>
           </Card>
         </Container>

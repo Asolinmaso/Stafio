@@ -37,9 +37,8 @@ export const LeaveMenu = () => {
     <div className="leave-menu">
       {/* Main Leave Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${
-          isLeaveActive ? "active" : ""
-        }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${isLeaveActive ? "active" : ""
+          }`}
         onClick={handleLeaveClick}
       >
         <div className="d-flex align-items-center">
@@ -108,87 +107,86 @@ const EmployeeSidebar = () => {
   };
   return (
     <div
-      className={`employee-sidebar d-flex flex-column ${
-        showSidebar ? "show" : ""
-      }`}
+      className={`employee-sidebar d-flex flex-column ${showSidebar ? "show" : ""
+        }`}
     >
       {/* Sidebar Header */}
       <div className="employee-sidebar-header text-center">
         <img src={stafioimg} alt="StafiO Logo" className="sidebar-logo" />
       </div>
 
-      {/* Sidebar Links */}
-      <Nav className="flex-column">
-        <Nav.Link
-          as={NavLink}
-          to="/employee-dashboard"
-          className="sidebar-link"
-        >
-          <img
-            src={Group}
-            alt="Dashboard Logo"
-            className={`me-2 sidebar-icon ${
-              isEmployeeDashboardActive ? "active" : ""
-            }`}
-          />
-          Dashboard
-        </Nav.Link>
+      <div className="sidebar-scroll-content">
+        {/* Sidebar Links */}
+        <Nav className="flex-column">
+          <Nav.Link
+            as={NavLink}
+            to="/employee-dashboard"
+            className="sidebar-link"
+          >
+            <img
+              src={Group}
+              alt="Dashboard Logo"
+              className={`me-2 sidebar-icon ${isEmployeeDashboardActive ? "active" : ""
+                }`}
+            />
+            Dashboard
+          </Nav.Link>
 
-        {/* Leave Menu */}
-        <NavLink to="/my-leave" className="sidebar-leave-link">
-          <LeaveMenu />
-        </NavLink>
-        <Nav.Link
-          as={NavLink}
-          to="/employee-attendance"
-          className="sidebar-link"
-        >
-          <img
-            src={Group2}
-            alt="Attendance Logo"
-            className={`me-2 sidebar-icon ${
-              isAttendancesActive ? "active" : ""
-            }`}
-          />
-          Attendance
-        </Nav.Link>
+          {/* Leave Menu */}
+          <NavLink to="/my-leave" className="sidebar-leave-link">
+            <LeaveMenu />
+          </NavLink>
+          <Nav.Link
+            as={NavLink}
+            to="/employee-attendance"
+            className="sidebar-link"
+          >
+            <img
+              src={Group2}
+              alt="Attendance Logo"
+              className={`me-2 sidebar-icon ${isAttendancesActive ? "active" : ""
+                }`}
+            />
+            Attendance
+          </Nav.Link>
 
-        <Nav.Link as={NavLink} to="/profile" className="sidebar-link">
+          <Nav.Link as={NavLink} to="/profile" className="sidebar-link">
+            <img
+              src={Vector}
+              alt="Profile Logo"
+              className="me-2"
+              style={{ width: "20px", height: "20px" }}
+            />
+            Profile
+          </Nav.Link>
+
+          <Nav.Link as={NavLink} to="/settings" className="sidebar-link">
+            <img
+              src={Vector2}
+              alt="Settings Logo"
+              className={`me-2 sidebar-icon ${isSettingsPageActive ? "active" : ""
+                }`}
+            />
+            Settings
+          </Nav.Link>
+        </Nav>
+
+        {/* Logout Button */}
+        <div className="sidebar-logout" onClick={handleLogout}>
           <img
-            src={Vector}
-            alt="Profile Logo"
+            src={Vector1}
+            alt="Logout Icon"
             className="me-2"
             style={{ width: "20px", height: "20px" }}
           />
-          Profile
-        </Nav.Link>
-
-        <Nav.Link as={NavLink} to="/settings" className="sidebar-link">
-          <img
-            src={Vector2}
-            alt="Settings Logo"
-            className={`me-2 sidebar-icon ${
-              isSettingsPageActive ? "active" : ""
-            }`}
-          />
-          Settings
-        </Nav.Link>
-      </Nav>
-
-      {/* Logout Button */}
-      <div className="sidebar-logout" onClick={handleLogout}>
-        <img
-          src={Vector1}
-          alt="Logout Icon"
-          className="me-2"
-          style={{ width: "20px", height: "20px" }}
-        />
-        Logout
+          Logout
+        </div>
       </div>
 
       <div className="employee-sidebar-footer text-center">
         <img src={booking} alt="Booking Logo" className="sidebar-logo1" />
       </div>
+
     </div>
   );
 };

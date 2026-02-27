@@ -6,19 +6,31 @@ const NotificationBar = () => {
   const [visible, setVisible] = useState(true);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
 
-  useEffect(() => {
-    // Retrieve announcements from localStorage
+useEffect(() => {
+  const loadLatestAnnouncement = () => {
     const stored = localStorage.getItem("announcements");
     if (stored) {
       const parsed = JSON.parse(stored);
       if (parsed.length > 0) {
-        // Get the last (latest) announcement
         setLatestAnnouncement(parsed[parsed.length - 1]);
+        setVisible(true); // show again for new announcement
       }
     }
-  }, []);
+  };
 
-  if (!visible || !latestAnnouncement) return null;
+  // Load initially
+  loadLatestAnnouncement();
+
+  // 🔥 Listen for updates
+  window.addEventListener("announcementUpdated", loadLatestAnnouncement);
+
+  return () => {
+    window.removeEventListener("announcementUpdated", loadLatestAnnouncement);
+  };
+}, []);
+
+
+ if (!visible || !latestAnnouncement) return null;
 
   return (
     <div className="notification">
