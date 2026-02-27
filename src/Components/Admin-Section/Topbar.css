@@ -2,14 +2,13 @@
 	position: sticky !important;
 	top: 0 !important;
 	z-index: 1000 !important;
-	height: 70px;
+	height: 65px;
 	background: #fff;
-	border-radius: 0 0 10px 10px;
-	/* Rounded only at bottom when sticky */
-	margin: 0 !important;
+	border-radius: 12px !important;
+	margin: 0 16px !important;
 	padding: 5px 20px !important;
-	width: 100% !important;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	width: calc(100% - 32px) !important;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .topbar-img {

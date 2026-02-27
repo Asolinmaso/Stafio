@@ -5,7 +5,7 @@ import "./Employees.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import group10 from "../../../assets/Group10.png";
-import { FaUserFriends, FaSearch, FaFilter, FaEdit } from "react-icons/fa";
+import { FaUserFriends, FaSearch, FaFilter, FaEdit, FaPlusCircle } from "react-icons/fa";
 import { FiShare2, FiDownload } from "react-icons/fi";
 
 const Employee = () => {
@@ -292,150 +292,113 @@ const Employee = () => {
         <Topbar />
 
         <div className="employee-content">
-          {/* ---------- Header Section ---------- */}
-          <div className="employee-header">
-            {/* LEFT SIDE */}
-            <div className="header-left">
-              <h2>Employees</h2>
+          {/* ---------- Title ---------- */}
+          <h2 className="emp-page-title">Employees</h2>
 
-              <div className="top-buttons">
-                <button
-                  className="btn-apply"
-                  onClick={() => navigate("/employees-list")}
-                >
-                  All Employee
-                </button>
-                <button
-                  className="btn-regularization"
-                  onClick={() => navigate("/el-myteam")}
-                >
-                  My Team
-                </button>
-              </div>
-              <div className="search-container">
-                <FaSearch className="search-icon" size={16} />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="search-input0"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
+          {/* ---------- Tabs + New Employee Button ---------- */}
+          <div className="emp-controls-row">
+            <div className="top-buttons">
+              <button
+                className="btn-apply"
+                onClick={() => navigate("/employees-list")}
+              >
+                All Employee
+              </button>
+              <button
+                className="btn-regularization"
+                onClick={() => navigate("/el-myteam")}
+              >
+                My Team
+              </button>
             </div>
 
-            {/* RIGHT SIDE */}
-            <div className="header-right">
-              <button className="add-btn" onClick={() => { resetForm(); setShowModal(true); }}>
-                + New Employee
-              </button>
+            <button className="add-btn" onClick={() => { resetForm(); setShowModal(true); }}>
+              <FaPlusCircle size={16} /> New Employee
+            </button>
+          </div>
 
-              <div className="filter-sort">
-                {/* FILTER BUTTON */}
-                <div className="filter-wrapper">
-                  <button
-                    className="right-butn-filterr"
-                    onClick={() => setShowFilters(prev => !prev)}
-                  >
-                    <FaFilter /> Filter
-                  </button>
+          {/* ---------- Search + Filter + Sort ---------- */}
+          <div className="emp-search-filter-row">
+            <div className="search-container">
+              <FaSearch className="search-icon" size={14} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="search-input0"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
-                  {/* DROPDOWN PANEL */}
-                  {showFilters && (
-                    <div className="filter-dropdown">
-                      <h4>Filter</h4>
+            <div className="filter-sort">
+              {/* FILTER BUTTON */}
+              <div className="filter-wrapper">
+                <button
+                  className="right-butn-filterr"
+                  onClick={() => setShowFilters(prev => !prev)}
+                >
+                  <FaFilter size={12} /> Filter
+                </button>
 
-                      {/* NAME */}
+                {showFilters && (
+                  <div className="filter-dropdown">
+                    <h4>Filter</h4>
+                    <div className="filter-field">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        placeholder="Please enter name"
+                        value={filters.name}
+                        onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+                      />
+                    </div>
+                    <div className="filter-row">
                       <div className="filter-field">
-                        <label>Name</label>
-                        <input
-                          type="text"
-                          placeholder="Please enter name"
-                          value={filters.name}
-                          onChange={(e) =>
-                            setFilters({ ...filters, name: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      {/* DEPARTMENT + POSITION */}
-                      <div className="filter-row">
-                        <div className="filter-field">
-                          <label>Department</label>
-                          <select
-                            value={filters.department}
-                            onChange={(e) =>
-                              setFilters({ ...filters, department: e.target.value })
-                            }
-                          >
-                            <option value="all">Select</option>
-                            <option value="Human Resource">Human Resource</option>
-                            <option value="Development">Development</option>
-                            <option value="Design">Design</option>
-                            <option value="Sales">Sales</option>
-                          </select>
-                        </div>
-
-                        <div className="filter-field">
-                          <label>Position</label>
-                          <select
-                            value={filters.position}
-                            onChange={(e) =>
-                              setFilters({ ...filters, position: e.target.value })
-                            }
-                          >
-                            <option value="all">Select</option>
-                            <option value="Designer">Designer</option>
-                            <option value="Developer">Developer</option>
-                            <option value="UIUX">UIUX</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* ACTIONS */}
-                      <div className="filter-actions">
-                        <button
-                          className="reset-btn"
-                          onClick={() => {
-                            setFilters({
-                              name: "",
-                              department: "all",
-                              position: "all",
-                              status: "all",
-                            });
-                            setSearchTerm("");
-                            setShowFilters(false);
-                          }}
+                        <label>Department</label>
+                        <select
+                          value={filters.department}
+                          onChange={(e) => setFilters({ ...filters, department: e.target.value })}
                         >
-                          Reset
-                        </button>
-
-
-                        <button
-                          className="apply-btn"
-                          onClick={() => setShowFilters(false)}
+                          <option value="all">Select</option>
+                          <option value="Human Resource">Human Resource</option>
+                          <option value="Development">Development</option>
+                          <option value="Design">Design</option>
+                          <option value="Sales">Sales</option>
+                        </select>
+                      </div>
+                      <div className="filter-field">
+                        <label>Position</label>
+                        <select
+                          value={filters.position}
+                          onChange={(e) => setFilters({ ...filters, position: e.target.value })}
                         >
-                          Apply
-                        </button>
+                          <option value="all">Select</option>
+                          <option value="Designer">Designer</option>
+                          <option value="Developer">Developer</option>
+                          <option value="UIUX">UIUX</option>
+                        </select>
                       </div>
                     </div>
-                  )}
-                </div>
-
-                {/* SORT */}
-                <select
-                  className="sort-select1"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="newest">Sort By : Newest</option>
-                  <option value="oldest">Sort By : Oldest</option>
-                  <option value="name">Sort By : Name</option>
-                  <option value="department">Sort By : Department</option>
-                  <option value="status">Sort By : Status</option>
-                </select>
+                    <div className="filter-actions">
+                      <button className="reset-btn" onClick={() => { setFilters({ name: "", department: "all", position: "all", status: "all" }); setSearchTerm(""); setShowFilters(false); }}>Reset</button>
+                      <button className="apply-btn" onClick={() => setShowFilters(false)}>Apply</button>
+                    </div>
+                  </div>
+                )}
               </div>
 
+              {/* SORT */}
+              <select
+                className="sort-select1"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Sort By : Newest</option>
+                <option value="oldest">Sort By : Oldest</option>
+                <option value="name">Sort By : Name</option>
+                <option value="department">Sort By : Department</option>
+                <option value="status">Sort By : Status</option>
+              </select>
             </div>
           </div>
 
@@ -443,7 +406,7 @@ const Employee = () => {
           <table className="employee-table">
             <thead>
               <tr>
-                <th>Name / Email ID</th>
+                <th>Name/Email ID</th>
                 <th>Employee ID</th>
                 <th>Position</th>
                 <th>Department</th>
@@ -454,7 +417,7 @@ const Employee = () => {
             <tbody>
               {finalEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
+                  <td colSpan="6" style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}>
                     No employees found
                   </td>
                 </tr>
@@ -465,18 +428,9 @@ const Employee = () => {
                       <div className="emp-info">
                         <img src={emp.image} alt={emp.name} className="emp-img" />
                         <div>
-                          <p
-                            className={`emp-name ${highlightName &&
-                              emp.name
-                                .toLowerCase()
-                                .includes(highlightName.toLowerCase())
-                              ? "highlight"
-                              : ""
-                              }`}
-                          >
+                          <p className={`emp-name ${highlightName && emp.name.toLowerCase().includes(highlightName.toLowerCase()) ? "highlight" : ""}`}>
                             {emp.name}
                           </p>
-
                           <p className="emp-email">{emp.email}</p>
                         </div>
                       </div>
@@ -484,24 +438,22 @@ const Employee = () => {
                     <td>{emp.empId}</td>
                     <td>{emp.position}</td>
                     <td>{emp.department}</td>
-                    <td className={`status ${emp.status.toLowerCase()}`}>
-                      {emp.status}
-                    </td>
+                    <td className="status">{emp.status}</td>
                     <td>
                       <button className="view-btn" onClick={() => handleViewDetails(emp)}>View Details</button>
                     </td>
                   </tr>
-                )
-                ))}
+                ))
+              )}
             </tbody>
           </table>
 
-          {/* ---------- Pagination Section ---------- */}
+          {/* ---------- Pagination ---------- */}
           <div className="pagination">
             <div className="showing">
-              Showing{" "}
+              Showing
               <select>
-                <option>07</option>
+                <option>07 ▾</option>
                 <option>10</option>
                 <option>20</option>
               </select>
@@ -806,181 +758,38 @@ const Employee = () => {
                       <p>{selectedEmployee.profile.empType || 'Not Set'}</p>
                     </div>
                     <div className="info-item">
-                      <label>Primary Supervisor</label>
-                      <p>{selectedEmployee.profile.supervisor || 'Not Assigned'}</p>
-                    </div>
-                    <div className="info-item">
                       <label>Department</label>
-                      <p>{selectedEmployee.profile.department || 'Not Assigned'}</p>
+                      <p>{selectedEmployee.profile.department || 'Not Set'}</p>
                     </div>
                     <div className="info-item">
-                      <label>HR Manager</label>
-                      <p>{selectedEmployee.profile.hrManager || 'Not Assigned'}</p>
-                    </div>
-                  </div>
-
-                  <div className="details-col">
-                    <h5 className="section-title">Personal Details</h5>
-                    <div className="info-item">
-                      <label>Gender</label>
-                      <p>{selectedEmployee.profile.gender || 'Female'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Date Of Birth</label>
-                      <p>{selectedEmployee.profile.dob || '22/07/1993'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Blood Group</label>
-                      <p>{selectedEmployee.profile.bloodGroup || 'A+'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Marital Status</label>
-                      <p>{selectedEmployee.profile.maritalStatus || 'Married'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Portfolio Link</label>
-                      <p className="link-text">{selectedEmployee.education.portfolio || 'http://www.behance'}</p>
-                    </div>
-                  </div>
-
-                  <div className="details-col">
-                    <h5 className="section-title">Educational Qualification</h5>
-                    <div className="info-item">
-                      <label>Name Of the Institution</label>
-                      <p>{selectedEmployee.education.institution || 'Not Specified'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Start & Endate</label>
-                      <p>{selectedEmployee.education.eduStartDate} - {selectedEmployee.education.eduEndDate}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Course</label>
-                      <p>{selectedEmployee.education.qualification || 'Not Specified'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Specialization</label>
-                      <p>{selectedEmployee.education.specialization || 'Not Specified'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Skills</label>
-                      <p>{Array.isArray(selectedEmployee.education.skills) ? selectedEmployee.education.skills.join(", ") : selectedEmployee.education.skills || 'None'}</p>
+                      <label>Joining Date</label>
+                      <p>{selectedEmployee.profile.joiningDate || 'Not Set'}</p>
                     </div>
                   </div>
                 </div>
 
-                {/* MIDDLE GRID */}
-                <div className="profile-middle-grid">
-                  <div className="details-col">
-                    <h5 className="section-title">Address</h5>
-                    <div className="info-item">
-                      <label>Address Line</label>
-                      <p>{selectedEmployee.profile.address || 'Not Set'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>City</label>
-                      <p>{selectedEmployee.profile.location || 'Not Set'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>State</label>
-                      <p>Kerala</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Country</label>
-                      <p>India</p>
+                <div className="profile-details-full-grid">
+                  <div className="details-section-box">
+                    <h5 className="section-title">Contact & Other Info</h5>
+                    <div className="full-grid-2col">
+                      <div className="info-item"><label>Email</label><p>{selectedEmployee.profile.email || 'N/A'}</p></div>
+                      <div className="info-item"><label>Phone</label><p>{selectedEmployee.profile.phone || 'N/A'}</p></div>
+                      <div className="info-item"><label>Reports To</label><p>{selectedEmployee.profile.supervisor || 'N/A'}</p></div>
+                      <div className="info-item"><label>HR Manager</label><p>{selectedEmployee.profile.hrManager || 'N/A'}</p></div>
+                      <div className="info-item"><label>Gender</label><p>{selectedEmployee.profile.gender || 'N/A'}</p></div>
+                      <div className="info-item"><label>Marital Status</label><p>{selectedEmployee.profile.maritalStatus || 'N/A'}</p></div>
+                      <div className="info-item"><label>Date of Birth</label><p>{selectedEmployee.profile.dob || 'N/A'}</p></div>
+                      <div className="info-item"><label>Blood Group</label><p>{selectedEmployee.profile.bloodGroup || 'N/A'}</p></div>
                     </div>
                   </div>
 
-                  <div className="details-col">
-                    <h5 className="section-title">Contact Details</h5>
-                    <div className="info-item">
-                      <label>Phone Number</label>
-                      <p>{selectedEmployee.profile.phone}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Emergency Contact</label>
-                      <p>{selectedEmployee.profile.emergencyContactNumber}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Relationship</label>
-                      <p>{selectedEmployee.profile.relationship}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Email</label>
-                      <p>{selectedEmployee.profile.email}</p>
-                    </div>
-                  </div>
-
-                  <div className="details-col">
-                    <h5 className="section-title">Previous Experience</h5>
-                    <div className="info-item">
-                      <label>Name Of the Company</label>
-                      <p>{selectedEmployee.experience.company || 'N/A'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Start & Endate</label>
-                      <p>{selectedEmployee.experience.expStartDate} - {selectedEmployee.experience.expEndDate}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Job Title</label>
-                      <p>{selectedEmployee.experience.jobTitle || 'N/A'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Job Description</label>
-                      <p className="description-text">{selectedEmployee.experience.responsibilities || 'N/A'}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* BOTTOM GRID */}
-                <div className="profile-bottom-grid">
-                  <div className="details-col">
-                    <h5 className="section-title">Bank Details</h5>
-                    <div className="info-item">
-                      <label>Bank Name</label>
-                      <p>{selectedEmployee.bank.bankName || 'N/A'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Branch</label>
-                      <p>{selectedEmployee.bank.branch || 'N/A'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Account Number</label>
-                      <p>{selectedEmployee.bank.accountNumber || 'N/A'}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>IFSC Code</label>
-                      <p>{selectedEmployee.bank.ifsc || 'N/A'}</p>
-                    </div>
-                  </div>
-
-                  <div className="details-col-span-2">
-                    <h5 className="section-title">Submitted Documents</h5>
-                    <div className="documents-list">
-                      {[
-                        { name: "Signed OfferLetter.pdf", size: "94 KB" },
-                        { name: "DegreeCertificate.pdf", size: "94 KB" },
-                        { name: "PAN CARD.pdf", size: "94 KB" }
-                      ].map((doc, idx) => (
-                        <div key={idx} className="document-card">
-                          <div className="doc-icon-box">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" alt="PDF" width="30" />
-                          </div>
-                          <div className="doc-info-text">
-                            <span className="doc-name-main">{doc.name}</span>
-                            <div className="doc-status-row">
-                              <span className="doc-size-text">{doc.size} of {doc.size} · </span>
-                              <div className="doc-status-pill">
-                                <span className="doc-checkmark-circle">✔</span>
-                                <span className="doc-completed-text">Completed</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="doc-actions-right">
-                            <button className="doc-action-btn"><FiShare2 /></button>
-                            <button className="doc-action-btn"><FiDownload /></button>
-                          </div>
-                        </div>
-                      ))}
+                  <div className="details-section-box">
+                    <h5 className="section-title">Educational & Professional</h5>
+                    <div className="full-grid-2col">
+                      <div className="info-item"><label>Institution</label><p>{selectedEmployee.education.institution || 'N/A'}</p></div>
+                      <div className="info-item"><label>Qualification</label><p>{selectedEmployee.education.qualification || 'N/A'}</p></div>
+                      <div className="info-item"><label>Specialization</label><p>{selectedEmployee.education.specialization || 'N/A'}</p></div>
+                      <div className="info-item"><label>Skills</label><p>{Array.isArray(selectedEmployee.education.skills) ? selectedEmployee.education.skills.join(", ") : selectedEmployee.education.skills || 'N/A'}</p></div>
                     </div>
                   </div>
                 </div>
