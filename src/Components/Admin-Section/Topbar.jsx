@@ -7,7 +7,10 @@ import {
   FaFilePdf,
   FaDownload,
   FaEdit,
+  FaShareAlt,
 } from "react-icons/fa";
+import { MdEvent } from "react-icons/md";
+import { AiOutlineLike } from "react-icons/ai";
 import profileimg from "../../assets/profileimg.png";
 import profileimg2 from "../../assets/profileimg2.png";
 import stafiologoimg from "../../assets/stafiologoimg.png";
@@ -27,6 +30,7 @@ const ProfilePopup = ({ onClose, username }) => {
   const [loading, setLoading] = React.useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState(null);
+
   const getAuthHeaders = () => {
     return {
       "X-User-Role": sessionStorage.getItem("current_role"),
@@ -88,7 +92,6 @@ const ProfilePopup = ({ onClose, username }) => {
         },
       });
 
-      // 🔥 Re-fetch
       const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
         headers: {
           ...getAuthHeaders(),
@@ -165,14 +168,14 @@ const ProfilePopup = ({ onClose, username }) => {
                     }
                   />
                 ) : (
-                  <p>{editableData.profile.empType || "-"}</p>
+                  <p>{editableData?.profile?.empType || "-"}</p>
                 )}
                 <strong>
                   {isEditing ? "Supervisor ID" : "Primary Supervisor"}
                 </strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.supervisor_id || ""}
+                    value={editableData?.profile?.supervisor_id || ""}
                     onChange={(e) =>
                       handleChange("profile", "supervisor_id", e.target.value)
                     }
@@ -183,7 +186,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Department:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.department || ""}
+                    value={editableData?.profile?.department || ""}
                     onChange={(e) =>
                       handleChange("profile", "department", e.target.value)
                     }
@@ -194,7 +197,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>{isEditing ? "HR Manager ID" : "HR Manager"}</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.hr_manager_id || ""}
+                    value={editableData?.profile?.hr_manager_id || ""}
                     onChange={(e) =>
                       handleChange("profile", "hr_manager_id", e.target.value)
                     }
@@ -208,7 +211,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Gender:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.gender || ""}
+                    value={editableData?.profile?.gender || ""}
                     onChange={(e) =>
                       handleChange("profile", "gender", e.target.value)
                     }
@@ -220,7 +223,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 {isEditing ? (
                   <input
                     type="date"
-                    value={editableData.profile.dob || ""}
+                    value={editableData?.profile?.dob || ""}
                     onChange={(e) =>
                       handleChange("profile", "dob", e.target.value)
                     }
@@ -236,7 +239,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <p>
                   {isEditing ? (
                     <input
-                      value={editableData.education.portfolio || " "}
+                      value={editableData?.education?.portfolio || ""}
                       onChange={(e) =>
                         handleChange("education", "portfolio", e.target.value)
                       }
@@ -251,7 +254,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Institution:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.education.institution || ""}
+                    value={editableData?.education?.institution || ""}
                     onChange={(e) =>
                       handleChange("education", "institution", e.target.value)
                     }
@@ -294,7 +297,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Course:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.education.qualification || ""}
+                    value={editableData?.education?.qualification || ""}
                     onChange={(e) =>
                       handleChange("education", "qualification", e.target.value)
                     }
@@ -305,7 +308,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Specialization:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.education.specialization || ""}
+                    value={editableData?.education?.specialization || ""}
                     onChange={(e) =>
                       handleChange(
                         "education",
@@ -332,7 +335,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Address:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.address || ""}
+                    value={editableData?.profile?.address || ""}
                     onChange={(e) =>
                       handleChange("profile", "address", e.target.value)
                     }
@@ -343,7 +346,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Location:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.location || ""}
+                    value={editableData?.profile?.location || ""}
                     onChange={(e) =>
                       handleChange("profile", "location", e.target.value)
                     }
@@ -357,7 +360,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Phone:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.phone || ""}
+                    value={editableData?.profile?.phone || ""}
                     onChange={(e) =>
                       handleChange("profile", "phone", e.target.value)
                     }
@@ -373,7 +376,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Company:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.experience.company || ""}
+                    value={editableData?.experience?.company || ""}
                     onChange={(e) =>
                       handleChange("experience", "company", e.target.value)
                     }
@@ -415,7 +418,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Job Title:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.experience.jobTitle || ""}
+                    value={editableData?.experience?.jobTitle || ""}
                     onChange={(e) =>
                       handleChange("experience", "jobTitle", e.target.value)
                     }
@@ -426,7 +429,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Description:</strong>
                 {isEditing ? (
                   <textarea
-                    value={editableData.experience.responsibilities || ""}
+                    value={editableData?.experience?.responsibilities || ""}
                     onChange={(e) =>
                       handleChange(
                         "experience",
@@ -447,7 +450,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Bank Name:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.bankName || ""}
+                    value={editableData?.bank?.bankName || ""}
                     onChange={(e) =>
                       handleChange("bank", "bankName", e.target.value)
                     }
@@ -458,7 +461,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Branch:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.branch || ""}
+                    value={editableData?.bank?.branch || ""}
                     onChange={(e) =>
                       handleChange("bank", "branch", e.target.value)
                     }
@@ -469,7 +472,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Account Number:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.accountNumber || ""}
+                    value={editableData?.bank?.accountNumber || ""}
                     onChange={(e) =>
                       handleChange("bank", "accountNumber", e.target.value)
                     }
@@ -480,7 +483,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>IFSC Code:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.ifsc || ""}
+                    value={editableData?.bank?.ifsc || ""}
                     onChange={(e) =>
                       handleChange("bank", "ifsc", e.target.value)
                     }
@@ -511,7 +514,11 @@ const Topbar = () => {
   const [query, setQuery] = useState("");
   const [searchItems, setSearchItems] = useState(searchData);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [selectedDate, setSelectedDate] = useState("");
   const popupRef = useRef(null);
+  const dateInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -531,13 +538,23 @@ const Topbar = () => {
       setAnnouncements(res.data);
     } catch (err) {
       console.error("Error fetching announcements:", err);
-      // fallback to clear array so it doesn't stay undefined or break
       setAnnouncements([]);
     }
   };
 
   useEffect(() => {
     fetchAnnouncements();
+
+    // Load saved announcements from localStorage as fallback
+    const savedAnnouncements = localStorage.getItem("announcements");
+    if (savedAnnouncements && savedAnnouncements !== "undefined") {
+      try {
+        setAnnouncements(JSON.parse(savedAnnouncements));
+      } catch (err) {
+        console.error("Error parsing announcements:", err);
+        setAnnouncements([]);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -550,20 +567,8 @@ const Topbar = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   // Read values from sessionStorage
-  //   const storedUsername = localStorage.getItem("admin_username");
-  //   const storedRole = localStorage.getItem("admin_role");
-
-  //   if (storedUsername) setUsername(storedUsername);
-  //   if (storedRole) setRole(storedRole);
-  // }, []);
-
-  // Remove local storage overwrite since it's backend fetched
-
   const togglePopup = () => {
     if (!showPopup) {
-      // Re-fetch announcements every time the popup is opened
       fetchAnnouncements();
     }
     setShowPopup(!showPopup);
@@ -595,20 +600,14 @@ const Topbar = () => {
     setShowAddForm(false);
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.message.trim()) {
-      alert("Please enter a message.");
-      return;
-    }
-
     try {
-      const adminId = sessionStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id") || "1";
+      const adminId =
+        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("employee_user_id") ||
+        "1";
       const payload = {
         event_date: formData.date || null,
         event_name: formData.eventName || formData.title,
@@ -616,19 +615,21 @@ const Topbar = () => {
         event_type: formData.eventType || null,
         message: formData.message,
         target_audience: "all",
-        mentioned_employee_id: formData.employee ? parseInt(formData.employee) : null,
+        mentioned_employee_id: formData.employee
+          ? parseInt(formData.employee)
+          : null,
         author_name: formData.name || null,
         author_email: formData.email || null,
-        author_designation: formData.designation || null
+        author_designation: formData.designation || null,
       };
 
       await axios.post(`${API_BASE}/api/admin/announcements`, payload, {
         headers: {
           "X-User-ID": adminId,
-          "X-User-Role": "admin"
-        }
+          "X-User-Role": "admin",
+        },
       });
-      // Also update local state for immediate feedback
+
       fetchAnnouncements();
       setFormData({
         date: "",
@@ -734,7 +735,6 @@ const Topbar = () => {
         </div>
 
         {/* Right side user + bell */}
-
         <div className="profile d-flex align-items-center gap-3">
           <div style={{ cursor: "pointer", position: "relative" }}>
             <FaBell size={20} className="text-dark" onClick={togglePopup} />
@@ -775,187 +775,241 @@ const Topbar = () => {
       </div>
 
       {/* Announcement Popup */}
-      {showPopup && (
+      {showPopup && !showAddForm && (
         <div className="announcement-popup shadow-lg" ref={popupRef}>
           <div className="popup-header d-flex align-items-center justify-content-between">
-            <div className="fw-bold fs-5">Announcement</div>
-            <div className="d-flex align-items-center gap-3">
-              <button
-                className="btn btn-primary btn-sm d-flex align-items-center gap-2"
-                onClick={handleAddNewClick}
+            <div className="announcement-left">
+              <div
+                className="announcement-dropdown"
+                onClick={() => setFilterOpen(!filterOpen)}
               >
-                <FaPlus /> Add New
-              </button>
+                <span className="fw-semi-bold fs-5">Announcement</span>
+                <span className="filter-text">{selectedFilter}</span>
+                <FaChevronDown />
+              </div>
+
+              {filterOpen && (
+                <div className="dropdown-menu-custom">
+                  <div
+                    onClick={() => {
+                      setSelectedFilter("All");
+                      setFilterOpen(false);
+                    }}
+                  >
+                    All
+                  </div>
+                  <div
+                    onClick={() => {
+                      setSelectedFilter("New");
+                      setFilterOpen(false);
+                    }}
+                  >
+                    New
+                  </div>
+                  <div
+                    onClick={() => {
+                      setSelectedFilter("Old");
+                      setFilterOpen(false);
+                    }}
+                  >
+                    Old
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT SIDE */}
+            <div className="announcement-right">
+              <div className="announce-calendar-box">
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="custom-date-input"
+                />
+                <FaChevronDown
+                  className="fachevron-box"
+                  onClick={() => {
+                    if (dateInputRef.current) {
+                      dateInputRef.current.showPicker();
+                    }
+                  }}
+                />
+              </div>
+
+              <div
+                className="add-new-link"
+                onClick={() => {
+                  setShowPopup(false);
+                  setShowAddForm(true);
+                }}
+              >
+                <FaPlus className="plus-icon" /> Add New
+              </div>
             </div>
           </div>
 
           <hr />
 
-          {/* Add Announcement Form */}
-          {showAddForm ? (
-            <div className="add-form-container">
-              <div className="form-header d-flex justify-content-between align-items-center">
-                <h5 className="fw-bold">Add New Announcement</h5>
-                <FaTimes className="close-icon" onClick={handleCancel} />
+          <div className="popup-content">
+            {announcements.length === 0 ? (
+              <div className="text-center text-muted py-5">
+                No announcements yet.
               </div>
-
-              <form onSubmit={handleSubmit} className="announcement-form">
-                <div className="form-grid">
-                  <div>
-                    <label>Event Date</label>
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <label>Event Name</label>
-                    <input
-                      type="text"
-                      name="eventName"
-                      placeholder="Enter name of event"
-                      value={formData.eventName}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <label>Time Of The Event</label>
-                    <input
-                      type="time"
-                      name="time"
-                      value={formData.time}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <label>Event Type</label>
-                    <select
-                      name="eventType"
-                      value={formData.eventType}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select</option>
-                      <option value="Meeting">Meeting</option>
-                      <option value="Holiday">Holiday</option>
-                      <option value="General">General</option>
-                    </select>
-                  </div>
-
-                  <div className="full-width">
-                    <label>Message</label>
-                    <textarea
-                      name="message"
-                      placeholder="Type message"
-                      value={formData.message}
-                      onChange={handleChange}
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label>Mention Any Employee</label>
-                    <input
-                      type="text"
-                      name="employee"
-                      placeholder="Enter employee name"
-                      value={formData.employee}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <hr />
-                  <h6 className="fw-bold">Your Details</h6>
-
-                  <div>
-                    <label>Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Enter your name"
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter your email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <label>Designation</label>
-                    <input
-                      type="text"
-                      name="designation"
-                      placeholder="Enter your designation"
-                      value={formData.designation}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-buttons">
-                  <button type="submit" className="btn btn-primary">
-                    Submit
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="popup-content">
-              {announcements.length === 0 ? (
-                <div className="text-center text-muted py-5">
-                  No announcements yet.
-                </div>
-              ) : (
-                <ul className="announcement-list">
-                  {announcements.map((a, i) => (
-                    <li key={i} className="announcement-item">
-                      <div className="announcement-header">
-                        <div className="announcement-name fw-bold">
-                          {a.author_name || a.name || "Unknown"}
-                        </div>
+            ) : (
+              <ul className="announcement-list">
+                {announcements.map((a, i) => (
+                  <li key={i} className="announcement-item">
+                    <div className="announcement-header">
+                      <div className="announcement-name fw-bold">
+                        {a.author_name || a.name || "Unknown"}
                       </div>
-                      <div className="announcement-meta text-muted small">
-                        <span>{a.author_designation || a.designation || "No Designation"}</span>
-                      </div>
-                      <div className="announcement-eventname">
-                        <span className="eventname">
-                          {a.eventName || a.title || "Untitled Event"}
-                          <span className="dot"> : </span>
-                          <span>{a.event_date || a.date || "No Date"}</span>
-                          <span className="dot">, </span>
-                          <span>{a.event_time || a.time || "No Time"}</span>
-                        </span>
-                      </div>
-                      <div className="announcement-message mt-2">
-                        {a.message || "No message provided."}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
+                    </div>
+                    <div className="announcement-meta text-muted small">
+                      <span>
+                        {a.author_designation || a.designation || "No Designation"}
+                      </span>
+                    </div>
+                    <div className="announcement-eventname">
+                      <span className="eventname">
+                        {a.eventName || a.title || "Untitled Event"}
+                        <span className="dot"> : </span>
+                        <span>{a.event_date || a.date || "No Date"}</span>
+                        <span className="dot">, </span>
+                        <span>{a.event_time || a.time || "No Time"}</span>
+                      </span>
+                    </div>
+                    <div className="announcement-message mt-2">
+                      {a.message || "No message provided."}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
+
+      {/* Add Announcement Form Popup */}
+      {showAddForm && (
+        <div className="announcement-popup shadow-lg" ref={popupRef}>
+          <div className="popup-header d-flex align-items-center justify-content-between">
+            <h5>Add Announcement</h5>
+            <button className="btn-close" onClick={handleCancel}>x</button>
+          </div>
+          <div className="popup-content">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-2">
+                <label>Event Name</label>
+                <input
+                  className="form-control"
+                  value={formData.eventName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, eventName: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Date</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={formData.date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Time</label>
+                <input
+                  type="time"
+                  className="form-control"
+                  value={formData.time}
+                  onChange={(e) =>
+                    setFormData({ ...formData, time: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Event Type</label>
+                <input
+                  className="form-control"
+                  value={formData.eventType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, eventType: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Message</label>
+                <textarea
+                  className="form-control"
+                  value={formData.message}
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Employee ID</label>
+                <input
+                  className="form-control"
+                  value={formData.employee}
+                  onChange={(e) =>
+                    setFormData({ ...formData, employee: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Author Name</label>
+                <input
+                  className="form-control"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Author Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label>Designation</label>
+                <input
+                  className="form-control"
+                  value={formData.designation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, designation: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-buttons">
+                <button type="submit" className="btn btn-primary">
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Full Profile Popup */}
       {showProfilePopup && (
         <ProfilePopup

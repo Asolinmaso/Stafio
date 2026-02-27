@@ -9,9 +9,8 @@ import {
   Spinner,
 } from "react-bootstrap";
 import AdminSidebar from "./AdminSidebar";
-import axios from "axios";
-
-const API_BASE = "http://127.0.0.1:5001";
+import Topbar from "./Topbar";
+import group10 from "../../assets/Group10.png";
 
 const DepartmentLeaveView = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("All");
@@ -19,19 +18,7 @@ const DepartmentLeaveView = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch departments on mount
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const response = await axios.get(`${API_BASE}/api/departments`);
-        setDepartments(["All", ...response.data.map((d) => d.name)]);
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-        setDepartments(["All"]);
-      }
-    };
-    fetchDepartments();
-  }, []);
+  
 
   // Fetch leave records when department changes
   useEffect(() => {
@@ -62,69 +49,60 @@ const DepartmentLeaveView = () => {
   }, [selectedDepartment]);
 
   return (
-    <Container fluid>
-      <Row>
-        <Col md={2}>
-          <AdminSidebar />
-        </Col>
-        <Col md={10}>
-          <Card className="mt-4 p-4">
-            <h3 className="mb-4">Department-wise Leave Records</h3>
-            <Form.Group controlId="departmentFilter" className="mb-3">
-              <Form.Label>Select Department</Form.Label>
+    <div className="report-layout">
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
+      </div>
+      <AdminSidebar />
+      <div className="report-main">
+        <Topbar />
+        <Container fluid className="p-4">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h2 className="fw-bold">Department Leave Records</h2>
+            <div style={{ width: '250px' }}>
               <Form.Select
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
+                className="border-0 shadow-sm"
+                style={{ height: '45px', borderRadius: '10px', background: '#fff' }}
               >
                 {departments.map((dept, idx) => (
                   <option key={idx} value={dept}>
-                    {dept}
+                    {dept === "All" ? "All Departments" : dept}
                   </option>
                 ))}
               </Form.Select>
-            </Form.Group>
+            </div>
+          </div>
 
-            {loading ? (
-              <div className="text-center py-4">
-                <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </div>
-            ) : (
-              <Table striped bordered hover>
-                <thead>
+          <Card className="border-0 shadow-sm overflow-hidden">
+            <Card.Body className="p-0">
+              <Table hover responsive className="mb-0">
+                <thead className="table-light">
                   <tr>
-                    <th>Employee ID</th>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Leave Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Days</th>
-                    <th>Status</th>
+                    <th className="py-3 px-4">Employee ID</th>
+                    <th className="py-3">Name</th>
+                    <th className="py-3">Department</th>
+                    <th className="py-3">Leave Type</th>
+                    <th className="py-3">Period</th>
+                    <th className="py-3 px-4">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {leaveRecords.length > 0 ? (
-                    leaveRecords.map((record, index) => (
-                      <tr key={record.id || index}>
-                        <td>{record.employeeId}</td>
-                        <td>{record.employeeName}</td>
-                        <td>{record.department}</td>
-                        <td>{record.leaveType}</td>
-                        <td>{record.startDate}</td>
-                        <td>{record.endDate}</td>
-                        <td>{record.days}</td>
-                        <td>
-                          <span
-                            className={`badge bg-${
-                              record.status === "approved"
-                                ? "success"
-                                : record.status === "declined"
-                                  ? "danger"
-                                  : "warning"
-                            }`}
-                          >
+                  {filteredRecords.length > 0 ? (
+                    filteredRecords.map((record, index) => (
+                      <tr key={index}>
+                        <td className="py-3 px-4 fw-medium text-primary">{record.employeeId}</td>
+                        <td className="py-3">{record.name}</td>
+                        <td className="py-3">
+                          <span className="badge bg-light text-dark px-3 py-2 border">
+                            {record.department}
+                          </span>
+                        </td>
+                        <td className="py-3">{record.leaveType}</td>
+                        <td className="py-3 small text-secondary">{record.startDate} — {record.endDate}</td>
+                        <td className="py-3 px-4">
+                          <span className={`badge ${record.status === 'Approved' ? 'bg-success' : 'bg-warning'} px-3 py-2`}>
                             {record.status}
                           </span>
                         </td>
@@ -132,18 +110,18 @@ const DepartmentLeaveView = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="8" className="text-center">
-                        No records found.
+                      <td colSpan="6" className="text-center py-5 text-secondary">
+                        No records found for the selected department.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </Table>
-            )}
+            </Card.Body>
           </Card>
-        </Col>
-      </Row>
-    </Container>
+        </Container>
+      </div>
+    </div>
   );
 };
 

@@ -7,7 +7,7 @@ const NotificationBar = () => {
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
 
   useEffect(() => {
-    const fetchAnnouncements = async () => {
+    const loadLatestAnnouncement = async () => {
       try {
         const res = await fetch("http://127.0.0.1:5001/api/broadcast");
         if (res.ok) {
@@ -21,7 +21,15 @@ const NotificationBar = () => {
       }
     };
 
-    fetchAnnouncements();
+    // Load initially
+    loadLatestAnnouncement();
+
+    // 🔥 Listen for updates
+    window.addEventListener("announcementUpdated", loadLatestAnnouncement);
+
+    return () => {
+      window.removeEventListener("announcementUpdated", loadLatestAnnouncement);
+    };
   }, []);
 
   if (!visible || !latestAnnouncement) return null;

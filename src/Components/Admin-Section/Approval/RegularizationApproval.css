@@ -1,13 +1,10 @@
-.regularization-page {
-  display: flex;
+.regularization-approval-layout {
   background: #eff5ff;
-  min-height: 100vh;
-  overflow: hidden;
 }
 
-.regularization-main {
-  flex: 1;
-  padding: 20px 30px;
+
+.regularization-approval-main {
+  padding: 1px 10px !important;
   background: #eff5ff;
 }
 

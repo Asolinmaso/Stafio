@@ -81,6 +81,35 @@ const Dashboard = () => {
 	const breakStartRef = useRef(null);
 	const pausedDurationRef = useRef(0);
 	const breakTimerRef = useRef(null);
+    
+	//new state and constant for break duration
+	const BREAK_DURATION_MIN = 15;
+	//outside click support for break dropdown
+	const breakDropdownRef = useRef(null);
+
+
+	// Handle outside click for break dropdown = close dropdown
+	useEffect(() => {
+    const handleClickOutside = (event) => {
+    if (
+      breakDropdownRef.current &&
+      !breakDropdownRef.current.contains(event.target)
+    ) {
+      setShowBreakDropdown(false);
+    }
+  };
+
+  if (showBreakDropdown) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [showBreakDropdown]);
+
+
+
 
 	const formatTime = (date) => {
 		return date.toLocaleTimeString([], {
@@ -90,13 +119,20 @@ const Dashboard = () => {
 		});
 	};
 
-	const calculateDuration = (start, end) => {
-		const diff = Math.floor((end - start - pausedDurationRef.current) / 1000);
-		const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
-		const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
-		const secs = String(diff % 60).padStart(2, "0");
-		return `${hrs}:${mins}:${secs}`;
-	};
+const calculateDuration = (start, end) => {
+  if (!start) return "00:00:00";
+
+  const totalMs = end - start - pausedDurationRef.current;
+
+  const diff = Math.max(0, Math.floor(totalMs / 1000)); // prevent negative
+
+  const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
+  const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+  const secs = String(diff % 60).padStart(2, "0");
+
+  return `${hrs}:${mins}:${secs}`;
+};
+
 
 	//newly added functions
 	const getCurrentTimeInMinutes = () => {
@@ -139,68 +175,92 @@ const Dashboard = () => {
 		return () => clearInterval(timer); // cleanup on unmount
 	}, []);
 
+	//meeting status state
+	const [meetingStatus, setMeetingStatus] = useState("idle");
+	// idle | countdown | join | ended
+	const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
+	const [hasJoined, setHasJoined] = useState(false);
+
+	//handlePunchIn
 	const handlePunchIn = (e) => {
 		e.preventDefault();
+
 		const now = new Date();
 		setIsPunchedIn(true);
 		setPunchInTime(now);
+		
 		startTimeRef.current = now;
 		pausedDurationRef.current = 0;
+		setTotalHours("00:00:00");
 
 		// Start timer
 		timerRef.current = setInterval(() => {
-			setTotalHours(calculateDuration(startTimeRef.current, new Date()));
+			setTotalHours(
+				calculateDuration(startTimeRef.current, new Date()));
 		}, 1000);
 	};
 
+	//handleStartBreak
 	const handleStartBreak = (breakItem = null) => {
-		//modified newly and added
-		if (!isBreak) {
-			setIsBreak(true);
-			setActiveBreak(breakItem);
-			breakStartRef.current = new Date();
-			clearInterval(timerRef.current);
 
-			breakTimerRef.current = setTimeout(
-				() => {
-					setShowAlert(true);
-				},
-				15 * 60 * 1000,
-			);
-		} else {
-			setIsBreak(false);
-			setActiveBreak(null);
-			const breakEnd = new Date();
-			pausedDurationRef.current += breakEnd - breakStartRef.current;
+  // ===== END BREAK =====
+  if (isBreak) {
+    const breakEnd = new Date();
 
-			clearTimeout(breakTimerRef.current);
-			setShowAlert(false);
+    // Add this break duration to paused total
+    pausedDurationRef.current += breakEnd - breakStartRef.current;
 
-			timerRef.current = setInterval(() => {
-				setTotalHours(calculateDuration(startTimeRef.current, new Date()));
-			}, 1000);
-		}
+    clearTimeout(breakTimerRef.current);
+    setShowAlert(false);
 
-		setShowBreakDropdown(false);
-	};
+    setIsBreak(false);
+    setActiveBreak(null);
 
-	const handlePunchOut = (e) => {
-		setIsPunchedIn(false);
-		clearInterval(timerRef.current);
-		clearTimeout(breakTimerRef.current);
-		setShowAlert(false);
-		e.preventDefault();
-		if (punchInTime) {
-			const now = new Date();
-			const diff = now - punchInTime;
-			const hours = Math.floor(diff / 3600000);
-			const minutes = Math.floor((diff % 3600000) / 60000);
-			const seconds = Math.floor((diff % 60000) / 1000);
-			setTotalHours(`${hours}:${minutes}:${seconds}`);
-		}
-		setIsPunchedIn(false);
-		setPunchInTime(null);
-	};
+    // Resume working timer
+    timerRef.current = setInterval(() => {
+      setTotalHours(
+        calculateDuration(startTimeRef.current, new Date())
+      );
+    }, 1000);
+
+    return;
+  }
+
+  // ===== START BREAK =====
+  setIsBreak(true);
+  setActiveBreak(breakItem);
+  breakStartRef.current = new Date();
+
+  clearInterval(timerRef.current); // Pause working timer
+  setShowBreakDropdown(false);
+
+  const isCoffeeOrCustom =
+    breakItem?.id === "coffee" || breakItem?.id === "custom";
+
+  if (isCoffeeOrCustom) {
+    breakTimerRef.current = setTimeout(() => {
+      setShowAlert(true);
+    }, BREAK_DURATION_MIN * 60 * 1000);
+  }
+};
+
+
+
+	//handlePunchOut
+const handlePunchOut = () => {
+  clearInterval(timerRef.current);
+  clearTimeout(breakTimerRef.current);
+
+  setIsBreak(false);
+  setActiveBreak(null);
+
+  // Final calculation
+  setTotalHours(
+    calculateDuration(startTimeRef.current, new Date())
+  );
+
+  setIsPunchedIn(false);
+};
 
 	useEffect(() => {
 		return () => {
@@ -247,41 +307,92 @@ const Dashboard = () => {
 
 	const MEETING_START_HOUR = 9;
 	const MEETING_START_MIN = 0;
-	const MEETING_DURATION = 10; // minutes
+	const ALERT_BEFORE_MINUTES = 10; // starts at 8:50 AM
 
 	const meetingLink = "https://meet.google.com/shm-kuvn-xqb";
 
-	const getMeetingMinutesLeft = () => {
-		const now = new Date();
-
-		const meetingStart = new Date();
-		meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
-
-		const meetingEnd = new Date(meetingStart);
-		meetingEnd.setMinutes(meetingStart.getMinutes() + MEETING_DURATION);
-
-		if (now < meetingStart) {
-			return MEETING_DURATION;
-		}
-
-		if (now > meetingEnd) {
-			return 0;
-		}
-
-		const diffMs = meetingEnd - now;
-		return Math.ceil(diffMs / 60000);
-	};
-
-	const [meetingMinutesLeft, setMeetingMinutesLeft] = useState(
-		getMeetingMinutesLeft(),
-	);
+	//All meeting status logic
 	useEffect(() => {
-		const interval = setInterval(() => {
-			setMeetingMinutesLeft(getMeetingMinutesLeft());
-		}, 1000);
+		const updateMeetingStatus = () => {
+			const now = new Date();
+
+			const meetingStart = new Date();
+			meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+
+			const alertStart = new Date(meetingStart);
+			alertStart.setMinutes(alertStart.getMinutes() - ALERT_BEFORE_MINUTES);
+
+			// Before 8:50 AM
+			if (now < alertStart) {
+				setMeetingStatus("idle");
+				setMeetingTimeLeft("");
+				return;
+			}
+
+			// 8:50 AM → 9:00 AM (countdown)
+			if (now >= alertStart && now < meetingStart) {
+				const diffMs = meetingStart - now;
+				const totalSeconds = Math.floor(diffMs / 1000);
+
+				const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+				const secs = String(totalSeconds % 60).padStart(2, "0");
+
+				setMeetingStatus("countdown");
+				setMeetingTimeLeft(`${mins}:${secs} Min Left`);
+				return;
+			}
+
+			// 9:00 AM → join phase
+			if (now >= meetingStart && !hasJoined) {
+				setMeetingStatus("join");
+				setMeetingTimeLeft("Join the meet");
+				return;
+			}
+
+			// After join
+			if (hasJoined) {
+				setMeetingStatus("ended");
+				setMeetingTimeLeft("Meeting Ended");
+			}
+		};
+
+		updateMeetingStatus();
+		const interval = setInterval(updateMeetingStatus, 1000);
 
 		return () => clearInterval(interval);
-	}, []);
+	}, [hasJoined]);
+
+	// const getMeetingMinutesLeft = () => {
+	// 	const now = new Date();
+
+	// 	const meetingStart = new Date();
+	// 	meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+
+	// 	const meetingEnd = new Date(meetingStart);
+	// 	meetingEnd.setMinutes(meetingStart.getMinutes() + MEETING_DURATION);
+
+	// 	if (now < meetingStart) {
+	// 		return MEETING_DURATION;
+	// 	}
+
+	// 	if (now > meetingEnd) {
+	// 		return 0;
+	// 	}
+
+	// 	const diffMs = meetingEnd - now;
+	// 	return Math.ceil(diffMs / 60000);
+	// };
+
+	// const [meetingMinutesLeft, setMeetingMinutesLeft] = useState(
+	// 	getMeetingMinutesLeft(),
+	// );
+	// useEffect(() => {
+	// 	const interval = setInterval(() => {
+	// 		setMeetingMinutesLeft(getMeetingMinutesLeft());
+	// 	}, 1000);
+
+	// 	return () => clearInterval(interval);
+	// }, []);
 
 	return (
 		<div className="dashboard-wrapper d-flex">
@@ -322,6 +433,7 @@ const Dashboard = () => {
 													target="_blank"
 													rel="noopener noreferrer"
 													className="meeting-box"
+													onClick={() => setHasJoined(true)}
 													style={{
 														cursor: "pointer",
 														textDecoration: "none",
@@ -330,11 +442,7 @@ const Dashboard = () => {
 												>
 													<div className="meeting-info">
 														<h4>Standup Meeting</h4>
-														<p>
-															{meetingMinutesLeft > 0
-																? `${meetingMinutesLeft} Min Left`
-																: "Meeting Ended"}
-														</p>
+														<p>{meetingTimeLeft}</p>
 													</div>
 
 													<div className="meeting-time">
@@ -372,32 +480,31 @@ const Dashboard = () => {
 
 												<div className="button-row">
 													<button
-														className="btn-punch-out"
+														className="btn-punch-out1"
 														onClick={handlePunchOut}
 													>
 														Punch Out
 													</button>
 													<button
-														className="btn-start-break"
+														className="break-btn-st-en"
 														onClick={() => {
 															if (isBreak) {
 																// ✅ END BREAK
-																handleStartBreak();
+																handleStartBreak();  //end break
 															} else {
 																// ✅ OPEN DROPDOWN
-																setShowBreakDropdown((prev) => !prev);
+																setShowBreakDropdown(true);  // Open dropdown
 															}
 														}}
 													>
-														{isBreak ? "End Break" : "Start Break"}{" "}
-														<span>▼</span>
+														{isBreak ? "End Break" : "Start Break ▼"}
 													</button>
 												</div>
 
 												{/* break-dropdown */}
 
 												{showBreakDropdown && !isBreak && (
-													<div className="break-dropdown">
+													<div className="break-dropdown" ref={breakDropdownRef}>
 														<p className="dropdown-title">Scheduled Breaks</p>
 
 														{breakSchedules.map((b) => {
@@ -428,7 +535,8 @@ const Dashboard = () => {
 																End Break
 															</button>
 														)}
-
+                                                         
+														{/* ➕ Custom Break */}
 														<div
 															className="break-item custom-break"
 															onClick={() =>

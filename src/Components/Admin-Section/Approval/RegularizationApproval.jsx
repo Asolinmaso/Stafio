@@ -8,9 +8,6 @@ import group10 from "../../../assets/Group10.png";
 import timemgnt from "../../../assets/Timemgnt.png";
 import axios from "axios";
 
-
-
-
 export default function RegularizationApproval() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,7 +23,9 @@ export default function RegularizationApproval() {
   useEffect(() => {
     const fetchRegularizationApproval = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/regularizationapproval");
+        const response = await axios.get(
+          "http://127.0.0.1:5001/api/regularizationapproval"
+        );
         setData(response.data);
       } catch (error) {
         console.error("Error fetching attendance data:", error);
@@ -34,6 +33,23 @@ export default function RegularizationApproval() {
     };
 
     fetchRegularizationApproval();
+  }, []);
+
+  // ✅ ADDED: close popup on outside click
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target)
+      ) {
+        setShowFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
   }, []);
 
   const navigate = useNavigate();
@@ -166,9 +182,12 @@ export default function RegularizationApproval() {
         <img src={group10} alt="logo"
           className="rightside-logos" />
       </div>
+
       <AdminSidebar />
-      <div className="regularization-main">
+
+      <div className="regularization-approval-main">
         <Topbar />
+
         <div className="regularization-container">
           <div className="regularization-header">
             <div className="header-top">
@@ -176,7 +195,6 @@ export default function RegularizationApproval() {
             </div>
 
             <div className="header-bottom">
-              {/* Left side buttons */}
               <div className="left-tabs">
                 <button className="tab-btn ">All</button>
                 <button className="tab-btn active"
@@ -184,7 +202,6 @@ export default function RegularizationApproval() {
                 >My Team</button>
               </div>
 
-              {/* Right side search/filter/sort */}
               <div className="right-controls">
                 <input
                   type="text"
@@ -226,6 +243,7 @@ export default function RegularizationApproval() {
                   <th>Action</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filteredAndSortedLeaves.map((emp) => (
                   <tr key={emp.id}>
@@ -238,8 +256,10 @@ export default function RegularizationApproval() {
                         </div>
                       </div>
                     </td>
+
                     <td>{emp.regDate}</td>
                     <td>{emp.attendance}</td>
+
                     <td>
                       <div className="request-status">
                         <span>{emp.requestDate}</span>
@@ -250,6 +270,7 @@ export default function RegularizationApproval() {
                         </p>
                       </div>
                     </td>
+
                     <td>
                       <button className="view-btn" onClick={() => handleViewDetails(emp)}>View Details</button>
                     </td>

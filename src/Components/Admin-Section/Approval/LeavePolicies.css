@@ -5,6 +5,17 @@
   min-height: 100vh;
 }
 
+.leave-policies-layout .topbar {    /* new */
+     padding-top: 13px !important;    /* modified */
+   padding-bottom: 13px !important;   /* modified */
+  margin-top: -1px !important;           /* modified */
+  margin-left: -6px !important;         /* modified */
+  margin-bottom: 50px !important;   /* new */
+  padding-bottom: 8px;
+  width: 100% ;            /* modified */
+  display: block;
+}
+
 .leave-policies-main {
   flex: 1;
   padding: 20px 30px;

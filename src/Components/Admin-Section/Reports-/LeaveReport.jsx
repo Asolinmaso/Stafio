@@ -88,28 +88,81 @@ export default function LeaveReport() {
     setSelectedEmployeeName(emp ? emp.name : "");
   };
 
-  const attendanceDataSets = {
-    months: [
-      { label: "Jan", value: 95 },
-      { label: "Feb", value: 90 },
-      { label: "Mar", value: 86 },
-      { label: "Apr", value: 92 },
-      { label: "May", value: 88 },
-    ],
-    weeks: [
-      { label: "W1", value: 85 },
-      { label: "W2", value: 88 },
-      { label: "W3", value: 90 },
-      { label: "W4", value: 92 },
-    ],
-    days: [
-      { label: "Mon", value: 90 },
-      { label: "Tue", value: 85 },
-      { label: "Wed", value: 88 },
-      { label: "Thu", value: 92 },
-      { label: "Fri", value: 95 },
-    ],
-  };
+  const [attendanceDataSets, setAttendanceDataSets] = useState({
+    months: [],
+    weeks: [],
+    days: [],
+  });
+  const [loadingAttendance, setLoadingAttendance] = useState(false);
+
+  // Fetch attendance data when employee is selected
+  useEffect(() => {
+    if (!selectedEmployeeId) {
+      setAttendanceDataSets({ months: [], weeks: [], days: [] });
+      return;
+    }
+
+    const fetchAttendanceData = async () => {
+      setLoadingAttendance(true);
+      try {
+        const res = await axios.get(`${API_BASE}/api/attendance_stats`, {
+          params: { user_id: selectedEmployeeId },
+          headers: {
+            "X-User-Role": "admin",
+            "X-User-ID": localStorage.getItem("userId") || "1",
+          },
+        });
+
+        // Transform API response to match AttendanceCard format
+        // Assuming API returns: { months: [...], attendance_percentage: 85 }
+        const monthlyData = res.data.months || [];
+
+        // Create monthly data (last 5 months)
+        const months = monthlyData.slice(-5).map((item) => ({
+          label: item.month_name || item.month,
+          value: Math.round(item.attendance_percentage || 0),
+        }));
+
+        // For now, use sample data for weeks and days until backend provides it
+        const weeks = [
+          {
+            label: "W1",
+            value: Math.round(res.data.attendance_percentage || 0),
+          },
+          {
+            label: "W2",
+            value: Math.round(res.data.attendance_percentage || 0),
+          },
+          {
+            label: "W3",
+            value: Math.round(res.data.attendance_percentage || 0),
+          },
+          {
+            label: "W4",
+            value: Math.round(res.data.attendance_percentage || 0),
+          },
+        ];
+
+        const days = [
+          { label: "Mon", value: 90 },
+          { label: "Tue", value: 85 },
+          { label: "Wed", value: 88 },
+          { label: "Thu", value: 92 },
+          { label: "Fri", value: 95 },
+        ];
+
+        setAttendanceDataSets({ months, weeks, days });
+      } catch (err) {
+        console.error("Error fetching attendance data", err);
+        // Set empty data on error
+        setAttendanceDataSets({ months: [], weeks: [], days: [] });
+      } finally {
+        setLoadingAttendance(false);
+      }
+    };
+
+    fetchAttendanceData();
+  }, [selectedEmployeeId]);
 
   return (
     <div className="leave-report-layout">

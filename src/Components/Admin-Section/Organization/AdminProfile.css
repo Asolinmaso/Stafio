@@ -1,3 +1,16 @@
+.main-content5 {
+  /* new */
+  flex-grow: 1;
+  padding: 7px;
+  background: #eff5ff;
+  margin-top: -15px !important;
+  /* modified */
+}
+
+.main-content5 .topbar {
+  width: 95%;
+}
+
 /* ====================== PROFILE HEADER SECTION ====================== */
 .profile-header-card {
   border-radius: 14px;
@@ -250,7 +263,8 @@
   transition: border-color 0.2s;
   /* new */
   width: 90%;
-  /* margin-bottom: -22px; */
+  margin-bottom: 7px !important;
+  /* modified */
 }
 
 .form-input:focus,
@@ -355,7 +369,7 @@
   color: #dc3545;
   font-size: 12px;
   /* margin-bottom: 2px; */
-  padding-top: 4px;
+  padding-top: 2px !important;
 }
 
 .input-error1 {
