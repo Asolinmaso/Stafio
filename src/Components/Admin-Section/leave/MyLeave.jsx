@@ -183,8 +183,7 @@ useEffect(() => {
   return (
     <div className="layout">
       <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="myleave-container">
@@ -225,9 +224,12 @@ useEffect(() => {
               <button className="btn-apply" onClick={() => setShowModal(true)}>
                 Apply Leave
               </button>
-              <button className="btn-regularization"
-              onClick={() => navigate("/admin-my-regularization")}
-              >Regularization</button>
+              <button
+                className="btn-regularization"
+                onClick={() => navigate("/admin-my-regularization")}
+              >
+                Regularization
+              </button>
             </div>
             <div className="bottom-button" style={{ position: 'relative' }}>
               <button

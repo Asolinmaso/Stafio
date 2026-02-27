@@ -55,6 +55,15 @@
   font-weight: 700;
   color: #111827;
   margin: 0 0 16px 0;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.employee-header h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #222;
+  margin-left: 10px;
 }
 
 /* LEFT SIDE */
@@ -70,6 +79,11 @@
 }
 
 /* Tab buttons: All Employee + My Team */
+.header-left h2 {
+  margin: auto;
+  padding: 7px 0px 0px 10px;
+}
+
 .employee-tabs {
   display: flex;
   gap: 0;
@@ -196,6 +210,10 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 13px;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  font-size: 15px;
   cursor: pointer;
   background: #ffffff;
   color: #374151;

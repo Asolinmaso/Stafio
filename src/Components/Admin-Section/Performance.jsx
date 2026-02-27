@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Container,
   Card,
@@ -9,6 +10,7 @@ import {
   ProgressBar,
   ListGroup,
   Badge,
+  Spinner,
 } from "react-bootstrap";
 import {
   FaUsers,
@@ -20,60 +22,108 @@ import {
 } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
 
-// You will need to install react-icons
-// `npm install react-icons --save`
+const API_BASE = "http://127.0.0.1:5001";
 
 const MonthlyPerformanceReport = () => {
-  const [reportData] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      tasksCompleted: 25,
-      projectsCompleted: 3,
-      feedbackScore: 4.5,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      tasksCompleted: 30,
-      projectsCompleted: 4,
-      feedbackScore: 4.8,
-    },
-    {
-      id: 3,
-      name: "Peter Jones",
-      tasksCompleted: 18,
-      projectsCompleted: 2,
-      feedbackScore: 3.9,
-    },
-    {
-      id: 4,
-      name: "Mary Brown",
-      tasksCompleted: 22,
-      projectsCompleted: 3,
-      feedbackScore: 4.2,
-    },
-    {
-      id: 5,
-      name: "Chris Evans",
-      tasksCompleted: 35,
-      projectsCompleted: 5,
-      feedbackScore: 4.9,
-    },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [reportData, setReportData] = useState([]);
+  const [summary, setSummary] = useState(null);
+
+  useEffect(() => {
+    fetchPerformanceData();
+  }, []);
+
+  const fetchPerformanceData = async () => {
+    try {
+      setLoading(true);
+      const [performanceRes, summaryRes] = await Promise.all([
+        axios.get(`${API_BASE}/api/performance`),
+        axios.get(`${API_BASE}/api/performance/summary`),
+      ]);
+
+      // Map API data to expected format
+      const mappedData = performanceRes.data.map((item, index) => ({
+        id: item.id || index + 1,
+        name: item.employee_name || "Unknown",
+        tasksCompleted: item.tasks_completed || 0,
+        projectsCompleted: item.projects_completed || 0,
+        feedbackScore: item.feedback_score || 0,
+      }));
+
+      setReportData(mappedData);
+      setSummary(summaryRes.data);
+    } catch (error) {
+      console.error("Error fetching performance data:", error);
+      // Set fallback data if API fails
+      setReportData([]);
+      setSummary({
+        total_employees: 0,
+        total_tasks_this_month: 0,
+        completed_tasks_this_month: 0,
+        average_feedback_score: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Calculate dashboard metrics
-  const totalEmployees = reportData.length;
-  const totalTasks = reportData.reduce((acc, e) => acc + e.tasksCompleted, 0);
-  const totalProjects = reportData.reduce((acc, e) => acc + e.projectsCompleted, 0);
-  const avgFeedbackScore = (reportData.reduce((acc, e) => acc + e.feedbackScore, 0) / totalEmployees).toFixed(1);
+  const totalEmployees = summary?.total_employees || reportData.length || 0;
+  const totalTasks =
+    summary?.total_tasks_this_month ||
+    reportData.reduce((acc, e) => acc + e.tasksCompleted, 0);
+  const totalProjects = reportData.reduce(
+    (acc, e) => acc + e.projectsCompleted,
+    0,
+  );
+  const avgFeedbackScore =
+    summary?.average_feedback_score?.toFixed(1) ||
+    (reportData.length > 0
+      ? (
+          reportData.reduce((acc, e) => acc + e.feedbackScore, 0) /
+          reportData.length
+        ).toFixed(1)
+      : "0.0");
 
   // Sort data to find top performers
-  const sortedByTasks = [...reportData].sort((a, b) => b.tasksCompleted - a.tasksCompleted);
-  const topTaskPerformer = sortedByTasks[0];
+  const sortedByTasks = [...reportData].sort(
+    (a, b) => b.tasksCompleted - a.tasksCompleted,
+  );
+  const topTaskPerformer = sortedByTasks[0] || {
+    name: "N/A",
+    tasksCompleted: 0,
+  };
 
-  const sortedByFeedback = [...reportData].sort((a, b) => b.feedbackScore - a.feedbackScore);
-  const topFeedbackPerformer = sortedByFeedback[0];
+  const sortedByFeedback = [...reportData].sort(
+    (a, b) => b.feedbackScore - a.feedbackScore,
+  );
+  const topFeedbackPerformer = sortedByFeedback[0] || {
+    name: "N/A",
+    feedbackScore: 0,
+  };
+
+  // Calculate productivity percentage
+  const productivityPercent =
+    summary?.total_tasks_this_month > 0
+      ? Math.round(
+          (summary.completed_tasks_this_month /
+            summary.total_tasks_this_month) *
+            100,
+        )
+      : 0;
+
+  if (loading) {
+    return (
+      <div>
+        <AdminSidebar />
+        <Container className="my-5 p-4 bg-light rounded shadow-lg text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </Container>
+      </div>
+    );
+  }
 
   return (
     <div className="performance-layout">

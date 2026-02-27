@@ -7,7 +7,6 @@ import group10 from "../../../assets/Group10.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-
 const LeavePolicies = () => {
   const [leavePolicies, setLeavePolicies] = useState([]);
   const navigate = useNavigate();
@@ -219,8 +218,7 @@ const handleDelete = async (id) => {
   return (
     <div className="leave-policies-layout">
       <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-        className="rightside-logos" />
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
       <AdminSidebar />
       <div className="leave-policies-main">

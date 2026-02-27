@@ -61,6 +61,8 @@ export default function MyTeamLeaveApproval() {
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
+ 
+
   return (
     <div className="myteam-layout">
       <div className="rightside-logo">
@@ -246,7 +248,6 @@ export default function MyTeamLeaveApproval() {
           </div>
 
         </div>
-
         {showModal && selectedLeave && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div
@@ -386,7 +387,6 @@ export default function MyTeamLeaveApproval() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
