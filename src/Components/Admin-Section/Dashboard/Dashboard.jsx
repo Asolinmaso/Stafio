@@ -22,246 +22,201 @@ import arrow3 from "../../../assets/arrow3.png";
 import gradientimg from "../../../assets/gradientimg.png";
 import clock from "../../../assets/clock.gif";
 import group10 from "../../../assets/Group10.png";
-import profileimg from "../../../assets/profileimg.png"; //new
+import profileimg from "../../../assets/profileimg.png";
 import { FaChevronRight } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
-
 import { getCurrentSession } from "../../../utils/sessionManager";
 
-const Dashboard = () => {
-	const [username, setUsername] = useState("");
-	const [role, setRole] = useState("");
-	const attendanceDataSets = {
-		months: [
-			{ label: "Jan", value: 95 },
-			{ label: "Feb", value: 90 },
-			{ label: "Mar", value: 86, highlight: true },
-			{ label: "Apr", value: 92 },
-			{ label: "May", value: 88 },
-		],
-		weeks: [
-			{ label: "W1", value: 85 },
-			{ label: "W2", value: 88 },
-			{ label: "W3", value: 90 },
-			{ label: "W4", value: 92 },
-		],
-		days: [
-			{ label: "Mon", value: 90 },
-			{ label: "Tue", value: 85 },
-			{ label: "Wed", value: 88 },
-			{ label: "Thu", value: 92 },
-			{ label: "Fri", value: 95 },
-		],
-	};
+// ─── Config ────────────────────────────────────────────────────────────────
+const BASE_URL = "http://127.0.0.1:5001";
 
-	// ✅ Punch In/Out
-	const [isPunchedIn, setIsPunchedIn] = useState(false);
-	const [punchInTime, setPunchInTime] = useState(null);
-	const [totalHours, setTotalHours] = useState("0:00:00");
-	const [currentTime, setCurrentTime] = useState("");
-	const [currentDate, setCurrentDate] = useState("");
-	const [isBreak, setIsBreak] = useState(false);
-	const [showAlert, setShowAlert] = useState(false);
+const BREAK_SCHEDULES = [
+	{ id: "lunch",  label: "Lunch Break",  start: "13:00", end: "14:00" },
+	{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+];
 
-	//newly added
-	const [showBreakDropdown, setShowBreakDropdown] = useState(false);
-	const [activeBreak, setActiveBreak] = useState(null);
-	// const [view, setView] = useState("months");
+const MEETING_LINK         = "https://meet.google.com/shm-kuvn-xqb";
+const MEETING_START_HOUR   = 9;
+const MEETING_START_MIN    = 0;
+const ALERT_BEFORE_MINUTES = 10;
+const BREAK_DURATION_MIN   = 15;
 
-	const breakSchedules = [
-		{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-		{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
-	];
+// ─── Helpers ────────────────────────────────────────────────────────────────
+const formatTime = (date) =>
+	date instanceof Date
+		? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+		: date;
 
-	const timerRef = useRef(null);
-	const startTimeRef = useRef(null);
-	const breakStartRef = useRef(null);
-	const pausedDurationRef = useRef(0);
-	const breakTimerRef = useRef(null);
-    
-	//new state and constant for break duration
-	const BREAK_DURATION_MIN = 15;
-	//outside click support for break dropdown
-	const breakDropdownRef = useRef(null);
-
-
-	// Handle outside click for break dropdown = close dropdown
-	useEffect(() => {
-    const handleClickOutside = (event) => {
-    if (
-      breakDropdownRef.current &&
-      !breakDropdownRef.current.contains(event.target)
-    ) {
-      setShowBreakDropdown(false);
-    }
-  };
-
-  if (showBreakDropdown) {
-    document.addEventListener("mousedown", handleClickOutside);
-  }
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [showBreakDropdown]);
-
-
-
-
-	const formatTime = (date) => {
-		return date.toLocaleTimeString([], {
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-		});
-	};
-
-const calculateDuration = (start, end) => {
-  if (!start) return "00:00:00";
-
-  const totalMs = end - start - pausedDurationRef.current;
-
-  const diff = Math.max(0, Math.floor(totalMs / 1000)); // prevent negative
-
-  const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
-  const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
-  const secs = String(diff % 60).padStart(2, "0");
-
-  return `${hrs}:${mins}:${secs}`;
+/** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
+const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
+	if (!punchInDate) return "00:00:00";
+	const totalMs  = Math.max(0, Date.now() - punchInDate.getTime() - totalBreakMs);
+	const totalSec = Math.floor(totalMs / 1000);
+	const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+	const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+	const s = String(totalSec % 60).padStart(2, "0");
+	return `${h}:${m}:${s}`;
 };
 
+const getCurrentTimeInMinutes = () => {
+	const now = new Date();
+	return now.getHours() * 60 + now.getMinutes();
+};
+const toMinutes = (time) => {
+	const [h, m] = time.split(":").map(Number);
+	return h * 60 + m;
+};
 
-	//newly added functions
-	const getCurrentTimeInMinutes = () => {
-		const now = new Date();
-		return now.getHours() * 60 + now.getMinutes();
-	};
+// ─── Component ──────────────────────────────────────────────────────────────
+const Dashboard = () => {
+	// ── Auth / session ────────────────────────────────────────────────────
+	const [username, setUsername] = useState("");
+	const [role,     setRole]     = useState("");
+	const [userId,   setUserId]   = useState(null); // needed for API headers
 
-	const toMinutes = (time) => {
-		const [h, m] = time.split(":").map(Number);
-		return h * 60 + m;
-	};
+	// ── Clock ─────────────────────────────────────────────────────────────
+	const [currentTime, setCurrentTime] = useState("");
+	const [currentDate, setCurrentDate] = useState("");
 
+	// ── Punch state ───────────────────────────────────────────────────────
+	const [isPunchedIn,  setIsPunchedIn]  = useState(false);
+	const [punchInTime,  setPunchInTime]  = useState(null);   // Date object
+	const [totalHours,   setTotalHours]   = useState("00:00:00");
+	const [isBreak,      setIsBreak]      = useState(false);
+	const [activeBreak,  setActiveBreak]  = useState(null);
+	const [showAlert,    setShowAlert]    = useState(false);
+	const [showBreakDropdown, setShowBreakDropdown] = useState(false);
+
+	// ── API loading / error state ─────────────────────────────────────────
+	const [punchLoading, setPunchLoading] = useState(false);
+	const [punchError,   setPunchError]   = useState("");
+
+	// ── Refs ──────────────────────────────────────────────────────────────
+	const timerRef         = useRef(null);   // working hours interval
+	const breakTimerRef    = useRef(null);   // 15-min break alert timeout
+	const breakDropdownRef = useRef(null);
+	const breakStartRef    = useRef(null);   // Date when current break started
+	const totalBreakMsRef  = useRef(0);      // accumulated break ms this session
+
+	// ── Admin summary ─────────────────────────────────────────────────────
+	const [adminDashboardData, setAdminDashboardData] = useState({
+		total_employees: 0, On_Time: 0, On_Leave: 0,
+		Late_Arrival: 0, Pending_Approval: 0, This_Week_Hoilday: 0,
+	});
+
+	// ── Meeting ───────────────────────────────────────────────────────────
+	const [meetingStatus,   setMeetingStatus]   = useState("idle");
+	const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
+	const [hasJoined,       setHasJoined]       = useState(false);
+
+	const navigate = useNavigate();
+
+	// ── Axios helper (attaches user-id header) ────────────────────────────
+	const apiHeaders = () => ({
+		"X-User-ID": userId,
+		"Content-Type": "application/json",
+	});
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 1. Session + initial attendance restore
+	// ─────────────────────────────────────────────────────────────────────
 	useEffect(() => {
-		// Function to update time & date every second
-		const updateTime = () => {
-			const now = new Date();
-
-			// Format time (e.g., 9:01:09 AM)
-			const time = now.toLocaleTimeString("en-US", {
-				hour: "numeric",
-				minute: "2-digit",
-				second: "2-digit",
-				hour12: true,
-			});
-
-			// Format date (e.g., 10 Aug 2025)
-			const date = now.toLocaleDateString("en-GB", {
-				day: "2-digit",
-				month: "short",
-				year: "numeric",
-			});
-
-			setCurrentTime(time);
-			setCurrentDate(date);
-		};
-
-		updateTime(); // run immediately
-		const timer = setInterval(updateTime, 1000); // update every 1s
-
-		return () => clearInterval(timer); // cleanup on unmount
+		const session = getCurrentSession();
+		if (session) {
+			setUsername(session.username || "");
+			setRole(session.role || "");
+			setUserId(session.user_id || session.id || null);
+		}
 	}, []);
 
-	//meeting status state
-	const [meetingStatus, setMeetingStatus] = useState("idle");
-	// idle | countdown | join | ended
-	const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
-	const [hasJoined, setHasJoined] = useState(false);
+	// Once userId is known, fetch today's attendance to restore UI state on refresh
+	useEffect(() => {
+		if (!userId) return;
+        const fetchTodayAttendance = async () => {
+    try {
+        const res = await axios.get(`${BASE_URL}/api/attendance/today`, {
+            headers: { "X-User-ID": userId },
+        });
 
-	//handlePunchIn
-	const handlePunchIn = (e) => {
-		e.preventDefault();
+        const data = res.data;
+        if (!data || !data.check_in) return;
 
-		const now = new Date();
-		setIsPunchedIn(true);
-		setPunchInTime(now);
+        const checkInDate = new Date(data.check_in.replace(" GMT", ""));
+        setPunchInTime(checkInDate);
+
+        if (data.check_out) {
+            setIsPunchedIn(false);
+            setTotalHours(data.work_hours || "00:00:00");
+            return;
+        }
+
+        setIsPunchedIn(true);
+
+        // Restore accumulated break ms
+        const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
+        totalBreakMsRef.current = restoredBreakMs;
+
+        if (data.active_break) {
+            // On break — show frozen working hours (don't start timer)
+            setIsBreak(true);
+            breakStartRef.current = new Date();
+            // Show correct frozen total hours instead of 00:00:00
+            setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+        } else {
+            // Working — immediately set correct hours before timer kicks in
+            setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+            startWorkingTimer(checkInDate);
+        }
+    } catch (err) {
+        console.error("Could not restore today's attendance:", err);
+    }
+};
 		
-		startTimeRef.current = now;
-		pausedDurationRef.current = 0;
-		setTotalHours("00:00:00");
 
-		// Start timer
+		fetchTodayAttendance();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userId]);
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 2. Live clock
+	// ─────────────────────────────────────────────────────────────────────
+	useEffect(() => {
+		const tick = () => {
+			const now = new Date();
+			setCurrentTime(
+				now.toLocaleTimeString("en-US", {
+					hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true,
+				})
+			);
+			setCurrentDate(
+				now.toLocaleDateString("en-GB", {
+					day: "2-digit", month: "short", year: "numeric",
+				})
+			);
+		};
+		tick();
+		const id = setInterval(tick, 1000);
+		return () => clearInterval(id);
+	}, []);
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 3. Working hours timer helpers
+	// ─────────────────────────────────────────────────────────────────────
+	const startWorkingTimer = (punchIn) => {
+		clearInterval(timerRef.current);
 		timerRef.current = setInterval(() => {
-			setTotalHours(
-				calculateDuration(startTimeRef.current, new Date()));
+			setTotalHours(calcWorkingTime(punchIn, totalBreakMsRef.current));
 		}, 1000);
 	};
 
-	//handleStartBreak
-	const handleStartBreak = (breakItem = null) => {
+	const stopWorkingTimer = () => {
+		clearInterval(timerRef.current);
+	};
 
-  // ===== END BREAK =====
-  if (isBreak) {
-    const breakEnd = new Date();
-
-    // Add this break duration to paused total
-    pausedDurationRef.current += breakEnd - breakStartRef.current;
-
-    clearTimeout(breakTimerRef.current);
-    setShowAlert(false);
-
-    setIsBreak(false);
-    setActiveBreak(null);
-
-    // Resume working timer
-    timerRef.current = setInterval(() => {
-      setTotalHours(
-        calculateDuration(startTimeRef.current, new Date())
-      );
-    }, 1000);
-
-    return;
-  }
-
-  // ===== START BREAK =====
-  setIsBreak(true);
-  setActiveBreak(breakItem);
-  breakStartRef.current = new Date();
-
-  clearInterval(timerRef.current); // Pause working timer
-  setShowBreakDropdown(false);
-
-  const isCoffeeOrCustom =
-    breakItem?.id === "coffee" || breakItem?.id === "custom";
-
-  if (isCoffeeOrCustom) {
-    breakTimerRef.current = setTimeout(() => {
-      setShowAlert(true);
-    }, BREAK_DURATION_MIN * 60 * 1000);
-  }
-};
-
-
-
-	//handlePunchOut
-const handlePunchOut = () => {
-  clearInterval(timerRef.current);
-  clearTimeout(breakTimerRef.current);
-
-  setIsBreak(false);
-  setActiveBreak(null);
-
-  // Final calculation
-  setTotalHours(
-    calculateDuration(startTimeRef.current, new Date())
-  );
-
-  setIsPunchedIn(false);
-};
-
+	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
 			clearInterval(timerRef.current);
@@ -269,134 +224,215 @@ const handlePunchOut = () => {
 		};
 	}, []);
 
+	// ─────────────────────────────────────────────────────────────────────
+	// 4. Outside click → close break dropdown
+	// ─────────────────────────────────────────────────────────────────────
 	useEffect(() => {
-		// Read values from sessionStorage
-		const session = getCurrentSession();
-
-		if (session) {
-			setUsername(session.username || "");
-			setRole(session.role || "");
-		}
-	}, []);
-
-	const [adminDashboardData, setAdminDashboardData] = useState({
-		total_employees: 0,
-		On_Time: 0,
-		On_Leave: 0,
-		Late_Arrival: 0,
-		Pending_Approval: 0,
-		This_Week_Hoilday: 0,
-	});
-
-	useEffect(() => {
-		const fetchAdminDashboardData = async () => {
-			try {
-				const response = await axios.get(
-					"http://127.0.0.1:5001/admin_dashboard",
-				);
-				setAdminDashboardData(response.data);
-			} catch (error) {
-				console.error("Error fetching dashboard data:", error);
+		const handler = (e) => {
+			if (breakDropdownRef.current && !breakDropdownRef.current.contains(e.target)) {
+				setShowBreakDropdown(false);
 			}
 		};
+		if (showBreakDropdown) document.addEventListener("mousedown", handler);
+		return () => document.removeEventListener("mousedown", handler);
+	}, [showBreakDropdown]);
 
-		fetchAdminDashboardData();
+	// ─────────────────────────────────────────────────────────────────────
+	// 5. Admin dashboard data
+	// ─────────────────────────────────────────────────────────────────────
+	useEffect(() => {
+		axios
+			.get(`${BASE_URL}/admin_dashboard`)
+			.then((r) => setAdminDashboardData(r.data))
+			.catch((e) => console.error("Admin dashboard error:", e));
 	}, []);
 
-	const navigate = useNavigate();
-
-	const MEETING_START_HOUR = 9;
-	const MEETING_START_MIN = 0;
-	const ALERT_BEFORE_MINUTES = 10; // starts at 8:50 AM
-
-	const meetingLink = "https://meet.google.com/shm-kuvn-xqb";
-
-	//All meeting status logic
+	// ─────────────────────────────────────────────────────────────────────
+	// 6. Meeting status
+	// ─────────────────────────────────────────────────────────────────────
 	useEffect(() => {
-		const updateMeetingStatus = () => {
-			const now = new Date();
-
+		const update = () => {
+			const now          = new Date();
 			const meetingStart = new Date();
 			meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
-
 			const alertStart = new Date(meetingStart);
 			alertStart.setMinutes(alertStart.getMinutes() - ALERT_BEFORE_MINUTES);
 
-			// Before 8:50 AM
 			if (now < alertStart) {
-				setMeetingStatus("idle");
-				setMeetingTimeLeft("");
-				return;
+				setMeetingStatus("idle"); setMeetingTimeLeft(""); return;
 			}
-
-			// 8:50 AM → 9:00 AM (countdown)
 			if (now >= alertStart && now < meetingStart) {
-				const diffMs = meetingStart - now;
-				const totalSeconds = Math.floor(diffMs / 1000);
-
-				const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
-				const secs = String(totalSeconds % 60).padStart(2, "0");
-
+				const diffSec  = Math.floor((meetingStart - now) / 1000);
+				const mins = String(Math.floor(diffSec / 60)).padStart(2, "0");
+				const secs = String(diffSec % 60).padStart(2, "0");
 				setMeetingStatus("countdown");
 				setMeetingTimeLeft(`${mins}:${secs} Min Left`);
 				return;
 			}
-
-			// 9:00 AM → join phase
 			if (now >= meetingStart && !hasJoined) {
-				setMeetingStatus("join");
-				setMeetingTimeLeft("Join the meet");
-				return;
+				setMeetingStatus("join"); setMeetingTimeLeft("Join the meet"); return;
 			}
-
-			// After join
 			if (hasJoined) {
-				setMeetingStatus("ended");
-				setMeetingTimeLeft("Meeting Ended");
+				setMeetingStatus("ended"); setMeetingTimeLeft("Meeting Ended");
 			}
 		};
-
-		updateMeetingStatus();
-		const interval = setInterval(updateMeetingStatus, 1000);
-
-		return () => clearInterval(interval);
+		update();
+		const id = setInterval(update, 1000);
+		return () => clearInterval(id);
 	}, [hasJoined]);
 
-	// const getMeetingMinutesLeft = () => {
-	// 	const now = new Date();
+	// ─────────────────────────────────────────────────────────────────────
+	// 7. Punch In
+	// ─────────────────────────────────────────────────────────────────────
+	const handlePunchIn = async (e) => {
+		e.preventDefault();
+		if (!userId) { setPunchError("User session not found. Please log in again."); return; }
 
-	// 	const meetingStart = new Date();
-	// 	meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+		setPunchLoading(true);
+		setPunchError("");
 
-	// 	const meetingEnd = new Date(meetingStart);
-	// 	meetingEnd.setMinutes(meetingStart.getMinutes() + MEETING_DURATION);
+		try {
+			await axios.post(`${BASE_URL}/api/attendance/punch-in`, {}, { headers: apiHeaders() });
 
-	// 	if (now < meetingStart) {
-	// 		return MEETING_DURATION;
-	// 	}
+			const now = new Date();
+			setPunchInTime(now);
+			totalBreakMsRef.current = 0;
+			setTotalHours("00:00:00");
+			setIsPunchedIn(true);
+			startWorkingTimer(now);
+		} catch (err) {
+			const msg = err.response?.data?.message || "Punch in failed. Please try again.";
+			setPunchError(msg);
+		} finally {
+			setPunchLoading(false);
+		}
+	};
 
-	// 	if (now > meetingEnd) {
-	// 		return 0;
-	// 	}
+	// ─────────────────────────────────────────────────────────────────────
+	// 8. Punch Out
+	// ─────────────────────────────────────────────────────────────────────
+	const handlePunchOut = async () => {
+		if (!userId) return;
 
-	// 	const diffMs = meetingEnd - now;
-	// 	return Math.ceil(diffMs / 60000);
-	// };
+		setPunchLoading(true);
+		setPunchError("");
 
-	// const [meetingMinutesLeft, setMeetingMinutesLeft] = useState(
-	// 	getMeetingMinutesLeft(),
-	// );
-	// useEffect(() => {
-	// 	const interval = setInterval(() => {
-	// 		setMeetingMinutesLeft(getMeetingMinutesLeft());
-	// 	}, 1000);
+		try {
+			const res = await axios.post(`${BASE_URL}/api/attendance/punch-out`, {}, { headers: apiHeaders() });
 
-	// 	return () => clearInterval(interval);
-	// }, []);
+			stopWorkingTimer();
+			clearTimeout(breakTimerRef.current);
 
+			// Show final work_hours returned by backend (net of breaks)
+			const finalHours = res.data?.work_hours || calcWorkingTime(punchInTime, totalBreakMsRef.current);
+			setTotalHours(finalHours);
+
+			setIsBreak(false);
+			setActiveBreak(null);
+			setIsPunchedIn(false);
+			totalBreakMsRef.current = 0;
+		} catch (err) {
+			const msg = err.response?.data?.message || "Punch out failed. Please try again.";
+			setPunchError(msg);
+		} finally {
+			setPunchLoading(false);
+		}
+	};
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 9. Start Break
+	// ─────────────────────────────────────────────────────────────────────
+	const handleStartBreak = async (breakItem = null) => {
+		if (!userId) return;
+
+		setPunchLoading(true);
+		setPunchError("");
+
+		try {
+			await axios.post(`${BASE_URL}/api/attendance/start-break`, {}, { headers: apiHeaders() });
+
+			stopWorkingTimer();
+			setIsBreak(true);
+			setActiveBreak(breakItem);
+			breakStartRef.current = new Date();
+			setShowBreakDropdown(false);
+
+			// Alert after 15 min for coffee / custom breaks
+			const isTimed = breakItem?.id === "coffee" || breakItem?.id === "custom";
+			if (isTimed) {
+				clearTimeout(breakTimerRef.current);
+				breakTimerRef.current = setTimeout(
+					() => setShowAlert(true),
+					BREAK_DURATION_MIN * 60 * 1000
+				);
+			}
+		} catch (err) {
+			const msg = err.response?.data?.message || "Could not start break.";
+			setPunchError(msg);
+		} finally {
+			setPunchLoading(false);
+		}
+	};
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 10. End Break
+	// ─────────────────────────────────────────────────────────────────────
+	const handleEndBreak = async () => {
+		if (!userId) return;
+
+		setPunchLoading(true);
+		setPunchError("");
+
+		try {
+			await axios.post(`${BASE_URL}/api/attendance/end-break`, {}, { headers: apiHeaders() });
+
+			// Accumulate break duration on frontend so working timer stays accurate
+			if (breakStartRef.current) {
+				totalBreakMsRef.current += Date.now() - breakStartRef.current.getTime();
+			}
+
+			clearTimeout(breakTimerRef.current);
+			setShowAlert(false);
+			setIsBreak(false);
+			setActiveBreak(null);
+			breakStartRef.current = null;
+
+			// Resume working timer
+			startWorkingTimer(punchInTime);
+		} catch (err) {
+			const msg = err.response?.data?.message || "Could not end break.";
+			setPunchError(msg);
+		} finally {
+			setPunchLoading(false);
+		}
+	};
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 11. Attendance data for chart
+	// ─────────────────────────────────────────────────────────────────────
+	const attendanceDataSets = {
+		months: [
+			{ label: "Jan", value: 95 }, { label: "Feb", value: 90 },
+			{ label: "Mar", value: 86, highlight: true }, { label: "Apr", value: 92 },
+			{ label: "May", value: 88 },
+		],
+		weeks: [
+			{ label: "W1", value: 85 }, { label: "W2", value: 88 },
+			{ label: "W3", value: 90 }, { label: "W4", value: 92 },
+		],
+		days: [
+			{ label: "Mon", value: 90 }, { label: "Tue", value: 85 },
+			{ label: "Wed", value: 88 }, { label: "Thu", value: 92 },
+			{ label: "Fri", value: 95 },
+		],
+	};
+
+	// ─────────────────────────────────────────────────────────────────────
+	// 12. Render
+	// ─────────────────────────────────────────────────────────────────────
 	return (
 		<div className="dashboard-wrapper d-flex">
-			<div className="rightside-logo ">
+			<div className="rightside-logo">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
 			<div className="sidebar">
@@ -405,72 +441,77 @@ const handlePunchOut = () => {
 			<div className="main-content flex-grow-1">
 				<Topbar />
 				<Container fluid className="p-4">
-					{/* Welcome Section */}
+
+					{/* Welcome */}
 					<Row className="mb-4 align-items-center">
 						<div className="username">
 							<h1>Welcome, {username || "User"}!</h1>
 						</div>
 					</Row>
 
-					{/* Notification Top */}
+					{/* Notification + Meeting/Punch Card */}
 					<Row className="mb-4">
-						<div md={4}>
-							<NotificationTop />
-						</div>
+						<div md={4}><NotificationTop /></div>
 						<Col md={12}>
 							<div className="meeting-card d-flex justify-content-between align-items-center">
+
 								{/* Left group */}
 								<div className="d-flex align-items-center">
 									<img src={Vector3} alt="Vector3" className="vector-img" />
 									<div className="meeting-left">
+
+										{/* ── STATE 1 : Not punched in ── */}
 										{!isPunchedIn ? (
 											<>
-												<h2>
-													{currentTime} , {currentDate}
-												</h2>
+												<h2>{currentTime} , {currentDate}</h2>
+
 												<a
-													href={meetingLink}
+													href={MEETING_LINK}
 													target="_blank"
 													rel="noopener noreferrer"
 													className="meeting-box"
 													onClick={() => setHasJoined(true)}
-													style={{
-														cursor: "pointer",
-														textDecoration: "none",
-														color: "inherit",
-													}}
+													style={{ cursor: "pointer", textDecoration: "none", color: "inherit" }}
 												>
 													<div className="meeting-info">
 														<h4>Standup Meeting</h4>
 														<p>{meetingTimeLeft}</p>
 													</div>
-
 													<div className="meeting-time">
 														<img src={profileimg} alt="profileimg" />
 													</div>
-
 													<div className="chevron-box">
 														<FaChevronRight />
 													</div>
 												</a>
 
-												<button className="btn-punch" onClick={handlePunchIn}>
-													Punch In
+												{/* Error message */}
+												{punchError && (
+													<p style={{ color: "#ff4d4d", fontSize: "13px", marginTop: "6px" }}>
+														{punchError}
+													</p>
+												)}
+
+												<button
+													className="btn-punch"
+													onClick={handlePunchIn}
+													disabled={punchLoading}
+												>
+													{punchLoading ? "Punching In…" : "Punch In"}
 												</button>
 											</>
 										) : (
+											/* ── STATE 2 & 3 : Punched in ── */
 											<>
-												<h2>
-													{currentTime} , {currentDate}
-												</h2>
+												<h2>{currentTime} , {currentDate}</h2>
 												<p>
-													Lunch Break 1:00 PM - 2:00 PM & Coffee Break 4:00 PM -
-													4:15 PM
+													Lunch Break 1:00 PM - 2:00 PM &amp; Coffee Break 4:00 PM - 4:15 PM
 												</p>
+
 												<div className="punch-info-box">
 													<div className="info-item">
 														<span>Punch In :</span>{" "}
-														<strong>{formatTime(punchInTime)}</strong>
+														<strong>{punchInTime ? formatTime(punchInTime) : "—"}</strong>
 													</div>
 													<div className="info-item">
 														<span>Total Hours :</span>{" "}
@@ -478,41 +519,51 @@ const handlePunchOut = () => {
 													</div>
 												</div>
 
+												{/* Error message */}
+												{punchError && (
+													<p style={{ color: "#ff4d4d", fontSize: "13px", marginTop: "6px" }}>
+														{punchError}
+													</p>
+												)}
+
 												<div className="button-row">
+													{/* Punch Out */}
 													<button
 														className="btn-punch-out1"
 														onClick={handlePunchOut}
+														disabled={punchLoading}
 													>
-														Punch Out
+														{punchLoading ? "Please wait…" : "Punch Out"}
 													</button>
-													<button
-														className="break-btn-st-en"
-														onClick={() => {
-															if (isBreak) {
-																// ✅ END BREAK
-																handleStartBreak();  //end break
-															} else {
-																// ✅ OPEN DROPDOWN
-																setShowBreakDropdown(true);  // Open dropdown
-															}
-														}}
-													>
-														{isBreak ? "End Break" : "Start Break ▼"}
-													</button>
+
+													{/* Start Break / End Break */}
+													{isBreak ? (
+														<button
+															className="break-btn-st-en"
+															onClick={handleEndBreak}
+															disabled={punchLoading}
+														>
+															End Break
+														</button>
+													) : (
+														<button
+															className="break-btn-st-en"
+															onClick={() => setShowBreakDropdown((prev) => !prev)}
+															disabled={punchLoading}
+														>
+															Start Break ▼
+														</button>
+													)}
 												</div>
 
-												{/* break-dropdown */}
-
+												{/* Break dropdown */}
 												{showBreakDropdown && !isBreak && (
 													<div className="break-dropdown" ref={breakDropdownRef}>
 														<p className="dropdown-title">Scheduled Breaks</p>
 
-														{breakSchedules.map((b) => {
-															const nowMin = getCurrentTimeInMinutes();
-															const isCurrent =
-																nowMin >= toMinutes(b.start) &&
-																nowMin <= toMinutes(b.end);
-
+														{BREAK_SCHEDULES.map((b) => {
+															const nowMin    = getCurrentTimeInMinutes();
+															const isCurrent = nowMin >= toMinutes(b.start) && nowMin <= toMinutes(b.end);
 															return (
 																<div
 																	key={b.id}
@@ -520,51 +571,27 @@ const handlePunchOut = () => {
 																	onClick={() => handleStartBreak(b)}
 																>
 																	<strong>{b.label}</strong>
-																	<span>
-																		{b.start} – {b.end}
-																	</span>
+																	<span>{b.start} – {b.end}</span>
 																</div>
 															);
 														})}
 
-														{isBreak && (
-															<button
-																className="btn-end-break"
-																onClick={handleStartBreak}
-															>
-																End Break
-															</button>
-														)}
-                                                         
-														{/* ➕ Custom Break */}
+														{/* Custom Break */}
 														<div
 															className="break-item custom-break"
-															onClick={() =>
-																handleStartBreak({
-																	id: "custom",
-																	label: "Custom Break",
-																})
-															}
+															onClick={() => handleStartBreak({ id: "custom", label: "Custom Break" })}
 														>
 															➕ Custom Break
 														</div>
 													</div>
 												)}
 
-												{/* ⚠️ Break time alert popup */}
+												{/* Break overtime alert */}
 												{showAlert && (
 													<div style={alertStyle}>
 														<span>⚠️</span>
-														<span>
-															Your break time of 15 minutes has ended. Please
-															resume work.
-														</span>
-														<button
-															style={closeBtnStyle}
-															onClick={() => setShowAlert(false)}
-														>
-															✖
-														</button>
+														<span>Your break time of 15 minutes has ended. Please resume work.</span>
+														<button style={closeBtnStyle} onClick={() => setShowAlert(false)}>✖</button>
 													</div>
 												)}
 											</>
@@ -572,15 +599,11 @@ const handlePunchOut = () => {
 									</div>
 								</div>
 
-								{/* Right Illustration */}
+								{/* Right illustration */}
 								<div className="meeting-right">
-									<img src={arrow3} alt="Illustration" className="arrow3" />
-									<img
-										src={gradientimg}
-										alt="Illustration"
-										className="maleteam"
-									/>
-									<img src={clock} alt="Illustration" className="clock" />
+									<img src={arrow3}      alt="Illustration" className="arrow3"   />
+									<img src={gradientimg} alt="Illustration" className="maleteam" />
+									<img src={clock}       alt="Illustration" className="clock"    />
 								</div>
 							</div>
 						</Col>
@@ -589,136 +612,81 @@ const handlePunchOut = () => {
 					{/* Admin Summary Cards */}
 					<Row className="notice mb-4">
 						<Col md={8}>
-							<Row class>
-								{/* Total Employees */}
+							<Row>
 								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/employees-list")}
-										style={{ cursor: "pointer" }}
-									>
+									<Card className="summary-card" onClick={() => navigate("/employees-list")} style={{ cursor: "pointer" }}>
 										<div className="summary-top">
 											<h2>{adminDashboardData.total_employees}</h2>
-											<div className="summary-icons">
-												<BsPeople />
-											</div>
+											<div className="summary-icons"><BsPeople /></div>
 										</div>
 										<h6>Total Employees</h6>
 										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsPlusCircle />
-											</div>
+											<div className="summary-action-icon"><BsPlusCircle /></div>
 											2 new employees added!
 										</div>
 									</Card>
 								</Col>
-
-								{/* On Time */}
 								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/attendance")}
-										style={{ cursor: "pointer" }}
-									>
+									<Card className="summary-card" onClick={() => navigate("/attendance")} style={{ cursor: "pointer" }}>
 										<div className="summary-top">
 											<h2>{adminDashboardData.On_Time}</h2>
-											<div className="summary-icons">
-												<IoTimeOutline />
-											</div>
+											<div className="summary-icons"><IoTimeOutline /></div>
 										</div>
 										<h6>On Time</h6>
 										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsEye />
-											</div>
+											<div className="summary-action-icon"><BsEye /></div>
 											Check Attendance Today
 										</div>
 									</Card>
 								</Col>
-
-								{/* On Leave */}
 								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/leave-approval")}
-										style={{ cursor: "pointer" }}
-									>
+									<Card className="summary-card" onClick={() => navigate("/leave-approval")} style={{ cursor: "pointer" }}>
 										<div className="summary-top">
 											<h2>{adminDashboardData.On_Leave}</h2>
-											<div className="summary-icons">
-												<MdOutlineAccessTime />
-											</div>
+											<div className="summary-icons"><MdOutlineAccessTime /></div>
 										</div>
 										<h6>On Leave</h6>
 										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsPencilSquare />
-											</div>
+											<div className="summary-action-icon"><BsPencilSquare /></div>
 											Accept or reject Leave
 										</div>
 									</Card>
 								</Col>
-
-								{/* Late Arrival */}
 								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/admin-attendance-report")}
-										style={{ cursor: "pointer" }}
-									>
+									<Card className="summary-card" onClick={() => navigate("/admin-attendance-report")} style={{ cursor: "pointer" }}>
 										<div className="summary-top">
 											<h2>{adminDashboardData.Late_Arrival}</h2>
-											<div className="summary-icons">
-												<MdOutlineLogout />
-											</div>
+											<div className="summary-icons"><MdOutlineLogout /></div>
 										</div>
 										<h6>Late Arrival</h6>
 										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsCalendarCheck />
-											</div>
+											<div className="summary-action-icon"><BsCalendarCheck /></div>
 											Check Attendance Overview
 										</div>
 									</Card>
 								</Col>
-
-								{/* Pending Approval */}
 								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/leave-approval")}
-										style={{ cursor: "pointer" }}
-									>
+									<Card className="summary-card" onClick={() => navigate("/leave-approval")} style={{ cursor: "pointer" }}>
 										<div className="summary-top">
 											<h2>{adminDashboardData.Pending_Approval}</h2>
-											<div className="summary-icons">
-												<FaCalendarAlt />
-											</div>
+											<div className="summary-icons"><FaCalendarAlt /></div>
 										</div>
 										<h6>Pending Approval</h6>
 										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsEnvelope />
-											</div>
+											<div className="summary-action-icon"><BsEnvelope /></div>
 											Approve Leave
 										</div>
 									</Card>
 								</Col>
-
-								{/* This Week Hoilday */}
 								<Col md={4} className="mb-3">
 									<Card className="summary-card">
 										<div className="summary-top">
 											<h2>{adminDashboardData.This_Week_Hoilday}</h2>
-											<div className="summary-icons">
-												<TbCalendarTime />
-											</div>
+											<div className="summary-icons"><TbCalendarTime /></div>
 										</div>
 										<h6>This Week Hoilday</h6>
 										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsFlag />
-											</div>
+											<div className="summary-action-icon"><BsFlag /></div>
 											Manage Holiday List
 										</div>
 									</Card>
@@ -744,10 +712,10 @@ const handlePunchOut = () => {
 
 export default Dashboard;
 
+// ─── Inline styles (kept identical to original) ────────────────────────────
 const alertStyle = {
 	position: "fixed",
-	top: "50%",
-	left: "50%",
+	top: "50%", left: "50%",
 	transform: "translate(-50%, -50%)",
 	backgroundColor: "#f47c3c",
 	color: "white",

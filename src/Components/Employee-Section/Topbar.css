@@ -120,7 +120,7 @@
   flex: 1;
   min-width: 250px;
   background: #ffffffff;
-  padding: 10px 15px;
+  padding: 10px 0x;
   border-radius: 10px;
   text-align: left;
 }
@@ -147,12 +147,7 @@
   font-size: 14px;
 }
 
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
+
 
 @keyframes fadeIn {
   from {
