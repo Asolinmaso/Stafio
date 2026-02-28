@@ -60,8 +60,14 @@ export default function MyRegularization() {
   }, [showModal]);
 
   const handleSubmitRegularization = async () => {
-    const userId = sessionStorage.getItem("current_user_id");
-    console.log(userId);
+    const userId = localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id");
+
+    // Frontend validation
+    if (!formData.date) {
+      alert("Please select a date");
+      return;
+    }
+
     try {
       if (isEdit) {
         // ✏️ EDIT
@@ -86,9 +92,7 @@ export default function MyRegularization() {
       setIsEdit(false);
       setEditId(null);
       setFormData({
-        user_id:
-          localStorage.getItem("employee_user_id") ||
-          sessionStorage.getItem("current_user_id"),
+        user_id: userId,
         date: "",
         session_type: "Full Day",
         attendance_type: "Present",
@@ -104,7 +108,7 @@ export default function MyRegularization() {
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Something went wrong. Please try again.",
+        "Something went wrong. Please try again.",
       );
     }
   };
@@ -115,12 +119,13 @@ export default function MyRegularization() {
     setIsEdit(true);
     setEditId(row.id);
 
+    const datePart = row.date.split("/")[0].trim();
     setFormData({
       user_id:
         localStorage.getItem("employee_user_id") ||
         sessionStorage.getItem("current_user_id"),
-      date: row.date.split("/")[0].split("-").reverse().join("-"),
-      session_type: row.date.split("/")[1] || "Full Day",
+      date: datePart.split("-").reverse().join("-"),
+      session_type: row.date.split("/")[1]?.trim() || "Full Day",
       attendance_type: row.attendanceType,
       reason: row.reason,
     });
@@ -133,7 +138,7 @@ export default function MyRegularization() {
 
     if (!window.confirm("Delete this regularization?")) return;
 
-    const userId = sessionStorage.getItem("current_user_id");
+    const userId = localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id");
 
     await axios.delete(`http://127.0.0.1:5001/api/regularization/${id}`, {
       headers: { "X-User-ID": userId },
@@ -208,13 +213,12 @@ export default function MyRegularization() {
                     <td>{row.reason}</td>
                     <td>
                       <span
-                        className={`status-badge ${
-                          row.status === "Approved"
-                            ? "approved"
-                            : row.status === "Pending"
-                              ? "pending"
-                              : "rejected"
-                        }`}
+                        className={`status-badge ${row.status === "Approved"
+                          ? "approved"
+                          : row.status === "Pending"
+                            ? "pending"
+                            : "rejected"
+                          }`}
                       >
                         {row.status}
                       </span>
@@ -283,7 +287,7 @@ export default function MyRegularization() {
                   {/* Left Form Section */}
                   <div className="regularization-left">
                     <label>Employee ID:</label>
-                    <input type="text" value={formData.user_id} readOnly/>
+                    <input type="text" value={formData.user_id} readOnly />
 
                     <label>Leave Type:</label>
                     <select
@@ -303,7 +307,7 @@ export default function MyRegularization() {
                     <label>Select Date:</label>
                     <input
                       type="date"
-                      placeholder="DD-MM-YYYY"
+                      required
                       value={formData.date}
                       onChange={(e) =>
                         setFormData({ ...formData, date: e.target.value })

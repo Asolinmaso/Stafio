@@ -17,7 +17,6 @@ export default function MyTeamLeaveApproval() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [actionType, setActionType] = useState("");
   const [approvalReason, setApprovalReason] = useState("");
-
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sortOrder, setSortOrder] = useState("Newest");
@@ -25,7 +24,6 @@ export default function MyTeamLeaveApproval() {
   // FILTER POPUP STATES
   const [showFilter, setShowFilter] = useState(false);
   const [tempStatus, setTempStatus] = useState("All");
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,7 +59,7 @@ export default function MyTeamLeaveApproval() {
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
- 
+
 
   return (
     <div className="myteam-layout">

@@ -1,23 +1,28 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import "./NotificationTop.css";
 
 const NotificationBar = () => {
   const [visible, setVisible] = useState(true);
-   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
+  const [latestAnnouncement, setLatestAnnouncement] = useState(null);
 
-    useEffect(() => {
-       // Retrieve announcements from localStorage
-       const stored = localStorage.getItem("announcements");
-       if (stored) {
-         const parsed = JSON.parse(stored);
-         if (parsed.length > 0) {
-           // Get the last (latest) announcement
-           setLatestAnnouncement(parsed[parsed.length - 1]);
-           
-         }
-       }
-     }, []);
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5001/api/broadcast");
+        if (res.ok) {
+          const parsed = await res.json();
+          if (parsed.length > 0) {
+            setLatestAnnouncement(parsed[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
 
   if (!visible || !latestAnnouncement) return null;
 
@@ -25,10 +30,10 @@ const NotificationBar = () => {
     <div className="notification-top">
       <div className="notification-content">
         <div className="notification-space">
-         <p className="event-names">{latestAnnouncement.eventName}</p>
-         <span>---</span>
-         <p className="event-messages">{latestAnnouncement.message}</p>
-         </div>
+          <p className="event-names">{latestAnnouncement.eventName || latestAnnouncement.title}</p>
+          <span>---</span>
+          <p className="event-messages">{latestAnnouncement.message}</p>
+        </div>
         <div className="close" onClick={() => setVisible(false)}>
           <FaTimes />
         </div>

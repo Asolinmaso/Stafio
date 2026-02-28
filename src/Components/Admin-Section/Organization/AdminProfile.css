@@ -1,13 +1,15 @@
-.main-content5 {                /* new */
-	flex-grow: 1;
-	padding: 7px;
-	background: #eff5ff;
-   margin-top: -15px !important;    /* modified */
+.main-content5 {
+  /* new */
+  flex-grow: 1;
+  padding: 7px;
+  background: #eff5ff;
+  margin-top: -15px !important;
+  /* modified */
 }
-                           
-.main-content5 .topbar{
+
+.main-content5 .topbar {
   width: 95%;
-} 
+}
 
 /* ====================== PROFILE HEADER SECTION ====================== */
 .profile-header-card {
@@ -42,7 +44,7 @@
   margin-left: 2px;
 }
 
-.profile-header-card > .card-body > div {
+.profile-header-card>.card-body>div {
   min-width: 170px;
 }
 
@@ -55,7 +57,8 @@
   background: transparent;
   padding: 0;
   margin: 0;
-   height: 15px;     /* height: 52px; */
+  height: 15px;
+  /* height: 52px; */
   gap: 0;
   flex-wrap: nowrap;
   width: 100%;
@@ -68,39 +71,49 @@
 }
 
 .profile-tabs .nav-link {
-  padding: 0 20px;        /* modified padding: 0 15px;  */
+  padding: 0 20px;
+  /* modified padding: 0 15px;  */
   /* height: 48px; */
-   bottom: 40px;           /* new css line bottom: 22px; */
+  bottom: 40px;
+  /* new css line bottom: 22px; */
   margin-bottom: 0;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
-   color: #6A7181;           /* modified color: #777c82; */
+  color: #6A7181;
+  /* modified color: #777c82; */
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-   font-size: 14px;          /* modified font-size:  15px;  */
+  font-size: 14px;
+  /* modified font-size:  15px;  */
   font-weight: 500;
   transition: color 0.22s;
   position: relative;
   outline: none;
-  width: 110%;      /* modified width: 100%; */
+  width: 110%;
+  /* modified width: 100%; */
   display: flex;
   align-items: center;
-  justify-content:space-around;     /* modified justify-content:center; */
-  text-decoration: none; /* Remove default underline */
+  justify-content: space-around;
+  /* modified justify-content:center; */
+  text-decoration: none;
+  /* Remove default underline */
 }
 
 /* Active tab with text underline only */
 .profile-tabs .nav-link.active {
   color: #12baf5 !important;
- font-weight: 500;        /* modified font-weight: 700; */
+  font-weight: 500;
+  /* modified font-weight: 700; */
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
   z-index: 2;
   text-decoration: underline !important;
   text-decoration-color: #12baf5 !important;
-  text-decoration-thickness: 1.5px !important;     /*modified text-decoration-thickness:3px !important; */
-  text-underline-offset: 3px !important;          /*modified text-underline-offset: 8px !important; */
+  text-decoration-thickness: 1.5px !important;
+  /*modified text-decoration-thickness:3px !important; */
+  text-underline-offset: 3px !important;
+  /*modified text-underline-offset: 8px !important; */
 }
 
 /* Override Bootstrap's default active state */
@@ -127,10 +140,12 @@
     flex-wrap: nowrap;
     width: 100%;
   }
+
   .profile-tabs .nav-item {
     flex: none;
     min-width: 120px;
   }
+
   .profile-tabs .nav-link {
     font-size: 0.97rem;
     padding: 0 12px;
@@ -142,12 +157,15 @@
 /* --- Header box with shadow/border, blue underline, white bg --- */
 .update-info-header-box {
   background: #fff;
-  border-radius: 8px;    /* modified border-radius: 14px; */
+  border-radius: 8px;
+  /* modified border-radius: 14px; */
   border: 1.3px solid #e5eaf1;
-  box-shadow: 0 6px 20px rgba(20,66,110,0.11);
-  margin: 0 0 28px 10px !important;          /* modified margin: 0 0 32px 0; */
+  box-shadow: 0 6px 20px rgba(20, 66, 110, 0.11);
+  margin: 0 0 28px 10px !important;
+  /* modified margin: 0 0 32px 0; */
   /* new */
-  width: 93% !important;       /* modified */
+  width: 93% !important;
+  /* modified */
   /* margin-left: 20px; */
 }
 
@@ -158,7 +176,8 @@
   background: transparent;
   border-radius: 12px 12px 0 0;
   box-shadow: none;
-  padding: 14px 32px 12px 34px;   /* modified padding: 23px 32px 23px 34px; */
+  padding: 14px 32px 12px 34px;
+  /* modified padding: 23px 32px 23px 34px; */
   min-height: 60px;
   position: relative;
   display: flex;
@@ -177,6 +196,7 @@
   background: #12baf5;
   border-radius: 2.5px;
 }
+
 /*------------PROFILE INFO TAB-------------------*/
 /* --- Main profile tab area - NO border, NO shadow, just background --- */
 .profile-tab-section.personal-info {
@@ -194,7 +214,7 @@
   /* padding: 0 38px 6px 38px !important; */
   box-shadow: none !important;
   border: none !important;
-    /* new */
+  /* new */
   margin: 2px;
 }
 
@@ -203,21 +223,27 @@
   background: #fff;
   border-radius: 12px;
   border: 1.3px solid #e5eaf1;
-  box-shadow: 0 2px 7px rgba(20,66,110,0.05);
+  box-shadow: 0 2px 7px rgba(20, 66, 110, 0.05);
   padding: 13px 21px 13px 18px;
   display: flex;
   align-items: center;
-  margin-top: -2px;        /* modified margin-top: 2px; */
-  margin-bottom: 12px !important;    /* modified margin-bottom: 2px; */
+  margin-top: -2px;
+  /* modified margin-top: 2px; */
+  margin-bottom: -12px;
+  /* modified margin-bottom: 2px; */
   /* new */
   width: 90%;
 }
 
 .form-label {
-  font-size: 15.5px !important; /* font-size: 13.5px !important;     */
-  font-weight: 500 !important;  /* font-weight: 600 !important;     */
-  color: #000000 !important;  /* modified color: !important;     */
-  margin-bottom: -2px !important; /* margin-bottom: 10px !important;     */
+  font-size: 15.5px !important;
+  /* font-size: 13.5px !important;     */
+  font-weight: 500 !important;
+  /* font-weight: 600 !important;     */
+  color: #000000 !important;
+  /* modified color: !important;     */
+  margin-bottom: -2px !important;
+  /* margin-bottom: 10px !important;     */
   letter-spacing: 0;
 }
 
@@ -226,20 +252,24 @@
 .form-control,
 .form-select {
   background: #F8F8F8 !important;
-  border: solid #e5eaf1 !important;   /* modified  border: 1.4px solid #e5eaf1 !important; */
+  border: solid #e5eaf1 !important;
+  /* modified  border: 1.4px solid #e5eaf1 !important; */
   border-radius: 12px !important;
   font-size: 1.0rem !important;
   padding: 10px 20px 10px 10px !important;
   color: #223042 !important;
   /* box-shadow: 0 3px 12px 0 rgba(16,82,177,0.085), 0 3px 16px 0 rgba(16,82,177,0.045); */
-  height: 50px !important;   
+  height: 50px !important;
   transition: border-color 0.2s;
   /* new */
   width: 90%;
-  margin-bottom: 7px !important;       /* modified */
+  margin-bottom: 7px !important;
+  /* modified */
 }
 
-.form-input:focus, .form-control:focus, .form-select:focus {
+.form-input:focus,
+.form-control:focus,
+.form-select:focus {
   border-color: #12baf5 !important;
   box-shadow: 0 0 0 3px #19bde91f !important;
 }
@@ -249,9 +279,11 @@
   position: relative;
   width: 100%;
 }
+
 .input-calendar-icon {
   position: absolute;
-  right: 60px;      /* right: 23px; */
+  right: 60px;
+  /* right: 23px; */
   top: 50%;
   transform: translateY(-50%);
   color: #14baf6;
@@ -259,6 +291,7 @@
   pointer-events: none;
   z-index: 3;
 }
+
 .input-icon-wrap input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
 }
@@ -270,6 +303,7 @@
   width: 18px;
   height: 18px;
 }
+
 .d-flex.gap-4.align-items-center {
   gap: 32px !important;
 }
@@ -284,12 +318,14 @@
   min-width: 114px;
   min-height: 45px;
   margin-left: 8px;
-  box-shadow: 0 2px 9px 0 rgba(25,189,232,0.12);
+  box-shadow: 0 2px 9px 0 rgba(25, 189, 232, 0.12);
   transition: background 0.13s;
 }
+
 .btn-save:hover {
   background: #109ed2 !important;
 }
+
 .btn-cancel {
   background: #12baf5 !important;
   color: #ffffff !important;
@@ -299,14 +335,16 @@
   font-size: 16px;
   min-width: 114px;
   min-height: 45px;
-  box-shadow: 0 2px 8px 0 rgba(25,189,232,0.08);
+  box-shadow: 0 2px 8px 0 rgba(25, 189, 232, 0.08);
   transition: background 0.13s, color 0.13s, border 0.17s;
 }
+
 .btn-cancel:hover {
   background: #f4fbfe !important;
   color: #119ed2 !important;
   border-color: #119ed2 !important;
 }
+
 .btn-edit {
   background: #12baf5 !important;
   color: #fff !important;
@@ -315,7 +353,7 @@
   font-weight: 600;
   min-width: 95px;
   min-height: 36px;
-  box-shadow: 0 2px 7px rgba(25,189,232, 0.09);
+  box-shadow: 0 2px 7px rgba(25, 189, 232, 0.09);
   font-size: 15px;
   padding: 7px 18px;
 }
@@ -334,23 +372,31 @@
   padding-top: 2px !important;
 }
 
-.input-error1 {                  /*new*/
-  border: 2px solid rgb(228, 228, 228)  !important;
+.input-error1 {
+  /*new*/
+  border: 2px solid rgb(228, 228, 228) !important;
   background-color: #fff5f5;
-  margin-bottom: 2px !important;   /* modified */
+  margin-bottom: 2px !important;
+  /* modified */
 }
 
-.error-text1 {               /*new*/
+.error-text1 {
+  /*new*/
   color: #dc3545;
   font-size: 14px;
-  /* margin-bottom: 2px; */ 
+  /* margin-bottom: 2px; */
   padding-top: 2px;
   margin-top: -5px;
 }
 
 @media (max-width: 900px) {
-  .update-info-header-box { margin: 0; }
-  .personal-info-form { padding: 0 8px 4px 8px !important; }
+  .update-info-header-box {
+    margin: 0;
+  }
+
+  .personal-info-form {
+    padding: 0 8px 4px 8px !important;
+  }
 }
 
 
@@ -361,6 +407,7 @@
   padding: 28px 26px;
   margin-top: 12px;
 }
+
 .tab-section-title.education {
   font-weight: 600;
   font-size: 14px;
@@ -371,11 +418,12 @@
   width: fit-content;
   color: #223042;
   border: 1px solid #e5eaf1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-.edform-input{       /* new css class for education form inputs */
-   background: #F8F8F8 !important;
+.edform-input {
+  /* new css class for education form inputs */
+  background: #F8F8F8 !important;
   border: solid #e5eaf1 !important;
   border-radius: 12px !important;
   font-size: 1.0rem !important;
@@ -385,14 +433,16 @@
   /* height: 10% !important; */
   transition: border-color 0.2s;
   width: 90%;
-  margin-bottom: 15px;  /* margin-bottom: 4px; */
+  margin-bottom: 15px;
+  /* margin-bottom: 4px; */
   /* new */
   appearance: auto;
   -webkit-appearance: auto;
   -moz-appearance: auto
 }
 
-/* Skills for education add update delete */  /* new */
+/* Skills for education add update delete */
+/* new */
 
 .skill-input-wrap {
   display: flex;
@@ -461,6 +511,7 @@
   padding: 28px 26px;
   margin-top: 12px;
 }
+
 .tab-section-title.experience {
   font-weight: 600;
   font-size: 1.05rem;
@@ -471,10 +522,10 @@
   width: fit-content;
   color: #223042;
   border: 1px solid #e5eaf1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-.pexform-input{
+.pexform-input {
   background: #F8F8F8 !important;
   border: solid #e5eaf1 !important;
   border-radius: 12px !important;
@@ -488,17 +539,18 @@
   margin-bottom: 22px !important;
 }
 
-.pexform-input1{
-   resize: vertical;
-   height: 65px;
-   margin-bottom: 22px !important;   /* new   */
+.pexform-input1 {
+  resize: vertical;
+  height: 65px;
+  margin-bottom: 22px !important;
+  /* new   */
 }
 
 .pexform-input2 {
-   resize: vertical;
-   height: 80px !important;
-   /* top: 10px; */
-  
+  resize: vertical;
+  height: 80px !important;
+  /* top: 10px; */
+
 }
 
 /* ====================== BANK DETAILS TAB SECTION ====================== */
@@ -508,6 +560,7 @@
   padding: 28px 26px;
   margin-top: 12px;
 }
+
 .tab-section-title.bank-details {
   font-weight: 600;
   font-size: 1.05rem;
@@ -518,7 +571,7 @@
   width: fit-content;
   color: #223042;
   border: 1px solid #e5eaf1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 /* ====================== DOCUMENTS TAB SECTION ====================== */
@@ -528,6 +581,7 @@
   padding: 28px 26px;
   margin-top: 12px;
 }
+
 .tab-section-title.documents {
   font-weight: 600;
   font-size: 1.05rem;
@@ -538,7 +592,7 @@
   width: fit-content;
   color: #223042;
   border: 1px solid #e5eaf1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 /* ------ Common form label style ------ */
@@ -554,6 +608,7 @@ input[type="radio"] {
   margin-right: 9px;
   accent-color: #19bde8;
 }
+
 .form-check {
   display: inline-flex;
   align-items: center;
@@ -575,12 +630,15 @@ input[type="radio"] {
   background: #f3faff;
   font-size: 1rem;
 }
+
 .form-control:focus,
 .form-select:focus {
   border-color: #19BDE8;
   box-shadow: 0 0 0 2px #19bde81b;
 }
-.btn-primary, .btn-outline-info {
+
+.btn-primary,
+.btn-outline-info {
   min-width: 80px;
 }
 
@@ -606,9 +664,10 @@ input[type="radio"] {
 .doc-item {
   background: #f7fafd;
   border-radius: 10px !important;
-  box-shadow: 0 1px 3px rgba(25,189,232,0.06);
+  box-shadow: 0 1px 3px rgba(25, 189, 232, 0.06);
   border: 1px solid #e2eaf0 !important;
 }
+
 .pdf-icon {
   background: #fff3f1;
   color: #fd776b;
@@ -618,12 +677,14 @@ input[type="radio"] {
   font-size: 0.93rem;
   margin-right: 10px;
 }
+
 .status-completed,
 .doc-done {
   color: #27be62;
   font-weight: 600;
   font-size: 1rem;
 }
+
 .upload-box {
   border-style: dotted;
   border-color: gray;
@@ -634,14 +695,16 @@ input[type="radio"] {
   flex-direction: column;
   align-items: center;
   /* new */
-  height: 300px ;
+  height: 300px;
   margin-right: 250px;
-  width: 320px; 
+  width: 320px;
 }
+
 .upload-cloud-icon {
   font-size: 2.5rem;
   color: #19bde8;
 }
+
 .upload-hint {
   font-size: 0.95rem;
   color: #848f9c;
@@ -649,10 +712,20 @@ input[type="radio"] {
 }
 
 @media (max-width: 991px) {
-  .profile-header-content { flex-direction: column; }
-  .profile-header-card > .card-body > div { min-width: 0; }
-  .profile-tabs .nav-link { padding: 11px 9px; font-size: 1rem; }
+  .profile-header-content {
+    flex-direction: column;
+  }
+
+  .profile-header-card>.card-body>div {
+    min-width: 0;
+  }
+
+  .profile-tabs .nav-link {
+    padding: 11px 9px;
+    font-size: 1rem;
+  }
 }
+
 /* Remove only the background, border, and shadow for all tabs except personal-info */
 .profile-tab-section.education,
 .profile-tab-section.experience,
