@@ -61,7 +61,6 @@ export default function MyTeamLeaveApproval() {
 
 
 
-
   return (
     <div className="myteam-layout">
       <div className="rightside-logo">

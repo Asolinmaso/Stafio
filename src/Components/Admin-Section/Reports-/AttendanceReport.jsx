@@ -43,6 +43,7 @@ export default function AttendanceReport() {
       .catch((err) => console.error(err));
   }, []);
 
+
   /* DATE */
   useEffect(() => {
     const now = new Date();
@@ -110,6 +111,37 @@ export default function AttendanceReport() {
     setPopupSortDays(7);
     setFromDate("");
     setToDate("");
+  };
+
+  const handleDownload = () => {
+    if (filteredAttendance.length === 0) {
+      alert("No data available to download");
+      return;
+    }
+
+    const headers = ["ID", "Employee", "Role", "Status", "Date", "Check-in", "Check-out", "Work hours"];
+    const csvRows = [
+      headers.join(","),
+      ...filteredAttendance.map(row => [
+        row.id,
+        `"${row.employee}"`,
+        `"${row.role}"`,
+        `"${row.status}"`,
+        row.date,
+        row.checkIn,
+        row.checkOut,
+        row.workHours
+      ].join(","))
+    ];
+
+    const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Attendance_Report_${selectedDate || "All"}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleApplyFilters = () => {
@@ -279,7 +311,7 @@ export default function AttendanceReport() {
                 />
               </div>
 
-              <button className="att-report-download-btn">
+              <button className="att-report-download-btn" onClick={handleDownload}>
                 <FaDownload /> Download
               </button>
             </div>

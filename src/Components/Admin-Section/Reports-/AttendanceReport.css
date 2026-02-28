@@ -156,13 +156,19 @@ input.search-input2 {
 .att-report-download-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #19bde8;
+  gap: 8px;
+  background: #0ea5e9;
   border: none;
   color: #fff;
   border-radius: 10px;
-  padding: 9px 14px;
+  padding: 10px 18px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.att-report-download-btn:hover {
+  background: #0284c7;
 }
 
 /* ===== Table ===== */

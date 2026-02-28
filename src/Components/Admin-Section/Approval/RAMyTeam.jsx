@@ -17,6 +17,28 @@ export default function RegularizationApprovalMyTeam() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const navigate = useNavigate();
+  const filteredAndSortedLeaves = data
+    // SEARCH by employee name
+    .filter((leave) =>
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    // FILTER by status
+    .filter((leave) =>
+      filterStatus === "All" ? true : leave.status === filterStatus
+    )
+
+    // SORT by request date
+    .sort((a, b) => {
+      const dateA = new Date(a.requestDate);
+      const dateB = new Date(b.requestDate);
+
+      return sortOrder === "Newest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
+
+
 
   useEffect(() => {
     const fetchMyTeamRA = async () => {

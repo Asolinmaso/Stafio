@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./RegularizationApproval.css";
 import { FaFilter } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
@@ -11,15 +11,24 @@ import axios from "axios";
 export default function RegularizationApproval() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All"); // All | Pending | Approved | Rejected
-  const [sortOrder, setSortOrder] = useState("Newest"); // Newest | Oldest
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [attendanceType, setAttendanceType] = useState("All");
+  const [sortOrder, setSortOrder] = useState("Newest");
+  const [showFilter, setShowFilter] = useState(false);
+
+  // View Details Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showApproveReasonModal, setShowApproveReasonModal] = useState(false);
+  const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showRejectedResultModal, setShowRejectedResultModal] = useState(false);
   const [modalReason, setModalReason] = useState("");
+
+  const filterRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Fetch data
   useEffect(() => {
     const fetchRegularizationApproval = async () => {
       try {
@@ -31,29 +40,21 @@ export default function RegularizationApproval() {
         console.error("Error fetching attendance data:", error);
       }
     };
-
     fetchRegularizationApproval();
   }, []);
 
-  // ✅ ADDED: close popup on outside click
+  // Close filter popup on outside click
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      if (
-        filterRef.current &&
-        !filterRef.current.contains(event.target)
-      ) {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
         setShowFilter(false);
       }
     };
-
     document.addEventListener("mousedown", handleOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  const navigate = useNavigate();
-
+  // Modal handlers
   const handleViewDetails = (leave) => {
     setSelectedLeave(leave);
     setIsModalOpen(true);
@@ -62,125 +63,92 @@ export default function RegularizationApproval() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedLeave(null);
-    setShowApproveModal(false);
-    setShowRejectModal(false);
+    setShowApproveReasonModal(false);
+    setShowRejectReasonModal(false);
     setShowSuccessModal(false);
     setShowRejectedResultModal(false);
     setModalReason("");
   };
 
-  const handleApproveClick = () => {
-    setShowApproveModal(true);
-  };
-
-  const handleRejectClick = () => {
-    setShowRejectModal(true);
-  };
+  const handleApproveClick = () => setShowApproveReasonModal(true);
+  const handleRejectClick = () => setShowRejectReasonModal(true);
 
   const handleApproveSubmit = async () => {
-    // Connect to backend
     if (selectedLeave) {
       try {
         const userId = sessionStorage.getItem("current_user_id");
         const userRole = sessionStorage.getItem("current_role") || "admin";
-        await axios.put(`http://127.0.0.1:5001/api/admin/regularization/${selectedLeave.id}`,
-          {
-            status: "approved",
-            reason: modalReason
-          },
-          {
-            headers: {
-              "X-User-ID": userId,
-              "X-User-Role": userRole
-            }
-          }
+        await axios.put(
+          `http://127.0.0.1:5001/api/admin/regularization/${selectedLeave.id}`,
+          { status: "Approved", reason: modalReason },
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } }
         );
-
-        setData(prevData => prevData.map(item =>
-          item.id === selectedLeave.id ? { ...item, status: "Approved" } : item
-        ));
+        setData((prev) =>
+          prev.map((item) =>
+            item.id === selectedLeave.id ? { ...item, status: "Approved" } : item
+          )
+        );
       } catch (error) {
         console.error("Error approving regularization:", error);
-        alert("Failed to approve regularization");
       }
     }
-    setShowApproveModal(false);
+    setShowApproveReasonModal(false);
     setShowSuccessModal(true);
-    // Auto-close success
-    setTimeout(() => {
-      handleCloseModal();
-    }, 2000);
+    setTimeout(() => handleCloseModal(), 2000);
   };
 
   const handleRejectSubmit = async () => {
-    // Connect to backend
     if (selectedLeave) {
       try {
         const userId = sessionStorage.getItem("current_user_id");
         const userRole = sessionStorage.getItem("current_role") || "admin";
-        await axios.put(`http://127.0.0.1:5001/api/admin/regularization/${selectedLeave.id}`,
-          {
-            status: "rejected",
-            reason: modalReason
-          },
-          {
-            headers: {
-              "X-User-ID": userId,
-              "X-User-Role": userRole
-            }
-          }
+        await axios.put(
+          `http://127.0.0.1:5001/api/admin/regularization/${selectedLeave.id}`,
+          { status: "Rejected", reason: modalReason },
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } }
         );
-
-        setData(prevData => prevData.map(item =>
-          item.id === selectedLeave.id ? { ...item, status: "Rejected" } : item
-        ));
+        setData((prev) =>
+          prev.map((item) =>
+            item.id === selectedLeave.id ? { ...item, status: "Rejected" } : item
+          )
+        );
       } catch (error) {
         console.error("Error rejecting regularization:", error);
-        alert("Failed to reject regularization");
       }
     }
-    setShowRejectModal(false);
+    setShowRejectReasonModal(false);
     setShowRejectedResultModal(true);
-    // Auto-close result
-    setTimeout(() => {
-      handleCloseModal();
-    }, 2000);
+    setTimeout(() => handleCloseModal(), 2000);
+  };
+
+  // Filter + sort logic
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date(0);
+    const parts = dateStr.split("-");
+    if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    return new Date(dateStr);
   };
 
   const filteredAndSortedLeaves = data
-    // SEARCH by employee name
     .filter((leave) =>
       leave.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
-
-    // FILTER by status
+    .filter((leave) =>
+      attendanceType === "All" ? true : leave.attendance === attendanceType
+    )
     .filter((leave) =>
       filterStatus === "All" ? true : leave.status === filterStatus
     )
-
-    // SORT by request date
     .sort((a, b) => {
-      const parseDate = (dateStr) => {
-        if (!dateStr) return new Date(0);
-        const parts = dateStr.split("-");
-        if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-        return new Date(dateStr);
-      };
       const dateA = parseDate(a.requestDate);
       const dateB = parseDate(b.requestDate);
-
-      return sortOrder === "Newest"
-        ? dateB - dateA
-        : dateA - dateB;
+      return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
-
-
   return (
-    <div className="regularization-page">
-      <div className="rightside-logo ">
-        <img src={group10} alt="logo"
-          className="rightside-logos" />
+    <div className="regularization-approval-layout">
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
       </div>
 
       <AdminSidebar />
@@ -196,10 +164,13 @@ export default function RegularizationApproval() {
 
             <div className="header-bottom">
               <div className="left-tabs">
-                <button className="tab-btn ">All</button>
-                <button className="tab-btn active"
+                <button className="tab-btn">All</button>
+                <button
+                  className="tab-btn active"
                   onClick={() => navigate("/ra-myteam")}
-                >My Team</button>
+                >
+                  My Team
+                </button>
               </div>
 
               <div className="right-controls">
@@ -210,16 +181,77 @@ export default function RegularizationApproval() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <select
-                  className="right-butn-filter"
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="All">All Status</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Rejected">Rejected</option>
-                </select>
+
+                {/* Filter Icon + Popup */}
+                <div className="filter-wrapper" ref={filterRef}>
+                  <button
+                    className="filter-icon-btn"
+                    onClick={() => setShowFilter(!showFilter)}
+                  >
+                    <FaFilter />
+                  </button>
+
+                  {showFilter && (
+                    <div className="filter-popup">
+                      <h4>Filter</h4>
+
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        placeholder="Please enter name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+
+                      <div className="filter-row">
+                        <div>
+                          <label>Attendance Type</label>
+                          <select
+                            value={attendanceType}
+                            onChange={(e) => setAttendanceType(e.target.value)}
+                          >
+                            <option value="All">All</option>
+                            <option value="Present">Present</option>
+                            <option value="Absent">Absent</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label>Status</label>
+                          <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                          >
+                            <option value="All">All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="filter-actions">
+                        <button
+                          className="reset-btn"
+                          onClick={() => {
+                            setSearchTerm("");
+                            setAttendanceType("All");
+                            setFilterStatus("All");
+                          }}
+                        >
+                          Reset
+                        </button>
+                        <button
+                          className="apply-btn"
+                          onClick={() => setShowFilter(false)}
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <select
                   className="right-sort-select"
                   value={sortOrder}
@@ -232,6 +264,7 @@ export default function RegularizationApproval() {
             </div>
           </div>
 
+          {/* Table */}
           <div className="table-container">
             <table className="regularization-table">
               <thead>
@@ -243,7 +276,6 @@ export default function RegularizationApproval() {
                   <th>Action</th>
                 </tr>
               </thead>
-
               <tbody>
                 {filteredAndSortedLeaves.map((emp) => (
                   <tr key={emp.id}>
@@ -256,35 +288,41 @@ export default function RegularizationApproval() {
                         </div>
                       </div>
                     </td>
-
                     <td>{emp.regDate}</td>
                     <td>{emp.attendance}</td>
-
                     <td>
                       <div className="request-status">
                         <span>{emp.requestDate}</span>
                         <p
-                          className={`status-badge ${emp.status.toLowerCase()}`}
+                          className={`status-badge ${emp.status === "Pending"
+                              ? "pending"
+                              : emp.status === "Rejected"
+                                ? "rejected"
+                                : "approved"
+                            }`}
                         >
                           {emp.status}
                         </p>
                       </div>
                     </td>
-
                     <td>
-                      <button className="view-btn" onClick={() => handleViewDetails(emp)}>View Details</button>
+                      <button
+                        className="view-btn"
+                        onClick={() => handleViewDetails(emp)}
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
           <div className="pagination">
             <div className="showing">
-              Showing{" "}
-              <select>
-                <option>07</option>
-              </select>
+              Showing <select><option>07</option></select>
             </div>
             <div className="page-btns">
               <button className="prev">Prev</button>
@@ -295,31 +333,62 @@ export default function RegularizationApproval() {
         </div>
       </div>
 
+      {/* ── View Details Modal ── */}
       {isModalOpen && selectedLeave && (
         <div className="ra-modal-overlay">
           <div className="ra-modal-content">
             <div className="ra-modal-header">
               <h2>Regularization Approval</h2>
-              <button className="ra-close-btn" onClick={handleCloseModal}>&times;</button>
+              <button className="ra-close-btn" onClick={handleCloseModal}>
+                &times;
+              </button>
             </div>
             <div className="ra-modal-body">
               <div className="ra-form-section">
                 <div className="ra-form-group">
                   <label>Employee ID:</label>
-                  <input type="text" value={`${selectedLeave.name}(${selectedLeave.empId})`} readOnly />
+                  <input
+                    type="text"
+                    value={`${selectedLeave.name} (${selectedLeave.empId})`}
+                    readOnly
+                  />
                 </div>
                 <div className="ra-form-group">
                   <label>Leave Type:</label>
                   <select disabled className="ra-select">
-                    <option>{selectedLeave.regDate?.split('/')[1] || "Full Day"}</option>
+                    <option>
+                      {selectedLeave.regDate?.split("/")[1] || "Full Day"}
+                    </option>
                   </select>
                 </div>
                 <div className="ra-form-group">
                   <label>Select Date:</label>
                   <div className="ra-date-input-wrapper">
-                    <input type="text" value={selectedLeave.regDate?.split('/')[0] || "DD-MM-YYYY"} readOnly />
+                    <input
+                      type="text"
+                      value={
+                        selectedLeave.regDate?.split("/")[0] || "DD-MM-YYYY"
+                      }
+                      readOnly
+                    />
                     <span className="ra-date-icon">📅</span>
                   </div>
+                </div>
+                <div className="ra-form-group">
+                  <label>Attendance Type:</label>
+                  <input
+                    type="text"
+                    value={selectedLeave.attendance || ""}
+                    readOnly
+                  />
+                </div>
+                <div className="ra-form-group">
+                  <label>Status:</label>
+                  <input
+                    type="text"
+                    value={selectedLeave.status || ""}
+                    readOnly
+                  />
                 </div>
                 <div className="ra-form-group">
                   <label>Approved By:</label>
@@ -340,63 +409,101 @@ export default function RegularizationApproval() {
             <div className="ra-modal-footer">
               <span className="ra-watermark">Viewdetailsregularization</span>
               <div className="ra-footer-btns">
-                <button className="ra-approve-btn" onClick={handleApproveClick}>Approve</button>
-                <button className="ra-reject-btn" onClick={handleRejectClick}>Reject</button>
+                <button
+                  className="ra-approve-pill-btn"
+                  onClick={handleApproveClick}
+                >
+                  Approve
+                </button>
+                <button
+                  className="ra-reject-pill-btn"
+                  onClick={handleRejectClick}
+                >
+                  Reject
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Approve Reason Modal */}
-      {showApproveModal && (
+      {/* ── Approve Reason Modal ── */}
+      {showApproveReasonModal && (
         <div className="ra-modal-overlay ra-nested-overlay">
           <div className="ra-small-modal">
-            <button className="ra-small-close" onClick={() => setShowApproveModal(false)}>&times;</button>
+            <button
+              className="ra-small-close"
+              onClick={() => setShowApproveReasonModal(false)}
+            >
+              &times;
+            </button>
             <h3>Reason For Approval</h3>
             <div className="ra-small-body">
               <textarea
                 placeholder="Please fill out the note for approvals"
                 value={modalReason}
+                maxLength={250}
                 onChange={(e) => setModalReason(e.target.value)}
               />
               <p className="ra-char-hint">maximum character limit 250</p>
               <div className="ra-small-footer">
-                <button className="ra-submit-btn" onClick={handleApproveSubmit}>Submit</button>
-                <button className="ra-cancel-btn" onClick={() => setShowApproveModal(false)}>Cancel</button>
+                <button className="ra-submit-btn" onClick={handleApproveSubmit}>
+                  Submit
+                </button>
+                <button
+                  className="ra-cancel-btn"
+                  onClick={() => setShowApproveReasonModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Reject Reason Modal */}
-      {showRejectModal && (
+      {/* ── Reject Reason Modal ── */}
+      {showRejectReasonModal && (
         <div className="ra-modal-overlay ra-nested-overlay">
           <div className="ra-small-modal">
-            <button className="ra-small-close" onClick={() => setShowRejectModal(false)}>&times;</button>
+            <button
+              className="ra-small-close"
+              onClick={() => setShowRejectReasonModal(false)}
+            >
+              &times;
+            </button>
             <h3>Reason For Rejection</h3>
             <div className="ra-small-body">
               <textarea
-                placeholder="Please fill out the note for approvals"
+                placeholder="Please fill out the note for rejection"
                 value={modalReason}
+                maxLength={250}
                 onChange={(e) => setModalReason(e.target.value)}
               />
               <p className="ra-char-hint">maximum character limit 250</p>
               <div className="ra-small-footer">
-                <button className="ra-submit-btn" onClick={handleRejectSubmit}>Submit</button>
-                <button className="ra-cancel-btn" onClick={() => setShowRejectModal(false)}>Cancel</button>
+                <button className="ra-submit-btn" onClick={handleRejectSubmit}>
+                  Submit
+                </button>
+                <button
+                  className="ra-cancel-btn"
+                  onClick={() => setShowRejectReasonModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Success Modal */}
+      {/* ── Success Modal ── */}
       {showSuccessModal && (
         <div className="ra-modal-overlay ra-nested-overlay">
           <div className="ra-result-modal ra-success-box">
-            <button className="ra-small-close" onClick={handleCloseModal}>&times;</button>
+            <button className="ra-small-close" onClick={handleCloseModal}>
+              &times;
+            </button>
             <div className="ra-result-content">
               <h2>Success</h2>
               <p>Leave Approved Successfully</p>
@@ -405,11 +512,13 @@ export default function RegularizationApproval() {
         </div>
       )}
 
-      {/* Rejected Result Modal */}
+      {/* ── Rejected Result Modal ── */}
       {showRejectedResultModal && (
         <div className="ra-modal-overlay ra-nested-overlay">
           <div className="ra-result-modal ra-reject-box">
-            <button className="ra-small-close" onClick={handleCloseModal}>&times;</button>
+            <button className="ra-small-close" onClick={handleCloseModal}>
+              &times;
+            </button>
             <div className="ra-result-content">
               <h2>Rejected</h2>
               <p>Leave Approval Rejected</p>
@@ -417,7 +526,6 @@ export default function RegularizationApproval() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
