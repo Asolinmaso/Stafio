@@ -17,7 +17,6 @@ export default function MyTeamLeaveApproval() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [actionType, setActionType] = useState("");
   const [approvalReason, setApprovalReason] = useState("");
-
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sortOrder, setSortOrder] = useState("Newest");
@@ -25,7 +24,6 @@ export default function MyTeamLeaveApproval() {
   // FILTER POPUP STATES
   const [showFilter, setShowFilter] = useState(false);
   const [tempStatus, setTempStatus] = useState("All");
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,6 +59,8 @@ export default function MyTeamLeaveApproval() {
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
+
+
   return (
     <div className="myteam-layout">
       <div className="rightside-logo">
@@ -76,6 +76,16 @@ export default function MyTeamLeaveApproval() {
           <h2 className="myteam-title">My Team Leave Approval</h2>
 
           <div className="myteam-controls">
+            <div className="toggle-tab-container">
+              <button
+                className="toggle-tab-btn"
+                onClick={() => navigate("/leave-approval")}
+              >
+                All
+              </button>
+              <button className="toggle-tab-btn active">My Team</button>
+            </div>
+
             <div className="filter-sort">
               {/* FILTER BUTTON */}
               <div className="filter-wrapper">
@@ -219,7 +229,7 @@ export default function MyTeamLeaveApproval() {
             </tbody>
           </table>
 
-         <div className="pagination">
+          <div className="pagination">
             <div className="showing">
               Showing{" "}
               <select>
@@ -236,8 +246,7 @@ export default function MyTeamLeaveApproval() {
           </div>
 
         </div>
-
-       {showModal && selectedLeave && (
+        {showModal && selectedLeave && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div
               className="apply-leave-modal"
@@ -306,7 +315,7 @@ export default function MyTeamLeaveApproval() {
                           Reject
                         </button>
                       </div>
-                    
+
                     )}
                   </div>
                   {/* Right Image */}
@@ -376,7 +385,6 @@ export default function MyTeamLeaveApproval() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

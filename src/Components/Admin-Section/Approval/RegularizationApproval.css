@@ -1,16 +1,11 @@
-.regularization-page {
-  display: flex;
+.regularization-approval-layout {
   background: #eff5ff;
-  min-height: 100vh;
-  overflow: hidden;
 }
 
-.regularization-main {
-  flex: 1;
+
+.regularization-approval-main {
   padding: 1px 10px !important;
   background: #eff5ff;
-  margin-top: 2px !important;
-  width: 90% !important;
 }
 
 .regularization-container {
@@ -27,8 +22,8 @@
 .header-top h2 {
   font-size: 30px;
   color: #222;
-  margin-bottom: 35px !important ;
-  font-weight:600;
+  margin-bottom: 35px !important;
+  font-weight: 600;
 }
 
 .header-bottom {
@@ -38,7 +33,7 @@
 }
 
 .left-tabs {
-    margin-top:40px;
+  margin-top: 40px;
   display: flex;
   gap: 0px;
 }
@@ -53,7 +48,7 @@
 }
 
 .tab-btn.active {
- background: #19bde8 !important;
+  background: #19bde8 !important;
   color: #ffffffff !important;
   border: 1px solid #b8b4b4ff;
   padding: 8px 12px !important;
@@ -73,7 +68,7 @@
   border-radius: 16px;
   width: 180px;
   font-size: 14px;
-  background:transparent;
+  background: transparent;
 }
 
 .right-btn-filter {
@@ -86,7 +81,7 @@
   align-items: center;
   gap: 5px;
   font-size: 14px;
-  margin-bottom:-10px;
+  margin-bottom: -10px;
   color: #000;
 }
 
@@ -96,8 +91,8 @@
   border-radius: 16px;
   background: #fff;
   font-size: 14px;
-  margin-top:9px;
-  margin-bottom:0px;
+  margin-top: 9px;
+  margin-bottom: 0px;
 }
 
 
@@ -237,8 +232,8 @@
   width: 38px;
   height: 36px;
   border-radius: 12px;
-  background:transparent;
-  border: 1px solid #b8b4b4ff;  
+  background: transparent;
+  border: 1px solid #b8b4b4ff;
   color: #000000ff;
   cursor: pointer;
   display: flex;
@@ -254,7 +249,8 @@
 /* Popup box */
 .filter-popup {
   position: absolute;
-  top: calc(100% + 10px); /* below filter icon */
+  top: calc(100% + 10px);
+  /* below filter icon */
   right: 0;
   width: 360px;
   background: #ffffff;
@@ -333,7 +329,8 @@
   align-items: center;
   gap: 8px;
   padding: 0 14px;
-  width: auto;            /* allow text */
+  width: auto;
+  /* allow text */
 }
 
 /* Add text using CSS */
@@ -342,4 +339,303 @@
   font-size: 14px;
   font-weight: 500;
   color: #000;
+}
+
+/* =========================
+   VIEW DETAILS MODAL
+========================= */
+
+.ra-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ra-modal-content {
+  background: #fff;
+  width: 700px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.ra-modal-header {
+  background: #19bde8;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.ra-modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ra-close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ra-modal-body {
+  padding: 30px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ra-form-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ra-form-group {
+  display: flex;
+  align-items: center;
+}
+
+.ra-form-group label {
+  width: 120px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.ra-form-group input,
+.ra-select,
+.ra-date-input-wrapper input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #555;
+  background: #fff;
+}
+
+.ra-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.ra-date-input-wrapper {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+.ra-date-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.ra-reason-group {
+  align-items: flex-start;
+}
+
+.ra-reason-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.ra-reason-wrapper textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #999;
+  resize: none;
+  background: #fff;
+}
+
+.ra-char-count {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 11px;
+  color: #aaa;
+}
+
+.ra-illustration-section {
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ra-illustration-section img {
+  width: 100%;
+  max-width: 180px;
+}
+
+.ra-modal-footer {
+  background: #f1f5fb;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ra-watermark {
+  font-size: 14px;
+  color: #b0b0b0;
+  font-weight: 400;
+}
+
+.ra-footer-btns {
+  display: flex;
+  gap: 15px;
+}
+
+.ra-approve-pill-btn {
+  padding: 8px 30px;
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* =========================
+   REASON & RESULT MODALS (HIERARCHY)
+========================= */
+
+.ra-nested-overlay {
+  z-index: 10001;
+  /* Higher than main modal */
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ra-small-modal {
+  background: #f1f8ff;
+  /* Light bluish tint from image */
+  width: 400px;
+  border-radius: 12px;
+  padding: 25px;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.ra-small-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+}
+
+.ra-small-modal h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.ra-small-body textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+  resize: none;
+  margin-bottom: 8px;
+}
+
+.ra-char-hint {
+  font-size: 11px;
+  color: #aaa;
+  text-align: left;
+  margin-left: 5px;
+}
+
+.ra-small-footer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.ra-submit-btn {
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  padding: 8px 25px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ra-cancel-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* SUCCESS / REJECTED BOXES */
+.ra-result-modal {
+  background: #f1f8ff;
+  width: 320px;
+  padding: 40px 20px;
+  border-radius: 12px;
+  text-align: center;
+  position: relative;
+}
+
+.ra-result-content h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.ra-result-content p {
+  font-size: 14px;
+  color: #666;
+}
+
+.ra-reject-pill-btn {
+  padding: 8px 30px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
 }

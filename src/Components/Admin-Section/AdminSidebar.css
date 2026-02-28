@@ -16,17 +16,16 @@
   opacity: 0;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
   z-index: 1050;
+  overflow: hidden;
+}
+
+.sidebar-scroll-content {
+  flex: 1;
   overflow-y: auto;
 
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE & Edge */
 }
 
-/* 🔴 Hide scrollbar for Chrome, Safari */
-.employee-sidebar::-webkit-scrollbar {
-  width: 0;
-  display: none;
-}
+
 
 .employee-sidebar.show {
   transform: translateX(0);
@@ -37,18 +36,20 @@
 .employee-sidebar-header {
   text-align: center;
   margin-bottom: 30px !important;
-  margin-top:0px ;
-  
+  margin-top: 0px;
+
 }
+
 .sidebar-logo {
   width: 200px !important;
-  height: auto; 
+  height: auto;
   object-fit: cover;
-  object-position: center; 
+  object-position: center;
   margin-top: 0px !important;
-  
-  
+
+
 }
+
 /* Sidebar Links */
 .sidebar-link {
   display: flex;
@@ -56,7 +57,8 @@
   /* justify-content: ; */
   color: #fff !important;
   text-decoration: none;
-  padding: 28px 15px !important;      /* modified */
+  padding: 28px 15px !important;
+  /* modified */
   font-size: 18px;
   font-weight: 500;
   border-top: 1px solid #fff;
@@ -151,7 +153,10 @@
 }
 
 /* Section labels */
-.org, .approval, .leave, .report {
+.org,
+.approval,
+.leave,
+.report {
   margin-left: 10px;
   text-decoration: none !important;
 }
@@ -189,23 +194,13 @@
   display: block;
 }
 
-/* Scrollbar */
-.employee-sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-.employee-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 10px;
-}
-.employee-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
+
 
 .sidebar-icon {
   width: 20px;
   height: 20px;
   transition: filter 0.3s ease;
- 
+
 }
 
 /* When active — change the color via filter */

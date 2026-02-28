@@ -2,11 +2,8 @@
    PAGE LAYOUT
 =========================== */
 .ra-page {
-  display: flex;
   background: #eff5ff;
-  min-height: 100vh;
   position: relative;
-  overflow: hidden;
 }
 
 /* Background logo (right side) */
@@ -25,16 +22,8 @@
 
 /* Main right section */
 .ra-main {
-  flex: 1;
-  padding: 20px 30px;
   position: relative;
   z-index: 1;
-}
-
-.ra-main .topbar {
-  margin-top: 1px !important;
-  margin-left: -5px !important;
-  width: 100%;
 }
 
 /* Content container */
@@ -95,7 +84,8 @@
 
 /* Left button */
 .ra-tab:first-child {
-  border-right: 1px solid #bfc7d5; /* middle divider */
+  border-right: 1px solid #bfc7d5;
+  /* middle divider */
   border-radius: 16px 0 0 16px;
 }
 
@@ -114,7 +104,8 @@
 /* IMPORTANT:
    When right tab is active, divider should not show inside blue */
 .ra-tab.active:last-child {
-  margin-left: -1px; /* hides the divider line */
+  margin-left: -1px;
+  /* hides the divider line */
 }
 
 
@@ -395,8 +386,10 @@
 /* ===== FILTER CARD ===== */
 .ra-filter-card {
   position: absolute;
-  top: 220px;       /* 👈 exact vertical alignment */
-  right: 230px;     /* 👈 button keezha correct position */
+  top: 220px;
+  /* 👈 exact vertical alignment */
+  right: 230px;
+  /* 👈 button keezha correct position */
   width: 340px;
   background: #ffffff;
   border-radius: 16px;
@@ -451,8 +444,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 32px;     /* 👈 buttons kizha pogum */
-  padding-top: 6px;     /* 👈 card bottom spacing feel */
+  margin-top: 32px;
+  /* 👈 buttons kizha pogum */
+  padding-top: 6px;
+  /* 👈 card bottom spacing feel */
 }
 
 

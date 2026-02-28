@@ -1,24 +1,12 @@
 /* ===== Layout ===== */
-.whoisleave-layout {
-  display: flex;
+.who-is-on-leave-layout {
   background: #eef2f7;
-  min-height: 100vh;
-  overflow: hidden;
   position: relative;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-.whoisleave-main {
-  flex: 1;
-  padding: 20px 30px;
+.who-is-on-leave-main {
   position: relative;
   z-index: 1;
-}
-
-.whoisleave-main .topbar{
-  margin-top: 10px !important;
-  width: 100%;
-  margin-left: -5px !important;
 }
 
 /* Right side logo */
@@ -443,6 +431,7 @@
 .whoisleave-page-btn:hover:not(.active) {
   background: #f9fafb;
 }
+
 /* ===== Calendar wrapper ===== */
 .whoisleave-date-picker {
   position: relative;
@@ -493,7 +482,8 @@
   display: flex;
   align-items: center;
   height: 40px;
-  padding: 0 36px 0 12px; /* right space for icon */
+  padding: 0 36px 0 12px;
+  /* right space for icon */
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
@@ -544,8 +534,11 @@
   right: 12px;
   color: #9ca3af;
   font-size: 16px;
-  cursor: pointer;        /* IMPORTANT */
+  cursor: pointer;
+  /* IMPORTANT */
 }
+
 .calendar-icon {
-  cursor: pointer;   /* hand cursor varum */
+  cursor: pointer;
+  /* hand cursor varum */
 }

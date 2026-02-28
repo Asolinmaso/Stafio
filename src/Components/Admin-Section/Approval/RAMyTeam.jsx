@@ -17,6 +17,28 @@ export default function RegularizationApprovalMyTeam() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const navigate = useNavigate();
+  const filteredAndSortedLeaves = data
+    // SEARCH by employee name
+    .filter((leave) =>
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    // FILTER by status
+    .filter((leave) =>
+      filterStatus === "All" ? true : leave.status === filterStatus
+    )
+
+    // SORT by request date
+    .sort((a, b) => {
+      const dateA = new Date(a.requestDate);
+      const dateB = new Date(b.requestDate);
+
+      return sortOrder === "Newest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
+
+
 
   useEffect(() => {
     const fetchMyTeamRA = async () => {
@@ -40,8 +62,15 @@ export default function RegularizationApprovalMyTeam() {
       filterStatus === "All" ? true : item.status === filterStatus
     )
     .sort((a, b) => {
-      const dateA = new Date(a.requestDate);
-      const dateB = new Date(b.requestDate);
+      const parseDate = (dateStr) => {
+        if (!dateStr) return new Date(0);
+        const parts = dateStr.split("-");
+        if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        return new Date(dateStr);
+      };
+      const dateA = parseDate(a.requestDate);
+      const dateB = parseDate(b.requestDate);
+
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 

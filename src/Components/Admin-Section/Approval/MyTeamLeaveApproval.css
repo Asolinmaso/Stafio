@@ -44,16 +44,43 @@
 ========================= */
 .myteam-controls {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
   margin-right: 50px;
   margin-bottom: 20px;
+}
+
+.toggle-tab-container {
+  display: flex;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.toggle-tab-btn {
+  padding: 10px 25px;
+  border: none;
+  background: #fff;
+  color: #374151;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-tab-btn.active {
+  background: #12b3e6;
+  color: #fff;
+  font-weight: 600;
 }
 
 .filter-sort {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 
 /* Filter Button */

@@ -6,31 +6,33 @@ const NotificationBar = () => {
   const [visible, setVisible] = useState(true);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
 
-useEffect(() => {
-  const loadLatestAnnouncement = () => {
-    const stored = localStorage.getItem("announcements");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed.length > 0) {
-        setLatestAnnouncement(parsed[parsed.length - 1]);
-        setVisible(true); // show again for new announcement
+  useEffect(() => {
+    const loadLatestAnnouncement = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5001/api/broadcast");
+        if (res.ok) {
+          const parsed = await res.json();
+          if (parsed.length > 0) {
+            setLatestAnnouncement(parsed[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
       }
-    }
-  };
+    };
 
-  // Load initially
-  loadLatestAnnouncement();
+    // Load initially
+    loadLatestAnnouncement();
 
-  // 🔥 Listen for updates
-  window.addEventListener("announcementUpdated", loadLatestAnnouncement);
+    // 🔥 Listen for updates
+    window.addEventListener("announcementUpdated", loadLatestAnnouncement);
 
-  return () => {
-    window.removeEventListener("announcementUpdated", loadLatestAnnouncement);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("announcementUpdated", loadLatestAnnouncement);
+    };
+  }, []);
 
-
- if (!visible || !latestAnnouncement) return null;
+  if (!visible || !latestAnnouncement) return null;
 
   return (
     <div className="notification">
@@ -40,7 +42,7 @@ useEffect(() => {
 
       <div className="content">
         <div className="notification-container">
-          <h4 className="event-name">{latestAnnouncement.eventName}</h4>
+          <h4 className="event-name">{latestAnnouncement.eventName || latestAnnouncement.title}</h4>
           <p className="event-message">{latestAnnouncement.message}</p>
         </div>
 

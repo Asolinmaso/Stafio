@@ -3,23 +3,53 @@
   background-color: #eff5ff;
   padding: 20px 30px;
   min-height: 100vh;
-  overflow-y: auto;      /* page content scrolls here */
+  overflow-y: auto;
+  /* page content scrolls here */
   overflow-x: hidden;
 }
 
-.myholiday-container .topbar{
+.myholiday-container .topbar {
   width: 100%;
   margin-left: -1px !important;
   margin-top: 10px !important;
+}
+
+.holiday-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 .page-title {
   font-size: 22px;
   font-weight: 600;
   color: #333;
-  margin: 40px 0 20px;
-  padding-top: 15px;
-  padding-bottom: 30px;
+  margin: 0;
+}
+
+.add-holiday-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #19bde8;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-holiday-btn:hover {
+  background-color: #0fb1db;
+}
+
+.add-holiday-icon {
+  font-size: 14px;
 }
 
 /* Table styling */
@@ -27,7 +57,7 @@
   background: #fff;
   border-radius: 1px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
-  height:505px;
+  height: 505px;
 }
 
 .holiday-table {
@@ -46,7 +76,7 @@
   font-size: 14px;
   color: #444;
   border-bottom: 1px solid #ddd;
-  height:55px;
+  height: 55px;
 }
 
 .holiday-table td {
@@ -55,7 +85,7 @@
   font-size: 14px;
   color: #333;
   border-bottom: 1px dashed #ddd;
-  height:64.4px;
+  height: 64.4px;
 }
 
 /* Pagination */
@@ -78,8 +108,8 @@
   padding: 4px 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-   background: #19bde8;
-   color:white;
+  background: #19bde8;
+  color: white;
 }
 
 .page-controls {
@@ -102,4 +132,155 @@
   background: #00aaff;
   color: #fff;
   border-color: #00aaff;
+}
+
+/* Modal Styling */
+.holiday-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.holiday-modal {
+  background: #fff;
+  width: 714px;
+  height: 480px;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.holiday-modal-header {
+  background-color: #19bde8;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+}
+
+.holiday-modal-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+  padding-left: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  cursor: pointer;
+  line-height: 1;
+  padding-right: 15px;
+}
+
+.holiday-modal-body {
+  padding: 50px 70px;
+  position: relative;
+  height: 345px;
+}
+
+.modal-shape-bg {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(25, 189, 232, 0.1) 0%, rgba(25, 189, 232, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+.form-group label {
+  width: 180px;
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #c9d6df;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+  outline: none;
+  background: #fff;
+  max-width: 250px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #19bde8;
+}
+
+.holiday-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 20px 40px;
+  background-color: #eff5ff;
+  height: 80px;
+}
+
+.holiday-modal-footer .add-btn {
+  background-color: #19bde8;
+  color: #fff;
+  border: none;
+  width: 100px;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.holiday-modal-footer .add-btn:hover {
+  background-color: #0fb1db;
+}
+
+.holiday-modal-footer .cancel-btn {
+  background-color: #fff;
+  color: #333;
+  border: 1.2px solid #333;
+  width: 100px;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Customizing date picker icon */
+.form-group input[type="date"] {
+  position: relative;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  font-size: 18px;
+  filter: invert(53%) sepia(87%) saturate(1915%) hue-rotate(159deg) brightness(97%) contrast(85%);
 }
