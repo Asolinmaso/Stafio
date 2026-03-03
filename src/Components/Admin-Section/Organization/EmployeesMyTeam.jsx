@@ -6,30 +6,13 @@ import { FaFilter, FaSearch } from "react-icons/fa";
 import group10 from "../../../assets/Group10.png";
 import { useLocation } from "react-router-dom";
 
+import axios from "axios";
+const API_BASE = "http://127.0.0.1:5001";
+
 
 const Employee = () => {
-	const [employees] = useState([
-		{
-			id: 1,
-			name: "Sakshi",
-			email: "sakshi@gmail.com",
-			empId: "100849",
-			position: "Project Head",
-			department: "Design",
-			DateOfJoining: "11-07-2025",
-			image: "https://i.pravatar.cc/40?img=3",
-		},
-		{
-			id: 2,
-			name: "Asolin",
-			email: "ignatious@gmail.com",
-			empId: "100849",
-			position: "Project Head",
-			department: "Development",
-			DateOfJoining: "11-07-2025",
-			image: "https://i.pravatar.cc/40?img=4",
-		},
-	]);
+	const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortBy, setSortBy] = useState("newest");
 	const [showFilters, setShowFilters] = useState(false);
@@ -41,6 +24,46 @@ const Employee = () => {
 
 	const location = useLocation();
 	const highlightName = location.state?.highlightName || "";
+
+	// Fetch team members from API
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE}/api/my_team`, {
+          headers: {
+            "X-User-Role": sessionStorage.getItem("current_role"),
+            "X-User-ID": sessionStorage.getItem("current_user_id"),
+          },
+        });
+
+        // Map API response to component format
+		console.log(response.data);
+        const teamData = response.data.map((member, index) => ({
+          id: member.id,
+          name: member.name,
+          email: member.email,
+          empId: String(member.id).padStart(6, "0"),
+          position: member.position || "Not Specified",
+          department: member.department || "Not Assigned",
+          DateOfJoining: member.joining_date
+  ? new Date(member.joining_date).toLocaleDateString("en-GB")
+  : "-",
+          status: member.status || "Active",
+          image: `https://i.pravatar.cc/40?img=${(index % 70) + 1}`,
+        }));
+
+        setEmployees(teamData);
+      } catch (error) {
+        console.error("Error fetching team:", error);
+        setEmployees([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, []);
 
 	const filteredEmployees = highlightName
 		? employees.filter((emp) =>
@@ -236,6 +259,11 @@ const Employee = () => {
 						</div>
 					</div>
 
+					{loading ? (
+            <div className="text-center py-4">
+              <p>Loading team members...</p>
+            </div>
+          ) : (
 					<table className="employee-table">
 						<thead>
 							<tr>
@@ -270,6 +298,7 @@ const Employee = () => {
 							))}
 						</tbody>
 					</table>
+					)}
 
 					<div className="pagination">
 						<div className="showing">

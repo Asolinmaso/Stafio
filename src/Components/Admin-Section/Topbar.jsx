@@ -30,6 +30,32 @@ const ProfilePopup = ({ onClose, username }) => {
   const [loading, setLoading] = React.useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState(null);
+
+  // Helper: format YYYY-MM-DD to DD-MM-YYYY for display
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr || dateStr === "0001-01-01") return "-";
+    // If already in DD/MM/YYYY or DD-MM-YYYY format, return as-is
+    if (/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/.test(dateStr)) return dateStr;
+    // Convert YYYY-MM-DD to DD-MM-YYYY
+    const parts = dateStr.split("-");
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  };
+
+  // Helper: ensure date is in YYYY-MM-DD format for <input type="date"> and backend
+  const toInputDateFormat = (dateStr) => {
+    if (!dateStr || dateStr === "0001-01-01") return "";
+    // Already YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    // Convert DD/MM/YYYY or DD-MM-YYYY to YYYY-MM-DD
+    const parts = dateStr.split(/[\/\-]/);
+    if (parts.length === 3 && parts[2].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  };
   const getAuthHeaders = () => {
     return {
       "X-User-Role": sessionStorage.getItem("current_role"),
@@ -44,6 +70,7 @@ const ProfilePopup = ({ onClose, username }) => {
       try {
         const userId =
           sessionStorage.getItem("current_user_id") ||
+          sessionStorage.getItem("empId") ||
           localStorage.getItem("employee_user_id");
         console.log(userId || "nothing");
         const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
@@ -51,9 +78,50 @@ const ProfilePopup = ({ onClose, username }) => {
             ...getAuthHeaders(),
           },
         });
-        setProfileData(res.data);
-        setEditableData(res.data);
-        console.log(res.data);
+
+        // Parse skills from JSON string if needed
+        const data = { ...res.data };
+        if (
+          data.education &&
+          data.education.skills &&
+          typeof data.education.skills === "string"
+        ) {
+          try {
+            const parsed = JSON.parse(data.education.skills);
+            data.education = {
+              ...data.education,
+              skills: Array.isArray(parsed) ? parsed : [],
+            };
+          } catch (e) {
+            data.education = { ...data.education, skills: [] };
+          }
+        }
+
+        // Normalize date formats to YYYY-MM-DD for input fields
+        if (data.profile && data.profile.dob) {
+          data.profile = {
+            ...data.profile,
+            dob: toInputDateFormat(data.profile.dob),
+          };
+        }
+        if (data.education) {
+          data.education = {
+            ...data.education,
+            eduStartDate: toInputDateFormat(data.education.eduStartDate),
+            eduEndDate: toInputDateFormat(data.education.eduEndDate),
+          };
+        }
+        if (data.experience) {
+          data.experience = {
+            ...data.experience,
+            expStartDate: toInputDateFormat(data.experience.expStartDate),
+            expEndDate: toInputDateFormat(data.experience.expEndDate),
+          };
+        }
+
+        setProfileData(data);
+        setEditableData(data);
+        console.log(data);
       } catch (err) {
         console.error("Error fetching profile:", err);
       } finally {
@@ -84,21 +152,96 @@ const ProfilePopup = ({ onClose, username }) => {
         sessionStorage.getItem("current_user_id") ||
         localStorage.getItem("employee_user_id");
 
-      await axios.put(`${API_BASE}/admin_profile/${userId}`, editableData, {
+      // Ensure dates are in YYYY-MM-DD format for backend
+      const dataToSend = JSON.parse(JSON.stringify(editableData));
+      if (dataToSend.profile && dataToSend.profile.dob) {
+        dataToSend.profile.dob = toInputDateFormat(dataToSend.profile.dob);
+      }
+      if (dataToSend.education) {
+        if (dataToSend.education.eduStartDate) {
+          dataToSend.education.eduStartDate = toInputDateFormat(
+            dataToSend.education.eduStartDate,
+          );
+        }
+        if (dataToSend.education.eduEndDate) {
+          dataToSend.education.eduEndDate = toInputDateFormat(
+            dataToSend.education.eduEndDate,
+          );
+        }
+      }
+      if (dataToSend.experience) {
+        if (dataToSend.experience.expStartDate) {
+          dataToSend.experience.expStartDate = toInputDateFormat(
+            dataToSend.experience.expStartDate,
+          );
+        }
+        if (dataToSend.experience.expEndDate) {
+          dataToSend.experience.expEndDate = toInputDateFormat(
+            dataToSend.experience.expEndDate,
+          );
+        }
+      }
+      // Convert skills array back to JSON string for backend
+      if (dataToSend.education && Array.isArray(dataToSend.education.skills)) {
+        dataToSend.education.skills = JSON.stringify(
+          dataToSend.education.skills,
+        );
+      }
+
+      await axios.put(`${API_BASE}/admin_profile/${userId}`, dataToSend, {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
         },
       });
 
-      // 🔥 Re-fetch
+      // Re-fetch
       const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
         headers: {
           ...getAuthHeaders(),
         },
       });
-      setProfileData(res.data);
-      setEditableData(res.data);
+
+      // Parse skills and normalize dates on re-fetch too
+      const data = { ...res.data };
+      if (
+        data.education &&
+        data.education.skills &&
+        typeof data.education.skills === "string"
+      ) {
+        try {
+          const parsed = JSON.parse(data.education.skills);
+          data.education = {
+            ...data.education,
+            skills: Array.isArray(parsed) ? parsed : [],
+          };
+        } catch (e) {
+          data.education = { ...data.education, skills: [] };
+        }
+      }
+      if (data.profile && data.profile.dob) {
+        data.profile = {
+          ...data.profile,
+          dob: toInputDateFormat(data.profile.dob),
+        };
+      }
+      if (data.education) {
+        data.education = {
+          ...data.education,
+          eduStartDate: toInputDateFormat(data.education.eduStartDate),
+          eduEndDate: toInputDateFormat(data.education.eduEndDate),
+        };
+      }
+      if (data.experience) {
+        data.experience = {
+          ...data.experience,
+          expStartDate: toInputDateFormat(data.experience.expStartDate),
+          expEndDate: toInputDateFormat(data.experience.expEndDate),
+        };
+      }
+
+      setProfileData(data);
+      setEditableData(data);
 
       setIsEditing(false);
 
@@ -223,13 +366,13 @@ const ProfilePopup = ({ onClose, username }) => {
                 {isEditing ? (
                   <input
                     type="date"
-                    value={editableData.profile.dob || ""}
+                    value={toInputDateFormat(editableData.profile.dob) || ""}
                     onChange={(e) =>
                       handleChange("profile", "dob", e.target.value)
                     }
                   />
                 ) : (
-                  <p>{profile.dob || "-"}</p>
+                  <p>{formatDateDisplay(profile.dob) || "-"}</p>
                 )}
                 <strong>Blood Group:</strong>
                 <p>{profile.bloodGroup || "-"}</p>
@@ -268,7 +411,11 @@ const ProfilePopup = ({ onClose, username }) => {
                   <div style={{ display: "flex", gap: "10px" }}>
                     <input
                       type="date"
-                      value={editableData?.education?.eduStartDate || ""}
+                      value={
+                        toInputDateFormat(
+                          editableData?.education?.eduStartDate,
+                        ) || ""
+                      }
                       onChange={(e) =>
                         handleChange(
                           "education",
@@ -280,7 +427,11 @@ const ProfilePopup = ({ onClose, username }) => {
 
                     <input
                       type="date"
-                      value={editableData?.education?.eduEndDate || ""}
+                      value={
+                        toInputDateFormat(
+                          editableData?.education?.eduEndDate,
+                        ) || ""
+                      }
                       onChange={(e) =>
                         handleChange("education", "eduEndDate", e.target.value)
                       }
@@ -289,7 +440,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 ) : (
                   <p>
                     {education.eduStartDate && education.eduEndDate
-                      ? `${education.eduStartDate} & ${education.eduEndDate}`
+                      ? `${formatDateDisplay(education.eduStartDate)} & ${formatDateDisplay(education.eduEndDate)}`
                       : "-"}
                   </p>
                 )}
@@ -390,7 +541,11 @@ const ProfilePopup = ({ onClose, username }) => {
                   <div style={{ display: "flex", gap: "10px" }}>
                     <input
                       type="date"
-                      value={editableData?.experience?.expStartDate || ""}
+                      value={
+                        toInputDateFormat(
+                          editableData?.experience?.expStartDate,
+                        ) || ""
+                      }
                       onChange={(e) =>
                         handleChange(
                           "experience",
@@ -402,7 +557,11 @@ const ProfilePopup = ({ onClose, username }) => {
 
                     <input
                       type="date"
-                      value={editableData?.experience?.expEndDate || ""}
+                      value={
+                        toInputDateFormat(
+                          editableData?.experience?.expEndDate,
+                        ) || ""
+                      }
                       onChange={(e) =>
                         handleChange("experience", "expEndDate", e.target.value)
                       }
@@ -410,8 +569,11 @@ const ProfilePopup = ({ onClose, username }) => {
                   </div>
                 ) : (
                   <p>
-                    {experience.expStartDate && experience.expEndDate
-                      ? `${experience.expStartDate} – ${experience.expEndDate}`
+                    {experience.expStartDate &&
+                    experience.expEndDate &&
+                    experience.expStartDate !== "0001-01-01" &&
+                    experience.expEndDate !== "0001-01-01"
+                      ? `${formatDateDisplay(experience.expStartDate)} – ${formatDateDisplay(experience.expEndDate)}`
                       : "-"}
                   </p>
                 )}

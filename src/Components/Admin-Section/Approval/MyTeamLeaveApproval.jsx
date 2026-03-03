@@ -8,6 +8,7 @@ import illustration from "../../../assets/Formsbro.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import tick from "../../../assets/tickicon.png";
+import { getCurrentSession } from "../../../utils/sessionManager";
 
 export default function MyTeamLeaveApproval() {
   const [leaveData, setLeaveData] = useState([]);
@@ -26,12 +27,21 @@ export default function MyTeamLeaveApproval() {
   const [tempStatus, setTempStatus] = useState("All");
   const navigate = useNavigate();
 
+  const session = getCurrentSession();
+  const currentAdminId = session?.user_id;
+
   useEffect(() => {
     const fetchMyTeamLA = async () => {
+      const userId =
+        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("employee_user_id");
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/myteamla"
-        );
+        const response = await axios.get("http://127.0.0.1:5001/api/myteamla", {
+          headers: {
+            "X-User-ID": userId,
+            "X-User-Role": sessionStorage.getItem("current_role") || "admin",
+          },
+        });
         setLeaveData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -39,6 +49,35 @@ export default function MyTeamLeaveApproval() {
     };
     fetchMyTeamLA();
   }, []);
+
+  // Helper to re-fetch team leave data
+  const refetchLeaveData = async () => {
+    const userId =
+      sessionStorage.getItem("current_user_id") ||
+      localStorage.getItem("employee_user_id");
+    try {
+      const response = await axios.get("http://127.0.0.1:5001/api/myteamla", {
+        headers: {
+          "X-User-ID": userId,
+          "X-User-Role": sessionStorage.getItem("current_role") || "admin",
+        },
+      });
+      setLeaveData(response.data);
+    } catch (error) {
+      console.error("Error re-fetching data:", error);
+    }
+  };
+
+  // Auto-close success modal after 2 seconds
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+        setShowModal(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal]);
 
   const getStatusClass = (status) => {
     if (status === "Approved") return "status-approved";
@@ -48,18 +87,16 @@ export default function MyTeamLeaveApproval() {
 
   const filteredAndSortedLeaves = leaveData
     .filter((leave) =>
-      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus
+      filterStatus === "All" ? true : leave.status === filterStatus,
     )
     .sort((a, b) => {
       const dateA = new Date(a.requestDate);
       const dateB = new Date(b.requestDate);
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
-
-
 
   return (
     <div className="myteam-layout">
@@ -244,7 +281,6 @@ export default function MyTeamLeaveApproval() {
               <button className="page-btn">Next</button>
             </div>
           </div>
-
         </div>
         {showModal && selectedLeave && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
@@ -315,7 +351,6 @@ export default function MyTeamLeaveApproval() {
                           Reject
                         </button>
                       </div>
-
                     )}
                   </div>
                   {/* Right Image */}
@@ -347,9 +382,30 @@ export default function MyTeamLeaveApproval() {
               <div className="modal-actions">
                 <button
                   className="apply-btn"
-                  onClick={() => {
-                    setShowReasonModal(false);
-                    setShowSuccessModal(true);
+                  onClick={async () => {
+                    try {
+                      const endpoint =
+                        actionType === "Approval"
+                          ? `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.id}/approve`
+                          : `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.id}/reject`;
+                      await axios.put(endpoint, {
+                        reason: approvalReason,
+                        approved_by: currentAdminId,
+                      });
+                      // Refresh the leave list
+                      await refetchLeaveData();
+                      setShowReasonModal(false);
+                      setShowSuccessModal(true);
+                      setApprovalReason("");
+                    } catch (error) {
+                      console.error(
+                        "Error processing leave request:",
+                        error?.response?.data?.message || error.message,
+                      );
+                      alert(
+                        `Failed to process leave request. Please try again.\n${error?.response?.data?.message || error.message}`,
+                      );
+                    }
                   }}
                 >
                   Submit

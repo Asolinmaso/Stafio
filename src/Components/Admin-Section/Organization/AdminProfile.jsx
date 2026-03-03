@@ -131,7 +131,9 @@ const AdminProfile = () => {
   // =========== GET USER ID ===========
   const getUserId = () => {
     return (
-      localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id")
+      localStorage.getItem("employee_user_id") ||
+      sessionStorage.getItem("empId") ||
+      sessionStorage.getItem("current_user_id")
     );
   };
 
@@ -140,7 +142,7 @@ const AdminProfile = () => {
     const userId = getUserId();
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5001/api/employee_profile/${userId}`,
+        `http://127.0.0.1:5001/admin_profile/${userId}`,
         dataToSave,
         {
           headers: {
@@ -178,8 +180,44 @@ const AdminProfile = () => {
         // Only update with data from backend, use empty defaults if not provided
         if (response.data) {
           setProfile(response.data.profile || initialProfile);
-          setEducation(response.data.education || initialEducation);
-          setExperience(response.data.experience || initialExperience);
+
+          // Map backend education field names to frontend state + parse skills JSON
+          const edu = response.data.education || {};
+          let parsedSkills = [];
+          if (edu.skills) {
+            if (Array.isArray(edu.skills)) {
+              parsedSkills = edu.skills;
+            } else {
+              try {
+                parsedSkills = JSON.parse(edu.skills);
+              } catch (e) {
+                parsedSkills = [];
+              }
+              if (!Array.isArray(parsedSkills)) parsedSkills = [];
+            }
+          }
+          setEducation({
+            institution: edu.institution || "",
+            location: edu.location || "",
+            startDate: edu.eduStartDate || "",
+            endDate: edu.eduEndDate || "",
+            qualification: edu.qualification || "",
+            specialization: edu.specialization || "",
+            skills: parsedSkills,
+            portfolio: edu.portfolio || "",
+          });
+
+          // Map backend experience field names to frontend state
+          const exp = response.data.experience || {};
+          setExperience({
+            company: exp.company || "",
+            jobTitle: exp.jobTitle || "",
+            startDate: exp.expStartDate || "",
+            endDate: exp.expEndDate || "",
+            responsibilities: exp.responsibilities || "",
+            totalYears: exp.totalYears || "",
+          });
+
           setBank(response.data.bank || initialBank);
           setDocuments(response.data.documents || initialDocs);
         }
@@ -381,16 +419,18 @@ const AdminProfile = () => {
 
     if (!isValid) return;
 
-    // Prepare data for backend
+    // Prepare data for backend (nested under "profile" section)
     const dataToSave = {
-      gender: profile.gender,
-      dob: profile.dob,
-      marital_status: profile.maritalStatus,
-      nationality: profile.nationality,
-      blood_group: profile.bloodGroup,
-      address: profile.address,
-      emergency_contact: profile.emergencyContactNumber,
-      emergency_relationship: profile.relationship,
+      profile: {
+        gender: profile.gender,
+        dob: profile.dob,
+        maritalStatus: profile.maritalStatus,
+        nationality: profile.nationality,
+        bloodGroup: profile.bloodGroup,
+        address: profile.address,
+        emergencyContactNumber: profile.emergencyContactNumber,
+        relationship: profile.relationship,
+      },
     };
 
     const result = await saveProfileToBackend(dataToSave);
@@ -422,16 +462,18 @@ const AdminProfile = () => {
   const handleSaveEducation = async () => {
     if (!validateEducation()) return;
 
-    // Prepare data for backend
+    // Prepare data for backend (nested under "education" section)
     const dataToSave = {
-      institution: education.institution,
-      edu_location: education.location,
-      edu_start_date: education.startDate,
-      edu_end_date: education.endDate,
-      qualification: education.qualification,
-      specialization: education.specialization,
-      skills: JSON.stringify(education.skills),
-      portfolio: education.portfolio,
+      education: {
+        institution: education.institution,
+        location: education.location,
+        eduStartDate: education.startDate,
+        eduEndDate: education.endDate,
+        qualification: education.qualification,
+        specialization: education.specialization,
+        skills: JSON.stringify(education.skills),
+        portfolio: education.portfolio,
+      },
     };
 
     const result = await saveProfileToBackend(dataToSave);
@@ -469,14 +511,16 @@ const AdminProfile = () => {
   const handleSaveExperience = async () => {
     if (!validateExperience()) return;
 
-    // Prepare data for backend
+    // Prepare data for backend (nested under "experience" section)
     const dataToSave = {
-      prev_company: experience.company,
-      prev_job_title: experience.jobTitle,
-      exp_start_date: experience.startDate,
-      exp_end_date: experience.endDate,
-      responsibilities: experience.responsibilities,
-      total_experience_years: parseFloat(experience.totalYears) || 0,
+      experience: {
+        company: experience.company,
+        jobTitle: experience.jobTitle,
+        expStartDate: experience.startDate,
+        expEndDate: experience.endDate,
+        responsibilities: experience.responsibilities,
+        totalYears: parseFloat(experience.totalYears) || 0,
+      },
     };
 
     const result = await saveProfileToBackend(dataToSave);
@@ -497,14 +541,16 @@ const AdminProfile = () => {
     const isValid = validateBankForm();
     if (!isValid) return;
 
-    // Prepare data for backend
+    // Prepare data for backend (nested under "bank" section)
     const dataToSave = {
-      bank_name: bank.bankName,
-      bank_branch: bank.branch,
-      account_number: bank.accountNumber,
-      ifsc_code: bank.ifsc,
-      aadhaar_number: bank.aadhaar,
-      pan_number: bank.pan,
+      bank: {
+        bankName: bank.bankName,
+        branch: bank.branch,
+        accountNumber: bank.accountNumber,
+        ifsc: bank.ifsc,
+        aadhaar: bank.aadhaar,
+        pan: bank.pan,
+      },
     };
 
     const result = await saveProfileToBackend(dataToSave);
@@ -947,8 +993,9 @@ const AdminProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${personalErrors.dob ? "input-error" : ""
-                          }`}
+                        className={`form-input ${
+                          personalErrors.dob ? "input-error" : ""
+                        }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -966,8 +1013,9 @@ const AdminProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
-                        }`}
+                      className={`form-select ${
+                        personalErrors.nationality ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -990,8 +1038,9 @@ const AdminProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.bloodGroup ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1023,10 +1072,11 @@ const AdminProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${personalErrors.emergencyContactNumber
-                        ? "input-error"
-                        : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.emergencyContactNumber
+                          ? "input-error"
+                          : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -1200,22 +1250,29 @@ const AdminProfile = () => {
                             onChange={handleSkillInputChange}
                             onKeyDown={handleSkillKeyDown}
                             className="skill-input"
+                            disabled={!isEditingEducation}
                           />
                           <button
                             type="button"
                             className="skill-add-btn"
                             onClick={addSkill}
+                            disabled={!isEditingEducation}
                           >
                             +
                           </button>
                         </div>
                         <div className="skills-pill-wrap">
-                          {education.skills.map((skill, i) => (
+                          {(Array.isArray(education.skills)
+                            ? education.skills
+                            : []
+                          ).map((skill, i) => (
                             <span className="skill-pill" key={i}>
                               {skill}
                               <span
-                                className="skill-remove"
-                                onClick={() => removeSkill(i)}
+                                className={`skill-remove ${!isEditingEducation ? "disabled-skill" : ""}`}
+                                onClick={() => {
+                                  if (isEditingEducation) removeSkill(i);
+                                }}
                               >
                                 ×
                               </span>
@@ -1461,7 +1518,6 @@ const AdminProfile = () => {
               </div>
             </Tab.Pane>
 
-
             {/* BANK DETAILS TAB */}
             <Tab.Pane eventKey="bank">
               <div className="update-info-header-box">
@@ -1618,17 +1674,55 @@ const AdminProfile = () => {
                       <div
                         className="doc-item mb-3 d-flex flex-row align-items-center p-3"
                         key={idx}
-                        style={{ background: "#F6F9FC", border: "1px solid #E2E8F0", borderRadius: "12px" }}
+                        style={{
+                          background: "#F6F9FC",
+                          border: "1px solid #E2E8F0",
+                          borderRadius: "12px",
+                        }}
                       >
-                        <span className="pdf-icon me-3" style={{ background: "#FFE4E6", color: "#E11D48", borderRadius: "8px", padding: "8px 12px", fontWeight: "bold", flexShrink: 0 }}>PDF</span>
+                        <span
+                          className="pdf-icon me-3"
+                          style={{
+                            background: "#FFE4E6",
+                            color: "#E11D48",
+                            borderRadius: "8px",
+                            padding: "8px 12px",
+                            fontWeight: "bold",
+                            flexShrink: 0,
+                          }}
+                        >
+                          PDF
+                        </span>
                         <div className="flex-grow-1 overflow-hidden">
-                          <h6 className="mb-0 text-truncate" style={{ fontSize: "15px", color: "#1E293B", fontWeight: "600" }}>{doc.fileName || doc.name}</h6>
+                          <h6
+                            className="mb-0 text-truncate"
+                            style={{
+                              fontSize: "15px",
+                              color: "#1E293B",
+                              fontWeight: "600",
+                            }}
+                          >
+                            {doc.fileName || doc.name}
+                          </h6>
                           <div className="d-flex align-items-center mt-1">
-                            <span style={{ fontSize: "13px", color: "#94A3B8" }}>
-                              {doc.size || '94'} KB of {doc.size || '94'} KB &nbsp;•&nbsp;
+                            <span
+                              style={{ fontSize: "13px", color: "#94A3B8" }}
+                            >
+                              {doc.size || "94"} KB of {doc.size || "94"} KB
+                              &nbsp;•&nbsp;
                             </span>
-                            <span className="ms-1" style={{ fontSize: "13px", color: "#10B981", fontWeight: "600", display: "flex", alignItems: "center" }}>
-                              <i className="bi bi-check-circle-fill me-1"></i> Completed
+                            <span
+                              className="ms-1"
+                              style={{
+                                fontSize: "13px",
+                                color: "#10B981",
+                                fontWeight: "600",
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <i className="bi bi-check-circle-fill me-1"></i>{" "}
+                              Completed
                             </span>
                           </div>
                         </div>
@@ -1637,7 +1731,13 @@ const AdminProfile = () => {
                           className="p-1 px-2 ms-2"
                           onClick={() => handleDocDelete(idx)}
                           disabled={!isEditingDocs}
-                          style={{ border: "none", background: "transparent", fontSize: "1.2rem", cursor: "pointer", color: "#94A3B8" }}
+                          style={{
+                            border: "none",
+                            background: "transparent",
+                            fontSize: "1.2rem",
+                            cursor: "pointer",
+                            color: "#94A3B8",
+                          }}
                         >
                           <i className="bi bi-trash3"></i>
                         </Button>
@@ -1646,24 +1746,34 @@ const AdminProfile = () => {
                   </Col>
                   <Col md={5}>
                     <div
-                      onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragOver(true);
+                      }}
                       onDragLeave={() => setIsDragOver(false)}
                       onDrop={(e) => {
                         e.preventDefault();
                         setIsDragOver(false);
-                        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                          const newDocs = Array.from(e.dataTransfer.files).map(f => ({
-                            name: f.name,
-                            fileName: f.name,
-                            size: (f.size / 1024).toFixed(0),
-                            status: "Completed",
-                            file: f
-                          }));
-                          setDocuments(prev => [...prev, ...newDocs]);
+                        if (
+                          e.dataTransfer.files &&
+                          e.dataTransfer.files.length > 0
+                        ) {
+                          const newDocs = Array.from(e.dataTransfer.files).map(
+                            (f) => ({
+                              name: f.name,
+                              fileName: f.name,
+                              size: (f.size / 1024).toFixed(0),
+                              status: "Completed",
+                              file: f,
+                            }),
+                          );
+                          setDocuments((prev) => [...prev, ...newDocs]);
                         }
                       }}
                       style={{
-                        border: isDragOver ? "2px dashed #19BDE8" : "2px dashed #CBD5E1",
+                        border: isDragOver
+                          ? "2px dashed #19BDE8"
+                          : "2px dashed #CBD5E1",
                         borderRadius: "20px",
                         background: isDragOver ? "#EFF9FF" : "#ffffff",
                         transition: "all 0.2s ease",
@@ -1677,48 +1787,67 @@ const AdminProfile = () => {
                       }}
                     >
                       <div style={{ marginBottom: "16px" }}>
-                        <i className="bi bi-cloud-arrow-up" style={{ fontSize: "3.5rem", color: "#19BDE8" }}></i>
+                        <i
+                          className="bi bi-cloud-arrow-up"
+                          style={{ fontSize: "3.5rem", color: "#19BDE8" }}
+                        ></i>
                       </div>
-                      <p style={{ color: "#1E293B", fontWeight: "700", fontSize: "17px", margin: "0 0 8px 0", lineHeight: "1.4" }}>
+                      <p
+                        style={{
+                          color: "#1E293B",
+                          fontWeight: "700",
+                          fontSize: "17px",
+                          margin: "0 0 8px 0",
+                          lineHeight: "1.4",
+                        }}
+                      >
                         Choose a file or drag &amp; drop it here
                       </p>
-                      <p style={{ fontSize: "12px", color: "#94A3B8", margin: "0 0 24px 0" }}>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "#94A3B8",
+                          margin: "0 0 24px 0",
+                        }}
+                      >
                         JPEG, PNG, PDG, and MP4 formats, up to 50MB
                       </p>
                       <input
                         id="admin-file-upload"
                         type="file"
-                        style={{ display: 'none' }}
+                        style={{ display: "none" }}
                         multiple
                         onChange={(e) => {
                           if (!e.target.files) return;
-                          const newDocs = Array.from(e.target.files).map(f => ({
-                            name: f.name,
-                            fileName: f.name,
-                            size: (f.size / 1024).toFixed(0),
-                            status: 'Completed',
-                            file: f
-                          }));
-                          setDocuments(prev => [...prev, ...newDocs]);
-                          e.target.value = '';
+                          const newDocs = Array.from(e.target.files).map(
+                            (f) => ({
+                              name: f.name,
+                              fileName: f.name,
+                              size: (f.size / 1024).toFixed(0),
+                              status: "Completed",
+                              file: f,
+                            }),
+                          );
+                          setDocuments((prev) => [...prev, ...newDocs]);
+                          e.target.value = "";
                         }}
                       />
                       <label
                         htmlFor="admin-file-upload"
                         style={{
-                          display: 'block',
-                          width: '100%',
-                          background: '#19BDE8',
-                          border: 'none',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontWeight: '600',
-                          padding: '12px 20px',
-                          cursor: 'pointer',
-                          fontSize: '16px',
-                          userSelect: 'none',
-                          textAlign: 'center',
-                          whiteSpace: 'nowrap',
+                          display: "block",
+                          width: "100%",
+                          background: "#19BDE8",
+                          border: "none",
+                          borderRadius: "12px",
+                          color: "white",
+                          fontWeight: "600",
+                          padding: "12px 20px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          userSelect: "none",
+                          textAlign: "center",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         Browse File
