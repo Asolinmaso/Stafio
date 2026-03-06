@@ -34,15 +34,15 @@ import { getCurrentSession } from "../../../utils/sessionManager";
 const BASE_URL = "http://127.0.0.1:5001";
 
 const BREAK_SCHEDULES = [
-	{ id: "lunch",  label: "Lunch Break",  start: "13:00", end: "14:00" },
+	{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
 	{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
 ];
 
-const MEETING_LINK         = "https://meet.google.com/shm-kuvn-xqb";
-const MEETING_START_HOUR   = 9;
-const MEETING_START_MIN    = 0;
+const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
+const MEETING_START_HOUR = 9;
+const MEETING_START_MIN = 0;
 const ALERT_BEFORE_MINUTES = 10;
-const BREAK_DURATION_MIN   = 15;
+const BREAK_DURATION_MIN = 15;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const formatTime = (date) =>
@@ -53,7 +53,7 @@ const formatTime = (date) =>
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
 const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
 	if (!punchInDate) return "00:00:00";
-	const totalMs  = Math.max(0, Date.now() - punchInDate.getTime() - totalBreakMs);
+	const totalMs = Math.max(0, Date.now() - punchInDate.getTime() - totalBreakMs);
 	const totalSec = Math.floor(totalMs / 1000);
 	const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
 	const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
@@ -74,32 +74,32 @@ const toMinutes = (time) => {
 const Dashboard = () => {
 	// ── Auth / session ────────────────────────────────────────────────────
 	const [username, setUsername] = useState("");
-	const [role,     setRole]     = useState("");
-	const [userId,   setUserId]   = useState(null); // needed for API headers
+	const [role, setRole] = useState("");
+	const [userId, setUserId] = useState(null); // needed for API headers
 
 	// ── Clock ─────────────────────────────────────────────────────────────
 	const [currentTime, setCurrentTime] = useState("");
 	const [currentDate, setCurrentDate] = useState("");
 
 	// ── Punch state ───────────────────────────────────────────────────────
-	const [isPunchedIn,  setIsPunchedIn]  = useState(false);
-	const [punchInTime,  setPunchInTime]  = useState(null);   // Date object
-	const [totalHours,   setTotalHours]   = useState("00:00:00");
-	const [isBreak,      setIsBreak]      = useState(false);
-	const [activeBreak,  setActiveBreak]  = useState(null);
-	const [showAlert,    setShowAlert]    = useState(false);
+	const [isPunchedIn, setIsPunchedIn] = useState(false);
+	const [punchInTime, setPunchInTime] = useState(null);   // Date object
+	const [totalHours, setTotalHours] = useState("00:00:00");
+	const [isBreak, setIsBreak] = useState(false);
+	const [activeBreak, setActiveBreak] = useState(null);
+	const [showAlert, setShowAlert] = useState(false);
 	const [showBreakDropdown, setShowBreakDropdown] = useState(false);
 
 	// ── API loading / error state ─────────────────────────────────────────
 	const [punchLoading, setPunchLoading] = useState(false);
-	const [punchError,   setPunchError]   = useState("");
+	const [punchError, setPunchError] = useState("");
 
 	// ── Refs ──────────────────────────────────────────────────────────────
-	const timerRef         = useRef(null);   // working hours interval
-	const breakTimerRef    = useRef(null);   // 15-min break alert timeout
+	const timerRef = useRef(null);   // working hours interval
+	const breakTimerRef = useRef(null);   // 15-min break alert timeout
 	const breakDropdownRef = useRef(null);
-	const breakStartRef    = useRef(null);   // Date when current break started
-	const totalBreakMsRef  = useRef(0);      // accumulated break ms this session
+	const breakStartRef = useRef(null);   // Date when current break started
+	const totalBreakMsRef = useRef(0);      // accumulated break ms this session
 
 	// ── Admin summary ─────────────────────────────────────────────────────
 	const [adminDashboardData, setAdminDashboardData] = useState({
@@ -108,9 +108,9 @@ const Dashboard = () => {
 	});
 
 	// ── Meeting ───────────────────────────────────────────────────────────
-	const [meetingStatus,   setMeetingStatus]   = useState("idle");
+	const [meetingStatus, setMeetingStatus] = useState("idle");
 	const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
-	const [hasJoined,       setHasJoined]       = useState(false);
+	const [hasJoined, setHasJoined] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -135,46 +135,46 @@ const Dashboard = () => {
 	// Once userId is known, fetch today's attendance to restore UI state on refresh
 	useEffect(() => {
 		if (!userId) return;
-        const fetchTodayAttendance = async () => {
-    try {
-        const res = await axios.get(`${BASE_URL}/api/attendance/today`, {
-            headers: { "X-User-ID": userId },
-        });
+		const fetchTodayAttendance = async () => {
+			try {
+				const res = await axios.get(`${BASE_URL}/api/attendance/today`, {
+					headers: { "X-User-ID": userId },
+				});
 
-        const data = res.data;
-        if (!data || !data.check_in) return;
+				const data = res.data;
+				if (!data || !data.check_in) return;
 
-        const checkInDate = new Date(data.check_in.replace(" GMT", ""));
-        setPunchInTime(checkInDate);
+				const checkInDate = new Date(data.check_in.replace(" GMT", ""));
+				setPunchInTime(checkInDate);
 
-        if (data.check_out) {
-            setIsPunchedIn(false);
-            setTotalHours(data.work_hours || "00:00:00");
-            return;
-        }
+				if (data.check_out) {
+					setIsPunchedIn(false);
+					setTotalHours(data.work_hours || "00:00:00");
+					return;
+				}
 
-        setIsPunchedIn(true);
+				setIsPunchedIn(true);
 
-        // Restore accumulated break ms
-        const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
-        totalBreakMsRef.current = restoredBreakMs;
+				// Restore accumulated break ms
+				const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
+				totalBreakMsRef.current = restoredBreakMs;
 
-        if (data.active_break) {
-            // On break — show frozen working hours (don't start timer)
-            setIsBreak(true);
-            breakStartRef.current = new Date();
-            // Show correct frozen total hours instead of 00:00:00
-            setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
-        } else {
-            // Working — immediately set correct hours before timer kicks in
-            setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
-            startWorkingTimer(checkInDate);
-        }
-    } catch (err) {
-        console.error("Could not restore today's attendance:", err);
-    }
-};
-		
+				if (data.active_break) {
+					// On break — show frozen working hours (don't start timer)
+					setIsBreak(true);
+					breakStartRef.current = new Date();
+					// Show correct frozen total hours instead of 00:00:00
+					setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+				} else {
+					// Working — immediately set correct hours before timer kicks in
+					setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+					startWorkingTimer(checkInDate);
+				}
+			} catch (err) {
+				console.error("Could not restore today's attendance:", err);
+			}
+		};
+
 
 		fetchTodayAttendance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,7 +252,7 @@ const Dashboard = () => {
 	// ─────────────────────────────────────────────────────────────────────
 	useEffect(() => {
 		const update = () => {
-			const now          = new Date();
+			const now = new Date();
 			const meetingStart = new Date();
 			meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
 			const alertStart = new Date(meetingStart);
@@ -262,7 +262,7 @@ const Dashboard = () => {
 				setMeetingStatus("idle"); setMeetingTimeLeft(""); return;
 			}
 			if (now >= alertStart && now < meetingStart) {
-				const diffSec  = Math.floor((meetingStart - now) / 1000);
+				const diffSec = Math.floor((meetingStart - now) / 1000);
 				const mins = String(Math.floor(diffSec / 60)).padStart(2, "0");
 				const secs = String(diffSec % 60).padStart(2, "0");
 				setMeetingStatus("countdown");
@@ -562,7 +562,7 @@ const Dashboard = () => {
 														<p className="dropdown-title">Scheduled Breaks</p>
 
 														{BREAK_SCHEDULES.map((b) => {
-															const nowMin    = getCurrentTimeInMinutes();
+															const nowMin = getCurrentTimeInMinutes();
 															const isCurrent = nowMin >= toMinutes(b.start) && nowMin <= toMinutes(b.end);
 															return (
 																<div
@@ -601,9 +601,9 @@ const Dashboard = () => {
 
 								{/* Right illustration */}
 								<div className="meeting-right">
-									<img src={arrow3}      alt="Illustration" className="arrow3"   />
+									<img src={arrow3} alt="Illustration" className="arrow3" />
 									<img src={gradientimg} alt="Illustration" className="maleteam" />
-									<img src={clock}       alt="Illustration" className="clock"    />
+									<img src={clock} alt="Illustration" className="clock" />
 								</div>
 							</div>
 						</Col>

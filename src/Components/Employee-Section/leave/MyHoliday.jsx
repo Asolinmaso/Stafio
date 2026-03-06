@@ -6,6 +6,8 @@ import axios from "axios";
 
 const MyHoliday = () => {
   const [holidays, setHolidays] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
 
   useEffect(() => {
     const fetchHolidays = async () => {
@@ -19,8 +21,12 @@ const MyHoliday = () => {
     fetchHolidays();
   }, []);
 
+  // Pagination Logic
+  const totalPages = Math.ceil(holidays.length / rowsPerPage);
+  const currentData = holidays.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
   return (
-    <div className="layout">
+    <div className="layout d-flex">
       <EmployeeSidebar />
       <div className="myholiday-container">
         <Topbar />
@@ -36,9 +42,9 @@ const MyHoliday = () => {
               </tr>
             </thead>
             <tbody>
-              {holidays.map((holiday, index) => (
-                <tr key={holiday.id}>
-                  <td>{String(index + 1).padStart(2, "0")}</td>
+              {currentData.map((holiday, index) => (
+                <tr key={holiday.id || index}>
+                  <td>{String((currentPage - 1) * rowsPerPage + index + 1).padStart(2, "0")}</td>
                   <td>{holiday.date}</td>
                   <td>{holiday.title}</td>
                 </tr>
@@ -51,16 +57,18 @@ const MyHoliday = () => {
         <div className="holiday-pagination">
           <div className="showing">
             Showing
-            <select>
-              <option>07</option>
-              <option>10</option>
-              <option>20</option>
+            <select value={rowsPerPage} onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+              <option value={7}>07</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
             </select>
           </div>
           <div className="page-controls">
-            <button className="page-btn">Prev</button>
-            <button className="page-number active">01</button>
-            <button className="page-btn">Next</button>
+            <button className="page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>Prev</button>
+            <button className="page-number active">
+              {String(currentPage).padStart(2, "0")}
+            </button>
+            <button className="page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, Math.max(1, totalPages)))} disabled={currentPage === Math.max(1, totalPages)}>Next</button>
           </div>
         </div>
       </div>

@@ -4,61 +4,100 @@
 } */
 .topbar {
   position: sticky !important;
-  top: 0 !important;
+  top: 15px !important;
   z-index: 1000 !important;
-  height: 65px;
+  height: 70px;
   background: #fff;
   border-radius: 12px !important;
-  margin: 0 16px !important;
-  width: calc(100% - 32px) !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  padding: 5px 20px !important;
+  margin: 15px 0 25px 0 !important;
+  padding: 0 25px !important;
+  width: 100% !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
 }
 
 .topbar-img {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   object-fit: contain;
 }
 
 .topbar-searches {
-  /* new*/
-  /* width: 400px;  */
-  /* width: 100px; */
-  padding: 5px 10px;
-  padding-right: 10px;
-  font-size: 13px;
-  outline: none;
+  position: relative;
+  width: 400px;
+  display: flex;
+  align-items: center;
 }
 
-.topbar-searches input {
-  /* new*/
-  border: none;
-  background-color: #F6F6F6;
-  /* width: 100px; */
-  height: 100%;
-  outline: none;
+.search-icon {
+  position: absolute;
+  left: 15px;
+  color: #999;
+  font-size: 14px;
+  z-index: 10;
 }
 
 .form-controler {
-  width: 50% !important;
+  border-radius: 20px !important;
+  width: 100% !important;
+  height: 42px !important;
+  padding: 10px 20px 10px 40px !important;
+  border: none !important;
+  background-color: #f5f6f8 !important;
+  outline: none;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.form-controler::placeholder {
+  color: #999;
+}
+
+.form-controler:focus {
+  background-color: #eceff2 !important;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 25px;
 }
 
 .topbar-avatar {
-  width: 35px;
-  height: 35px;
+  width: 45px;
+  height: 45px;
   object-fit: cover;
-}
-
-.profile {
-  margin-right: 50px;
-  gap: 10px;
+  border-radius: 50%;
 }
 
 .profile-data {
-  gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.profile-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #000;
+  line-height: 1.2;
+}
+
+.profile-role {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.2;
 }
 
 

@@ -1,10 +1,7 @@
 .main-content5 {
-  /* new */
   flex-grow: 1;
-  padding: 7px;
+  padding: 20px;
   background: #eff5ff;
-  margin-top: -15px !important;
-  /* modified */
 }
 
 .main-content5 .topbar {

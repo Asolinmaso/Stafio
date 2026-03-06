@@ -828,7 +828,7 @@ const AdminProfile = () => {
       <div className="sidebar">
         <AdminSidebar />
       </div>
-      <div className="main-content5 py-4">
+      <div className="main-content5">
         <Topbar />
         <ProfileBanner profileData={profile} />
 

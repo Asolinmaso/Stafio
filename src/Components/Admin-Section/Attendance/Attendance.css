@@ -1,5 +1,5 @@
 .attendance-layout {
-  position:relative;
+  position: relative;
   display: flex;
   background: #eff5ff;
   min-height: 100vh;
@@ -21,22 +21,22 @@
   pointer-events: none;
 }
 
-.topbar {
+/* .topbar {
   position: relative;
   z-index: 10;
-}
+} */
 
 .attendance-main {
   flex: 1;
-  padding: 20px 30px;
+  padding: 0 25px 25px 25px;
   position: relative;
 }
 
-.attendance-main .topbar {
+/* .attendance-main .topbar {
   margin-top: 10px !important;
   width: 100%;
   margin-left: 2px !important;
-}
+} */
 
 
 /* ===== Header Section ===== */
@@ -45,13 +45,13 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  margin-top: 30px;
-  margin-left: 10px;
+  /* margin-top: 30px; */
+  /* margin-left: 10px; */
   position: relative;
 }
 
 .attendance-header h2 {
- 
+
   font-size: 30px;
   font-weight: 600;
   color: #222;
@@ -66,12 +66,12 @@
   margin-top: 40px !important;
 }
 
-.select-filter{
+.select-filter {
   display: flex;
   align-items: center;
   gap: 8px;
   background: transparent;
-  border:1px solid #a8a8a8ff;
+  border: 1px solid #a8a8a8ff;
   color: #666;
   font-weight: 500;
   padding: 8px 10px;
@@ -123,7 +123,8 @@ select.sort-dropdown {
   background: #fff;
   border-radius: 12px;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
+  /* Changed from hidden to show calendar popup */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -172,7 +173,9 @@ select.sort-dropdown {
   cursor: pointer;
   font-size: 14px;
   background: #ece8e8ff;
+  position: relative;
 }
+
 
 .who-is-on-leave-btn {
   background-color: #19bde8;
@@ -250,17 +253,17 @@ select.sort-dropdown {
   font-weight: 500;
 }
 
-.status.on-time + .time-cell,
+.status.on-time+.time-cell,
 tr:has(.status.on-time) .time-cell {
   color: #2060d7ff;
 }
 
-.status.absent + .time-cell,
+.status.absent+.time-cell,
 tr:has(.status.absent) .time-cell {
   color: #dc3545;
 }
 
-.status.late-login + .time-cell,
+.status.late-login+.time-cell,
 tr:has(.status.late-login) .time-cell {
   color: #ffc107;
 }
@@ -350,6 +353,7 @@ tr:has(.status.late-login) .time-cell {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

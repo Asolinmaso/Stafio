@@ -7,7 +7,7 @@
   padding: 20px;
   background: #eff5ff;
   min-height: 100vh;
-  margin:0px;
+  margin: 0px;
 }
 
 .page-title {
@@ -52,11 +52,11 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  background:transparent;
+  background: transparent;
   border: 1px solid #cececeff !important;
-  border-radius:12px;
-  padding: 0 12px ;
-  margin-left:30px;
+  border-radius: 12px;
+  padding: 0 12px;
+  margin-left: 30px;
 }
 
 /* Table */

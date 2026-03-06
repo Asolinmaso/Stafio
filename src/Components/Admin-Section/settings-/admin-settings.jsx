@@ -6,9 +6,17 @@ import profileimg from "../../../assets/profileimg.png";
 import user from "../../../assets/user.png";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-import penicon from "../../../assets/penicon.png";
+import penicon from "../../../assets/penicon2.png";
 import deletebox from "../../../assets/deletebox.png";
-import { FaUserFriends, FaSearch, FaFilter, FaEdit, FaPlusCircle, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import {
+	FaUserFriends,
+	FaSearch,
+	FaFilter,
+	FaEdit,
+	FaPlusCircle,
+	FaPencilAlt,
+	FaTrashAlt,
+} from "react-icons/fa";
 import { BsUpload } from "react-icons/bs";
 import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
@@ -108,7 +116,8 @@ const translations = {
 };
 
 export default function AdminSettings() {
-	const { theme, setTheme, language, setLanguage, font, setFont } = useContext(SettingsContext);
+	const { theme, setTheme, language, setLanguage, font, setFont } =
+		useContext(SettingsContext);
 	const [activeTab, setActiveTab] = useState("department");
 
 	const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
@@ -504,16 +513,13 @@ export default function AdminSettings() {
 			<div className="rightside-logo ">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
-			{/* Sidebar */}
-			<div className="sidebar">
-				<AdminSidebar />
-			</div>
+			<AdminSidebar />
 
 			{/* Main content */}
-			<div className="main-content flex-grow-1">
+			<div className="admin-settings-main">
 				<Topbar />
 
-				<div className="settings-page p-4">
+				<div className="settings-page">
 					{/* Header */}
 					<div className="settings-header">
 						<h1>{t("title")}</h1>
@@ -635,7 +641,9 @@ export default function AdminSettings() {
 								<div className="form-row-grid">
 									{/* Row 1 */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("systemLanguage")}</label>
+										<label className="section-label-top">
+											{t("systemLanguage")}
+										</label>
 										<div className="custom-select-wrapper">
 											<select
 												value={language}
@@ -649,7 +657,9 @@ export default function AdminSettings() {
 									</div>
 
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("userSignup")}</label>
+										<label className="section-label-top">
+											{t("userSignup")}
+										</label>
 										<div className="setting-item-underline">
 											<span className="setting-muted-text">
 												Allow new users to sign up
@@ -663,7 +673,9 @@ export default function AdminSettings() {
 
 									{/* Row 2 */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("dashboardTheme")}</label>
+										<label className="section-label-top">
+											{t("dashboardTheme")}
+										</label>
 										<div className="theme-input-box0">
 											<span className="setting-muted-text">
 												{theme === "light" ? "Light Theme" : "Dark Theme"}
@@ -682,17 +694,21 @@ export default function AdminSettings() {
 									</div>
 
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("defaultThemeforUsers")}</label>
-										<div className="theme-input-box0">
-											<span className="setting-muted-text">
-												Light Theme
-											</span>
-										</div>
+										<label>{t("defaultThemeforUsers")}</label>
+										<select
+											value={userTheme}
+											onChange={(e) => setUserTheme(e.target.value)}
+										>
+											<option value="light">Light Theme</option>
+											<option value="dark">Dark Theme</option>
+										</select>
 									</div>
 
 									{/* Row 3 */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("systemFont")}</label>
+										<label className="section-label-top">
+											{t("systemFont")}
+										</label>
 										<div className="custom-select-wrapper">
 											<select
 												value={font}
@@ -706,32 +722,8 @@ export default function AdminSettings() {
 									</div>
 
 									<div className="form-column">
-										<div className="form-groupz">
-											<label>{t("userSignup")}</label>
-											<div className="theme-input-box0">
-												<span className="theme-label">
-													Allow new users to sign up
-												</span>
-												<label className="switch">
-													<input
-														type="checkbox"
-														checked={allowSignup}
-														onChange={() => setAllowSignup(!allowSignup)}
-													/>
-													<span className="slider round"></span>
-												</label>
-											</div>
-										</div>
-										<div className="form-group1">
-											<label>{t("defaultThemeforUsers")}</label>
-											<select
-												value={userTheme}
-												onChange={(e) => setUserTheme(e.target.value)}
-											>
-												<option value="light">Light Theme</option>
-												<option value="dark">Dark Theme</option>
-											</select>
-										</div>
+
+
 										<div className="form-group2">
 											<label>
 												{t("dateFormat")}
@@ -754,7 +746,9 @@ export default function AdminSettings() {
 
 									{/* Row 4 */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("allowManagertoeditemployeerecord")}</label>
+										<label className="section-label-top">
+											{t("allowManagertoeditemployeerecord")}
+										</label>
 										<div className="theme-input-box0">
 											<span className="setting-muted-text">
 												{allowManagerEdit ? "Enable" : "Disable"}
@@ -778,12 +772,17 @@ export default function AdminSettings() {
 
 						{/* Basic Info */}
 						{activeTab === "basic" && (
-							<div className="basic-info-tab" style={{ padding: "30px 30px 30px 30px" }}>
+							<div
+								className="basic-info-tab"
+								style={{ padding: "30px 30px 30px 30px" }}
+							>
 								{/* 2-column grid for fields */}
 								<div className="form-row-grid">
 									{/* First Name */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("firstName")}</label>
+										<label className="section-label-top">
+											{t("firstName")}
+										</label>
 										<input
 											type="text"
 											name="firstName"
@@ -794,7 +793,9 @@ export default function AdminSettings() {
 											onChange={handleBasicChange}
 										/>
 										{basicErrors.firstName && (
-											<span className="error-text">{basicErrors.firstName}</span>
+											<span className="error-text">
+												{basicErrors.firstName}
+											</span>
 										)}
 									</div>
 
@@ -852,7 +853,10 @@ export default function AdminSettings() {
 									{/* Position */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("position")}</label>
-										<div className="custom-select-wrapper" style={{ maxWidth: "100%" }}>
+										<div
+											className="custom-select-wrapper"
+											style={{ maxWidth: "100%" }}
+										>
 											<select
 												name="position"
 												value={basicForm.position}
@@ -872,7 +876,10 @@ export default function AdminSettings() {
 									{/* Role */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("role")}</label>
-										<div className="custom-select-wrapper" style={{ maxWidth: "100%" }}>
+										<div
+											className="custom-select-wrapper"
+											style={{ maxWidth: "100%" }}
+										>
 											<select
 												name="role"
 												value={basicForm.role}
@@ -887,7 +894,10 @@ export default function AdminSettings() {
 								</div>
 
 								{/* Profile Picture – full width below grid */}
-								<div className="profile-section-custom" style={{ marginTop: "10px" }}>
+								<div
+									className="profile-section-custom"
+									style={{ marginTop: "10px" }}
+								>
 									<label className="section-label-top">Profile picture</label>
 									<p className="file-info-muted">
 										We support only JPEGs or PNGs under 5MB
@@ -1025,7 +1035,9 @@ export default function AdminSettings() {
 															className="checkbbig"
 															checked={
 																departments.length > 0 &&
-																Object.values(selectedDepartmentRows).every(Boolean)
+																Object.values(selectedDepartmentRows).every(
+																	Boolean,
+																)
 															}
 															onChange={(e) => {
 																const isChecked = e.target.checked;
@@ -1050,7 +1062,9 @@ export default function AdminSettings() {
 															<input
 																type="checkbox"
 																className="checkbsmall"
-																checked={selectedDepartmentRows[dept.id] || false}
+																checked={
+																	selectedDepartmentRows[dept.id] || false
+																}
 																onChange={(e) =>
 																	setSelectedDepartmentRows({
 																		...selectedDepartmentRows,
@@ -1127,23 +1141,33 @@ export default function AdminSettings() {
 															) : (
 																<div className="dept-action-btns">
 																	<button
-																		className="dept-icon-btn dept-edit-btn"
+																		className="action-btn edit"
 																		onClick={() => {
 																			setEditingDeptId(dept.id);
 																			setEditMemberCount(
-																				dept.memberCount?.toString() || "0"
+																				dept.memberCount?.toString() || "0",
 																			);
 																		}}
 																		title="Edit"
 																	>
-																		<FaPencilAlt />
+																		<img
+																			className="pen-icon"
+																			src={penicon}
+																			alt="edit"
+																		/>
 																	</button>
 																	<button
-																		className="dept-icon-btn dept-delete-btn"
-																		onClick={() => handleDeleteDepartment(dept.id)}
+																		className="action-btn delete"
+																		onClick={() =>
+																			handleDeleteDepartment(dept.id)
+																		}
 																		title="Delete"
 																	>
-																		<FaTrashAlt />
+																		<img
+																			className="deletebox-icon"
+																			src={deletebox}
+																			alt="delete"
+																		/>
 																	</button>
 																</div>
 															)}
@@ -1216,6 +1240,13 @@ export default function AdminSettings() {
 											</div>
 										</div>
 									</div>
+
+									<button
+										className="btn-create-new1"
+										onClick={() => setShowBreakModal(true)}
+									>
+										Create new
+									</button>
 
 									{/* Create New Break Time Modal */}
 									{showBreakModal && (
