@@ -3,7 +3,7 @@ import "./MyHoliday.css";
 import EmployeeSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import { FaPlusCircle } from "react-icons/fa";
 
 const Myholiday = () => {
@@ -19,8 +19,8 @@ const Myholiday = () => {
 
 	const fetchHolidays = async () => {
 		try {
-			const response = await axios.get(
-				"http://127.0.0.1:5001/api/myholidays",
+			const response = await apiClient.get(
+				"/api/myholidays",
 			);
 			setHolidayData(response.data);
 		} catch (error) {
@@ -40,7 +40,7 @@ const Myholiday = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post("http://127.0.0.1:5001/api/myholidays", formData);
+			const response = await apiClient.post("/api/myholidays", formData);
 			if (response.status === 201) {
 				alert("Holiday added successfully!");
 				setIsModalOpen(false);

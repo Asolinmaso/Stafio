@@ -4,7 +4,7 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import ProfileBanner from "./ProfileBanner";
 import "./AdminProfile.css";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 // ====================== INITIAL STATE ======================
 const initialProfile = {
@@ -132,8 +132,8 @@ const AdminProfile = () => {
   const getUserId = () => {
     return (
       localStorage.getItem("employee_user_id") ||
-      sessionStorage.getItem("empId") ||
-      sessionStorage.getItem("current_user_id")
+      localStorage.getItem("empId") ||
+      localStorage.getItem("current_user_id")
     );
   };
 
@@ -141,8 +141,8 @@ const AdminProfile = () => {
   const saveProfileToBackend = async (dataToSave) => {
     const userId = getUserId();
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:5001/admin_profile/${userId}`,
+      const response = await apiClient.put(
+        `/admin_profile/${userId}`,
         dataToSave,
         {
           headers: {
@@ -167,15 +167,12 @@ const AdminProfile = () => {
     const fetchAdminProfileData = async () => {
       try {
         const userId = getUserId();
-        const response = await axios.get(
-          `http://127.0.0.1:5001/admin_profile/${userId}`,
-          {
-            headers: {
-              "X-User-Role": "admin",
-              "X-User-ID": userId.toString(),
-            },
+        const response = await apiClient.get(`/admin_profile/${userId}`, {
+          headers: {
+            "X-User-Role": "admin",
+            "X-User-ID": userId.toString(),
           },
-        );
+        });
 
         // Only update with data from backend, use empty defaults if not provided
         if (response.data) {

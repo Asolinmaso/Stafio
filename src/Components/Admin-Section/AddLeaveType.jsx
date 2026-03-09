@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Container, Form, Alert } from "react-bootstrap";
-import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import AdminSidebar from "./AdminSidebar";
 
 const AddLeaveType = () => {
@@ -35,8 +35,8 @@ const AddLeaveType = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:5001/leave_types",
+      const res = await apiClient.post(
+        "/leave_types",
         formData,
         {
           headers: {

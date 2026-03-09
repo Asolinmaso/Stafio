@@ -7,9 +7,7 @@ import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import AttendanceCard from "../Dashboard/AttendanceCard";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
-
-const API_BASE = "http://127.0.0.1:5001";
+import apiClient from "../../../utils/apiClient";
 
 export default function LeaveReport() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
@@ -22,7 +20,7 @@ export default function LeaveReport() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/api/employeeslist`);
+        const res = await apiClient.get("/api/employeeslist");
         setEmployees(res.data);
       } catch (err) {
         console.error("Error fetching employees", err);
@@ -42,8 +40,8 @@ export default function LeaveReport() {
     const fetchLeaveBalance = async () => {
       setLoadingBalance(true);
       try {
-        const res = await axios.get(
-          `${API_BASE}/api/employee_leave_balance/${selectedEmployeeId}`,
+        const res = await apiClient.get(
+          `/api/employee_leave_balance/${selectedEmployeeId}`,
           {
             headers: {
               "X-User-Role": "admin",
@@ -105,7 +103,7 @@ export default function LeaveReport() {
     const fetchAttendanceData = async () => {
       setLoadingAttendance(true);
       try {
-        const res = await axios.get(`${API_BASE}/api/attendance_stats`, {
+        const res = await apiClient.get("/api/attendance_stats", {
           params: { user_id: selectedEmployeeId },
           headers: {
             "X-User-Role": "admin",

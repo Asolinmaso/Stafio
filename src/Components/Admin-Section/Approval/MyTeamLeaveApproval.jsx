@@ -6,7 +6,7 @@ import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import illustration from "../../../assets/Formsbro.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import tick from "../../../assets/tickicon.png";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
@@ -33,13 +33,13 @@ export default function MyTeamLeaveApproval() {
   useEffect(() => {
     const fetchMyTeamLA = async () => {
       const userId =
-        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("current_user_id") ||
         localStorage.getItem("employee_user_id");
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/myteamla", {
+        const response = await apiClient.get("/api/myteamla", {
           headers: {
             "X-User-ID": userId,
-            "X-User-Role": sessionStorage.getItem("current_role") || "admin",
+            "X-User-Role": localStorage.getItem("current_role") || "admin",
           },
         });
         setLeaveData(response.data);
@@ -53,13 +53,13 @@ export default function MyTeamLeaveApproval() {
   // Helper to re-fetch team leave data
   const refetchLeaveData = async () => {
     const userId =
-      sessionStorage.getItem("current_user_id") ||
+      localStorage.getItem("current_user_id") ||
       localStorage.getItem("employee_user_id");
     try {
-      const response = await axios.get("http://127.0.0.1:5001/api/myteamla", {
+      const response = await apiClient.get("/api/myteamla", {
         headers: {
           "X-User-ID": userId,
-          "X-User-Role": sessionStorage.getItem("current_role") || "admin",
+          "X-User-Role": localStorage.getItem("current_role") || "admin",
         },
       });
       setLeaveData(response.data);
@@ -386,9 +386,9 @@ export default function MyTeamLeaveApproval() {
                     try {
                       const endpoint =
                         actionType === "Approval"
-                          ? `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.id}/approve`
-                          : `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.id}/reject`;
-                      await axios.put(endpoint, {
+                          ? `/api/leave_requests/${selectedLeave.id}/approve`
+                          : `/api/leave_requests/${selectedLeave.id}/reject`;
+                      await apiClient.put(endpoint, {
                         reason: approvalReason,
                         approved_by: currentAdminId,
                       });

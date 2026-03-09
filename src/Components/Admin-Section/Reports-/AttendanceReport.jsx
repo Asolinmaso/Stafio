@@ -3,7 +3,7 @@ import { FaFilter, FaCalendarAlt, FaDownload } from "react-icons/fa";
 import "./AttendanceReport.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
 
 export default function AttendanceReport() {
@@ -29,20 +29,19 @@ export default function AttendanceReport() {
 
   /* FETCH ATTENDANCE */
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:5001/api/attendancelist")
+    apiClient
+      .get("/api/attendancelist")
       .then((res) => setAttendanceData(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   /* FETCH EMPLOYEES */
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:5001/api/employeeslist")
+    apiClient
+      .get("/api/employeeslist")
       .then((res) => setEmployees(res.data))
       .catch((err) => console.error(err));
   }, []);
-
 
   /* DATE */
   useEffect(() => {
@@ -52,7 +51,7 @@ export default function AttendanceReport() {
         day: "2-digit",
         month: "short",
         year: "numeric",
-      })
+      }),
     );
 
     // ✅ default for date input (yyyy-mm-dd)
@@ -66,21 +65,21 @@ export default function AttendanceReport() {
 
   /* FILTER LOGIC */
   const filteredAttendance = attendanceData
-    .filter((r) =>
-      r.employee?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    .filter((r) => r.employee?.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter(
       (r) =>
-        r.status?.toLowerCase().trim() === statusFilter.toLowerCase().trim()
+        r.status?.toLowerCase().trim() === statusFilter.toLowerCase().trim(),
     )
     .filter((r) =>
-      selectedEmployeeName ? r.employee === selectedEmployeeName : true
+      selectedEmployeeName ? r.employee === selectedEmployeeName : true,
     )
     .filter((r) => {
       const today = new Date();
       const rd = parseDate(r.date);
       if (!rd) return true;
-      return (today.getTime() - rd.getTime()) / (1000 * 60 * 60 * 24) <= sortDays;
+      return (
+        (today.getTime() - rd.getTime()) / (1000 * 60 * 60 * 24) <= sortDays
+      );
     })
     .filter((r) => {
       if (!fromDate && !toDate) return true;
@@ -119,26 +118,40 @@ export default function AttendanceReport() {
       return;
     }
 
-    const headers = ["ID", "Employee", "Role", "Status", "Date", "Check-in", "Check-out", "Work hours"];
+    const headers = [
+      "ID",
+      "Employee",
+      "Role",
+      "Status",
+      "Date",
+      "Check-in",
+      "Check-out",
+      "Work hours",
+    ];
     const csvRows = [
       headers.join(","),
-      ...filteredAttendance.map(row => [
-        row.id,
-        `"${row.employee}"`,
-        `"${row.role}"`,
-        `"${row.status}"`,
-        row.date,
-        row.checkIn,
-        row.checkOut,
-        row.workHours
-      ].join(","))
+      ...filteredAttendance.map((row) =>
+        [
+          row.id,
+          `"${row.employee}"`,
+          `"${row.role}"`,
+          `"${row.status}"`,
+          row.date,
+          row.checkIn,
+          row.checkOut,
+          row.workHours,
+        ].join(","),
+      ),
     ];
 
     const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Attendance_Report_${selectedDate || "All"}.csv`);
+    link.setAttribute(
+      "download",
+      `Attendance_Report_${selectedDate || "All"}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -262,10 +275,16 @@ export default function AttendanceReport() {
                 </div>
 
                 <div className="att-filter-footer">
-                  <button className="att-filter-reset" onClick={handleResetFilters}>
+                  <button
+                    className="att-filter-reset"
+                    onClick={handleResetFilters}
+                  >
                     Reset
                   </button>
-                  <button className="att-filter-apply" onClick={handleApplyFilters}>
+                  <button
+                    className="att-filter-apply"
+                    onClick={handleApplyFilters}
+                  >
                     Apply
                   </button>
                 </div>
@@ -311,7 +330,10 @@ export default function AttendanceReport() {
                 />
               </div>
 
-              <button className="att-report-download-btn" onClick={handleDownload}>
+              <button
+                className="att-report-download-btn"
+                onClick={handleDownload}
+              >
                 <FaDownload /> Download
               </button>
             </div>

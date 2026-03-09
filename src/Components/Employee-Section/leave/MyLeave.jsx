@@ -4,7 +4,7 @@ import { FaCheckCircle, FaFilter, FaEdit, FaTimesCircle } from "react-icons/fa";
 import EmployeeSidebar from ".././EmployeeSidebar";
 import Topbar from ".././Topbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 export default function MyLeave() {
   const navigate = useNavigate();
@@ -16,21 +16,18 @@ export default function MyLeave() {
       try {
         const userId =
           localStorage.getItem("employee_user_id") ||
-          sessionStorage.getItem("current_user_id");
+          localStorage.getItem("current_user_id");
 
         // Fetch leave requests
-        const response = await axios.get("http://127.0.0.1:5001/api/myleave", {
+        const response = await apiClient.get("/api/myleave", {
           headers: { "X-User-ID": userId },
         });
         setLeaveData(response.data);
 
         // Fetch leave balance
-        const balanceResponse = await axios.get(
-          "http://127.0.0.1:5001/api/leave_balance",
-          {
-            headers: { "X-User-ID": userId },
-          },
-        );
+        const balanceResponse = await apiClient.get("/api/leave_balance", {
+          headers: { "X-User-ID": userId },
+        });
         setLeaveBalance(balanceResponse.data);
       } catch (error) {
         console.error("Error fetching leave data:", error);

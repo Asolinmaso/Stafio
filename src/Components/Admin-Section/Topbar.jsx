@@ -18,11 +18,9 @@ import "./Topbar.css";
 import topbarsettings from "../../assets/topbarsettings.png";
 import { Navigate, useNavigate } from "react-router-dom";
 import { searchData } from "./searchData";
-import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import { FiEdit } from "react-icons/fi";
 import { getCurrentSession } from "../../utils/sessionManager";
-
-const API_BASE = "http://127.0.0.1:5001";
 
 // ProfilePopup Component - fetches data from backend
 const ProfilePopup = ({ onClose, username }) => {
@@ -58,9 +56,9 @@ const ProfilePopup = ({ onClose, username }) => {
   };
   const getAuthHeaders = () => {
     return {
-      "X-User-Role": sessionStorage.getItem("current_role"),
+      "X-User-Role": localStorage.getItem("current_role"),
       "X-User-ID":
-        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("current_user_id") ||
         localStorage.getItem("employee_user_id"),
     };
   };
@@ -69,11 +67,11 @@ const ProfilePopup = ({ onClose, username }) => {
     const fetchProfile = async () => {
       try {
         const userId =
-          sessionStorage.getItem("current_user_id") ||
-          sessionStorage.getItem("empId") ||
+          localStorage.getItem("current_user_id") ||
+          localStorage.getItem("empId") ||
           localStorage.getItem("employee_user_id");
         console.log(userId || "nothing");
-        const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
+        const res = await apiClient.get(`/admin_profile/${userId}`, {
           headers: {
             ...getAuthHeaders(),
           },
@@ -149,7 +147,7 @@ const ProfilePopup = ({ onClose, username }) => {
   const handleUpdate = async () => {
     try {
       const userId =
-        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("current_user_id") ||
         localStorage.getItem("employee_user_id");
 
       // Ensure dates are in YYYY-MM-DD format for backend
@@ -188,7 +186,7 @@ const ProfilePopup = ({ onClose, username }) => {
         );
       }
 
-      await axios.put(`${API_BASE}/admin_profile/${userId}`, dataToSend, {
+      await apiClient.put(`/admin_profile/${userId}`, dataToSend, {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
@@ -196,7 +194,7 @@ const ProfilePopup = ({ onClose, username }) => {
       });
 
       // Re-fetch
-      const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
+      const res = await apiClient.get(`/admin_profile/${userId}`, {
         headers: {
           ...getAuthHeaders(),
         },
@@ -834,7 +832,7 @@ const Topbar = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:5001/api/employeeslist");
+        const res = await apiClient.get("/api/employeeslist");
 
         const employeeItems = res.data.map((emp) => ({
           type: "employee",

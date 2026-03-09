@@ -3,7 +3,7 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import "./Employees.css";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
 import { FaUserFriends, FaSearch, FaFilter, FaEdit, FaPlusCircle } from "react-icons/fa";
 import { FiShare2, FiDownload } from "react-icons/fi";
@@ -115,10 +115,10 @@ const Employee = () => {
     if (validateForm()) {
       try {
         if (isEditing) {
-          const response = await axios.put(`http://127.0.0.1:5001/api/employees/${editingId}`, formData);
+          const response = await apiClient.put(`/api/employees/${editingId}`, formData);
           alert(response.data.message);
         } else {
-          const response = await axios.post("http://127.0.0.1:5001/api/employees", formData);
+          const response = await apiClient.post("/api/employees", formData);
           alert(response.data.message);
         }
         setShowModal(false);
@@ -178,7 +178,7 @@ const Employee = () => {
 
   const handleViewDetails = async (emp) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5001/admin_profile/${emp.id}`, {
+      const response = await apiClient.get(`/admin_profile/${emp.id}`, {
         headers: {
           'X-User-Role': 'admin',
           'X-User-ID': '1'
@@ -204,8 +204,8 @@ const Employee = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/employeeslist"
+        const response = await apiClient.get(
+          "/api/employeeslist"
         );
         console.log("API DATA:", response.data);
         setAllEmployees(response.data);

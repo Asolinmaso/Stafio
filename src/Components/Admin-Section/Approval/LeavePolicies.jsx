@@ -5,7 +5,7 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 const LeavePolicies = () => {
   const [leavePolicies, setLeavePolicies] = useState([]);
@@ -120,7 +120,7 @@ const buildApplicabilityType = (applicability, gender) => {
   
   const  fetchleavepolicies = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/leavepolicies");
+        const response = await apiClient.get("/api/leavepolicies");
         setLeavePolicies(response.data);
       } catch (error) {
         console.error("Error fetching attendance data:", error);
@@ -146,17 +146,17 @@ const buildApplicabilityType = (applicability, gender) => {
     try {
       if (isEdit) {
         // 🔄 UPDATE
-        await axios.put(
-          `http://127.0.0.1:5001/api/leavepolicies/${editId}`,
+        await apiClient.put(
+          `/api/leavepolicies/${editId}`,
           payload,
         );
       } else {
         // ➕ CREATE (future-ready)
-        await axios.post("http://127.0.0.1:5001/api/leavepolicies", payload);
+        await apiClient.post("/api/leavepolicies", payload);
       }
 
       // Refresh table
-      const res = await axios.get("http://127.0.0.1:5001/api/leavepolicies");
+      const res = await apiClient.get("/api/leavepolicies");
       setLeavePolicies(res.data);
 
       resetForm();
@@ -191,7 +191,7 @@ const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this leave policy?"))
       return;
 
-    await fetch(`http://127.0.0.1:5001/api/leavepolicies/${id}`, {
+    await fetch(`/api/leavepolicies/${id}`, {
       method: "DELETE",
     });
 
