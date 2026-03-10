@@ -1,59 +1,112 @@
 .topbar {
 	position: sticky !important;
-	top: 0 !important;
+	top: 8px !important;
 	z-index: 1000 !important;
-	height: 65px;
+	height: 62px;
 	background: #fff;
-	border-radius: 12px !important;
-	margin: 0 16px !important;
-	padding: 5px 20px !important;
-	width: calc(100% - 32px) !important;
-	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+	border-radius: 14px !important;
+	margin: 8px 0 16px 0 !important;
+	padding: 0 22px !important;
+	width: 100% !important;
+	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.topbar-left {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex: 1;
 }
 
 .topbar-img {
-	width: 50px;
-	height: 50px;
+	width: 36px;
+	height: 36px;
 	object-fit: contain;
 }
 
+.topbar-searches {
+	position: relative;
+	width: 360px;
+	display: flex;
+	align-items: center;
+}
+
+.search-icon {
+	position: absolute;
+	left: 14px;
+	color: #aaa;
+	font-size: 13px;
+	z-index: 10;
+}
+
 .form-controler {
-	border-radius: 20px !important;
-	width: 40% !important;
-	height: 35px !important;
-	padding: 10px 12px !important;
-	border: 1px solid #ccc;
+	border-radius: 22px !important;
+	width: 100% !important;
+	height: 38px !important;
+	padding: 0 16px 0 38px !important;
+	border: none !important;
+	background-color: #f0f2f5 !important;
 	outline: none;
+	font-size: 13px;
+	color: #555;
 	transition: all 0.2s ease;
 }
 
-.form-controler:focus {
-	border-color: #19bde8 !important;
-	box-shadow: 0 0 0 3px rgba(25, 189, 232, 0.25);
-	/* optional glow */
+.form-controler::placeholder {
+	color: #aaa;
 }
 
-.topbar-search {
-	width: 40%;
-	background-color: #f6f6f6;
+.form-controler:focus {
+	background-color: #e8ebef !important;
+}
+
+.topbar-right {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+.topbar-settings {
+	width: 28px;
+	height: 28px;
+	cursor: pointer;
 }
 
 .topbar-avatar {
-	width: 35px;
-	height: 35px;
+	width: 40px;
+	height: 40px;
 	object-fit: cover;
+	border-radius: 50%;
 }
 
-.profile {
-	margin-right: 50px;
+.profile-data {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+}
+
+.profile-name {
+	font-weight: 700;
+	font-size: 14px;
+	color: #111;
+	line-height: 1.3;
+}
+
+.profile-role {
+	font-size: 12px;
+	color: #888;
+	line-height: 1.3;
 }
 
 /* NEW CSS part */
 /* Admin profile popup  */
 
 .profile0 {
-	margin-right: 25px;
-	/* gap:10px; */
+	margin-right: 20px;
 }
 
 .profile-data1 {
@@ -123,9 +176,7 @@
 
 .details-grid p {
 	color: #000;
-	/* Makes it darker (pure black) */
 	font-weight: 700;
-	/* Ensures boldness */
 }
 
 .details-grid h6 {
@@ -157,7 +208,7 @@
 
 .announcement-popup {
 	position: absolute;
-	top: 110px;
+	top: 100px;
 	right: 40px;
 	width: 77% !important;
 	max-height: 80vh;
@@ -186,7 +237,6 @@
 .add-announcement-overlay {
 	position: fixed;
 	inset: 0;
-	/* background: rgba(0, 0, 0, 0.45); */
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -242,8 +292,6 @@
 	padding: 60px 10px;
 	font-size: 0.95rem;
 }
-
-/* Global scrollbar will handle this */
 
 /* announcement top section */
 
@@ -401,10 +449,7 @@
 .add-form-container {
 	background: #fff;
 	border-radius: 12px;
-	/* padding: 20px 25px; */
 	padding: 0;
-	/* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.3s ease-in-out; */
 	overflow: hidden;
 	animation: fadeIn 0.3s ease-in-out;
 	box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
@@ -457,9 +502,7 @@
 .form-grid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	/* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
 	gap: 18px 25px;
-	/* gap: 15px 25px; */
 	align-items: start;
 }
 
@@ -483,7 +526,6 @@
 	outline: none;
 	background: #f9fafb;
 	transition: all 0.2s ease;
-	/* transition: border-color 0.2s ease; */
 }
 
 .announcement-form input:focus,
@@ -521,7 +563,6 @@
 	justify-content: flex-start;
 	gap: 12px;
 	padding: 0 25px 25px 25px;
-	/* margin-top: 10px; */
 }
 
 .form-buttons .btn {
@@ -576,7 +617,7 @@
 /* new  */
 .announcement-popup {
 	position: absolute;
-	top: 110px;
+	top: 95px;
 	right: 40px;
 	width: 650px;
 	max-height: 80vh;
@@ -593,7 +634,6 @@
 	border: 1px solid #e3e3e3;
 	border-radius: 12px;
 	padding: 18px 20px;
-	/* padding: 15px 20px; */
 	margin-bottom: 12px;
 	transition: all 0.2s ease;
 }
@@ -613,7 +653,6 @@
 .announcement-name {
 	font-size: 15px;
 	color: #222;
-	/* padding-left:50px; */
 	font-weight: 600;
 	color: #1f2937;
 	padding-left: 0;
@@ -627,7 +666,6 @@
 	font-size: 13px;
 	color: #6c757d;
 	margin-top: 2px;
-	/* padding-left:50px; */
 	padding-left: 0;
 }
 
@@ -692,7 +730,7 @@
 
 .full-profile-popups {
 	position: absolute;
-	top: 100px;
+	top: 90px;
 	right: 100px;
 	width: 900px;
 	max-height: 90vh;
@@ -753,9 +791,7 @@
 
 .details-grid p {
 	color: #000;
-	/* Makes it darker (pure black) */
 	font-weight: 700;
-	/* Ensures boldness */
 }
 
 .details-grid h6 {
@@ -777,16 +813,4 @@
 	border: none;
 	font-size: 20px;
 	cursor: pointer;
-}
-
-@keyframes fadeIn {
-	from {
-		opacity: 0;
-		transform: translateY(-5px);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
 }

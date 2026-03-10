@@ -437,9 +437,7 @@ const AdminSidebar = () => {
         </div>
       </div>
 
-      <div className="employee-sidebar-footer text-center">
-        <img src={booking} alt="Booking Logo" className="sidebar-logo1" />
-      </div>
+
     </div>
   );
 };

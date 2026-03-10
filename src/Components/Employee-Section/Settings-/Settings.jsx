@@ -7,7 +7,8 @@ import { SettingsContext } from "./SettingsContext";
 import { Border } from "react-bootstrap-icons";
 import { BiFontSize } from "react-icons/bi";
 import profileimg from "../../../assets/profileimg.png";
-import profileimg2 from "../../../assets/profileimg2.png"; // new
+import profileimg2 from "../../../assets/profileimg2.png";
+import { BsUpload } from "react-icons/bs";
 
 const API_BASE = "http://127.0.0.1:5001";
 
@@ -18,7 +19,7 @@ export default function Settings() {
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
   const [errors, setErrors] = useState({});
 
-  const [basicForm, setBasicForm] = useState({ /* new*/
+  const [basicForm, setBasicForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -53,7 +54,7 @@ export default function Settings() {
       title: "System Settings",
       subtitle: "Setup and edit system settings and preferences",
       general: "General Settings",
-      general1: "General",           // new
+      general1: "General",
       basic: "Basic Info",
       systemLanguage: "System Language",
       dashboardTheme: "Dashboard Theme",
@@ -65,8 +66,8 @@ export default function Settings() {
       phone: "Phone Number",
       position: "Position",
       role: "Role",
-      profilepicture: "Profile Picture",  // new
-      subp3: "We support only JPEGs or PNGs under 5MB",  // new
+      profilepicture: "Profile Picture",
+      subp3: "We support only JPEGs or PNGs under 5MB",
     },
     tamil: {
       title: "கணினி அமைப்புகள்",
@@ -101,6 +102,9 @@ export default function Settings() {
       role: "भूमिका",
     },
   };
+
+  // Assign t from translations
+  const t = translations[language] || translations.english;
 
   const [saveMessage, setSaveMessage] = useState("");
 
@@ -139,7 +143,6 @@ export default function Settings() {
   }, []);
 
   useEffect(() => {
-    // Example: auto-save when language changes
     console.log("Auto-saving general settings", {
       language,
       theme,
@@ -148,24 +151,17 @@ export default function Settings() {
     });
   }, [language, theme, font, dateFormat]);
 
-  //handle input change
-
   const handleBasicChange = (e) => {
     const { name, value } = e.target;
-
     setBasicForm({
       ...basicForm,
       [name]: value
     });
-
-    // clear error on change
     setBasicErrors({
       ...basicErrors,
       [name]: ""
     });
   };
-
-  //validation logic   new
 
   const validateBasicInfo = () => {
     const errors = {};
@@ -202,8 +198,6 @@ export default function Settings() {
     return Object.keys(errors).length === 0;
   };
 
-  //save Button logic
-
   const handleBasicSave = async () => {
     if (validateBasicInfo()) {
       try {
@@ -223,8 +217,6 @@ export default function Settings() {
     }
   };
 
-  //cancel button logic (reset)
-
   const handleBasicCancel = () => {
     setBasicForm({
       firstName: "",
@@ -237,9 +229,6 @@ export default function Settings() {
     setProfileImage(profileimg);
     setBasicErrors({});
   };
-
-
-  const t = translations[language];
 
   return (
     <div className="dashboard-wrapper d-flex">
@@ -282,7 +271,7 @@ export default function Settings() {
               <div>
                 <h3>{t.general1}</h3>
 
-                <div className="form-group">
+                <div className="emp-form-group">
                   <label>{t.systemLanguage}</label>
                   <select
                     value={language}
@@ -294,9 +283,9 @@ export default function Settings() {
                   </select>
                 </div>
 
-                <div className="form-group">
+                <div className="emp-form-group">
                   <label>{t.dashboardTheme}</label>
-                  <div className="theme-input-box">     {/*new check box inside the input*/}
+                  <div className="theme-input-box">
                     <span className="theme-text">
                       {theme === "light" ? "Light Theme" : "Dark Theme"}
                     </span>
@@ -311,12 +300,9 @@ export default function Settings() {
                       <span className="slider round"></span>
                     </label>
                   </div>
-                  {/* <span className="theme-label">
-                    {theme === "light" ? "Light Theme" : "Dark Theme"}
-                  </span> */}
                 </div>
 
-                <div className="form-group">
+                <div className="emp-form-group">
                   <label>{t.systemFont}</label>
                   <select
                     value={font}
@@ -328,7 +314,7 @@ export default function Settings() {
                   </select>
                 </div>
 
-                <div className="form-group">
+                <div className="emp-form-group">
                   <label>{t.dateFormat}</label>
                   <select
                     value={dateFormat}
@@ -344,7 +330,6 @@ export default function Settings() {
             {/* Basic Info */}
             {activeTab === "basic" && (
               <div>
-                {/* <h3>{t.basic}</h3> */}  {/*modified */}
                 <div className="form-row">
                   <div className="form-column">
                     <div className="form-group">
@@ -374,8 +359,6 @@ export default function Settings() {
                         <span className="error-text">{basicErrors.lastName}</span>
                       )}
                     </div>
-
-
 
                     <div className="form-group">
                       <label>{t.email}</label>
@@ -436,6 +419,7 @@ export default function Settings() {
                     </div>
                   </div>
                 </div>
+
                 <div className="form-group3">
                   <h3>{t.profilepicture}</h3>
                   <p className="file-info">{t.subp3}</p>
@@ -478,7 +462,6 @@ export default function Settings() {
                     Save
                   </button>
                 </div>
-
               </div>
             )}
           </div>

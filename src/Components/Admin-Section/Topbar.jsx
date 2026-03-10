@@ -8,6 +8,7 @@ import {
   FaDownload,
   FaEdit,
   FaShareAlt,
+  FaSearch,
 } from "react-icons/fa";
 import { MdEvent } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
@@ -845,10 +846,12 @@ const Topbar = () => {
 
   return (
     <>
-      <div className="topbar shadow-sm d-flex align-items-center justify-content-between px-3">
-        {/* Left logo */}
-        <div className="topbar-logo d-flex align-items-center">
-          <img src={stafiologoimg} alt="Logo" className="topbar-img" />
+      <div className="topbar">
+        {/* Left Section: Logo + Search */}
+        <div className="topbar-left">
+          <div className="topbar-logo" onClick={() => navigate("/admin-dashboard")} style={{ cursor: "pointer" }}>
+            <img src={stafiologoimg} alt="Logo" className="topbar-img" />
+          </div>
         </div>
 
         {/* Search box */}
@@ -887,39 +890,59 @@ const Topbar = () => {
         {/* Right side user + bell */}
         <div className="profile d-flex align-items-center gap-3">
           <div style={{ cursor: "pointer", position: "relative" }}>
-            <FaBell size={20} className="text-dark" onClick={togglePopup} />
           </div>
-          <div style={{ cursor: "pointer" }}>
+
+          <div className="topbar-searches">
+            {query && (
+              <div className="search-dropdown">
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((item, index) => (
+                    <div
+                      key={index}
+                      className="search-item"
+                      onClick={() => handleSelect(item)}
+                    >
+                      <span className="search-type">{item.type}</span>
+                      <span>{item.label}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="search-item no-result">No results found</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Section: Bell + Settings + Profile */}
+        <div className="topbar-right">
+          <div className="notification-icon" onClick={togglePopup} style={{ cursor: "pointer" }}>
+            <FaBell size={20} color="#1f2937" />
+          </div>
+
+          <div className="settings-icon">
             <img
               src={topbarsettings}
-              alt="Profile Logo"
+              alt="Settings"
               className="topbar-settings"
               onClick={() => navigate("/admin-settings")}
             />
           </div>
 
-          <div
-            className="profile-data d-flex align-items-center"
+          <div className="profile-wrapper d-flex align-items-center gap-2"
             onClick={() => setShowProfilePopup((prev) => !prev)}
             style={{ cursor: "pointer" }}
           >
             <img
               src={profileData?.profile?.profileImage || profileimg}
               alt="User"
-              className="topbar-avatar rounded-circle me-2"
+              className="topbar-avatar"
             />
-            <div>
-              <div className="fw-bold">{username || "User"}</div>
-              <div className="text-muted small">{role}</div>
+            <div className="profile-info">
+              <div className="profile-name">{username || "User"}</div>
+              <div className="profile-role">{role || "admin"}</div>
             </div>
-          </div>
-
-          <div
-            className="chevron-container"
-            onClick={() => setShowProfilePopup((prev) => !prev)}
-            style={{ cursor: "pointer" }}
-          >
-            <FaChevronDown />
+            <FaChevronDown size={14} color="#666" style={{ marginLeft: "5px" }} />
           </div>
         </div>
       </div>

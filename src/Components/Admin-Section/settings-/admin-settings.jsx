@@ -1,4 +1,3 @@
-
 import apiClient from "../../../utils/apiClient";
 import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
@@ -8,7 +7,7 @@ import profileimg from "../../../assets/profileimg.png";
 import user from "../../../assets/user.png";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-import penicon from "../../../assets/penicon.png";
+import penicon from "../../../assets/penicon2.png";
 import deletebox from "../../../assets/deletebox.png";
 import {
 	FaUserFriends,
@@ -443,6 +442,7 @@ export default function AdminSettings() {
 			setNewDeptMemberCount("");
 			setNewDeptManagerId("");
 			setShowCreateDept(false);
+			setShowDeptModal(false);
 		} catch (err) {
 			console.error("Error creating department:", err);
 		}
@@ -698,8 +698,10 @@ export default function AdminSettings() {
 
 									{/* User Signup Toggle */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("userSignup")}</label>
-										<div className="theme-input-box0">
+										<label className="section-label-top">
+											{t("userSignup")}
+										</label>
+										<div className="setting-item-underline">
 											<span className="setting-muted-text">
 												Allow new users to sign up
 											</span>
@@ -763,9 +765,16 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
-									{/* Date Format */}
-									<div className="form-group-custom">
-										<label className="section-label-top">{t("dateFormat")}</label>
+									<div className="form-column">
+										<div className="form-group2">
+											<label>
+												{t("dateFormat")}
+												<label className="switch">
+													<input type="checkbox" />
+													<span className="slider round"></span>
+												</label>
+											</label>
+										</div>
 										<div className="custom-select-wrapper">
 											<select
 												value={dateFormat}
@@ -796,6 +805,8 @@ export default function AdminSettings() {
 											</label>
 										</div>
 									</div>
+
+									<div className="form-group-custom"></div>
 								</div>
 
 								{saveMessage && (
@@ -1177,14 +1188,24 @@ export default function AdminSettings() {
 																		}}
 																		title="Edit"
 																	>
-																		<FaPencilAlt />
+																		<img
+																			className="pen-icon"
+																			src={penicon}
+																			alt="edit"
+																		/>
 																	</button>
 																	<button
-																		className="dept-icon-btn dept-delete-btn"
-																		onClick={() => handleDeleteDepartment(dept.id)}
+																		className="action-btn delete"
+																		onClick={() =>
+																			handleDeleteDepartment(dept.id)
+																		}
 																		title="Delete"
 																	>
-																		<FaTrashAlt />
+																		<img
+																			className="deletebox-icon"
+																			src={deletebox}
+																			alt="delete"
+																		/>
 																	</button>
 																</div>
 															)}
@@ -1257,6 +1278,13 @@ export default function AdminSettings() {
 											</div>
 										</div>
 									</div>
+
+									<button
+										className="btn-create-new1"
+										onClick={() => setShowBreakModal(true)}
+									>
+										Create new
+									</button>
 
 									{/* Create New Break Time Modal */}
 									{showBreakModal && (

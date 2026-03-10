@@ -8,7 +8,7 @@
   overflow: hidden;
 }
 
-.myteam-layout .topbar {
+/* .myteam-layout .topbar {
   padding-top: 12px !important;
   padding-bottom: 12px !important;
   margin-top: 30px;
@@ -16,18 +16,17 @@
   margin-left: auto !important;
   margin-right: auto;
   display: block;
-}
+} */
 
 .myteam-main {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: block;
   overflow-y: auto;
 }
 
 .myteam-page {
   flex: 1;
-  padding: 25px;
+  padding: 0 25px 25px 25px;
   background: #eff5ff;
 }
 
@@ -35,18 +34,20 @@
   font-size: 30px;
   color: #1e1e1e;
   font-weight: 600;
-  margin-left: 40px;
-  margin-bottom: 5px;
+  margin-left: 0;
+  margin-bottom: 12px;
 }
 
 /* =========================
-   CONTROLS
+   CONTROLS — single row
 ========================= */
 .myteam-controls {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-right: 50px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 0;
+  margin-right: 0;
   margin-bottom: 20px;
 }
 
@@ -80,7 +81,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 5px;
 }
 
 /* Filter Button */
@@ -91,7 +91,7 @@
   background: transparent;
   border: 1px solid #cecece;
   border-radius: 12px;
-  padding: 8px 14px;
+  padding: 5px 14px;
   font-size: 14px;
   cursor: pointer;
 }
@@ -141,6 +141,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 14px;
+  flex: 1;
 }
 
 .filter-field label {
@@ -156,6 +157,8 @@
   border: 1px solid #d1d5db;
   font-size: 14px;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .filter-field input::placeholder {
@@ -218,7 +221,6 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-
 .myteam-table th {
   background: #f9fafb;
   font-size: 14px;
@@ -264,19 +266,25 @@
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
-  border: 1px solid;
+  border: 1px solid transparent;
 }
 
 .status-approved {
   color: #16a34a;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
 }
 
 .status-pending {
-  color: #eab308;
+  color: #ca8a04;
+  background: #fefce8;
+  border-color: #fde68a;
 }
 
 .status-rejected {
   color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
 }
 
 /* =========================
@@ -295,6 +303,7 @@
 .view-btn:hover {
   background: #19bde9;
   color: white;
+  border-color: #19bde9;
 }
 
 /* =========================
@@ -310,6 +319,11 @@
   margin-right: 25px;
 }
 
+.page-nav {
+  display: flex;
+  gap: 6px;
+}
+
 .page-btn {
   background: #f1f5f9;
   border: none;
@@ -323,6 +337,12 @@
   color: white;
 }
 
+.showing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .showing select {
   padding: 5px 8px;
   border-radius: 5px;
@@ -332,53 +352,49 @@
 }
 
 /* =========================
-   MODAL OVERLAY & POPUPS
+   MODALS
 ========================= */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.45);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 2000;
 }
 
 .apply-leave-modal {
   background: #fff;
   border-radius: 16px;
   width: 680px;
-  max-width: 90vw;
-  max-height: 85vh;
-  overflow-y: auto;
+  max-width: 95vw;
+  overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  position: relative;
 }
 
 .modal-header-blue {
   background: #12b3e6;
-  color: #fff;
   padding: 16px 24px;
-  border-radius: 16px 16px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modal-header-blue h3 {
+  color: #fff;
   margin: 0;
   font-size: 18px;
+  font-weight: 600;
 }
 
-.modal-header-blue .close-btn {
-  background: none;
+.close-btn {
+  background: transparent;
   border: none;
   color: #fff;
   font-size: 22px;
   cursor: pointer;
+  line-height: 1;
 }
 
 .modal-body {
@@ -387,36 +403,35 @@
 
 .apply-leave-form {
   display: flex;
-  gap: 20px;
+  gap: 24px;
 }
 
 .form-left {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .form-left label {
-  display: block;
-  font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: #374151;
-  margin-top: 12px;
-  margin-bottom: 4px;
+  font-weight: 500;
 }
 
 .form-left input,
 .form-left textarea {
-  width: 100%;
-  padding: 8px 12px;
+  padding: 9px 12px;
+  border-radius: 10px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
   font-size: 14px;
   outline: none;
-  box-sizing: border-box;
+  background: #f9fafb;
 }
 
 .form-left textarea {
-  min-height: 60px;
-  resize: vertical;
+  resize: none;
+  height: 80px;
 }
 
 .date-row {
@@ -429,98 +444,81 @@
 }
 
 .form-right {
+  width: 180px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  max-width: 200px;
 }
 
 .form-right img {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  object-fit: contain;
 }
 
 .modal-actions {
   display: flex;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 10px;
 }
 
-.modal-actions .apply-btn {
-  background: #12b3e6;
-  color: #fff;
+.cancel-btn {
+  background: #fee2e2;
+  color: #dc2626;
   border: none;
-  padding: 8px 24px;
+  padding: 8px 22px;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
 }
 
-.modal-actions .cancel-btn {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 8px 24px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
+.cancel-btn:hover {
+  background: #fecaca;
 }
 
 /* Reason Modal */
 .reason-modal {
   background: #fff;
   border-radius: 16px;
+  padding: 28px;
   width: 420px;
-  max-width: 90vw;
-  padding: 24px;
+  max-width: 95vw;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 }
 
 .reason-modal h3 {
-  margin: 0 0 14px;
   font-size: 18px;
+  font-weight: 600;
   color: #1f2937;
+  margin-bottom: 14px;
 }
 
 .reason-modal textarea {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  height: 120px;
+  padding: 12px;
   border-radius: 10px;
+  border: 1px solid #d1d5db;
   font-size: 14px;
-  min-height: 80px;
-  resize: vertical;
   outline: none;
+  resize: none;
   box-sizing: border-box;
 }
 
 .reason-modal small {
   display: block;
-  text-align: right;
   color: #9ca3af;
   font-size: 12px;
   margin-top: 4px;
-}
-
-.reason-modal .close-btn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #6b7280;
+  margin-bottom: 16px;
 }
 
 /* Success Modal */
 .success-modal {
   background: #fff;
   border-radius: 16px;
+  padding: 40px 28px;
   width: 340px;
-  max-width: 90vw;
-  padding: 32px 24px;
   text-align: center;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
@@ -529,26 +527,25 @@
 .success-modal .close-btn {
   position: absolute;
   top: 14px;
-  right: 14px;
-  background: none;
-  border: none;
+  right: 16px;
+  color: #374151;
   font-size: 20px;
-  cursor: pointer;
-  color: #6b7280;
 }
 
-.success-modal .tick-icon {
-  width: 60px;
-  margin-bottom: 12px;
+.tick-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
 }
 
 .success-modal h2 {
+  font-size: 22px;
+  font-weight: 700;
   color: #16a34a;
-  margin: 0 0 8px;
+  margin-bottom: 8px;
 }
 
 .success-modal p {
+  font-size: 15px;
   color: #374151;
-  font-size: 14px;
-  margin: 0;
 }

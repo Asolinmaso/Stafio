@@ -305,7 +305,7 @@
 }
 
 /* Character count hint */
-.regularization-left textarea + span,
+.regularization-left textarea+span,
 .char-count {
   grid-column: 2;
   font-size: 11px;

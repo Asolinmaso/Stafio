@@ -30,39 +30,16 @@ import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
+const BREAK_SCHEDULES = [
+	{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+	{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+];
+
 const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
 const MEETING_START_HOUR = 9;
 const MEETING_START_MIN = 0;
 const ALERT_BEFORE_MINUTES = 10;
 const BREAK_DURATION_MIN = 15;
-
-// ─── Inline styles ────────────────────────────────────────────────────────────
-const alertStyle = {
-	position: "fixed",
-	top: "50%",
-	left: "50%",
-	transform: "translate(-50%, -50%)",
-	backgroundColor: "#f47c3c",
-	color: "white",
-	padding: "16px 24px",
-	borderRadius: "8px",
-	boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-	fontSize: "16px",
-	display: "flex",
-	alignItems: "center",
-	gap: "10px",
-	zIndex: 9999,
-	width: "30%",
-};
-
-const closeBtnStyle = {
-	background: "transparent",
-	color: "white",
-	border: "none",
-	fontSize: "18px",
-	cursor: "pointer",
-	marginLeft: "10px",
-};
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const formatTime = (date) =>
@@ -77,7 +54,10 @@ const formatTime = (date) =>
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
 const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
 	if (!punchInDate) return "00:00:00";
-	const totalMs = Math.max(0, Date.now() - punchInDate.getTime() - totalBreakMs);
+	const totalMs = Math.max(
+		0,
+		Date.now() - punchInDate.getTime() - totalBreakMs,
+	);
 	const totalSec = Math.floor(totalMs / 1000);
 	const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
 	const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
@@ -107,7 +87,7 @@ const Dashboard = () => {
 
 	// ── Punch state ───────────────────────────────────────────────────────
 	const [isPunchedIn, setIsPunchedIn] = useState(false);
-	const [punchInTime, setPunchInTime] = useState(null);   // Date object
+	const [punchInTime, setPunchInTime] = useState(null); // Date object
 	const [totalHours, setTotalHours] = useState("00:00:00");
 	const [isBreak, setIsBreak] = useState(false);
 	const [activeBreak, setActiveBreak] = useState(null);
@@ -119,11 +99,11 @@ const Dashboard = () => {
 	const [punchError, setPunchError] = useState("");
 
 	// ── Refs ──────────────────────────────────────────────────────────────
-	const timerRef = useRef(null);         // working hours interval
-	const breakTimerRef = useRef(null);    // 15-min break alert timeout
+	const timerRef = useRef(null); // working hours interval
+	const breakTimerRef = useRef(null); // 15-min break alert timeout
 	const breakDropdownRef = useRef(null);
-	const breakStartRef = useRef(null);    // Date when current break started
-	const totalBreakMsRef = useRef(0);     // accumulated break ms this session
+	const breakStartRef = useRef(null); // Date when current break started
+	const totalBreakMsRef = useRef(0); // accumulated break ms this session
 
 	// ── Admin summary ─────────────────────────────────────────────────────
 	const [adminDashboardData, setAdminDashboardData] = useState({
@@ -951,3 +931,30 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+// ─── Inline styles (kept identical to original) ────────────────────────────
+const alertStyle = {
+	position: "fixed",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	backgroundColor: "#f47c3c",
+	color: "white",
+	padding: "16px 24px",
+	borderRadius: "8px",
+	boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+	fontSize: "16px",
+	display: "flex",
+	alignItems: "center",
+	gap: "10px",
+	zIndex: 9999,
+	width: "30%",
+};
+
+const closeBtnStyle = {
+	background: "transparent",
+	color: "white",
+	border: "none",
+	fontSize: "18px",
+	cursor: "pointer",
+	marginLeft: "10px",
+};

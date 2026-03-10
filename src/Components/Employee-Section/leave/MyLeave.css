@@ -1,221 +1,275 @@
-
 .layout {
-  display: flex; /* Sidebar + Page content side by side */
+	display: flex; /* Sidebar + Page content side by side */
 }
 
-.myleave-container {
-  flex: 1;
-  padding: 20px;
-  
-  min-height: 100vh;
+.myleave-container1 {
+	flex: 1;
+	padding: 10px !important;
+	min-height: 100vh;
 }
-
 
 .page-title {
-  font-size: 25px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  margin-top:40px;
-  color:black;
+	font-size: 25px;
+	font-weight: 600;
+	margin-bottom: 20px;
+	margin-top: 40px;
+	color: black;
 }
 
 /* Leave Summary Cards */
 .leave-summary {
-  display:flex;
-  width:50%;
-  gap: 10px;
-  margin-bottom: 20px;
+	display: flex;
+	width: 40% !important;
+	gap: 10px;
+	margin-bottom: 20px;
 }
 
-.summary-card {
-  background: #fff;
-  flex: 1;
-  padding: 20px;
-  border-radius: 1px;
-  box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
-  display: block;
-  align-items: center;
-  gap: 5px;
+.emp-summary-card {
+	background: #ffffff;
+	flex: 1;
+	padding: 10px;
+	border-radius: 1px;
+	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+	display: block;
+	align-items: center;
+	gap: 10px;
 }
 
 .summary-icon {
-  color: #00c853;
-  font-size: 25px;
-  margin-bottom:10px;
+	color: #00c853;
+	font-size: 25px;
+	margin-bottom: 10px;
 }
 
 .leave-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 20px 0 0 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin: 20px 0 0 0;
 }
 
 /* Left summary section */
 .leave-summary {
-  display: flex;
-  gap: 15px;
+	display: flex;
+	gap: 15px;
 }
 
 /* Right actions section */
 .leave-actions {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* pushes filter button to bottom */
-  align-items: flex-end;
-  height: 100%; /* makes it stretch same as summary section */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between; /* pushes filter button to bottom */
+	align-items: flex-end;
+	height: 100%; /* makes it stretch same as summary section */
 }
 
 .leave-actions .top-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 0px;
+	display: flex;
+	flex-direction: row;
+	gap: 0px;
 }
 
 .leave-actions .bottom-button {
-  margin-top: auto; /* pushes filter button to bottom */
+	margin-top: auto; /* pushes filter button to bottom */
 }
 
 .leave-actions button {
-  padding: 8px 16px;
-  margin: 5px 0;
-  border: none;
-  cursor: pointer;
- 
+	padding: 8px 16px;
+	margin: 5px 0;
+	border: none;
+	cursor: pointer;
 }
 
 /* Buttons */
 .leave-actions {
-  margin-top:-30px;
-  display: flex;
-  gap: 50px;
-  margin-bottom: 30px;
+	margin-top: -30px;
+	display: flex;
+	gap: 50px;
+	margin-bottom: 30px;
 }
 
 .btn-apply {
-  background: #00bcd4;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius:15px 0px 0px 15px;
-  font-weight: 500;
-  cursor: pointer;
+	background: #00bcd4;
+	color: #fff;
+	border: none;
+	padding: 10px 18px;
+	border-radius: 15px 0px 0px 15px;
+	font-weight: 500;
+	cursor: pointer;
 }
 
 .btn-regularization {
-  background: #fff;
-  color: #000;
-  border: 1px solid #ddd;
-  padding: 8px 18px;
-  border-radius: 0px 15px 15px 0px;
-  cursor: pointer;
+	background: #fff;
+	color: #000;
+	border: 1px solid #ddd;
+	padding: 8px 18px;
+	border-radius: 0px 15px 15px 0px;
+	cursor: pointer;
 }
 
 .btn-filter {
-  color: #000000ff;
-  font-size: 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background:transparent;
-  border: 1px solid #cececeff !important;
-  border-radius:12px;
+	color: #000000ff;
+	font-size: 15px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	background: transparent;
+	border: 1px solid #cececeff !important;
+	border-radius: 12px;
 }
 
 /* Table */
 .leave-table table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .leave-table th,
 .leave-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
+	padding: 12px;
+	text-align: left;
+	border-bottom: 1px solid #eee;
+	font-size: 14px;
 }
 
 .leave-table th {
-  background: #f9fbfd;
-  font-weight: 600;
-   border-bottom: 2px solid #eee;
-   border-top: 2px solid #eee;
-   height:70px;
-   text-align:center;
+	background: #f9fbfd;
+	font-weight: 600;
+	border-bottom: 2px solid #eee;
+	border-top: 2px solid #eee;
+	height: 70px;
+	text-align: center;
 }
 .leave-table td {
-  height:90px;
-   text-align:center;
-   font-weight:500;
+	height: 90px;
+	text-align: center;
+	font-weight: 500;
 }
 
 .leave-table .status {
-  color: #00c853;
-  font-weight: 500;
-  margin-right: 10px;
+	color: #00c853;
+	font-weight: 500;
+	margin-right: 10px;
 }
 
 .action-icons {
-  align-items: center;
+	align-items: center;
 }
 
 .edit-icon {
-  color: #555555ff;
-  cursor: pointer;
-  margin-right:10px !important;
+	color: #555555ff;
+	cursor: pointer;
+	margin-right: 10px !important;
 }
 .status {
-  display: block;   /* forces new line */
-  margin-top: 4px;  /* adds spacing below the date */
-  color: #00c853;
-  font-weight: 500;
- margin-left:10px;
+	display: block; /* forces new line */
+	margin-top: 4px; /* adds spacing below the date */
+	color: #00c853;
+	font-weight: 500;
+	margin-left: 10px;
 }
 
-
 .delete-icon {
-  color: #ff5252;
-  cursor: pointer;
+	color: #ff5252;
+	cursor: pointer;
 }
 
 /* Pagination */
 .pagination {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+	margin-top: 15px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
 .pagination select {
-  padding: 4px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-   background: #19bde8;
-   color:white;
+	padding: 4px 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	background: #19bde8;
+	color: white;
 }
 
 .page-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 6px;
+	margin-left: auto;
+	display: flex;
+	gap: 6px;
 }
 
 .page-controls button {
-  padding: 4px 10px;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 4px;
-  cursor: pointer;
+	padding: 4px 10px;
+	border: 1px solid #ddd;
+	background: #fff;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
 .page-controls button.active {
-  background: #19bde8;
-  color: #fff;
-  border-color: #00bcd4;
+	background: #19bde8;
+	color: #fff;
+	border-color: #00bcd4;
+}
+
+/* apply leave modal */
+
+.apply-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;   /* important */
+}
+
+
+.apply-modal {
+	width: 800px;
+	/* max-width: 95%; */
+	height: 550px;
+	background: #fff;
+	border-radius: 12px;
+	overflow: hidden;
+	animation: modalFade 0.3s ease;
+	z-index: 10000;
+}
+
+.apply-modal-header {
+	background: #21b6d7;
+	color: white;
+	padding: 14px 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.apply-modal-body {
+	padding: 25px;
+}
+
+.close-btn {
+	border: none;
+	background: none;
+	color: white;
+	font-size: 22px;
+	cursor: pointer;
+}
+
+@keyframes modalFade {
+	from {
+		transform: scale(0.9);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
 }

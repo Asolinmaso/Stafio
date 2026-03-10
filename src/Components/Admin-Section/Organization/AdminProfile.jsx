@@ -76,6 +76,7 @@ const AdminProfile = () => {
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
+  const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [documentsBackup, setDocumentsBackup] = useState(null);
   const [education, setEducation] = useState({
@@ -732,7 +733,7 @@ const AdminProfile = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // validation for previous experience tab                 new
+  // validation for previous experience tab new
 
   const calculateExperienceYears = (startDate, endDate) => {
     if (!startDate || !endDate) return "";
@@ -883,7 +884,7 @@ const AdminProfile = () => {
       <div className="sidebar">
         <AdminSidebar />
       </div>
-      <div className="main-content5 py-4">
+      <div className="main-content5">
         <Topbar />
         <ProfileBanner profileData={profile} />
 
@@ -1079,8 +1080,8 @@ const AdminProfile = () => {
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
                       className={`form-input ${personalErrors.emergencyContactNumber
-                          ? "input-error"
-                          : ""
+                        ? "input-error"
+                        : ""
                         }`}
                       disabled={!isEditingPersonal}
                     />
