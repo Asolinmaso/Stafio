@@ -484,7 +484,7 @@ const EmployeeDashboard = () => {
             </Col>
 
             <Col md={4}>
-               <EmployeeAttendanceCard attendanceData={attendanceData} />
+              <EmployeeAttendanceCard attendanceData={attendanceData} />
             </Col>
           </Row>
 
@@ -517,7 +517,7 @@ const alertStyle = {
   alignItems: "center",
   gap: "10px",
   zIndex: 9999,
-  width:"30%",
+  width: "30%",
 };
 
 const closeBtnStyle = {

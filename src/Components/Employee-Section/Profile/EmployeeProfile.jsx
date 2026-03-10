@@ -76,6 +76,7 @@ const EmployeeProfile = () => {
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
+  const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [education, setEducation] = useState({
     institution: "",
@@ -132,36 +133,36 @@ const EmployeeProfile = () => {
 
 
   // =========== FETCH DATA FROM BACKEND ===========
-  useEffect(() => {
-    const fetchEmployeeProfileData = async () => {
-      try {
-        const userId = 1; // Replace with actual logged-in employee ID
-        const response = await axios.get(
-          `http://127.0.0.1:5001/employee_profile/${userId}`,
-          {
-            headers: {
-              'X-User-Role': 'employee',
-              'X-User-ID': '1'
-            }
+  const fetchEmployeeProfileData = async () => {
+    try {
+      const userId = 1; // Replace with actual logged-in employee ID
+      const response = await axios.get(
+        `http://127.0.0.1:5001/employee_profile/${userId}`,
+        {
+          headers: {
+            'X-User-Role': 'employee',
+            'X-User-ID': '1'
           }
-        );
-
-        // Only update with data from backend, use empty defaults if not provided
-        if (response.data) {
-          setProfile(response.data.profile || initialProfile);
-          setEducation(response.data.education || initialEducation);
-          setExperience(response.data.experience || initialExperience);
-          setBank(response.data.bank || initialBank);
-          setDocuments(response.data.documents || initialDocs);
         }
+      );
 
-        console.log("Employee profile data loaded successfully");
-      } catch (error) {
-        console.error("Error fetching employee profile data:", error);
-        // Keep empty initial state on error
+      // Only update with data from backend, use empty defaults if not provided
+      if (response.data) {
+        setProfile(response.data.profile || initialProfile);
+        setEducation(response.data.education || initialEducation);
+        setExperience(response.data.experience || initialExperience);
+        setBank(response.data.bank || initialBank);
+        setDocuments(response.data.documents || initialDocs);
       }
-    };
 
+      console.log("Employee profile data loaded successfully");
+    } catch (error) {
+      console.error("Error fetching employee profile data:", error);
+      // Keep empty initial state on error
+    }
+  };
+
+  useEffect(() => {
     fetchEmployeeProfileData();
   }, []);
 
@@ -301,8 +302,14 @@ const EmployeeProfile = () => {
 
 
 
-  const handleDocDelete = idx =>
+  const handleDocDelete = idx => {
+    const docToDelete = documents[idx];
+    if (docToDelete.id) {
+      alert("Submitted documents cannot be deleted from here. Please contact HR if you need to remove them.");
+      return;
+    }
     setDocuments(prev => prev.filter((_, didx) => didx !== idx));
+  };
 
 
 
@@ -314,15 +321,24 @@ const EmployeeProfile = () => {
   };
 
   //save handle button for personal info
-  const handleSavePersonal = () => {
+  const handleSavePersonal = async () => {
     const isValid = validatePersonalInfo();
-
     if (!isValid) return;
 
-    setPersonalBackup(profile); // keep latest saved state
-    setIsEditingPersonal(false);
-    setPersonalErrors({});
-    alert("Profile updated successfully!");
+    try {
+      const userId = 1; // Replace with actual logged-in ID
+      await axios.put(`http://127.0.0.1:5001/api/employee_profile/${userId}`, {
+        profile: profile
+      });
+      setPersonalBackup(profile);
+      setIsEditingPersonal(false);
+      setPersonalErrors({});
+      alert("Profile updated successfully!");
+      fetchEmployeeProfileData(); // Refresh UI
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile.");
+    }
   };
 
   //cancel handle button for personal info
@@ -340,14 +356,24 @@ const EmployeeProfile = () => {
     setIsEditingEducation(true);
   };
 
-  const handleSaveEducation = () => {
-
+  const handleSaveEducation = async () => {
     if (!validateEducation()) return;
-    setIsEditingEducation(false);
-    setEducationErrors({});
-    setSavedEducation(education);
-    setEducationBackup(null)
-    alert("Education Qualification updated successfully.");
+
+    try {
+      const userId = 1; // Replace with actual logged-in ID
+      await axios.put(`http://127.0.0.1:5001/api/employee_profile/${userId}`, {
+        education: education
+      });
+      setIsEditingEducation(false);
+      setEducationErrors({});
+      setSavedEducation(education);
+      setEducationBackup(null);
+      alert("Education Qualification updated successfully.");
+      fetchEmployeeProfileData(); // Refresh UI
+    } catch (error) {
+      console.error("Error updating education:", error);
+      alert("Failed to update education.");
+    }
   };
 
   const handleCancelEducation = () => {
@@ -372,24 +398,45 @@ const EmployeeProfile = () => {
   };
 
   //handleSaveExperience
-  const handleSaveExperience = () => {
+  const handleSaveExperience = async () => {
     if (!validateExperience()) return;
-    setIsEditingExperience(false);
-    setExperienceErrors({});
-    setExperienceBackup(null);
-    alert("Experience updated!");
+
+    try {
+      const userId = 1; // Replace with actual logged-in ID
+      await axios.put(`http://127.0.0.1:5001/api/employee_profile/${userId}`, {
+        experience: experience
+      });
+      setIsEditingExperience(false);
+      setExperienceErrors({});
+      setExperienceBackup(null);
+      alert("Experience updated!");
+      fetchEmployeeProfileData(); // Refresh UI
+    } catch (error) {
+      console.error("Error updating experience:", error);
+      alert("Failed to update experience.");
+    }
   };
 
 
   // handleSaveBank Save button logic
 
-  const handleSaveBank = () => {
+  const handleSaveBank = async () => {
     const isValid = validateBankForm();
     if (!isValid) return;
 
-    setSavedBank(bank);
-    setIsEditingBank(false);
-    alert("Bank details updated!");
+    try {
+      const userId = 1; // Replace with actual logged-in ID
+      await axios.put(`http://127.0.0.1:5001/api/employee_profile/${userId}`, {
+        bank: bank
+      });
+      setSavedBank(bank);
+      setIsEditingBank(false);
+      alert("Bank details updated!");
+      fetchEmployeeProfileData(); // Refresh UI
+    } catch (error) {
+      console.error("Error updating bank details:", error);
+      alert("Failed to update bank details.");
+    }
   };
 
   const handleCancelBank = () => {
@@ -407,7 +454,41 @@ const EmployeeProfile = () => {
   };
 
 
-  const handleSaveDocs = () => { setIsEditingDocs(false); alert('Documents updated!'); };
+  const handleSaveDocs = async () => {
+    try {
+      const userId = 1; // Replace with actual logged-in ID
+
+      // Filter out only new documents (those that don't have an 'id')
+      // and send them to the backend
+      const newDocs = documents.filter(doc => !doc.id);
+
+      for (const doc of newDocs) {
+        await axios.post(`http://127.0.0.1:5001/api/documents`, {
+          user_id: userId,
+          document_type: "Employee Document",
+          file_name: doc.name || doc.fileName,
+          file_size: parseInt(doc.size) * 1024,
+          mime_type: "application/pdf",
+          description: "Uploaded from profile"
+        });
+      }
+
+      setIsEditingDocs(false);
+      alert('Documents updated!');
+      fetchEmployeeProfileData(); // Refresh UI
+    } catch (error) {
+      console.error("Error updating documents:", error);
+      alert("Failed to update documents.");
+    }
+  };
+
+  const handleCancelDocs = () => {
+    if (docsBackup !== null) {
+      setDocuments(docsBackup);
+    }
+    setDocsBackup(null);
+    setIsEditingDocs(false);
+  };
 
   // const handleCancelBank = () => {
   //   setBank(savedBank);      // restore last saved data
@@ -708,781 +789,803 @@ const EmployeeProfile = () => {
 
   // =========== RENDER ===========
   return (
-    <div className="d-flex">
+    <div className="dashboard-wrapper d-flex">
       <div className="sidebar">
         <EmployeeSidebar />
       </div>
-      <div className="main-content py-4">
+      <div className="main-content flex-grow-1">
         <Topbar />
-        <ProfileBanner />
+        <div className="container-fluid p-4">
+          <ProfileBanner />
 
-        {/* ------ Outer Card REMOVED! Tabs sit on main-content directly ---- */}
-        <Tab.Container
-          activeKey={activeTab}
-          onSelect={k => setActiveTab(k)}
-          defaultActiveKey="personal"
-        >
-          <Nav variant="tabs" className="profile-tabs">
-            <Nav.Item><Nav.Link eventKey="personal">Personal Information</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="education">Education Qualification</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="experience">Previous Experience (if any)</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="bank">Bank Details</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="documents">Documents</Nav.Link></Nav.Item>
-          </Nav>
-          <Tab.Content>
+          {/* ------ Outer Card REMOVED! Tabs sit on main-content directly ---- */}
+          <Tab.Container
+            activeKey={activeTab}
+            onSelect={(k) => setActiveTab(k)}
+            defaultActiveKey="personal"
+          >
+            <Nav variant="tabs" className="profile-tabs">
+              <Nav.Item>
+                <Nav.Link eventKey="personal">Personal Information</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="education">Education Qualification</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="experience">
+                  Previous Experience (if any)
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="bank">Bank Details</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="documents">Documents</Nav.Link>
+              </Nav.Item>
+            </Nav>
+            <Tab.Content>
+              {/* Rest of the Tab.Content remains the same */}
 
-            {/* PERSONAL INFORMATION */}
-            <Tab.Pane eventKey="personal">
-              <div className="update-info-header-box">
-                <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
-                  <span>Update Personal Information</span>
-                  {!isEditingPersonal ? (
-                    <Button className="btn-edit" onClick={handleEditPersonal}>Edit</Button>
-                  ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelPersonal}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSavePersonal}>Save</Button>
-                    </div>
-                  )}
+              {/* PERSONAL INFORMATION */}
+              <Tab.Pane eventKey="personal">
+                <div className="update-info-header-box">
+                  <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
+                    <span>Update Personal Information</span>
+                    {!isEditingPersonal ? (
+                      <Button className="btn-edit" onClick={handleEditPersonal}>Edit</Button>
+                    ) : (
+                      <div style={{ minWidth: 180, textAlign: 'right' }}>
+                        <Button className="btn-cancel" onClick={handleCancelPersonal}>Cancel</Button>
+                        <Button className="btn-save" onClick={handleSavePersonal}>Save</Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <Form className="personal-info-form">
-                <Row className="gy-4">
-                  <Col md={6}>
-                    <Form.Label className="form-label">Gender</Form.Label>
-                    <div className="option-box">
-                      <div className="d-flex gap-4 align-items-center">
-                        {["Male", "Female"].map((g) => (
-                          <Form.Check
-                            key={g}
-                            type="radio"
-                            disabled={!isEditingPersonal}
-                            label={g}
-                            name="gender"
-                            value={g}
-                            checked={profile.gender === g}
-                            onChange={handleProfileChange}
-                            className="form-radio"
-                          />
-                        ))}
+                <Form className="personal-info-form">
+                  <Row className="gy-4">
+                    <Col md={6}>
+                      <Form.Label className="form-label">Gender</Form.Label>
+                      <div className="option-box">
+                        <div className="d-flex gap-4 align-items-center">
+                          {["Male", "Female"].map((g) => (
+                            <Form.Check
+                              key={g}
+                              type="radio"
+                              disabled={!isEditingPersonal}
+                              label={g}
+                              name="gender"
+                              value={g}
+                              checked={profile.gender === g}
+                              onChange={handleProfileChange}
+                              className="form-radio"
+                            />
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    {/* new */}
-                    {personalErrors.gender && (
-                      <div className="error-text mt-1">{personalErrors.gender}</div>
-                    )}
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Marital Status</Form.Label>
-                    <div className="option-box">
-                      <div className="d-flex gap-4 align-items-center">
-                        {["Single", "Married"].map((m) => (
-                          <Form.Check
-                            key={m}
-                            type="radio"
-                            disabled={!isEditingPersonal}
-                            label={m}
-                            name="maritalStatus"
-                            value={m}
-                            checked={profile.maritalStatus === m}
-                            onChange={handleProfileChange}
-                            className="form-radio"
-                          />
-                        ))}
+                      {/* new */}
+                      {personalErrors.gender && (
+                        <div className="error-text mt-1">{personalErrors.gender}</div>
+                      )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Marital Status</Form.Label>
+                      <div className="option-box">
+                        <div className="d-flex gap-4 align-items-center">
+                          {["Single", "Married"].map((m) => (
+                            <Form.Check
+                              key={m}
+                              type="radio"
+                              disabled={!isEditingPersonal}
+                              label={m}
+                              name="maritalStatus"
+                              value={m}
+                              checked={profile.maritalStatus === m}
+                              onChange={handleProfileChange}
+                              className="form-radio"
+                            />
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    {/* new */}
-                    {personalErrors.maritalStatus && (
-                      <div className="error-text mt-1">{personalErrors.maritalStatus}</div>
-                    )}
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Date Of Birth</Form.Label>
-                    <div className="input-icon-wrap">
-                      <Form.Control
-                        type="date"
-                        name="dob"
-                        value={profile.dob}
+                      {/* new */}
+                      {personalErrors.maritalStatus && (
+                        <div className="error-text mt-1">{personalErrors.maritalStatus}</div>
+                      )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Date Of Birth</Form.Label>
+                      <div className="input-icon-wrap">
+                        <Form.Control
+                          type="date"
+                          name="dob"
+                          value={profile.dob}
+                          onChange={handleProfileChange}
+                          className={`form-input ${personalErrors.dob ? "input-error" : ""
+                            }`}
+                          disabled={!isEditingPersonal}
+                        />
+                        <span className="input-calendar-icon">
+                          <i className="bi bi-calendar3" />
+                        </span>
+                      </div>
+                      {/* new */}
+                      {personalErrors.dob && (
+                        <div className="error-text">{personalErrors.dob}</div>
+                      )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Nationality</Form.Label>
+                      <Form.Select
+
+                        name="nationality"
+                        value={profile.nationality}
                         onChange={handleProfileChange}
-                        className={`form-input ${personalErrors.dob ? "input-error" : ""
+                        className={`form-select ${personalErrors.nationality ? "input-error" : ""
+                          }`}
+                        disabled={!isEditingPersonal}
+                      >
+                        <option value="" disabled>Select Your Nationality</option>
+                        <option value="India">India</option>
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="Germany">Germany</option>
+
+                      </Form.Select>
+                      {/* new */}
+                      {personalErrors.nationality && (
+                        <div className="error-text">{personalErrors.nationality}</div>
+                      )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Blood Group</Form.Label>
+                      <Form.Select
+
+                        name="bloodGroup"
+                        value={profile.bloodGroup}
+                        onChange={handleProfileChange}
+                        className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
+                          }`}
+                        disabled={!isEditingPersonal}
+                      >
+                        <option value="" disabled>Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+
+                      </Form.Select>
+                      {/* new */}
+                      {personalErrors.bloodGroup && (
+                        <div className="error-text">{personalErrors.bloodGroup}</div>
+                      )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Emergency Contact Number</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="emergencyContactNumber"
+                        value={profile.emergencyContactNumber}
+                        onChange={handleProfileChange}
+                        placeholder="Contact Number"
+                        className={`form-input ${personalErrors.emergencyContactNumber ? "input-error" : ""
                           }`}
                         disabled={!isEditingPersonal}
                       />
-                      <span className="input-calendar-icon">
-                        <i className="bi bi-calendar3" />
-                      </span>
-                    </div>
-                    {/* new */}
-                    {personalErrors.dob && (
-                      <div className="error-text">{personalErrors.dob}</div>
-                    )}
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Nationality</Form.Label>
-                    <Form.Select
-
-                      name="nationality"
-                      value={profile.nationality}
-                      onChange={handleProfileChange}
-                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
-                        }`}
-                      disabled={!isEditingPersonal}
-                    >
-                      <option value="" disabled>Select Your Nationality</option>
-                      <option value="India">India</option>
-                      <option value="Sri Lanka">Sri Lanka</option>
-                      <option value="Germany">Germany</option>
-
-                    </Form.Select>
-                    {/* new */}
-                    {personalErrors.nationality && (
-                      <div className="error-text">{personalErrors.nationality}</div>
-                    )}
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Blood Group</Form.Label>
-                    <Form.Select
-
-                      name="bloodGroup"
-                      value={profile.bloodGroup}
-                      onChange={handleProfileChange}
-                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
-                        }`}
-                      disabled={!isEditingPersonal}
-                    >
-                      <option value="" disabled>Select Blood Group</option>
-                      <option value="A+">A+</option>
-                      <option value="A-">A-</option>
-                      <option value="B+">B+</option>
-                      <option value="B-">B-</option>
-                      <option value="AB+">AB+</option>
-                      <option value="AB-">AB-</option>
-                      <option value="O+">O+</option>
-                      <option value="O-">O-</option>
-
-                    </Form.Select>
-                    {/* new */}
-                    {personalErrors.bloodGroup && (
-                      <div className="error-text">{personalErrors.bloodGroup}</div>
-                    )}
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Emergency Contact Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="emergencyContactNumber"
-                      value={profile.emergencyContactNumber}
-                      onChange={handleProfileChange}
-                      placeholder="Contact Number"
-                      className={`form-input ${personalErrors.emergencyContactNumber ? "input-error" : ""
-                        }`}
-                      disabled={!isEditingPersonal}
-                    />
-                    {personalErrors.emergencyContactNumber && (
-                      <div className="error-text">
-                        {personalErrors.emergencyContactNumber}
-                      </div>
-                    )}
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Address</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="address"
-                      value={profile.address}
-                      onChange={handleProfileChange}
-                      placeholder="Home Address"
-                      className={`form-input ${personalErrors.address ? "input-error" : ""}`}
-                      disabled={!isEditingPersonal}
-                    />
-                    {personalErrors.address && (
-                      <div className="error-text">{personalErrors.address}</div>
-                    )}
-
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="form-label">Relationship with Emergency Contact</Form.Label>
-                    <Form.Select
-                      // type="text"
-                      name="relationship"
-                      value={profile.relationship}
-                      onChange={handleProfileChange}
-                      placeholder="Emergency Contact Person"
-                      className={`form-input ${personalErrors.relationship ? "input-error" : ""}`}
-                      disabled={!isEditingPersonal}
-                    >
-                      <option value="" disabled>Select Relation contact</option>
-                      <option value="Husband">Husband</option>
-                      <option value="Wife">Wife</option>
-                      <option value="Father">Father</option>
-                      <option value="Mother">Mother</option>
-                    </Form.Select>
-                    {/* new */}
-                    {personalErrors.relationship && (
-                      <div className="error-text">{personalErrors.relationship}</div>
-                    )}
-
-                  </Col>
-                </Row>
-              </Form>
-            </Tab.Pane>
-
-            {/* EDUCATION TAB */}
-            <Tab.Pane eventKey="education">
-              <div className="update-info-header-box">
-                <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
-                  <span>Update Educational Qualification</span>
-                  {!isEditingEducation ? (
-                    <Button className="btn-edit" onClick={handleEditEducation}>Edit</Button>
-                  ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelEducation}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveEducation}>Save</Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="profile-tab-section education">
-                <Form>
-                  <Row className="gy-4">
-                    <Col md={6}>
-                      {educationErrors.form && (
-                        <div className="error-text mb-3">
-                          {educationErrors.form}
+                      {personalErrors.emergencyContactNumber && (
+                        <div className="error-text">
+                          {personalErrors.emergencyContactNumber}
                         </div>
                       )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Address</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="address"
+                        value={profile.address}
+                        onChange={handleProfileChange}
+                        placeholder="Home Address"
+                        className={`form-input ${personalErrors.address ? "input-error" : ""}`}
+                        disabled={!isEditingPersonal}
+                      />
+                      {personalErrors.address && (
+                        <div className="error-text">{personalErrors.address}</div>
+                      )}
 
-                      <Form.Group>
-                        <Form.Label className="form-label">Name Of the Institution</Form.Label>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Relationship with Emergency Contact</Form.Label>
+                      <Form.Select
+                        // type="text"
+                        name="relationship"
+                        value={profile.relationship}
+                        onChange={handleProfileChange}
+                        placeholder="Emergency Contact Person"
+                        className={`form-input ${personalErrors.relationship ? "input-error" : ""}`}
+                        disabled={!isEditingPersonal}
+                      >
+                        <option value="" disabled>Select Relation contact</option>
+                        <option value="Husband">Husband</option>
+                        <option value="Wife">Wife</option>
+                        <option value="Father">Father</option>
+                        <option value="Mother">Mother</option>
+                      </Form.Select>
+                      {/* new */}
+                      {personalErrors.relationship && (
+                        <div className="error-text">{personalErrors.relationship}</div>
+                      )}
+
+                    </Col>
+                  </Row>
+                </Form>
+              </Tab.Pane>
+
+              {/* EDUCATION TAB */}
+              <Tab.Pane eventKey="education">
+                <div className="update-info-header-box">
+                  <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
+                    <span>Update Educational Qualification</span>
+                    {!isEditingEducation ? (
+                      <Button className="btn-edit" onClick={handleEditEducation}>Edit</Button>
+                    ) : (
+                      <div style={{ minWidth: 180, textAlign: 'right' }}>
+                        <Button className="btn-cancel" onClick={handleCancelEducation}>Cancel</Button>
+                        <Button className="btn-save" onClick={handleSaveEducation}>Save</Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="profile-tab-section education">
+                  <Form>
+                    <Row className="gy-4">
+                      <Col md={6}>
+                        {educationErrors.form && (
+                          <div className="error-text mb-3">
+                            {educationErrors.form}
+                          </div>
+                        )}
+
+                        <Form.Group>
+                          <Form.Label className="form-label">Name Of the Institution</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="institution"
+                            value={education.institution}
+                            onChange={handleEducationChange}
+                            placeholder="Institution Name"
+                            className={`edform-input ${educationErrors.institution ? "input-error1" : ""}`}
+                            disabled={!isEditingEducation}
+                          />
+                          {/* new */}
+                          {educationErrors.institution && (
+                            <div className="error-text1">{educationErrors.institution}</div>
+                          )}
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label className="form-label">Start Date</Form.Label>
+                          <div className="calendar-input-wrap">
+                            <Form.Control
+                              type="date"
+                              name="startDate"
+                              value={education.startDate}
+                              onChange={handleEducationChange}
+                              className={`edform-input ${educationErrors.startDate ? "input-error1" : ""}`}
+                              disabled={!isEditingEducation}
+                            />
+                            {/* new */}
+                            {educationErrors.startDate && (
+                              <div className="error-text1">{educationErrors.startDate}</div>
+                            )}
+                            <span className="calendar-icon">
+                              <i className="bi bi-calendar3"></i>
+                            </span>
+                          </div>
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label className="form-label">Qualification</Form.Label>
+                          <Form.Select
+
+                            name="qualification"
+                            value={education.qualification}
+                            onChange={handleEducationChange}
+                            placeholder="Qualification"
+                            className={`edform-input ${educationErrors.qualification ? "input-error1" : ""}`}
+                            disabled={!isEditingEducation}
+                          >
+                            <option value="" disabled>Education Qualification</option>
+                            <option value="BE">BE</option>
+                            <option value="BSC">B.SC(computer science)</option>
+                            <option value="BCOM">B.COM(computer science)</option>
+                          </Form.Select>
+                          {/* new */}
+                          {educationErrors.qualification && (
+                            <div className="error-text1">{educationErrors.qualification}</div>
+                          )}
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label className="form-label">Skills</Form.Label>
+
+                          {/* Skill Input + Add Button */}
+                          <div className="skill-input-wrap">
+                            <Form.Control
+                              type="text"
+                              placeholder="Add a skill"
+                              value={skillInput}
+                              onChange={handleSkillInputChange}
+                              onKeyDown={handleSkillKeyDown}
+                              className="skill-input"
+                            />
+                            <button
+                              type="button"
+                              className="skill-add-btn"
+                              onClick={addSkill}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <div className="skills-pill-wrap">
+                            {education.skills.map((skill, i) => (
+                              <span className="skill-pill" key={i}>{skill}
+                                <span
+                                  className="skill-remove"
+                                  onClick={() => removeSkill(i)}
+                                >
+                                  ×
+                                </span>
+                              </span>
+                            ))}
+                          </div>                       { /* new */}
+                          {educationErrors.skills && (
+                            <div className="error-text">{educationErrors.skills}</div>
+                          )}
+
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="form-label">Location</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="location"
+                            value={education.location}
+                            onChange={handleEducationChange}
+                            placeholder="Location"
+                            className={`edform-input ${educationErrors.location ? "input-error1" : ""}`}
+                            disabled={!isEditingEducation}
+                          />
+                          {/* new */}
+                          {educationErrors.location && (
+                            <div className="error-text1">{educationErrors.location}</div>
+                          )}
+                        </Form.Group>
+
+                        <Form.Group>
+                          <Form.Label className="form-label">End Date</Form.Label>
+                          <div className="calendar-input-wrap">
+                            <Form.Control
+                              type="date"
+                              name="endDate"
+                              value={education.endDate}
+                              onChange={handleEducationChange}
+                              className={`edform-input ${educationErrors.endDate ? "input-error1" : ""}`}
+                              disabled={!isEditingEducation}
+                            />
+                            {educationErrors.endDate && (
+                              <div className="error-text1">{educationErrors.endDate}</div>
+                            )}
+                            <span className="calendar-icon">
+                              <i className="bi bi-calendar3"></i>
+                            </span>
+                          </div>
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label className="form-label">Specialization</Form.Label>
+                          <Form.Select
+
+                            name="specialization"
+                            value={education.specialization}
+                            onChange={handleEducationChange}
+                            placeholder="Specialization"
+                            className={`edform-input ${educationErrors.specialization ? "input-error1" : ""}`}
+                            disabled={!isEditingEducation}
+                          >
+                            <option value="" disabled>Specialization</option>
+                            <option value="Cloud-computing">Cloud computing</option>
+                            <option value="Data-Science">Data Science</option>
+                            <option value="Cyber-Security">Cyber Security</option>
+                          </Form.Select>
+                          {/* new */}
+                          {educationErrors.specialization && (
+                            <div className="error-text1">{educationErrors.specialization}</div>
+                          )}
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label className="form-label">Portfolio Link</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="portfolio"
+                            value={education.portfolio}
+                            onChange={handleEducationChange}
+                            placeholder="Portfolio Link"
+                            className={`edform-input ${educationErrors.portfolio ? "input-error1" : ""}`}
+                            disabled={!isEditingEducation}
+                          />
+                          {educationErrors.portfolio && (
+                            <div className="error-text1">{educationErrors.portfolio}</div>
+                          )}
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Form>
+                </div>
+              </Tab.Pane>
+
+              {/* EXPERIENCE TAB */}
+              <Tab.Pane eventKey="experience">
+                <div className="update-info-header-box">
+                  <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
+                    <span>Update Previous Experience (if any)</span>
+                    {!isEditingExperience ? (
+                      <Button className="btn-edit" onClick={handleEditExperience}>Edit</Button>
+                    ) : (
+                      <div style={{ minWidth: 180, textAlign: 'right' }}>
+                        <Button className="btn-cancel" onClick={handleCancelExperience}>Cancel</Button>
+                        <Button className="btn-save" onClick={handleSaveExperience}>Save</Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="profile-tab-section experience">
+                  <Form>
+                    <Row className="gy-4">
+                      <Col md={6}><Form.Label>Name Of the Company</Form.Label>
                         <Form.Control
                           type="text"
-                          name="institution"
-                          value={education.institution}
-                          onChange={handleEducationChange}
-                          placeholder="Institution Name"
-                          className={`edform-input ${educationErrors.institution ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
+                          name="company"
+                          value={experience.company}
+                          onChange={handleExperienceChange}
+                          placeholder="Company Name"
+                          className={`pexform-input ${experienceErrors.company ? "input-error1" : ""}`}
+                          disabled={!isEditingExperience}
                         />
-                        {/* new */}
-                        {educationErrors.institution && (
-                          <div className="error-text1">{educationErrors.institution}</div>
+                        {experienceErrors.company && (
+                          <div className="error-text1">{experienceErrors.company}</div>
                         )}
-                      </Form.Group>
-                      <Form.Group>
                         <Form.Label className="form-label">Start Date</Form.Label>
                         <div className="calendar-input-wrap">
                           <Form.Control
                             type="date"
                             name="startDate"
-                            value={education.startDate}
-                            onChange={handleEducationChange}
-                            className={`edform-input ${educationErrors.startDate ? "input-error1" : ""}`}
-                            disabled={!isEditingEducation}
+                            value={experience.startDate}
+                            onChange={handleExperienceChange}
+                            className={`pexform-input ${experienceErrors.startDate ? "input-error1" : ""}`}
+                            disabled={!isEditingExperience}
                           />
-                          {/* new */}
-                          {educationErrors.startDate && (
-                            <div className="error-text1">{educationErrors.startDate}</div>
+                          {experienceErrors.startDate && (
+                            <div className="error-text1">{experienceErrors.startDate}</div>
                           )}
                           <span className="calendar-icon">
                             <i className="bi bi-calendar3"></i>
                           </span>
                         </div>
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label className="form-label">Qualification</Form.Label>
-                        <Form.Select
-
-                          name="qualification"
-                          value={education.qualification}
-                          onChange={handleEducationChange}
-                          placeholder="Qualification"
-                          className={`edform-input ${educationErrors.qualification ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
-                        >
-                          <option value="" disabled>Education Qualification</option>
-                          <option value="BE">BE</option>
-                          <option value="BSC">B.SC(computer science)</option>
-                          <option value="BCOM">B.COM(computer science)</option>
-                        </Form.Select>
-                        {/* new */}
-                        {educationErrors.qualification && (
-                          <div className="error-text1">{educationErrors.qualification}</div>
+                        <Form.Label>Job Responsibilities</Form.Label>
+                        <Form.Control as="textarea"
+                          name="responsibilities"
+                          value={experience.responsibilities}
+                          onChange={handleExperienceChange}
+                          placeholder="Describe your job responsibilities"
+                          className={`pexform-input2 ${experienceErrors.responsibilities ? "input-error" : ""}`}
+                          disabled={!isEditingExperience}
+                        />
+                        {experienceErrors.responsibilities && (
+                          <div className="error-text">{experienceErrors.responsibilities}</div>
                         )}
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label className="form-label">Skills</Form.Label>
-
-                        {/* Skill Input + Add Button */}
-                        <div className="skill-input-wrap">
-                          <Form.Control
-                            type="text"
-                            placeholder="Add a skill"
-                            value={skillInput}
-                            onChange={handleSkillInputChange}
-                            onKeyDown={handleSkillKeyDown}
-                            className="skill-input"
-                          />
-                          <button
-                            type="button"
-                            className="skill-add-btn"
-                            onClick={addSkill}
-                          >
-                            +
-                          </button>
-                        </div>
-                        <div className="skills-pill-wrap">
-                          {education.skills.map((skill, i) => (
-                            <span className="skill-pill" key={i}>{skill}
-                              <span
-                                className="skill-remove"
-                                onClick={() => removeSkill(i)}
-                              >
-                                ×
-                              </span>
-                            </span>
-                          ))}
-                        </div>                       { /* new */}
-                        {educationErrors.skills && (
-                          <div className="error-text">{educationErrors.skills}</div>
-                        )}
-
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label className="form-label">Location</Form.Label>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Label>Job Title / Designation</Form.Label>
                         <Form.Control
                           type="text"
-                          name="location"
-                          value={education.location}
-                          onChange={handleEducationChange}
-                          placeholder="Location"
-                          className={`edform-input ${educationErrors.location ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
+                          name="jobTitle"
+                          value={experience.jobTitle}
+                          onChange={handleExperienceChange}
+                          placeholder="Job Title"
+                          className={`pexform-input1 ${experienceErrors.jobTitle ? "input-error1" : ""}`}
+                          disabled={!isEditingExperience}
                         />
-                        {/* new */}
-                        {educationErrors.location && (
-                          <div className="error-text1">{educationErrors.location}</div>
+                        {experienceErrors.jobTitle && (
+                          <div className="error-text1">{experienceErrors.jobTitle}</div>
                         )}
-                      </Form.Group>
-
-                      <Form.Group>
                         <Form.Label className="form-label">End Date</Form.Label>
                         <div className="calendar-input-wrap">
                           <Form.Control
                             type="date"
                             name="endDate"
-                            value={education.endDate}
-                            onChange={handleEducationChange}
-                            className={`edform-input ${educationErrors.endDate ? "input-error1" : ""}`}
-                            disabled={!isEditingEducation}
+                            value={experience.endDate}
+                            onChange={handleExperienceChange}
+                            className={`pexform-input ${experienceErrors.endDate ? "input-error1" : ""}`}
+                            disabled={!isEditingExperience}
                           />
-                          {educationErrors.endDate && (
-                            <div className="error-text1">{educationErrors.endDate}</div>
+                          {experienceErrors.endDate && (
+                            <div className="error-text1">{experienceErrors.endDate}</div>
                           )}
                           <span className="calendar-icon">
                             <i className="bi bi-calendar3"></i>
-                          </span>
-                        </div>
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label className="form-label">Specialization</Form.Label>
-                        <Form.Select
-
-                          name="specialization"
-                          value={education.specialization}
-                          onChange={handleEducationChange}
-                          placeholder="Specialization"
-                          className={`edform-input ${educationErrors.specialization ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
-                        >
-                          <option value="" disabled>Specialization</option>
-                          <option value="Cloud-computing">Cloud computing</option>
-                          <option value="Data-Science">Data Science</option>
-                          <option value="Cyber-Security">Cyber Security</option>
-                        </Form.Select>
-                        {/* new */}
-                        {educationErrors.specialization && (
-                          <div className="error-text1">{educationErrors.specialization}</div>
+                          </span> </div>
+                        <Form.Label>Total Years Of Experience</Form.Label>
+                        <Form.Control
+                          type="number"
+                          step="0.1"
+                          name="totalYears"
+                          value={experience.totalYears}
+                          onChange={handleExperienceChange}
+                          placeholder="Experience in Years"
+                          className={`pexform-input ${experienceErrors.totalYears ? "input-error1" : ""}`}
+                          disabled={!isEditingExperience}
+                        />
+                        {experienceErrors.totalYears && (
+                          <div className="error-text1">{experienceErrors.totalYears}</div>
                         )}
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label className="form-label">Portfolio Link</Form.Label>
+                      </Col>
+                    </Row>
+                  </Form>
+                </div>
+              </Tab.Pane>
+
+              {/* BANK DETAILS TAB */}
+              <Tab.Pane eventKey="bank">
+                <div className="update-info-header-box">
+                  <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
+                    <span>Update Bank Details</span>
+                    {!isEditingBank ? (
+                      <Button className="btn-edit" onClick={() => setIsEditingBank(true)}>Edit</Button>
+                    ) : (
+                      <div style={{ minWidth: 180, textAlign: 'right' }}>
+                        <Button className="btn-cancel" onClick={handleCancelBank} >Cancel</Button>
+                        <Button className="btn-save" onClick={handleSaveBank}>Save</Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="profile-tab-section bank-details">
+                  <Form>
+                    <Row className="gy-4">
+                      <Col md={6}><Form.Label>Bank Name</Form.Label>
                         <Form.Control
                           type="text"
-                          name="portfolio"
-                          value={education.portfolio}
-                          onChange={handleEducationChange}
-                          placeholder="Portfolio Link"
-                          className={`edform-input ${educationErrors.portfolio ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
+                          name="bankName"
+                          value={bank.bankName}
+                          onChange={handleBankChange}
+                          placeholder="Name of the Bank"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.bankName ? "input-error" : ""}`}
                         />
-                        {educationErrors.portfolio && (
-                          <div className="error-text1">{educationErrors.portfolio}</div>
+                        {errors.bankName && (
+                          <div className="error-text">{errors.bankName}</div>
                         )}
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Form>
-              </div>
-            </Tab.Pane>
-
-            {/* EXPERIENCE TAB */}
-            <Tab.Pane eventKey="experience">
-              <div className="update-info-header-box">
-                <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
-                  <span>Update Previous Experience (if any)</span>
-                  {!isEditingExperience ? (
-                    <Button className="btn-edit" onClick={handleEditExperience}>Edit</Button>
-                  ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelExperience}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveExperience}>Save</Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="profile-tab-section experience">
-                <Form>
-                  <Row className="gy-4">
-                    <Col md={6}><Form.Label>Name Of the Company</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="company"
-                        value={experience.company}
-                        onChange={handleExperienceChange}
-                        placeholder="Company Name"
-                        className={`pexform-input ${experienceErrors.company ? "input-error1" : ""}`}
-                        disabled={!isEditingExperience}
-                      />
-                      {experienceErrors.company && (
-                        <div className="error-text1">{experienceErrors.company}</div>
-                      )}
-                      <Form.Label className="form-label">Start Date</Form.Label>
-                      <div className="calendar-input-wrap">
+                      </Col>
+                      <Col md={6}>
+                        <Form.Label>Branch</Form.Label>
                         <Form.Control
-                          type="date"
-                          name="startDate"
-                          value={experience.startDate}
-                          onChange={handleExperienceChange}
-                          className={`pexform-input ${experienceErrors.startDate ? "input-error1" : ""}`}
-                          disabled={!isEditingExperience}
+                          type="text"
+                          name="branch"
+                          value={bank.branch}
+                          onChange={handleBankChange}
+                          placeholder="Name of the Branch"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.branch ? "input-error" : ""}`}
                         />
-                        {experienceErrors.startDate && (
-                          <div className="error-text1">{experienceErrors.startDate}</div>
+                        {errors.branch && (
+                          <div className="error-text">{errors.branch}</div>
                         )}
-                        <span className="calendar-icon">
-                          <i className="bi bi-calendar3"></i>
-                        </span>
-                      </div>
-                      <Form.Label>Job Responsibilities</Form.Label>
-                      <Form.Control as="textarea"
-                        name="responsibilities"
-                        value={experience.responsibilities}
-                        onChange={handleExperienceChange}
-                        placeholder="Describe your job responsibilities"
-                        className={`pexform-input2 ${experienceErrors.responsibilities ? "input-error" : ""}`}
-                        disabled={!isEditingExperience}
-                      />
-                      {experienceErrors.responsibilities && (
-                        <div className="error-text">{experienceErrors.responsibilities}</div>
-                      )}
-                    </Col>
-                    <Col md={6}>
-                      <Form.Label>Job Title / Designation</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="jobTitle"
-                        value={experience.jobTitle}
-                        onChange={handleExperienceChange}
-                        placeholder="Job Title"
-                        className={`pexform-input1 ${experienceErrors.jobTitle ? "input-error1" : ""}`}
-                        disabled={!isEditingExperience}
-                      />
-                      {experienceErrors.jobTitle && (
-                        <div className="error-text1">{experienceErrors.jobTitle}</div>
-                      )}
-                      <Form.Label className="form-label">End Date</Form.Label>
-                      <div className="calendar-input-wrap">
+                      </Col>
+                      <Col md={6}><Form.Label>Account Number</Form.Label>
                         <Form.Control
-                          type="date"
-                          name="endDate"
-                          value={experience.endDate}
-                          onChange={handleExperienceChange}
-                          className={`pexform-input ${experienceErrors.endDate ? "input-error1" : ""}`}
-                          disabled={!isEditingExperience}
+                          type="text"
+                          name="accountNumber"
+                          value={bank.accountNumber}
+                          onChange={handleBankChange}
+                          placeholder="Bank AC Number"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.accountNumber ? "input-error" : ""}`}
                         />
-                        {experienceErrors.endDate && (
-                          <div className="error-text1">{experienceErrors.endDate}</div>
+                        {errors.accountNumber && (
+                          <div className="error-text">{errors.accountNumber}</div>
                         )}
-                        <span className="calendar-icon">
-                          <i className="bi bi-calendar3"></i>
-                        </span> </div>
-                      <Form.Label>Total Years Of Experience</Form.Label>
-                      <Form.Control
-                        type="number"
-                        step="0.1"
-                        name="totalYears"
-                        value={experience.totalYears}
-                        onChange={handleExperienceChange}
-                        placeholder="Experience in Years"
-                        className={`pexform-input ${experienceErrors.totalYears ? "input-error1" : ""}`}
-                        disabled={!isEditingExperience}
-                      />
-                      {experienceErrors.totalYears && (
-                        <div className="error-text1">{experienceErrors.totalYears}</div>
-                      )}
-                    </Col>
-                  </Row>
-                </Form>
-              </div>
-            </Tab.Pane>
-
-            {/* BANK DETAILS TAB */}
-            <Tab.Pane eventKey="bank">
-              <div className="update-info-header-box">
-                <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
-                  <span>Update Bank Details</span>
-                  {!isEditingBank ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingBank(true)}>Edit</Button>
-                  ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelBank} >Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveBank}>Save</Button>
-                    </div>
-                  )}
+                      </Col>
+                      <Col md={6}><Form.Label>IFSC Code</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="ifsc"
+                          value={bank.ifsc}
+                          onChange={handleBankChange}
+                          placeholder="IFSC Code"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.ifsc ? "input-error" : ""}`}
+                        />
+                        {errors.ifsc && (
+                          <div className="error-text">{errors.ifsc}</div>
+                        )}
+                      </Col>
+                      <Col md={6}><Form.Label>Aadhaar Number</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="aadhaar"
+                          value={bank.aadhaar}
+                          onChange={handleBankChange}
+                          placeholder="XXXX-XXXX-XXXX"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.aadhaar ? "input-error" : ""}`}
+                        />
+                        {errors.aadhaar && (
+                          <div className="error-text">{errors.aadhaar}</div>
+                        )}
+                      </Col>
+                      <Col md={6}><Form.Label>PAN Number</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="pan"
+                          value={bank.pan}
+                          onChange={handleBankChange}
+                          placeholder="ABCDE1234F"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.pan ? "input-error" : ""}`}
+                        />
+                        {errors.pan && (
+                          <div className="error-text">{errors.pan}</div>
+                        )}
+                      </Col>
+                    </Row>
+                  </Form>
                 </div>
-              </div>
-              <div className="profile-tab-section bank-details">
-                <Form>
-                  <Row className="gy-4">
-                    <Col md={6}><Form.Label>Bank Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="bankName"
-                        value={bank.bankName}
-                        onChange={handleBankChange}
-                        placeholder="Name of the Bank"
-                        disabled={!isEditingBank}
-                        className={`form-input ${errors.bankName ? "input-error" : ""}`}
-                      />
-                      {errors.bankName && (
-                        <div className="error-text">{errors.bankName}</div>
-                      )}
-                    </Col>
-                    <Col md={6}>
-                      <Form.Label>Branch</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="branch"
-                        value={bank.branch}
-                        onChange={handleBankChange}
-                        placeholder="Name of the Branch"
-                        disabled={!isEditingBank}
-                        className={`form-input ${errors.branch ? "input-error" : ""}`}
-                      />
-                      {errors.branch && (
-                        <div className="error-text">{errors.branch}</div>
-                      )}
-                    </Col>
-                    <Col md={6}><Form.Label>Account Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="accountNumber"
-                        value={bank.accountNumber}
-                        onChange={handleBankChange}
-                        placeholder="Bank AC Number"
-                        disabled={!isEditingBank}
-                        className={`form-input ${errors.accountNumber ? "input-error" : ""}`}
-                      />
-                      {errors.accountNumber && (
-                        <div className="error-text">{errors.accountNumber}</div>
-                      )}
-                    </Col>
-                    <Col md={6}><Form.Label>IFSC Code</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="ifsc"
-                        value={bank.ifsc}
-                        onChange={handleBankChange}
-                        placeholder="IFSC Code"
-                        disabled={!isEditingBank}
-                        className={`form-input ${errors.ifsc ? "input-error" : ""}`}
-                      />
-                      {errors.ifsc && (
-                        <div className="error-text">{errors.ifsc}</div>
-                      )}
-                    </Col>
-                    <Col md={6}><Form.Label>Aadhaar Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="aadhaar"
-                        value={bank.aadhaar}
-                        onChange={handleBankChange}
-                        placeholder="XXXX-XXXX-XXXX"
-                        disabled={!isEditingBank}
-                        className={`form-input ${errors.aadhaar ? "input-error" : ""}`}
-                      />
-                      {errors.aadhaar && (
-                        <div className="error-text">{errors.aadhaar}</div>
-                      )}
-                    </Col>
-                    <Col md={6}><Form.Label>PAN Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="pan"
-                        value={bank.pan}
-                        onChange={handleBankChange}
-                        placeholder="ABCDE1234F"
-                        disabled={!isEditingBank}
-                        className={`form-input ${errors.pan ? "input-error" : ""}`}
-                      />
-                      {errors.pan && (
-                        <div className="error-text">{errors.pan}</div>
-                      )}
-                    </Col>
-                  </Row>
-                </Form>
-              </div>
-            </Tab.Pane>
+              </Tab.Pane>
 
-            {/* DOCUMENTS TAB */}
-            <Tab.Pane eventKey="documents">
-              <div className="update-info-header-box">
-                <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
-                  <span>Update Documents</span>
-                  {!isEditingDocs ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingDocs(true)}>Edit</Button>
-                  ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={() => setIsEditingDocs(false)}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveDocs}>Save</Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="profile-tab-section documents">
-                <Row className="align-items-start g-3">
-                  <Col md={7}>
-                    {documents.map((doc, idx) => (
-                      <div
-                        className="doc-item mb-3 d-flex flex-row align-items-center p-3"
-                        key={idx}
-                        style={{ background: "#F6F9FC", border: "1px solid #E2E8F0", borderRadius: "12px" }}
+              {/* DOCUMENTS TAB */}
+              <Tab.Pane eventKey="documents">
+                <div className="update-info-header-box">
+                  <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
+                    <span>Update Documents</span>
+                    {!isEditingDocs ? (
+                      <Button
+                        className="btn-edit"
+                        onClick={() => {
+                          setDocsBackup([...documents]);
+                          setIsEditingDocs(true);
+                        }}
                       >
-                        <span className="pdf-icon me-3" style={{ background: "#FFE4E6", color: "#E11D48", borderRadius: "8px", padding: "8px 12px", fontWeight: "bold", flexShrink: 0 }}>PDF</span>
-                        <div className="flex-grow-1 overflow-hidden">
-                          <h6 className="mb-0 text-truncate" style={{ fontSize: "15px", color: "#1E293B", fontWeight: "600" }}>{doc.fileName || doc.name}</h6>
-                          <div className="d-flex align-items-center mt-1">
-                            <span style={{ fontSize: "13px", color: "#94A3B8" }}>
-                              {doc.size || '94'} KB of {doc.size || '94'} KB &nbsp;•&nbsp;
-                            </span>
-                            <span className="ms-1" style={{ fontSize: "13px", color: "#10B981", fontWeight: "600", display: "flex", alignItems: "center" }}>
-                              <i className="bi bi-check-circle-fill me-1"></i> Completed
-                            </span>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          className="p-1 px-2 ms-2"
-                          onClick={() => handleDocDelete(idx)}
-                          disabled={!isEditingDocs}
-                          style={{ border: "none", background: "transparent", fontSize: "1.2rem", cursor: "pointer", color: "#94A3B8" }}
+                        Edit
+                      </Button>
+                    ) : (
+                      <div style={{ minWidth: 180, textAlign: 'right' }}>
+                        <Button className="btn-cancel" onClick={handleCancelDocs}>Cancel</Button>
+                        <Button className="btn-save" onClick={handleSaveDocs}>Save</Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="profile-tab-section documents">
+                  <Row className="align-items-start g-3">
+                    <Col md={7}>
+                      {documents.map((doc, idx) => (
+                        <div
+                          className="doc-item mb-3 d-flex flex-row align-items-center p-3"
+                          key={idx}
+                          style={{ background: "#F6F9FC", border: "1px solid #E2E8F0", borderRadius: "12px" }}
                         >
-                          <i className="bi bi-trash3"></i>
-                        </Button>
-                      </div>
-                    ))}
-                  </Col>
-                  <Col md={5}>
-                    <div
-                      onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-                      onDragLeave={() => setIsDragOver(false)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        setIsDragOver(false);
-                        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                          const newDocs = Array.from(e.dataTransfer.files).map(f => ({
-                            name: f.name,
-                            fileName: f.name,
-                            size: (f.size / 1024).toFixed(0),
-                            status: "Completed",
-                            file: f
-                          }));
-                          setDocuments(prev => [...prev, ...newDocs]);
-                        }
-                      }}
-                      style={{
-                        border: isDragOver ? "2px dashed #19BDE8" : "2px dashed #CBD5E1",
-                        borderRadius: "20px",
-                        background: isDragOver ? "#EFF9FF" : "#ffffff",
-                        transition: "all 0.2s ease",
-                        padding: "40px 30px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        textAlign: "center",
-                        minHeight: "280px",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <div style={{ marginBottom: "16px" }}>
-                        <i className="bi bi-cloud-arrow-up" style={{ fontSize: "3.5rem", color: "#19BDE8" }}></i>
-                      </div>
-                      <p style={{ color: "#1E293B", fontWeight: "700", fontSize: "17px", margin: "0 0 8px 0", lineHeight: "1.4" }}>
-                        Choose a file or drag &amp; drop it here
-                      </p>
-                      <p style={{ fontSize: "12px", color: "#94A3B8", margin: "0 0 24px 0" }}>
-                        JPEG, PNG, PDG, and MP4 formats, up to 50MB
-                      </p>
-                      <input
-                        id="employee-file-upload"
-                        type="file"
-                        style={{ display: 'none' }}
-                        multiple
-                        onChange={(e) => {
-                          if (!e.target.files) return;
-                          const newDocs = Array.from(e.target.files).map(f => ({
-                            name: f.name,
-                            fileName: f.name,
-                            size: (f.size / 1024).toFixed(0),
-                            status: 'Completed',
-                            file: f
-                          }));
-                          setDocuments(prev => [...prev, ...newDocs]);
-                          e.target.value = '';
+                          <span className="pdf-icon me-3" style={{ background: "#FFE4E6", color: "#E11D48", borderRadius: "8px", padding: "8px 12px", fontWeight: "bold", flexShrink: 0 }}>PDF</span>
+                          <div className="flex-grow-1 overflow-hidden">
+                            <h6 className="mb-0 text-truncate" style={{ fontSize: "15px", color: "#1E293B", fontWeight: "600" }}>{doc.fileName || doc.name}</h6>
+                            <div className="d-flex align-items-center mt-1">
+                              <span style={{ fontSize: "13px", color: "#94A3B8" }}>
+                                {doc.size || '94'} KB of {doc.size || '94'} KB &nbsp;•&nbsp;
+                              </span>
+                              <span className="ms-1" style={{ fontSize: "13px", color: "#10B981", fontWeight: "600", display: "flex", alignItems: "center" }}>
+                                <i className="bi bi-check-circle-fill me-1"></i> Completed
+                              </span>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            className="p-1 px-2 ms-2"
+                            onClick={() => handleDocDelete(idx)}
+                            disabled={!isEditingDocs}
+                            style={{ border: "none", background: "transparent", fontSize: "1.2rem", cursor: "pointer", color: "#94A3B8" }}
+                          >
+                            <i className="bi bi-trash3"></i>
+                          </Button>
+                        </div>
+                      ))}
+                    </Col>
+                    <Col md={5}>
+                      <div
+                        onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                        onDragLeave={() => setIsDragOver(false)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setIsDragOver(false);
+                          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                            const newDocs = Array.from(e.dataTransfer.files).map(f => ({
+                              name: f.name,
+                              fileName: f.name,
+                              size: (f.size / 1024).toFixed(0),
+                              status: "Completed",
+                              file: f
+                            }));
+                            setDocuments(prev => [...prev, ...newDocs]);
+                          }
                         }}
-                      />
-                      <label
-                        htmlFor="employee-file-upload"
                         style={{
-                          display: 'block',
-                          width: '100%',
-                          background: '#19BDE8',
-                          border: 'none',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontWeight: '600',
-                          padding: '12px 20px',
-                          cursor: 'pointer',
-                          fontSize: '16px',
-                          userSelect: 'none',
-                          textAlign: 'center',
-                          whiteSpace: 'nowrap',
+                          border: isDragOver ? "2px dashed #19BDE8" : "2px dashed #CBD5E1",
+                          borderRadius: "20px",
+                          background: isDragOver ? "#EFF9FF" : "#ffffff",
+                          transition: "all 0.2s ease",
+                          padding: "40px 30px",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          textAlign: "center",
+                          minHeight: "280px",
+                          justifyContent: "center",
                         }}
                       >
-                        Browse File
-                      </label>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            </Tab.Pane>
-
-          </Tab.Content >
-        </Tab.Container >
-      </div >
-    </div >
+                        <div style={{ marginBottom: "16px" }}>
+                          <i className="bi bi-cloud-arrow-up" style={{ fontSize: "3.5rem", color: "#19BDE8" }}></i>
+                        </div>
+                        <p style={{ color: "#1E293B", fontWeight: "700", fontSize: "17px", margin: "0 0 8px 0", lineHeight: "1.4" }}>
+                          Choose a file or drag &amp; drop it here
+                        </p>
+                        <p style={{ fontSize: "12px", color: "#94A3B8", margin: "0 0 24px 0" }}>
+                          JPEG, PNG, PDG, and MP4 formats, up to 50MB
+                        </p>
+                        <input
+                          id="employee-file-upload"
+                          type="file"
+                          style={{ display: 'none' }}
+                          multiple
+                          onChange={(e) => {
+                            if (!e.target.files) return;
+                            const newDocs = Array.from(e.target.files).map(f => ({
+                              name: f.name,
+                              fileName: f.name,
+                              size: (f.size / 1024).toFixed(0),
+                              status: 'Completed',
+                              file: f
+                            }));
+                            setDocuments(prev => [...prev, ...newDocs]);
+                            e.target.value = '';
+                          }}
+                        />
+                        <label
+                          htmlFor="employee-file-upload"
+                          style={{
+                            display: 'block',
+                            width: '100%',
+                            background: '#19BDE8',
+                            border: 'none',
+                            borderRadius: '12px',
+                            color: 'white',
+                            fontWeight: '600',
+                            padding: '12px 20px',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            userSelect: 'none',
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          Browse File
+                        </label>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+              </Tab.Pane>
+            </Tab.Content>
+          </Tab.Container>
+        </div>
+      </div>
+    </div>
   );
 };
 

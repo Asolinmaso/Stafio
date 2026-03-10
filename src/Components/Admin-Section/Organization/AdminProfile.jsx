@@ -76,6 +76,7 @@ const AdminProfile = () => {
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
+  const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [education, setEducation] = useState({
     institution: "",
@@ -535,6 +536,14 @@ const AdminProfile = () => {
   const handleSaveDocs = () => {
     setIsEditingDocs(false);
     alert("Documents updated!");
+  };
+
+  const handleCancelDocs = () => {
+    if (docsBackup !== null) {
+      setDocuments(docsBackup);
+    }
+    setDocsBackup(null);
+    setIsEditingDocs(false);
   };
 
   // const handleCancelBank = () => {
@@ -1592,7 +1601,10 @@ const AdminProfile = () => {
                   {!isEditingDocs ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => setIsEditingDocs(true)}
+                      onClick={() => {
+                        setDocsBackup([...documents]);
+                        setIsEditingDocs(true);
+                      }}
                     >
                       Edit
                     </Button>
@@ -1600,7 +1612,7 @@ const AdminProfile = () => {
                     <div style={{ minWidth: 180, textAlign: "right" }}>
                       <Button
                         className="btn-cancel"
-                        onClick={() => setIsEditingDocs(false)}
+                        onClick={handleCancelDocs}
                       >
                         Cancel
                       </Button>
