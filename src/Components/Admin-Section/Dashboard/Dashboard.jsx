@@ -75,7 +75,7 @@ const Dashboard = () => {
 	// ── Auth / session ────────────────────────────────────────────────────
 	const [username, setUsername] = useState("");
 	const [role,     setRole]     = useState("");
-	const [userId,   setUserId]   = useState(null); // needed for API headers
+	const [userId,   setUserId]   = useState(null);
 
 	// ── Clock ─────────────────────────────────────────────────────────────
 	const [currentTime, setCurrentTime] = useState("");
@@ -83,7 +83,7 @@ const Dashboard = () => {
 
 	// ── Punch state ───────────────────────────────────────────────────────
 	const [isPunchedIn,  setIsPunchedIn]  = useState(false);
-	const [punchInTime,  setPunchInTime]  = useState(null);   // Date object
+	const [punchInTime,  setPunchInTime]  = useState(null);
 	const [totalHours,   setTotalHours]   = useState("00:00:00");
 	const [isBreak,      setIsBreak]      = useState(false);
 	const [activeBreak,  setActiveBreak]  = useState(null);
@@ -95,17 +95,22 @@ const Dashboard = () => {
 	const [punchError,   setPunchError]   = useState("");
 
 	// ── Refs ──────────────────────────────────────────────────────────────
-	const timerRef         = useRef(null);   // working hours interval
-	const breakTimerRef    = useRef(null);   // 15-min break alert timeout
+	const timerRef         = useRef(null);
+	const breakTimerRef    = useRef(null);
 	const breakDropdownRef = useRef(null);
-	const breakStartRef    = useRef(null);   // Date when current break started
-	const totalBreakMsRef  = useRef(0);      // accumulated break ms this session
+	const breakStartRef    = useRef(null);
+	const totalBreakMsRef  = useRef(0);
 
 	// ── Admin summary ─────────────────────────────────────────────────────
 	const [adminDashboardData, setAdminDashboardData] = useState({
 		total_employees: 0, On_Time: 0, On_Leave: 0,
 		Late_Arrival: 0, Pending_Approval: 0, This_Week_Hoilday: 0,
 	});
+
+	// ── Admin Notification Banner ─────────────────────────────────────────
+	const [showAdminNotif,      setShowAdminNotif]      = useState(false);
+	const [pendingApprovalsCount, setPendingApprovalsCount] = useState(0);
+	const [pendingLeavesCount,    setPendingLeavesCount]    = useState(0);
 
 	// ── Meeting ───────────────────────────────────────────────────────────
 	const [meetingStatus,   setMeetingStatus]   = useState("idle");
@@ -114,7 +119,7 @@ const Dashboard = () => {
 
 	const navigate = useNavigate();
 
-	// ── Axios helper (attaches user-id header) ────────────────────────────
+	// ── Axios helper ──────────────────────────────────────────────────────
 	const apiHeaders = () => ({
 		"X-User-ID": userId,
 		"Content-Type": "application/json",
@@ -132,49 +137,43 @@ const Dashboard = () => {
 		}
 	}, []);
 
-	// Once userId is known, fetch today's attendance to restore UI state on refresh
 	useEffect(() => {
 		if (!userId) return;
-        const fetchTodayAttendance = async () => {
-    try {
-        const res = await axios.get(`${BASE_URL}/api/attendance/today`, {
-            headers: { "X-User-ID": userId },
-        });
+		const fetchTodayAttendance = async () => {
+			try {
+				const res = await axios.get(`${BASE_URL}/api/attendance/today`, {
+					headers: { "X-User-ID": userId },
+				});
 
-        const data = res.data;
-        if (!data || !data.check_in) return;
+				const data = res.data;
+				if (!data || !data.check_in) return;
 
-        const checkInDate = new Date(data.check_in.replace(" GMT", ""));
-        setPunchInTime(checkInDate);
+				const checkInDate = new Date(data.check_in.replace(" GMT", ""));
+				setPunchInTime(checkInDate);
 
-        if (data.check_out) {
-            setIsPunchedIn(false);
-            setTotalHours(data.work_hours || "00:00:00");
-            return;
-        }
+				if (data.check_out) {
+					setIsPunchedIn(false);
+					setTotalHours(data.work_hours || "00:00:00");
+					return;
+				}
 
-        setIsPunchedIn(true);
+				setIsPunchedIn(true);
 
-        // Restore accumulated break ms
-        const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
-        totalBreakMsRef.current = restoredBreakMs;
+				const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
+				totalBreakMsRef.current = restoredBreakMs;
 
-        if (data.active_break) {
-            // On break — show frozen working hours (don't start timer)
-            setIsBreak(true);
-            breakStartRef.current = new Date();
-            // Show correct frozen total hours instead of 00:00:00
-            setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
-        } else {
-            // Working — immediately set correct hours before timer kicks in
-            setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
-            startWorkingTimer(checkInDate);
-        }
-    } catch (err) {
-        console.error("Could not restore today's attendance:", err);
-    }
-};
-		
+				if (data.active_break) {
+					setIsBreak(true);
+					breakStartRef.current = new Date();
+					setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+				} else {
+					setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+					startWorkingTimer(checkInDate);
+				}
+			} catch (err) {
+				console.error("Could not restore today's attendance:", err);
+			}
+		};
 
 		fetchTodayAttendance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -216,7 +215,6 @@ const Dashboard = () => {
 		clearInterval(timerRef.current);
 	};
 
-	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
 			clearInterval(timerRef.current);
@@ -238,13 +236,30 @@ const Dashboard = () => {
 	}, [showBreakDropdown]);
 
 	// ─────────────────────────────────────────────────────────────────────
-	// 5. Admin dashboard data
+	// 5. Admin dashboard data + notification counts
 	// ─────────────────────────────────────────────────────────────────────
 	useEffect(() => {
-		axios
-			.get(`${BASE_URL}/admin_dashboard`)
-			.then((r) => setAdminDashboardData(r.data))
-			.catch((e) => console.error("Admin dashboard error:", e));
+		const fetchAdminData = async () => {
+			try {
+				const r = await axios.get(`${BASE_URL}/admin_dashboard`);
+				setAdminDashboardData(r.data);
+			} catch (e) {
+				console.error("Admin dashboard error:", e);
+			}
+
+			try {
+				const countRes = await axios.get(`${BASE_URL}/api/admin/pending_counts`);
+				const { pending_approvals, pending_leave_requests } = countRes.data;
+				setPendingApprovalsCount(pending_approvals);
+				setPendingLeavesCount(pending_leave_requests);
+				if (pending_approvals > 0 || pending_leave_requests > 0) {
+					setShowAdminNotif(true);
+				}
+			} catch (e) {
+				console.error("Pending counts error:", e);
+			}
+		};
+		fetchAdminData();
 	}, []);
 
 	// ─────────────────────────────────────────────────────────────────────
@@ -323,7 +338,6 @@ const Dashboard = () => {
 			stopWorkingTimer();
 			clearTimeout(breakTimerRef.current);
 
-			// Show final work_hours returned by backend (net of breaks)
 			const finalHours = res.data?.work_hours || calcWorkingTime(punchInTime, totalBreakMsRef.current);
 			setTotalHours(finalHours);
 
@@ -357,7 +371,6 @@ const Dashboard = () => {
 			breakStartRef.current = new Date();
 			setShowBreakDropdown(false);
 
-			// Alert after 15 min for coffee / custom breaks
 			const isTimed = breakItem?.id === "coffee" || breakItem?.id === "custom";
 			if (isTimed) {
 				clearTimeout(breakTimerRef.current);
@@ -386,7 +399,6 @@ const Dashboard = () => {
 		try {
 			await axios.post(`${BASE_URL}/api/attendance/end-break`, {}, { headers: apiHeaders() });
 
-			// Accumulate break duration on frontend so working timer stays accurate
 			if (breakStartRef.current) {
 				totalBreakMsRef.current += Date.now() - breakStartRef.current.getTime();
 			}
@@ -397,7 +409,6 @@ const Dashboard = () => {
 			setActiveBreak(null);
 			breakStartRef.current = null;
 
-			// Resume working timer
 			startWorkingTimer(punchInTime);
 		} catch (err) {
 			const msg = err.response?.data?.message || "Could not end break.";
@@ -447,6 +458,36 @@ const Dashboard = () => {
 						<div className="username">
 							<h1>Welcome, {username || "User"}!</h1>
 						</div>
+
+						{/* ── Admin Notification Banner ── */}
+						{showAdminNotif && (
+							<div className="admin-notif-banner">
+								<span className="admin-notif-text">
+									You have{" "}
+									<span
+										className="admin-notif-count admin-notif-link"
+										onClick={() => navigate("/regularization-approval")}
+									>
+										{String(pendingApprovalsCount).padStart(2, "0")}
+									</span>
+									{" "}Pending Approvals &amp;{" "}
+									<span
+										className="admin-notif-count admin-notif-link"
+										onClick={() => navigate("/leave-approval")}
+									>
+										{String(pendingLeavesCount).padStart(2, "0")}
+									</span>
+									{" "}Leave Requests
+								</span>
+								<button
+									className="admin-notif-close"
+									onClick={() => setShowAdminNotif(false)}
+									aria-label="Close notification"
+								>
+									✕
+								</button>
+							</div>
+						)}
 					</Row>
 
 					{/* Notification + Meeting/Punch Card */}
@@ -485,7 +526,6 @@ const Dashboard = () => {
 													</div>
 												</a>
 
-												{/* Error message */}
 												{punchError && (
 													<p style={{ color: "#ff4d4d", fontSize: "13px", marginTop: "6px" }}>
 														{punchError}
@@ -519,7 +559,6 @@ const Dashboard = () => {
 													</div>
 												</div>
 
-												{/* Error message */}
 												{punchError && (
 													<p style={{ color: "#ff4d4d", fontSize: "13px", marginTop: "6px" }}>
 														{punchError}
@@ -527,7 +566,6 @@ const Dashboard = () => {
 												)}
 
 												<div className="button-row">
-													{/* Punch Out */}
 													<button
 														className="btn-punch-out1"
 														onClick={handlePunchOut}
@@ -536,7 +574,6 @@ const Dashboard = () => {
 														{punchLoading ? "Please wait…" : "Punch Out"}
 													</button>
 
-													{/* Start Break / End Break */}
 													{isBreak ? (
 														<button
 															className="break-btn-st-en"
@@ -556,7 +593,6 @@ const Dashboard = () => {
 													)}
 												</div>
 
-												{/* Break dropdown */}
 												{showBreakDropdown && !isBreak && (
 													<div className="break-dropdown" ref={breakDropdownRef}>
 														<p className="dropdown-title">Scheduled Breaks</p>
@@ -576,7 +612,6 @@ const Dashboard = () => {
 															);
 														})}
 
-														{/* Custom Break */}
 														<div
 															className="break-item custom-break"
 															onClick={() => handleStartBreak({ id: "custom", label: "Custom Break" })}
@@ -586,7 +621,6 @@ const Dashboard = () => {
 													</div>
 												)}
 
-												{/* Break overtime alert */}
 												{showAlert && (
 													<div style={alertStyle}>
 														<span>⚠️</span>

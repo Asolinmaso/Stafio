@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
 *{                          /* modified */
   margin-top: 0px !important;
 }
@@ -231,4 +232,76 @@
 .custom-break {
   color: #1890ff;
   font-weight: 500;
+}
+
+/* ─── Admin Notification Banner ──────────────────────────────────────────────
+   Only styles for the pending approvals notification on Admin Dashboard
+──────────────────────────────────────────────────────────────────────────── */
+
+.admin-notif-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #EEEEEE;
+  border: none;
+  border-radius: 14px;
+  padding: 13px 18px;
+  margin-bottom: 14px;
+  margin-top: 16px !important;
+  gap: 12px;
+  width: 100%;
+}
+
+.admin-notif-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+  color: #000000;
+}
+
+.admin-notif-link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+  color: #19BDE8;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.admin-notif-link:hover {
+  text-decoration: underline;
+  color: #19BDE8;
+}
+
+.admin-notif-count {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+  color: #19BDE8;
+}
+
+.admin-notif-close {
+  background: #EEEEEE;
+  border: none;
+  cursor: pointer;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.admin-notif-close:hover {
+  opacity: 0.6;
 }

@@ -8,13 +8,13 @@ import booking from "../../assets/booking.png";
 import Group from "../../assets/Group.png";
 import Group1 from "../../assets/Group1.png";
 import Group2 from "../../assets/Group2.png";
+import Group5 from "../../assets/Group5.png";
 import Vector from "../../assets/Vector.png";
 import Vector1 from "../../assets/Vector1.svg";
 import Vector2 from "../../assets/Vector2.svg";
 import { useLocation } from "react-router-dom";
 
-// LeaveMenu code here
-
+// LeaveMenu
 export const LeaveMenu = () => {
   const location = useLocation();
   const isLeavePageActive =
@@ -25,6 +25,7 @@ export const LeaveMenu = () => {
 
   const leavePaths = ["/my-leave", "/my-regularization", "/my-holidays"];
   const isLeaveActive = leavePaths.includes(location.pathname);
+
   useEffect(() => {
     if (isLeaveActive) setOpen(true);
   }, [isLeaveActive]);
@@ -37,8 +38,9 @@ export const LeaveMenu = () => {
     <div className="leave-menu">
       {/* Main Leave Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${isLeaveActive ? "active" : ""
-          }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${
+          isLeaveActive ? "active" : ""
+        }`}
         onClick={handleLeaveClick}
       >
         <div className="d-flex align-items-center">
@@ -87,6 +89,72 @@ export const LeaveMenu = () => {
   );
 };
 
+// ReportsMenu — mirrors AdminSidebar's ReportMenu using Group5 icon
+export const ReportsMenu = () => {
+  const location = useLocation();
+  const isReportsPageActive =
+    location.pathname.startsWith("/employee-attendance-report") ||
+    location.pathname.startsWith("/employee-leave-report");
+  const [open, setOpen] = useState(false);
+
+  const reportPaths = ["/employee-attendance-report", "/employee-leave-report"];
+  const isReportActive = reportPaths.includes(location.pathname);
+
+  useEffect(() => {
+    if (isReportActive) setOpen(true);
+  }, [isReportActive]);
+
+  const handleReportClick = () => {
+    setOpen(!open);
+  };
+
+  return (
+    <div className="report-menu">
+      {/* Main Report Nav */}
+      <div
+        className={`sidebar-link d-flex align-items-center justify-content-between ${
+          isReportActive ? "active" : ""
+        }`}
+        onClick={handleReportClick}
+      >
+        <div className="d-flex align-items-center">
+          <img
+            src={Group5}
+            alt="Report Icon"
+            className={`me-2 sidebar-icon ${isReportsPageActive ? "active" : ""}`}
+          />
+          <div className="report">Reports</div>
+        </div>
+        <div className="chev-container">
+          {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+        </div>
+      </div>
+
+      {/* Submenu Links */}
+      {open && (
+        <div className="submenu ms-4 mt-2">
+          <NavLink
+            to="/employee-attendance-report"
+            className={({ isActive }) =>
+              `submenu-link ${isActive ? "active" : ""}`
+            }
+          >
+            Attendance Report
+          </NavLink>
+          <NavLink
+            to="/employee-leave-report"
+            className={({ isActive }) =>
+              `submenu-link ${isActive ? "active" : ""}`
+            }
+          >
+            Leave Report
+          </NavLink>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const EmployeeSidebar = () => {
   const isEmployeeDashboardActive = location.pathname === "/employee-dashboard";
   const isAttendancesActive = location.pathname === "/employee-attendance";
@@ -99,16 +167,17 @@ const EmployeeSidebar = () => {
   }, []);
 
   const handleLogout = () => {
-    // Remove Remember Me data
     localStorage.removeItem("remember_employee");
     localStorage.removeItem("employee_email");
     localStorage.removeItem("employee_password");
     window.location.href = "/employee-login";
   };
+
   return (
     <div
-      className={`employee-sidebar d-flex flex-column ${showSidebar ? "show" : ""
-        }`}
+      className={`employee-sidebar d-flex flex-column ${
+        showSidebar ? "show" : ""
+      }`}
     >
       {/* Sidebar Header */}
       <div className="employee-sidebar-header text-center">
@@ -126,8 +195,9 @@ const EmployeeSidebar = () => {
             <img
               src={Group}
               alt="Dashboard Logo"
-              className={`me-2 sidebar-icon ${isEmployeeDashboardActive ? "active" : ""
-                }`}
+              className={`me-2 sidebar-icon ${
+                isEmployeeDashboardActive ? "active" : ""
+              }`}
             />
             Dashboard
           </Nav.Link>
@@ -136,6 +206,12 @@ const EmployeeSidebar = () => {
           <NavLink to="/my-leave" className="sidebar-leave-link">
             <LeaveMenu />
           </NavLink>
+
+          {/* Reports Menu */}
+          <NavLink to="/employee-attendance-report" className="sidebar-leave-link">
+            <ReportsMenu />
+          </NavLink>
+
           <Nav.Link
             as={NavLink}
             to="/employee-attendance"
@@ -144,8 +220,9 @@ const EmployeeSidebar = () => {
             <img
               src={Group2}
               alt="Attendance Logo"
-              className={`me-2 sidebar-icon ${isAttendancesActive ? "active" : ""
-                }`}
+              className={`me-2 sidebar-icon ${
+                isAttendancesActive ? "active" : ""
+              }`}
             />
             Attendance
           </Nav.Link>
@@ -164,8 +241,9 @@ const EmployeeSidebar = () => {
             <img
               src={Vector2}
               alt="Settings Logo"
-              className={`me-2 sidebar-icon ${isSettingsPageActive ? "active" : ""
-                }`}
+              className={`me-2 sidebar-icon ${
+                isSettingsPageActive ? "active" : ""
+              }`}
             />
             Settings
           </Nav.Link>
@@ -186,7 +264,6 @@ const EmployeeSidebar = () => {
       <div className="employee-sidebar-footer text-center">
         <img src={booking} alt="Booking Logo" className="sidebar-logo1" />
       </div>
-
     </div>
   );
 };
