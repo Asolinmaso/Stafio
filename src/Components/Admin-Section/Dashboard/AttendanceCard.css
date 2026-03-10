@@ -2,6 +2,7 @@
   border-radius: 16px;
   border: none;
   padding: 10px;
+   width: 330px;       /* new */
 }
 
 .attendance-header1 {
