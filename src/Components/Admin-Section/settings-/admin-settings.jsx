@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
 import profileimg from "../../../assets/profileimg.png";
@@ -20,7 +20,6 @@ import {
 import { BsUpload } from "react-icons/bs";
 import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
-const API_BASE = "http://127.0.0.1:5001";
 const translations = {
 	english: {
 		title: "System Settings",
@@ -175,7 +174,7 @@ export default function AdminSettings() {
 	useEffect(() => {
 		const fetchGeneralSettings = async () => {
 			try {
-				const res = await axios.get(`${API_BASE}/api/settings/general`, {
+				const res = await apiClient.get(`/api/settings/general`, {
 					headers: getHeaders(),
 				});
 				const data = res.data;
@@ -199,7 +198,7 @@ export default function AdminSettings() {
 		if (activeTab === "basic") {
 			const fetchBasicInfo = async () => {
 				try {
-					const res = await axios.get(`${API_BASE}/api/settings/basic_info`, {
+					const res = await apiClient.get(`/api/settings/basic_info`, {
 						headers: getHeaders(),
 					});
 					setBasicForm({
@@ -224,7 +223,7 @@ export default function AdminSettings() {
 			const fetchTeam = async () => {
 				setLoading(true);
 				try {
-					const res = await axios.get(`${API_BASE}/api/settings/team`, {
+					const res = await apiClient.get(`/api/settings/team`, {
 						headers: getHeaders(),
 					});
 					setTeamMembers(res.data);
@@ -250,10 +249,10 @@ export default function AdminSettings() {
 				setLoading(true);
 				try {
 					const [deptRes, teamRes] = await Promise.all([
-						axios.get(`${API_BASE}/api/settings/departments`, {
+						apiClient.get(`/api/settings/departments`, {
 							headers: getHeaders(),
 						}),
-						axios.get(`${API_BASE}/api/settings/team`, {
+						apiClient.get(`/api/settings/team`, {
 							headers: getHeaders(),
 						}),
 					]);
@@ -274,7 +273,7 @@ export default function AdminSettings() {
 		if (activeTab === "breaktimes") {
 			const fetchBreakTimes = async () => {
 				try {
-					const res = await axios.get(`${API_BASE}/api/settings/break_times`, {
+					const res = await apiClient.get(`/api/settings/break_times`, {
 						headers: getHeaders(),
 					});
 					setLunchBreak(res.data.lunch_break || "1:00 PM - 2:00 PM");
@@ -309,8 +308,8 @@ export default function AdminSettings() {
 
 	const saveGeneralSettings = async () => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/settings/general`,
+			await apiClient.put(
+				`/api/settings/general`,
 				{
 					system_language: language,
 					admin_theme: theme,
@@ -371,7 +370,7 @@ export default function AdminSettings() {
 	const handleBasicSave = async () => {
 		if (validateBasicInfo()) {
 			try {
-				await axios.put(`${API_BASE}/api/settings/basic_info`, basicForm, {
+				await apiClient.put(`/api/settings/basic_info`, basicForm, {
 					headers: getHeaders(),
 				});
 				setSaveMessage("Basic info saved successfully!");
@@ -399,8 +398,8 @@ export default function AdminSettings() {
 	const handleCreateDepartment = async () => {
 		if (!newDeptName.trim()) return;
 		try {
-			await axios.post(
-				`${API_BASE}/api/departments`,
+			await apiClient.post(
+				`/api/departments`,
 				{
 					name: newDeptName,
 				},
@@ -423,7 +422,7 @@ export default function AdminSettings() {
 		if (!window.confirm("Are you sure you want to delete this department?"))
 			return;
 		try {
-			await axios.delete(`${API_BASE}/api/departments/${deptId}`, {
+			await apiClient.delete(`/api/departments/${deptId}`, {
 				headers: getHeaders(),
 			});
 			setDepartments(departments.filter((d) => d.id !== deptId));
@@ -434,12 +433,12 @@ export default function AdminSettings() {
 
 	const handleAssignHead = async (deptId, managerId) => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/departments/${deptId}`,
+			await apiClient.put(
+				`/api/departments/${deptId}`,
 				{ manager_id: managerId ? parseInt(managerId) : null },
 				{ headers: getHeaders() },
 			);
-			const res = await axios.get(`${API_BASE}/api/settings/departments`, {
+			const res = await apiClient.get(`/api/settings/departments`, {
 				headers: getHeaders(),
 			});
 			setDepartments(res.data);
@@ -450,12 +449,12 @@ export default function AdminSettings() {
 
 	const handleSaveDeptEdit = async (deptId) => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/departments/${deptId}`,
+			await apiClient.put(
+				`/api/departments/${deptId}`,
 				{ member_count: parseInt(editMemberCount) || 0 },
 				{ headers: getHeaders() },
 			);
-			const res = await axios.get(`${API_BASE}/api/settings/departments`, {
+			const res = await apiClient.get(`/api/settings/departments`, {
 				headers: getHeaders(),
 			});
 			setDepartments(res.data);
@@ -470,8 +469,8 @@ export default function AdminSettings() {
 	// Break Times Handlers
 	const saveBreakTimes = async () => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/settings/break_times`,
+			await apiClient.put(
+				`/api/settings/break_times`,
 				{
 					lunch_break: lunchBreak,
 					coffee_break: coffeeBreak,
@@ -513,16 +512,13 @@ export default function AdminSettings() {
 			<div className="rightside-logo ">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
-			{/* Sidebar */}
-			<div className="sidebar">
-				<AdminSidebar />
-			</div>
+			<AdminSidebar />
 
 			{/* Main content */}
-			<div className="main-content flex-grow-1">
+			<div className="admin-settings-main">
 				<Topbar />
 
-				<div className="settings-page p-4">
+				<div className="settings-page">
 					{/* Header */}
 					<div className="settings-header">
 						<h1>{t("title")}</h1>
@@ -698,13 +694,13 @@ export default function AdminSettings() {
 
 									<div className="form-group-custom">
 										<label>{t("defaultThemeforUsers")}</label>
-											<select
-												value={userTheme}
-												onChange={(e) => setUserTheme(e.target.value)}
-											>
-												<option value="light">Light Theme</option>
-												<option value="dark">Dark Theme</option>
-											</select>
+										<select
+											value={userTheme}
+											onChange={(e) => setUserTheme(e.target.value)}
+										>
+											<option value="light">Light Theme</option>
+											<option value="dark">Dark Theme</option>
+										</select>
 									</div>
 
 									{/* Row 3 */}
@@ -725,8 +721,6 @@ export default function AdminSettings() {
 									</div>
 
 									<div className="form-column">
-										
-										
 										<div className="form-group2">
 											<label>
 												{t("dateFormat")}
@@ -1167,10 +1161,10 @@ export default function AdminSettings() {
 																		title="Delete"
 																	>
 																		<img
-																		  className="deletebox-icon"
-																	      src={deletebox}
-										 								  alt="delete"
-															            />
+																			className="deletebox-icon"
+																			src={deletebox}
+																			alt="delete"
+																		/>
 																	</button>
 																</div>
 															)}

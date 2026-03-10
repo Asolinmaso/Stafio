@@ -16,7 +16,7 @@ import BGShape from "../../assets/BGShape.png";
 import teampluslogo from "../../assets/stafioimg.png";
 import Registerlogo from "../../assets/registerlogo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import apiClient from "../../api/client";
+import apiClient from "../../utils/apiClient";
 import { useGoogleLogin } from "@react-oauth/google";
 import gicon from "../../assets/favicon.ico";
 
@@ -132,7 +132,7 @@ const EmployeeRegister = () => {
         "https://www.googleapis.com/oauth2/v3/userinfo",
         {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        }
+        },
       );
 
       const profile = await userInfoRes.json();
@@ -323,7 +323,7 @@ const EmployeeRegister = () => {
                   style={{
                     width: "18px",
                     height: "18px",
-                   
+
                     cursor: "pointer",
                     marginRight: "10px",
                     accentColor: "#19bde8", // 🔵 Makes tick color BLUE
@@ -341,8 +341,6 @@ const EmployeeRegister = () => {
                   </span>
                 </label>
               </Form.Group>
-
-              
 
               <Button variant="primary" type="submit" className="register-btn">
                 Sign Up

@@ -3,7 +3,7 @@ import { FaFilter, FaCalendarAlt, FaDownload, FaSearch } from "react-icons/fa";
 import "./AttendanceReport.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
 
 export default function AttendanceReport() {
@@ -29,16 +29,16 @@ export default function AttendanceReport() {
 
 	/* FETCH ATTENDANCE */
 	useEffect(() => {
-		axios
-			.get("http://127.0.0.1:5001/api/attendancelist")
+		apiClient
+			.get("/api/attendancelist")
 			.then((res) => setAttendanceData(res.data))
 			.catch((err) => console.error(err));
 	}, []);
 
 	/* FETCH EMPLOYEES */
 	useEffect(() => {
-		axios
-			.get("http://127.0.0.1:5001/api/employeeslist")
+		apiClient
+			.get("/api/employeeslist")
 			.then((res) => setEmployees(res.data))
 			.catch((err) => console.error(err));
 	}, []);
@@ -53,9 +53,6 @@ export default function AttendanceReport() {
 				year: "numeric",
 			}),
 		);
-
-		// ✅ default for date input (yyyy-mm-dd)
-		setSelectedDate(now.toISOString().split("T")[0]);
 	}, []);
 
 	const parseDate = (dateStr) => {
@@ -94,7 +91,6 @@ export default function AttendanceReport() {
 			if (!selectedDate) return true;
 			const rd = parseDate(r.date);
 			if (!rd) return true;
-
 			const picked = new Date(selectedDate);
 			return (
 				rd.getDate() === picked.getDate() &&

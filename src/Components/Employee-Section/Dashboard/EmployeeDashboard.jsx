@@ -34,7 +34,7 @@ import Vector3 from "../../../assets/Vector3.svg";
 import arrow3 from "../../../assets/arrow3.png";
 import maleteam from "../../../assets/maleteam.png";
 import clock from "../../../assets/clock.gif";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import "./EmployeeDashboard.css";
 import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
 
@@ -250,7 +250,7 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/dashboard");
+        const response = await apiClient.get("/dashboard");
         setDashboardData(response.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -484,7 +484,7 @@ const EmployeeDashboard = () => {
             </Col>
 
             <Col md={4}>
-               <EmployeeAttendanceCard attendanceData={attendanceData} />
+              <EmployeeAttendanceCard attendanceData={attendanceData} />
             </Col>
           </Row>
 
@@ -517,7 +517,7 @@ const alertStyle = {
   alignItems: "center",
   gap: "10px",
   zIndex: 9999,
-  width:"30%",
+  width: "30%",
 };
 
 const closeBtnStyle = {

@@ -1,5 +1,5 @@
 // AdminLogin.jsx
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
@@ -20,8 +20,6 @@ import {
   getRememberMe,
 } from "../../utils/sessionManager";
 
-
-
 import { useGoogleLogin } from "@react-oauth/google";
 
 const AdminLogin = () => {
@@ -34,7 +32,6 @@ const AdminLogin = () => {
 
   const navigate = useNavigate();
   const googleInitRef = useRef(false);
-
 
   // ---------------------------
   // ⭐ Admin Normal Login
@@ -54,28 +51,26 @@ const AdminLogin = () => {
       const data = await response.json();
 
       if (!response.ok) {
-         setError(data.message || "Login failed");
-         return;
+        setError(data.message || "Login failed");
+        return;
       }
 
-    // ✅ 1. Save session (MANDATORY)
-    saveSession(data, "admin");
+      // ✅ 1. Save session (MANDATORY)
+      saveSession(data, "admin");
 
-    // ✅ 2. Remember Me (OPTIONAL)
-    if (rememberMe) {
-      saveRememberMe(identifier, password, "admin", data.user_id);
-    } else {
-      clearRememberMe("admin", data.user_id);
-    }
-
+      // ✅ 2. Remember Me (OPTIONAL)
+      if (rememberMe) {
+        saveRememberMe(identifier, password, "admin", data.user_id);
+      } else {
+        clearRememberMe("admin", data.user_id);
+      }
 
       // ✅ 3. Navigate
-    navigate("/admin-dashboard");
-
-  } catch {
-    setError("Network error. Check backend.");
-  }
-};
+      navigate("/admin-dashboard");
+    } catch {
+      setError("Network error. Check backend.");
+    }
+  };
 
   // ---------------------------
   // ⭐ Google Login (Fully Fixed)
@@ -122,81 +117,79 @@ const AdminLogin = () => {
   // };
 
   const googleLogin = useGoogleLogin({
-  flow: "implicit",
-  onSuccess: async (tokenResponse) => {
-    try {
-      const res = await fetch(
-        "http://127.0.0.1:5001/admin_google_login",
-        {
+    flow: "implicit",
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await fetch("http://127.0.0.1:5001/admin_google_login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             access_token: tokenResponse.access_token,
             role: "admin",
           }),
+        });
+
+        const data = await res.json();
+
+        if (!data.user_id) {
+          setError("Google login failed");
+          return;
         }
-      );
 
-      const data = await res.json();
+        // ✅ 1. Save session
+        saveSession(data, "admin");
 
-      if (!data.user_id) {
+        // ✅ 2. Remember Google
+        if (rememberMe) {
+          saveGoogleRememberMe(
+            data.email,
+            data.username,
+            "admin",
+            data.user_id,
+          );
+        }
+
+        navigate("/admin-dashboard");
+      } catch {
         setError("Google login failed");
-        return;
       }
+    },
+  });
 
-      // ✅ 1. Save session
-      saveSession(data, "admin");
+  //  useEffect(() => {
+  //   if (googleInitRef.current) return;
+  //   googleInitRef.current = true;
 
-      // ✅ 2. Remember Google
-      if (rememberMe) {
-        saveGoogleRememberMe(data.email, data.username, "admin", data.user_id);
-      }
+  //   if (!window.google) return;
 
+  //   window.google.accounts.id.initialize({
+  //     client_id:
+  //       "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
+  //     callback: handleGoogleLogin,
+  //     ux_mode: "popup",
+  //   });
+
+  //     window.google.accounts.id.renderButton(
+  //     document.getElementById("googleLoginButton"),
+  //     { theme: "outline", size: "large" }
+  //   );
+
+  // }, []);
+
+  //  AUTO LOGIN (Normal + Google)
+
+  useEffect(() => {
+    if (isLoggedIn()) {
       navigate("/admin-dashboard");
-
-    } catch {
-      setError("Google login failed");
+      return;
     }
-  },
 
-});
+    const remembered = getRememberMe("admin");
+    if (!remembered) return;
 
-
-//  useEffect(() => {
-//   if (googleInitRef.current) return;
-//   googleInitRef.current = true;
-
-//   if (!window.google) return;
-
-//   window.google.accounts.id.initialize({
-//     client_id:
-//       "337074822738-kaucna6a1olvoo8qfvs8r320iekp9hi1.apps.googleusercontent.com",
-//     callback: handleGoogleLogin,
-//     ux_mode: "popup",
-//   });
-
-//     window.google.accounts.id.renderButton(
-//     document.getElementById("googleLoginButton"),
-//     { theme: "outline", size: "large" }
-//   );
-
-// }, []);
-
-//  AUTO LOGIN (Normal + Google)
-
-useEffect(() => {
-  if (isLoggedIn()) {
-    navigate("/admin-dashboard");
-    return;
-  }
-
-  const remembered = getRememberMe("admin");
-  if (!remembered) return;
-
-  setIdentifier(remembered.email || "");
-  setPassword(remembered.password || "");
-}, []);
-
+    // Only pre-fill email, never password (security fix)
+    setIdentifier(remembered.email || "");
+  }, []);
 
   return (
     <Container fluid className="admin-login-container">
@@ -307,22 +300,13 @@ useEffect(() => {
               {/* ⭐ GOOGLE LOGIN BUTTON */}
               {/* ⭐ OFFICIAL GOOGLE LOGIN BUTTON RENDER TARGET */}
               {/* Custom Google Login Button */}
-            
-            {/* Hidden official Google button */}
-  
-<div
-  className="custom-google-btn"
-  
-    onClick={() => googleLogin()}
->
-  <img
-    src={gicon}
-    alt="Google"
-    className="google-icon"
-  />
-  <span>Continue with Google</span>
-</div>
 
+              {/* Hidden official Google button */}
+
+              <div className="custom-google-btn" onClick={() => googleLogin()}>
+                <img src={gicon} alt="Google" className="google-icon" />
+                <span>Continue with Google</span>
+              </div>
             </Form>
 
             <div className="signup-text mt-4">

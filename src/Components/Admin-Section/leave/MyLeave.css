@@ -3,7 +3,7 @@
   display: flex;
   min-height: 100vh;
   background: #f0f2f5;
-  
+
 }
 
 /* ===== Sidebar ===== */
@@ -22,17 +22,17 @@
 /* ===== Main Container ===== */
 .myleave-container {
   flex: 1;
-  padding: 10px !important ;   /* modified */
+  padding: 0 25px 25px 25px;
   background: #eff5ff;
   min-height: 100vh;
   overflow-y: auto;
 }
 
 /* ===== Topbar ===== */
-.myleave-container .topbar {
-  width: 97%;    /* modified */
+/* .myleave-container .topbar {
+  width: 97%;
   margin-bottom: 20px;
-}
+} */
 
 /* ===== Page Title ===== */
 .page-title {
@@ -45,23 +45,18 @@
 /* ===== Leave Summary Cards ===== */
 .leave-summary {
   display: flex;
-  gap: 10px !important;  /* modified */
-  margin-bottom: 10px;   /* modified */
-
+  gap: 20px;
+  margin-bottom: 25px;
 }
 
 .summary-card {
   background: #fff;
   flex: 1;
   min-width: 200px;
-  border-radius: 3px !important; /* modified */
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
-  text-align: left;   /* modified */
-  margin-left: -25px; /* modified */
-  margin-right: 20px;   /* modified */
-  padding-top: 13px !important;   /* modified */
-  padding-bottom: 5px !important;  /* modified */
-  
+  border-radius: 12px !important;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  padding: 20px !important;
 }
 
 .summary-icon {
@@ -268,9 +263,10 @@
   color: #fff;
   font-size: 30px;
   cursor: pointer;
-  border:none;
-  
+  border: none;
+
 }
+
 /* ===== Modal Body ===== */
 .app-leave-modal-body {
   padding: 45px;
@@ -282,7 +278,8 @@
 .apply-leave-form {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; /* pushes image to bottom */
+  align-items: flex-end;
+  /* pushes image to bottom */
   gap: 20px;
   height: 430px;
   width: 100%;
@@ -341,7 +338,7 @@
   flex: 1;
 }
 
-.app-leave-notify-row select{
+.app-leave-notify-row select {
   width: 150px;
   height: 42px;
 }
@@ -365,9 +362,11 @@ textarea {
 
 /* ===== Right Image Section ===== */
 .form-right {
-  flex: 0 0 180px; /* width of right section */
+  flex: 0 0 180px;
+  /* width of right section */
   display: flex;
-  align-items: flex-end; /* align image to bottom */
+  align-items: flex-end;
+  /* align image to bottom */
   justify-content: center;
 }
 
@@ -420,13 +419,14 @@ textarea {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
- /* filter button */
+/* filter button */
 .app-btn-filter {
   color: #000000;
   font-size: 14px;
@@ -434,7 +434,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 6px;
-   background: none;
+  background: none;
   border-radius: 12px;
   border: 1px solid #b3b1b1 !important;
   padding: 6px 14px;
@@ -448,6 +448,7 @@ textarea {
 .app-btn-filter svg {
   font-size: 14px;
 }
+
 /* ====== Filter Dropdown Box ====== */
 .filter-dropdown-box {
   position: absolute;
@@ -462,16 +463,19 @@ textarea {
   animation: filterSlideDown 0.2s ease-out;
   border: 1px solid #e5e7eb;
 }
+
 @keyframes filterSlideDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 /* ====== Filter Popup Header ====== */
 .filter-popup-header {
   display: flex;
@@ -481,12 +485,14 @@ textarea {
   padding: 12px 16px;
   border-bottom: 1px solid #e6e6e6;
 }
+
 .filter-popup-header h3 {
   font-size: 16px;
   font-weight: 600;
   margin: 0;
   color: #1a1a1a;
 }
+
 .filter-popup-close {
   position: absolute;
   right: 12px;
@@ -502,9 +508,11 @@ textarea {
   font-size: 20px;
   color: #6b7280;
 }
+
 .filter-popup-close:hover {
   background: #f3f4f6;
 }
+
 /* ====== Filter Popup Body ====== */
 .filter-popup-body {
   padding: 16px;
@@ -512,16 +520,19 @@ textarea {
   flex-direction: column;
   gap: 12px;
 }
+
 .filter-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .filter-field label {
   font-size: 13px;
   font-weight: 600;
   color: #374151;
 }
+
 .filter-field input,
 .filter-field select {
   width: 100%;
@@ -533,21 +544,25 @@ textarea {
   outline: none;
   transition: all 0.2s;
 }
+
 .filter-field input::placeholder {
   color: #9ca3af;
   font-size: 13px;
 }
+
 .filter-field input:focus,
 .filter-field select:focus {
   border-color: #19bde8;
   box-shadow: 0px 0px 0px 3px rgba(25, 189, 232, 0.1);
 }
+
 /* ====== Filter Row ====== */
 .filter-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+
 /* ====== Filter Popup Footer ====== */
 .filter-popup-footer {
   display: flex;
@@ -557,6 +572,7 @@ textarea {
   background: #f9fafb;
   border-top: 1px solid #e6e6e6;
 }
+
 .filter-reset-btn {
   flex: 1;
   height: 38px;
@@ -569,9 +585,11 @@ textarea {
   font-size: 13px;
   transition: 0.2s;
 }
+
 .filter-reset-btn:hover {
   background: #f3f4f6;
 }
+
 .filter-apply-btn {
   flex: 1;
   height: 38px;
@@ -584,10 +602,13 @@ textarea {
   font-size: 13px;
   transition: 0.2s;
 }
+
 .filter-apply-btn:hover {
   background: #1d4ed8;
 }
+
 /* ====== Remove old filter select styles ====== */
 .right-butn-filter {
-  display: none; /* Hide the old dropdown */
+  display: none;
+  /* Hide the old dropdown */
 }
