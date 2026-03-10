@@ -1,11 +1,15 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
+import axios from "axios";
 import "./Settings.css";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import { SettingsContext } from "./SettingsContext";
 import { Border } from "react-bootstrap-icons";
 import { BiFontSize } from "react-icons/bi";
+import profileimg from "../../../assets/profileimg.png";
 import profileimg2 from "../../../assets/profileimg2.png"; // new
+
+const API_BASE = "http://127.0.0.1:5001";
 
 export default function Settings() {
   const { theme, setTheme, language, setLanguage, font, setFont } =
@@ -14,18 +18,34 @@ export default function Settings() {
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
   const [errors, setErrors] = useState({});
 
-  const [basicForm, setBasicForm] = useState({ /* new*/ 
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  position: "",
-  role: ""
-});
+  const [basicForm, setBasicForm] = useState({ /* new*/
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    position: "",
+    role: ""
+  });
 
-const [basicErrors, setBasicErrors] = useState({});
+  const [basicErrors, setBasicErrors] = useState({});
 
+  const [profileImage, setProfileImage] = useState(profileimg);
+  const profileInputRef = useRef(null);
 
+  const handleProfileImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB limit");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Simple language translation object
   const translations = {
@@ -45,8 +65,8 @@ const [basicErrors, setBasicErrors] = useState({});
       phone: "Phone Number",
       position: "Position",
       role: "Role",
-      profilepicture:"Profile Picture",  // new
-      subp3:"We support only JPEGs or PNGs under 5MB",  // new
+      profilepicture: "Profile Picture",  // new
+      subp3: "We support only JPEGs or PNGs under 5MB",  // new
     },
     tamil: {
       title: "கணினி அமைப்புகள்",
@@ -82,92 +102,141 @@ const [basicErrors, setBasicErrors] = useState({});
     },
   };
 
+  const [saveMessage, setSaveMessage] = useState("");
+
+  const getHeaders = () => {
+    const userId = sessionStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id");
+    const role = sessionStorage.getItem("current_role") || localStorage.getItem("employee_role");
+    return {
+      "X-User-ID": userId,
+      "X-User-Role": role,
+    };
+  };
+
   useEffect(() => {
-  // Example: auto-save when language changes
-  console.log("Auto-saving general settings", {
-    language,
-    theme,
-    font,
-    dateFormat
-  });
-}, [language, theme, font, dateFormat]);
+    const fetchBasicInfo = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/settings/basic_info`, {
+          headers: getHeaders(),
+        });
+        setBasicForm({
+          firstName: res.data.firstName || "",
+          lastName: res.data.lastName || "",
+          email: res.data.email || "",
+          phone: res.data.phone || "",
+          position: res.data.position || "",
+          role: res.data.role || "employee",
+        });
+        if (res.data.profileImage) {
+          setProfileImage(res.data.profileImage);
+        }
+      } catch (err) {
+        console.error("Error fetching basic info:", err);
+      }
+    };
 
-        //handle input change
+    fetchBasicInfo();
+  }, []);
 
-const handleBasicChange = (e) => {
-  const { name, value } = e.target;
+  useEffect(() => {
+    // Example: auto-save when language changes
+    console.log("Auto-saving general settings", {
+      language,
+      theme,
+      font,
+      dateFormat
+    });
+  }, [language, theme, font, dateFormat]);
 
-  setBasicForm({
-    ...basicForm,
-    [name]: value
-  });
+  //handle input change
 
-  // clear error on change
-  setBasicErrors({
-    ...basicErrors,
-    [name]: ""
-  });
-};
+  const handleBasicChange = (e) => {
+    const { name, value } = e.target;
 
-           //validation logic   new
+    setBasicForm({
+      ...basicForm,
+      [name]: value
+    });
 
-const validateBasicInfo = () => {
-  const errors = {};
+    // clear error on change
+    setBasicErrors({
+      ...basicErrors,
+      [name]: ""
+    });
+  };
 
-  if (!basicForm.firstName.trim()) {
-    errors.firstName = "*First name is required";
-  }
+  //validation logic   new
 
-  if (!basicForm.lastName.trim()) {
-    errors.lastName = "*Last name is required";
-  }
+  const validateBasicInfo = () => {
+    const errors = {};
 
-  if (!basicForm.email.trim()) {
-    errors.email = "*Email is required";
-  } else if (!/^\S+@\S+\.\S+$/.test(basicForm.email)) {
-    errors.email = "*Enter a valid email address";
-  }
+    if (!basicForm.firstName.trim()) {
+      errors.firstName = "*First name is required";
+    }
 
-  if (!basicForm.phone.trim()) {
-    errors.phone = "*Phone number is required";
-  } else if (!/^[0-9]{10}$/.test(basicForm.phone)) {
-    errors.phone = "*Enter a valid 10-digit phone number";
-  }
+    if (!basicForm.lastName.trim()) {
+      errors.lastName = "*Last name is required";
+    }
 
-  if (!basicForm.position.trim()) {
-    errors.position = "*Position is required";
-  }
+    if (!basicForm.email.trim()) {
+      errors.email = "*Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(basicForm.email)) {
+      errors.email = "*Enter a valid email address";
+    }
 
-  if (!basicForm.role.trim()) {
-    errors.role = "*Role is required";
-  }
+    if (!basicForm.phone.trim()) {
+      errors.phone = "*Phone number is required";
+    } else if (!/^[0-9]{10}$/.test(basicForm.phone)) {
+      errors.phone = "*Enter a valid 10-digit phone number";
+    }
 
-  setBasicErrors(errors);
-  return Object.keys(errors).length === 0;
-};
+    if (!basicForm.position.trim()) {
+      errors.position = "*Position is required";
+    }
 
-//save Button logic
+    if (!basicForm.role.trim()) {
+      errors.role = "*Role is required";
+    }
 
-const handleBasicSave = () => {
-  if (validateBasicInfo()) {
-    console.log("Basic info saved:", basicForm);
-    // API call later
-  }
-};
+    setBasicErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
-//cancel button logic (reset)
+  //save Button logic
 
-const handleBasicCancel = () => {
-  setBasicForm({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    position: "",
-    role: ""
-  });
-  setBasicErrors({});
-};
+  const handleBasicSave = async () => {
+    if (validateBasicInfo()) {
+      try {
+        await axios.put(`${API_BASE}/api/settings/basic_info`, {
+          ...basicForm,
+          profileImage: profileImage === profileimg ? "" : profileImage
+        }, {
+          headers: getHeaders(),
+        });
+        setSaveMessage("Basic info saved successfully!");
+        window.dispatchEvent(new Event("profileUpdated"));
+        setTimeout(() => setSaveMessage(""), 3000);
+      } catch (err) {
+        console.error("Error saving basic info:", err);
+        alert(err.response?.data?.message || "Failed to save basic info");
+      }
+    }
+  };
+
+  //cancel button logic (reset)
+
+  const handleBasicCancel = () => {
+    setBasicForm({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      position: "",
+      role: "employee"
+    });
+    setProfileImage(profileimg);
+    setBasicErrors({});
+  };
 
 
   const t = translations[language];
@@ -186,6 +255,7 @@ const handleBasicCancel = () => {
           <div className="settings-header">
             <h1>{t.title}</h1>
             <p>{t.subtitle}</p>
+            {saveMessage && <div className="alert alert-success">{saveMessage}</div>}
           </div>
 
           {/* Tabs */}
@@ -226,20 +296,20 @@ const handleBasicCancel = () => {
 
                 <div className="form-group">
                   <label>{t.dashboardTheme}</label>
-                   <div className="theme-input-box">     {/*new check box inside the input*/}
+                  <div className="theme-input-box">     {/*new check box inside the input*/}
                     <span className="theme-text">
-                     {theme === "light" ? "Light Theme" : "Dark Theme"}
+                      {theme === "light" ? "Light Theme" : "Dark Theme"}
                     </span>
-                   <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={theme === "dark"}
-                      onChange={() =>
-                        setTheme(theme === "light" ? "dark" : "light")
-                      }
-                    />
-                    <span className="slider round"></span>
-                   </label>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={theme === "dark"}
+                        onChange={() =>
+                          setTheme(theme === "light" ? "dark" : "light")
+                        }
+                      />
+                      <span className="slider round"></span>
+                    </label>
                   </div>
                   {/* <span className="theme-label">
                     {theme === "light" ? "Light Theme" : "Dark Theme"}
@@ -273,64 +343,64 @@ const handleBasicCancel = () => {
 
             {/* Basic Info */}
             {activeTab === "basic" && (
-            <div>
+              <div>
                 {/* <h3>{t.basic}</h3> */}  {/*modified */}
                 <div className="form-row">
                   <div className="form-column">
                     <div className="form-group">
                       <label>{t.firstName}</label>
-                      <input 
-                      type="text" 
-                      name="firstName"
-                      value={basicForm.firstName}
-                      placeholder={t.firstName}
-                      onChange={handleBasicChange}
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={basicForm.firstName}
+                        placeholder={t.firstName}
+                        onChange={handleBasicChange}
                       />
                       {basicErrors.firstName && (
-                         <span className="error-text">{basicErrors.firstName}</span>
-                       )}
+                        <span className="error-text">{basicErrors.firstName}</span>
+                      )}
                     </div>
 
                     <div className="form-group">
                       <label>{t.lastName}</label>
-                      <input 
-                      type="text" 
-                      name="lastName"
-                      value={basicForm.lastName}
-                      placeholder={t.lastName}
-                      onChange={handleBasicChange}
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={basicForm.lastName}
+                        placeholder={t.lastName}
+                        onChange={handleBasicChange}
                       />
                       {basicErrors.lastName && (
-                         <span className="error-text">{basicErrors.lastName}</span>
-                       )}
+                        <span className="error-text">{basicErrors.lastName}</span>
+                      )}
                     </div>
 
-                    
+
 
                     <div className="form-group">
                       <label>{t.email}</label>
-                      <input 
-                      type="email"
-                      name="email"
-                      value={basicForm.email}
-                      placeholder={t.email}
-                      onChange={handleBasicChange}
+                      <input
+                        type="email"
+                        name="email"
+                        value={basicForm.email}
+                        placeholder={t.email}
+                        onChange={handleBasicChange}
                       />
                       {basicErrors.email && (
-                         <span className="error-text">{basicErrors.email}</span>
-                       )}
+                        <span className="error-text">{basicErrors.email}</span>
+                      )}
                     </div>
                   </div>
 
                   <div className="form-column">
                     <div className="form-group">
                       <label>{t.phone}</label>
-                      <input 
-                      type="tel" 
-                      name="phone"
-                      value={basicForm.phone}
-                      placeholder={t.phone}
-                      onChange={handleBasicChange}
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={basicForm.phone}
+                        placeholder={t.phone}
+                        onChange={handleBasicChange}
                       />
                       {basicErrors.phone && (
                         <span className="error-text">{basicErrors.phone}</span>
@@ -339,65 +409,76 @@ const handleBasicCancel = () => {
 
                     <div className="form-group">
                       <label>{t.position}</label>
-                      <input 
-                      type="text" 
-                      name="position"
-                      value={basicForm.position}
-                      placeholder={t.position}
-                      onChange={handleBasicChange}
+                      <input
+                        type="text"
+                        name="position"
+                        value={basicForm.position}
+                        placeholder={t.position}
+                        onChange={handleBasicChange}
                       />
                       {basicErrors.position && (
-                         <span className="error-text">{basicErrors.position}</span>
-                       )}
+                        <span className="error-text">{basicErrors.position}</span>
+                      )}
                     </div>
 
                     <div className="form-group">
                       <label>{t.role}</label>
-                      <input 
-                      type="text"
-                      name="role" 
-                      value={basicForm.role} 
-                      placeholder={t.role}
-                      onChange={handleBasicChange} 
-                       />
+                      <input
+                        type="text"
+                        name="role"
+                        value={basicForm.role}
+                        placeholder={t.role}
+                        onChange={handleBasicChange}
+                      />
                       {basicErrors.role && (
-                         <span className="error-text">{basicErrors.role}</span>
-                       )}
+                        <span className="error-text">{basicErrors.role}</span>
+                      )}
                     </div>
                   </div>
-                </div>   
-                   <div className="form-group3">
-                     <h3>{t.profilepicture}</h3>
-                     <p className="file-info">{t.subp3}</p>
-                     <div className="profile-upload1">
-                        <img
-                           src={profileimg2}
-                          alt="Profile"
-                          className="profile-preview1"
-                        />
-                        <button type="button" className="upload-btn1">
-                          📁 Upload
-                        </button>
-                      </div>
-                   </div>
+                </div>
+                <div className="form-group3">
+                  <h3>{t.profilepicture}</h3>
+                  <p className="file-info">{t.subp3}</p>
+                  <div className="profile-upload1">
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="profile-preview1"
+                    />
+                    <input
+                      type="file"
+                      accept="image/jpeg, image/png"
+                      style={{ display: "none" }}
+                      ref={profileInputRef}
+                      onChange={handleProfileImageUpload}
+                    />
+                    <button
+                      type="button"
+                      className="upload-btn1"
+                      onClick={() => profileInputRef.current && profileInputRef.current.click()}
+                    >
+                      📁 Upload
+                    </button>
+                  </div>
+                </div>
 
                 <div className="form-actions1">
-                  <button 
-                  type="button" 
-                  className="btn-cancel"
-                  onClick={handleBasicCancel}
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={handleBasicCancel}
                   >
                     Cancel
                   </button>
-                  <button 
-                  type="submit" 
-                  className="btn-save"
-                  onClick={handleBasicSave}
+                  <button
+                    type="submit"
+                    className="btn-save"
+                    onClick={handleBasicSave}
                   >
-                      Save
+                    Save
                   </button>
-                </div> 
-                
+                </div>
+
               </div>
             )}
           </div>

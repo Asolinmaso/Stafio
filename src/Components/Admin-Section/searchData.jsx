@@ -15,11 +15,11 @@ export const searchData = [
   { type: "module", label: "Leave Report", path: "/leave-report" },
   { type: "module", label: "Attendance", path: "/attendance" },
   { type: "module", label: "Settings", path: "/admin-settings" },
-  
-  
+
+
   { type: "module", label: "", path: "/leave-approval" },
 
- 
+
 
   // Documents
   { type: "document", label: "Salary Slip - March", path: "/documents/salary-march" },

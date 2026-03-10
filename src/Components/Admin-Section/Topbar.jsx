@@ -32,9 +32,7 @@ const ProfilePopup = ({ onClose, username }) => {
   // Helper: format YYYY-MM-DD to DD-MM-YYYY for display
   const formatDateDisplay = (dateStr) => {
     if (!dateStr || dateStr === "0001-01-01") return "-";
-    // If already in DD/MM/YYYY or DD-MM-YYYY format, return as-is
     if (/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/.test(dateStr)) return dateStr;
-    // Convert YYYY-MM-DD to DD-MM-YYYY
     const parts = dateStr.split("-");
     if (parts.length === 3 && parts[0].length === 4) {
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -45,15 +43,14 @@ const ProfilePopup = ({ onClose, username }) => {
   // Helper: ensure date is in YYYY-MM-DD format for <input type="date"> and backend
   const toInputDateFormat = (dateStr) => {
     if (!dateStr || dateStr === "0001-01-01") return "";
-    // Already YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-    // Convert DD/MM/YYYY or DD-MM-YYYY to YYYY-MM-DD
     const parts = dateStr.split(/[\/\-]/);
     if (parts.length === 3 && parts[2].length === 4) {
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
     return dateStr;
   };
+
   const getAuthHeaders = () => {
     return {
       "X-User-Role": localStorage.getItem("current_role"),
@@ -77,7 +74,6 @@ const ProfilePopup = ({ onClose, username }) => {
           },
         });
 
-        // Parse skills from JSON string if needed
         const data = { ...res.data };
         if (
           data.education &&
@@ -95,7 +91,6 @@ const ProfilePopup = ({ onClose, username }) => {
           }
         }
 
-        // Normalize date formats to YYYY-MM-DD for input fields
         if (data.profile && data.profile.dob) {
           data.profile = {
             ...data.profile,
@@ -150,7 +145,6 @@ const ProfilePopup = ({ onClose, username }) => {
         localStorage.getItem("current_user_id") ||
         localStorage.getItem("employee_user_id");
 
-      // Ensure dates are in YYYY-MM-DD format for backend
       const dataToSend = JSON.parse(JSON.stringify(editableData));
       if (dataToSend.profile && dataToSend.profile.dob) {
         dataToSend.profile.dob = toInputDateFormat(dataToSend.profile.dob);
@@ -179,7 +173,6 @@ const ProfilePopup = ({ onClose, username }) => {
           );
         }
       }
-      // Convert skills array back to JSON string for backend
       if (dataToSend.education && Array.isArray(dataToSend.education.skills)) {
         dataToSend.education.skills = JSON.stringify(
           dataToSend.education.skills,
@@ -193,14 +186,13 @@ const ProfilePopup = ({ onClose, username }) => {
         },
       });
 
-      // Re-fetch
+      // Re-fetch after update
       const res = await apiClient.get(`/admin_profile/${userId}`, {
         headers: {
           ...getAuthHeaders(),
         },
       });
 
-      // Parse skills and normalize dates on re-fetch too
       const data = { ...res.data };
       if (
         data.education &&
@@ -240,9 +232,7 @@ const ProfilePopup = ({ onClose, username }) => {
 
       setProfileData(data);
       setEditableData(data);
-
       setIsEditing(false);
-
       alert("Profile Updated Successfully");
     } catch (err) {
       console.error("Update error:", err);
@@ -269,7 +259,6 @@ const ProfilePopup = ({ onClose, username }) => {
             </button>
           )}
         </h5>
-
         <button className="btn-close" onClick={onClose}>
           x
         </button>
@@ -281,7 +270,7 @@ const ProfilePopup = ({ onClose, username }) => {
         ) : (
           <div className="profile-section">
             <div className="profile-photo">
-              <img src={profileimg2} alt="Profile" />
+              <img src={profile.profileImage || profileimg2} alt="Profile" />
               <h6>{profile.name || username || "User"}</h6>
               <p className="text-success">● {profile.status || "Active"}</p>
             </div>
@@ -309,14 +298,14 @@ const ProfilePopup = ({ onClose, username }) => {
                     }
                   />
                 ) : (
-                  <p>{editableData.profile.empType || "-"}</p>
+                  <p>{editableData?.profile?.empType || "-"}</p>
                 )}
                 <strong>
                   {isEditing ? "Supervisor ID" : "Primary Supervisor"}
                 </strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.supervisor_id || ""}
+                    value={editableData?.profile?.supervisor_id || ""}
                     onChange={(e) =>
                       handleChange("profile", "supervisor_id", e.target.value)
                     }
@@ -327,7 +316,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Department:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.department || ""}
+                    value={editableData?.profile?.department || ""}
                     onChange={(e) =>
                       handleChange("profile", "department", e.target.value)
                     }
@@ -338,7 +327,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>{isEditing ? "HR Manager ID" : "HR Manager"}</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.hr_manager_id || ""}
+                    value={editableData?.profile?.hr_manager_id || ""}
                     onChange={(e) =>
                       handleChange("profile", "hr_manager_id", e.target.value)
                     }
@@ -352,7 +341,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Gender:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.gender || ""}
+                    value={editableData?.profile?.gender || ""}
                     onChange={(e) =>
                       handleChange("profile", "gender", e.target.value)
                     }
@@ -364,7 +353,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 {isEditing ? (
                   <input
                     type="date"
-                    value={toInputDateFormat(editableData.profile.dob) || ""}
+                    value={toInputDateFormat(editableData?.profile?.dob) || ""}
                     onChange={(e) =>
                       handleChange("profile", "dob", e.target.value)
                     }
@@ -380,7 +369,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <p>
                   {isEditing ? (
                     <input
-                      value={editableData.education.portfolio || " "}
+                      value={editableData?.education?.portfolio || ""}
                       onChange={(e) =>
                         handleChange("education", "portfolio", e.target.value)
                       }
@@ -395,7 +384,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Institution:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.education.institution || ""}
+                    value={editableData?.education?.institution || ""}
                     onChange={(e) =>
                       handleChange("education", "institution", e.target.value)
                     }
@@ -404,7 +393,6 @@ const ProfilePopup = ({ onClose, username }) => {
                   <p>{education.institution || "-"}</p>
                 )}
                 <strong>Start & End Date:</strong>
-
                 {isEditing ? (
                   <div style={{ display: "flex", gap: "10px" }}>
                     <input
@@ -422,7 +410,6 @@ const ProfilePopup = ({ onClose, username }) => {
                         )
                       }
                     />
-
                     <input
                       type="date"
                       value={
@@ -442,11 +429,10 @@ const ProfilePopup = ({ onClose, username }) => {
                       : "-"}
                   </p>
                 )}
-
                 <strong>Course:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.education.qualification || ""}
+                    value={editableData?.education?.qualification || ""}
                     onChange={(e) =>
                       handleChange("education", "qualification", e.target.value)
                     }
@@ -457,7 +443,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Specialization:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.education.specialization || ""}
+                    value={editableData?.education?.specialization || ""}
                     onChange={(e) =>
                       handleChange(
                         "education",
@@ -484,7 +470,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Address:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.address || ""}
+                    value={editableData?.profile?.address || ""}
                     onChange={(e) =>
                       handleChange("profile", "address", e.target.value)
                     }
@@ -495,7 +481,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Location:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.location || ""}
+                    value={editableData?.profile?.location || ""}
                     onChange={(e) =>
                       handleChange("profile", "location", e.target.value)
                     }
@@ -509,7 +495,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Phone:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.profile.phone || ""}
+                    value={editableData?.profile?.phone || ""}
                     onChange={(e) =>
                       handleChange("profile", "phone", e.target.value)
                     }
@@ -525,7 +511,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Company:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.experience.company || ""}
+                    value={editableData?.experience?.company || ""}
                     onChange={(e) =>
                       handleChange("experience", "company", e.target.value)
                     }
@@ -534,7 +520,6 @@ const ProfilePopup = ({ onClose, username }) => {
                   <p>{experience.company || "-"}</p>
                 )}
                 <strong>Start & End:</strong>
-
                 {isEditing ? (
                   <div style={{ display: "flex", gap: "10px" }}>
                     <input
@@ -552,7 +537,6 @@ const ProfilePopup = ({ onClose, username }) => {
                         )
                       }
                     />
-
                     <input
                       type="date"
                       value={
@@ -568,9 +552,9 @@ const ProfilePopup = ({ onClose, username }) => {
                 ) : (
                   <p>
                     {experience.expStartDate &&
-                    experience.expEndDate &&
-                    experience.expStartDate !== "0001-01-01" &&
-                    experience.expEndDate !== "0001-01-01"
+                      experience.expEndDate &&
+                      experience.expStartDate !== "0001-01-01" &&
+                      experience.expEndDate !== "0001-01-01"
                       ? `${formatDateDisplay(experience.expStartDate)} – ${formatDateDisplay(experience.expEndDate)}`
                       : "-"}
                   </p>
@@ -578,7 +562,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Job Title:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.experience.jobTitle || ""}
+                    value={editableData?.experience?.jobTitle || ""}
                     onChange={(e) =>
                       handleChange("experience", "jobTitle", e.target.value)
                     }
@@ -589,7 +573,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Description:</strong>
                 {isEditing ? (
                   <textarea
-                    value={editableData.experience.responsibilities || ""}
+                    value={editableData?.experience?.responsibilities || ""}
                     onChange={(e) =>
                       handleChange(
                         "experience",
@@ -610,7 +594,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Bank Name:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.bankName || ""}
+                    value={editableData?.bank?.bankName || ""}
                     onChange={(e) =>
                       handleChange("bank", "bankName", e.target.value)
                     }
@@ -621,7 +605,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Branch:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.branch || ""}
+                    value={editableData?.bank?.branch || ""}
                     onChange={(e) =>
                       handleChange("bank", "branch", e.target.value)
                     }
@@ -632,7 +616,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>Account Number:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.accountNumber || ""}
+                    value={editableData?.bank?.accountNumber || ""}
                     onChange={(e) =>
                       handleChange("bank", "accountNumber", e.target.value)
                     }
@@ -643,7 +627,7 @@ const ProfilePopup = ({ onClose, username }) => {
                 <strong>IFSC Code:</strong>
                 {isEditing ? (
                   <input
-                    value={editableData.bank.ifsc || ""}
+                    value={editableData?.bank?.ifsc || ""}
                     onChange={(e) =>
                       handleChange("bank", "ifsc", e.target.value)
                     }
@@ -674,6 +658,7 @@ const Topbar = () => {
   const [query, setQuery] = useState("");
   const [searchItems, setSearchItems] = useState(searchData);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const [profileData, setProfileData] = useState(null);
   const popupRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -688,7 +673,6 @@ const Topbar = () => {
     designation: "",
   });
 
-  // new
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [showReactions, setShowReactions] = useState(null);
@@ -696,12 +680,6 @@ const Topbar = () => {
   const dateInputRef = useRef(null);
 
   useEffect(() => {
-    // const storedAdminusername = localStorage.getItem("admin_username");
-    // if (storedAdminusername) {
-    //   setAdminusername(storedAdminusername);
-    // }
-
-    // Load saved announcements
     const savedAnnouncements = localStorage.getItem("announcements");
     if (savedAnnouncements && savedAnnouncements !== "undefined") {
       try {
@@ -715,7 +693,6 @@ const Topbar = () => {
 
   useEffect(() => {
     const session = getCurrentSession();
-
     if (session) {
       setAdminusername(session.username);
       setUsername(session.username);
@@ -723,14 +700,37 @@ const Topbar = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   // Read values from sessionStorage
-  //   const storedUsername = localStorage.getItem("admin_username");
-  //   const storedRole = localStorage.getItem("admin_role");
+  const fetchProfileData = async () => {
+    try {
+      const userId =
+        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("employee_user_id");
+      if (userId) {
+        const res = await apiClient.get(`/admin_profile/${userId}`, {
+          headers: {
+            "X-User-Role":
+              sessionStorage.getItem("current_role") ||
+              localStorage.getItem("employee_role"),
+            "X-User-ID": userId,
+          },
+        });
+        setProfileData(res.data);
+      }
+    } catch (err) {
+      console.error("Error fetching profile in Topbar:", err);
+    }
+  };
 
-  //   if (storedUsername) setUsername(storedUsername);
-  //   if (storedRole) setRole(storedRole);
-  // }, []);
+  useEffect(() => {
+    fetchProfileData();
+
+    const handleProfileUpdate = () => {
+      fetchProfileData();
+    };
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+  }, []);
 
   useEffect(() => {
     if (announcements.length > 0) {
@@ -781,17 +781,10 @@ const Topbar = () => {
     }
 
     const updatedAnnouncements = [...announcements, { ...formData }];
-
-    // Update state
     setAnnouncements(updatedAnnouncements);
-
-    // Save to localStorage
     localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
-
-    // 🔥 Notify other components immediately
     window.dispatchEvent(new Event("announcementUpdated"));
 
-    // Reset form
     setFormData({
       date: "",
       eventName: "",
@@ -892,7 +885,6 @@ const Topbar = () => {
         </div>
 
         {/* Right side user + bell */}
-
         <div className="profile d-flex align-items-center gap-3">
           <div style={{ cursor: "pointer", position: "relative" }}>
             <FaBell size={20} className="text-dark" onClick={togglePopup} />
@@ -912,7 +904,7 @@ const Topbar = () => {
             style={{ cursor: "pointer" }}
           >
             <img
-              src={profileimg}
+              src={profileData?.profile?.profileImage || profileimg}
               alt="User"
               className="topbar-avatar rounded-circle me-2"
             />
@@ -933,7 +925,6 @@ const Topbar = () => {
       </div>
 
       {/* Announcement Popup */}
-      {/* 🔔 Announcement List Popup */}
       {showPopup && !showAddForm && (
         <div className="announcement-popup shadow-lg" ref={popupRef}>
           <div className="popup-header d-flex align-items-center justify-content-between">
@@ -991,7 +982,7 @@ const Topbar = () => {
                   className="fachevron-box"
                   onClick={() => {
                     if (dateInputRef.current) {
-                      dateInputRef.current.showPicker(); // opens calendar
+                      dateInputRef.current.showPicker();
                     }
                   }}
                 />
@@ -1039,7 +1030,6 @@ const Topbar = () => {
                     <hr />
 
                     <div className="announcement-actions">
-                      {/* React */}
                       <div
                         className="react-btn"
                         onMouseEnter={() => setShowReactions(i)}
@@ -1057,12 +1047,10 @@ const Topbar = () => {
                         )}
                       </div>
 
-                      {/* Share */}
                       <div className="action-btn">
                         <FaShareAlt /> Share
                       </div>
 
-                      {/* Event */}
                       <div className="action-btn">
                         <MdEvent /> Event
                       </div>
@@ -1075,7 +1063,7 @@ const Topbar = () => {
         </div>
       )}
 
-      {/* 🟦 Add New Announcement Modal */}
+      {/* Add New Announcement Modal */}
       {showAddForm && (
         <div className="add-announcement-overlay">
           <div className="add-form-container">
@@ -1088,8 +1076,6 @@ const Topbar = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="announcement-form">
-              {/* your full form grid here */}
-              {/* Add Announcement Form */}
               <div className="form-grid">
                 <div>
                   <label>Event Date</label>

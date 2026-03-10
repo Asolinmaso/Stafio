@@ -77,6 +77,7 @@ const EmployeeProfile = () => {
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
+  const [documentsBackup, setDocumentsBackup] = useState(null);
   const [education, setEducation] = useState({
     institution: "",
     location: "",
@@ -163,66 +164,71 @@ const EmployeeProfile = () => {
   };
 
   // =========== FETCH DATA FROM BACKEND ===========
-  useEffect(() => {
-    const fetchEmployeeProfileData = async () => {
-      try {
-        const userId = getUserId();
-        const response = await apiClient.get(`/employee_profile/${userId}`);
+  const fetchEmployeeProfileData = async () => {
+    try {
+      const userId = getUserId();
+      const response = await apiClient.get(`/employee_profile/${userId}`);
 
-        // Only update with data from backend, use empty defaults if not provided
-        if (response.data) {
-          setProfile(response.data.profile || initialProfile);
-          console.log("Employee profile data loaded successfully", response.data);
+      // Only update with data from backend, use empty defaults if not provided
+      if (response.data) {
+        setProfile(response.data.profile || initialProfile);
+        console.log("Employee profile data loaded successfully", response.data);
 
-          // Map backend education field names to frontend state + parse skills JSON
-          const edu = response.data.education || {};
-          let parsedSkills = [];
-          if (edu.skills) {
-            if (Array.isArray(edu.skills)) {
-              parsedSkills = edu.skills;
-            } else {
-              try {
-                parsedSkills = JSON.parse(edu.skills);
-              } catch (e) {
-                parsedSkills = [];
-              }
-              if (!Array.isArray(parsedSkills)) parsedSkills = [];
+        // Map backend education field names to frontend state + parse skills JSON
+        const edu = response.data.education || {};
+        let parsedSkills = [];
+        if (edu.skills) {
+          if (Array.isArray(edu.skills)) {
+            parsedSkills = edu.skills;
+          } else {
+            try {
+              parsedSkills = JSON.parse(edu.skills);
+            } catch (e) {
+              parsedSkills = [];
             }
+            if (!Array.isArray(parsedSkills)) parsedSkills = [];
           }
-          setEducation({
-            institution: edu.institution || "",
-            location: edu.location || "",
-            startDate: edu.eduStartDate || "",
-            endDate: edu.eduEndDate || "",
-            qualification: edu.qualification || "",
-            specialization: edu.specialization || "",
-            skills: parsedSkills,
-            portfolio: edu.portfolio || "",
-          });
-
-          // Map backend experience field names to frontend state
-          const exp = response.data.experience || {};
-          setExperience({
-            company: exp.company || "",
-            jobTitle: exp.jobTitle || "",
-            startDate: exp.expStartDate || "",
-            endDate: exp.expEndDate || "",
-            responsibilities: exp.responsibilities || "",
-            totalYears: exp.totalYears || "",
-          });
-
-          setBank(response.data.bank || initialBank);
-          setDocuments(response.data.documents || initialDocs);
         }
+        setEducation({
+          institution: edu.institution || "",
+          location: edu.location || "",
+          startDate: edu.eduStartDate || "",
+          endDate: edu.eduEndDate || "",
+          qualification: edu.qualification || "",
+          specialization: edu.specialization || "",
+          skills: parsedSkills,
+          portfolio: edu.portfolio || "",
+        });
 
-        console.log("Employee profile data loaded successfully");
-      } catch (error) {
-        console.error("Error fetching employee profile data:", error);
-        // Keep empty initial state on error
+        // Map backend experience field names to frontend state
+        const exp = response.data.experience || {};
+        setExperience({
+          company: exp.company || "",
+          jobTitle: exp.jobTitle || "",
+          startDate: exp.expStartDate || "",
+          endDate: exp.expEndDate || "",
+          responsibilities: exp.responsibilities || "",
+          totalYears: exp.totalYears || "",
+        });
+
+        setBank(response.data.bank || initialBank);
+        setDocuments(response.data.documents || initialDocs);
       }
-    };
 
+      console.log("Employee profile data loaded successfully");
+    } catch (error) {
+      console.error("Error fetching employee profile data:", error);
+      // Keep empty initial state on error
+    }
+  };
+
+  useEffect(() => {
     fetchEmployeeProfileData();
+
+    // Refresh if updated from settings
+    const handleUpdate = () => fetchEmployeeProfileData();
+    window.addEventListener("profileUpdated", handleUpdate);
+    return () => window.removeEventListener("profileUpdated", handleUpdate);
   }, []);
 
   // =========== HANDLERS ===========
@@ -513,23 +519,34 @@ const EmployeeProfile = () => {
     }
   };
 
-  const handleCancelBank = () => {
-    setBank({
-      bankName: "",
-      branch: "",
-      accountNumber: "",
-      ifsc: "",
-      aadhaar: "",
-      pan: "",
-    });
+  const handleEditBank = () => {
+    setSavedBank(bank); // capture current state
+    setIsEditingBank(true);
+  };
 
+  const handleCancelBank = () => {
+    setBank(savedBank);
     setErrors({});
     setIsEditingBank(false);
   };
 
   const handleSaveDocs = () => {
     setIsEditingDocs(false);
+    setDocumentsBackup(null);
     alert("Documents updated!");
+  };
+
+  const handleCancelDocs = () => {
+    if (documentsBackup) {
+      setDocuments(documentsBackup);
+    }
+    setDocumentsBackup(null);
+    setIsEditingDocs(false);
+  };
+
+  const handleEditDocs = () => {
+    setDocumentsBackup([...documents]);
+    setIsEditingDocs(true);
   };
 
   // const handleCancelBank = () => {
@@ -942,9 +959,8 @@ const EmployeeProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${
-                          personalErrors.dob ? "input-error" : ""
-                        }`}
+                        className={`form-input ${personalErrors.dob ? "input-error" : ""
+                          }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -962,9 +978,8 @@ const EmployeeProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${
-                        personalErrors.nationality ? "input-error" : ""
-                      }`}
+                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -987,9 +1002,8 @@ const EmployeeProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${
-                        personalErrors.bloodGroup ? "input-error" : ""
-                      }`}
+                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1021,11 +1035,10 @@ const EmployeeProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${
-                        personalErrors.emergencyContactNumber
-                          ? "input-error"
-                          : ""
-                      }`}
+                      className={`form-input ${personalErrors.emergencyContactNumber
+                        ? "input-error"
+                        : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -1216,7 +1229,7 @@ const EmployeeProfile = () => {
                                 className="skill-remove"
                                 onClick={() => removeSkill(i)}
                               >
-                                ×
+
                               </span>
                             </span>
                           ))}
@@ -1469,7 +1482,7 @@ const EmployeeProfile = () => {
                   {!isEditingBank ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => setIsEditingBank(true)}
+                      onClick={handleEditBank}
                     >
                       Edit
                     </Button>
@@ -1591,7 +1604,7 @@ const EmployeeProfile = () => {
                   {!isEditingDocs ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => setIsEditingDocs(true)}
+                      onClick={handleEditDocs}
                     >
                       Edit
                     </Button>
@@ -1599,7 +1612,7 @@ const EmployeeProfile = () => {
                     <div style={{ minWidth: 180, textAlign: "right" }}>
                       <Button
                         className="btn-cancel"
-                        onClick={() => setIsEditingDocs(false)}
+                        onClick={handleCancelDocs}
                       >
                         Cancel
                       </Button>

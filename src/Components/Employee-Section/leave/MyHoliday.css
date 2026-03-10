@@ -17,7 +17,7 @@
   background: #fff;
   border-radius: 1px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
-  height:505px;
+  height: 505px;
 }
 
 .holiday-table {
@@ -36,7 +36,7 @@
   font-size: 14px;
   color: #444;
   border-bottom: 1px solid #ddd;
-  height:55px;
+  height: 55px;
 }
 
 .holiday-table td {
@@ -45,7 +45,7 @@
   font-size: 14px;
   color: #333;
   border-bottom: 1px dashed #ddd;
-  height:64.4px;
+  height: 64.4px;
 }
 
 /* Pagination */
@@ -68,8 +68,8 @@
   padding: 4px 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-   background: #19bde8;
-   color:white;
+  background: #19bde8;
+  color: white;
 }
 
 .page-controls {

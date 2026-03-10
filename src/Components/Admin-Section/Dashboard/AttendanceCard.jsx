@@ -22,11 +22,18 @@ const AttendanceCard = ({ dataSets }) => {
 
   const data = dataSets[view];
 
+  const getTitle = () => {
+    if (view === "months") return "Monthly Attendance";
+    if (view === "weeks") return "Weekly Attendance";
+    if (view === "days") return "Daily Attendance";
+    return "Attendance";
+  };
+
   return (
     <Card className="attendance-card p-3" style={{ borderRadius: "16px" }}>
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h6 className="mb-0">Monthly Attendance</h6>
+        <h6 className="mb-0">{getTitle()}</h6>
 
         <Dropdown>
           <Dropdown.Toggle variant="light" size="sm">
@@ -41,18 +48,18 @@ const AttendanceCard = ({ dataSets }) => {
               Weeks
             </Dropdown.Item>
             <Dropdown.Item onClick={() => setView("days")}>
-              days
+              Days
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
 
       {/* Chart */}                                         {/* modified height */}
-       <ResponsiveContainer width="100%" height={190}>    
+      <ResponsiveContainer width="100%" height={190}>
         <BarChart data={data}>
           <XAxis
             dataKey="label"
-            
+
             interval={0}   // ✅ prevents text breaking
           />
           <YAxis
@@ -61,15 +68,19 @@ const AttendanceCard = ({ dataSets }) => {
           />
           <Tooltip cursor={false} formatter={(v) => `${v}%`} />
 
-          <Bar dataKey="value" radius={[6, 6, 0, 0]}
-          onMouseLeave={() => setHoveredIndex(null)}
+          <Bar
+            dataKey="value"
+            radius={[6, 6, 0, 0]}
+            barSize={45} // Making bars a nice consistent thickness
+            minPointSize={5} // Ensuring even '0' values show a tiny baseline bar
+            onMouseLeave={() => setHoveredIndex(null)}
           >
             {data.map((_, index) => (
               <Cell
                 key={index}
-                fill={hoveredIndex === index ? "#00B5E2" : "#E6EEF3"}
+                fill={hoveredIndex === index ? "#008BCC" : "#00B5E2"}
                 onMouseEnter={() => setHoveredIndex(index)}
-                style={{ transition: "fill 0.1s ease" }}
+                style={{ transition: "fill 0.15s ease", cursor: "pointer" }}
               />
             ))}
           </Bar>
