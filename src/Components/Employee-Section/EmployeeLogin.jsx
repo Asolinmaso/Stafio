@@ -11,6 +11,7 @@ import ForgotPasswordPopup from "../Admin-Section/ForgotPasswordPopup";
 import gicon from "../../assets/favicon.ico";
 
 import { useGoogleLogin } from "@react-oauth/google";
+import { saveSession } from "../../utils/sessionManager";
 
 const EmployeeLogin = () => {
   const [identifier, setIdentifier] = useState("");
@@ -115,6 +116,7 @@ const EmployeeLogin = () => {
   //     .catch(() => setErrorMsg("Google login failed"));
   // };
 
+
   const googleLogin = useGoogleLogin({
     flow: "implicit",
     onSuccess: async (tokenResponse) => {
@@ -139,6 +141,8 @@ const EmployeeLogin = () => {
             localStorage.setItem("auth_token", data.access_token);
           if (data.refresh_token)
             localStorage.setItem("refresh_token", data.refresh_token);
+          // ✅ Use standardized session management
+          saveSession(data, "employee");
           navigate("/employee-dashboard");
         } else {
           setErrorMsg("Google login failed");
@@ -204,6 +208,8 @@ const EmployeeLogin = () => {
               localStorage.setItem("auth_token", data.access_token);
             if (data.refresh_token)
               localStorage.setItem("refresh_token", data.refresh_token);
+            // ✅ Use standardized session management
+            saveSession(data, "employee");
             navigate("/employee-dashboard");
           }
         });

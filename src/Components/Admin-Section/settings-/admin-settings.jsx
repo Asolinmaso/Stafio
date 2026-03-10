@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
 import apiClient from "../../../utils/apiClient";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import axios from "axios";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
 import profileimg from "../../../assets/profileimg.png";
@@ -115,8 +116,7 @@ const translations = {
 };
 
 export default function AdminSettings() {
-	const { theme, setTheme, language, setLanguage, font, setFont } =
-		useContext(SettingsContext);
+	const { theme, setTheme, language, setLanguage, font, setFont } = useContext(SettingsContext);
 	const [activeTab, setActiveTab] = useState("department");
 
 	const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
@@ -147,6 +147,24 @@ export default function AdminSettings() {
 
 	const [basicErrors, setBasicErrors] = useState({});
 
+	const [profileImage, setProfileImage] = useState(profileimg);
+	const profileInputRef = useRef(null);
+
+	const handleProfileImageUpload = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			if (file.size > 5 * 1024 * 1024) {
+				alert("File size exceeds 5MB limit");
+				return;
+			}
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setProfileImage(reader.result);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
 	// Team State
 	const [teamMembers, setTeamMembers] = useState([]);
 	const [selectedRows, setSelectedRows] = useState({});
@@ -157,6 +175,8 @@ export default function AdminSettings() {
 	const [newDeptName, setNewDeptName] = useState("");
 	const [editingDeptId, setEditingDeptId] = useState(null);
 	const [editMemberCount, setEditMemberCount] = useState("");
+	const [newDeptMemberCount, setNewDeptMemberCount] = useState("");
+	const [newDeptManagerId, setNewDeptManagerId] = useState("");
 
 	// Break Times State
 	const [lunchBreak, setLunchBreak] = useState("1:00 PM - 2:00 PM");
@@ -166,8 +186,8 @@ export default function AdminSettings() {
 	const t = (key) => translations[language]?.[key] || key;
 
 	const getHeaders = () => ({
-		"X-User-Role": sessionStorage.getItem("current_role"),
-		"X-User-ID": sessionStorage.getItem("current_user_id"),
+		"X-User-Role": localStorage.getItem("current_role"),
+		"X-User-ID": localStorage.getItem("current_user_id"),
 	});
 
 	// Fetch General Settings on mount
@@ -198,7 +218,7 @@ export default function AdminSettings() {
 		if (activeTab === "basic") {
 			const fetchBasicInfo = async () => {
 				try {
-					const res = await apiClient.get(`/api/settings/basic_info`, {
+					const res = await apiClient.get('/api/settings/basic_info', {
 						headers: getHeaders(),
 					});
 					setBasicForm({
@@ -209,6 +229,9 @@ export default function AdminSettings() {
 						position: res.data.position || "",
 						role: res.data.role || "admin",
 					});
+					if (res.data.profileImage) {
+						setProfileImage(res.data.profileImage);
+					}
 				} catch (err) {
 					console.error("Error fetching basic info:", err);
 				}
@@ -324,6 +347,8 @@ export default function AdminSettings() {
 				},
 			);
 			console.log("General settings saved");
+			setSaveMessage("General settings saved successfully!");
+			setTimeout(() => setSaveMessage(""), 3000);
 		} catch (err) {
 			console.error("Error saving general settings:", err);
 		}
@@ -374,6 +399,7 @@ export default function AdminSettings() {
 					headers: getHeaders(),
 				});
 				setSaveMessage("Basic info saved successfully!");
+				window.dispatchEvent(new Event("profileUpdated"));
 				setTimeout(() => setSaveMessage(""), 3000);
 			} catch (err) {
 				console.error("Error saving basic info:", err);
@@ -391,6 +417,7 @@ export default function AdminSettings() {
 			position: "",
 			role: "admin",
 		});
+		setProfileImage(profileimg);
 		setBasicErrors({});
 	};
 
@@ -407,11 +434,14 @@ export default function AdminSettings() {
 					headers: getHeaders(),
 				},
 			);
-			const res = await axios.get(`${API_BASE}/api/settings/departments`, {
+			const res = await apiClient.get(`/api/settings/departments`, {
 				headers: getHeaders(),
 			});
 			setDepartments(res.data);
 			setNewDeptName("");
+			setNewDeptMemberCount("");
+			setNewDeptManagerId("");
+			setShowCreateDept(false);
 			setShowDeptModal(false);
 		} catch (err) {
 			console.error("Error creating department:", err);
@@ -512,13 +542,16 @@ export default function AdminSettings() {
 			<div className="rightside-logo ">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
-			<AdminSidebar />
+			{/* Sidebar */}
+			<div className="sidebar">
+				<AdminSidebar />
+			</div>
 
 			{/* Main content */}
-			<div className="admin-settings-main">
+			<div className="main-content flex-grow-1">
 				<Topbar />
 
-				<div className="settings-page">
+				<div className="settings-page p-4">
 					{/* Header */}
 					<div className="settings-header">
 						<h1>{t("title")}</h1>
@@ -574,16 +607,26 @@ export default function AdminSettings() {
 
 									<div className="dept-form-group">
 										<label>Number of Employees</label>
-										<input type="number" placeholder="Enter number" />
+										<input
+											type="number"
+											placeholder="Enter number"
+											value={newDeptMemberCount}
+											onChange={(e) => setNewDeptMemberCount(e.target.value)}
+										/>
 									</div>
 
 									<div className="dept-form-group">
 										<label>Department Head</label>
-										<select>
+										<select
+											value={newDeptManagerId}
+											onChange={(e) => setNewDeptManagerId(e.target.value)}
+										>
 											<option value="">Select</option>
-											<option>Lakshmi</option>
-											<option>Sakshi</option>
-											<option>Asolin</option>
+											{teamMembers.map((member) => (
+												<option key={member.id} value={member.id}>
+													{member.name}
+												</option>
+											))}
 										</select>
 									</div>
 								</div>
@@ -638,11 +681,9 @@ export default function AdminSettings() {
 							<div>
 								<h3>General</h3>
 								<div className="form-row-grid">
-									{/* Row 1 */}
+									{/* Language */}
 									<div className="form-group-custom">
-										<label className="section-label-top">
-											{t("systemLanguage")}
-										</label>
+										<label className="section-label-top">{t("systemLanguage")}</label>
 										<div className="custom-select-wrapper">
 											<select
 												value={language}
@@ -655,6 +696,7 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
+									{/* User Signup Toggle */}
 									<div className="form-group-custom">
 										<label className="section-label-top">
 											{t("userSignup")}
@@ -664,17 +706,19 @@ export default function AdminSettings() {
 												Allow new users to sign up
 											</span>
 											<label className="switch">
-												<input type="checkbox" defaultChecked />
+												<input
+													type="checkbox"
+													checked={allowSignup}
+													onChange={() => setAllowSignup(!allowSignup)}
+												/>
 												<span className="slider round"></span>
 											</label>
 										</div>
 									</div>
 
-									{/* Row 2 */}
+									{/* Admin Dashboard Theme */}
 									<div className="form-group-custom">
-										<label className="section-label-top">
-											{t("dashboardTheme")}
-										</label>
+										<label className="section-label-top">{t("dashboardTheme")}</label>
 										<div className="theme-input-box0">
 											<span className="setting-muted-text">
 												{theme === "light" ? "Light Theme" : "Dark Theme"}
@@ -692,22 +736,23 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
+									{/* Default User Theme */}
 									<div className="form-group-custom">
-										<label>{t("defaultThemeforUsers")}</label>
-										<select
-											value={userTheme}
-											onChange={(e) => setUserTheme(e.target.value)}
-										>
-											<option value="light">Light Theme</option>
-											<option value="dark">Dark Theme</option>
-										</select>
+										<label className="section-label-top">{t("defaultThemeforUsers")}</label>
+										<div className="custom-select-wrapper">
+											<select
+												value={userTheme}
+												onChange={(e) => setUserTheme(e.target.value)}
+											>
+												<option value="light">Light Theme</option>
+												<option value="dark">Dark Theme</option>
+											</select>
+										</div>
 									</div>
 
-									{/* Row 3 */}
+									{/* System Font */}
 									<div className="form-group-custom">
-										<label className="section-label-top">
-											{t("systemFont")}
-										</label>
+										<label className="section-label-top">{t("systemFont")}</label>
 										<div className="custom-select-wrapper">
 											<select
 												value={font}
@@ -741,11 +786,9 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
-									{/* Row 4 */}
+									{/* Allow Manager Edit Toggle */}
 									<div className="form-group-custom">
-										<label className="section-label-top">
-											{t("allowManagertoeditemployeerecord")}
-										</label>
+										<label className="section-label-top">{t("allowManagertoeditemployeerecord")}</label>
 										<div className="theme-input-box0">
 											<span className="setting-muted-text">
 												{allowManagerEdit ? "Enable" : "Disable"}
@@ -762,24 +805,26 @@ export default function AdminSettings() {
 											</label>
 										</div>
 									</div>
+
 									<div className="form-group-custom"></div>
 								</div>
+
+								{saveMessage && (
+									<div className="save-message" style={{ marginTop: "20px", color: "green", fontWeight: "bold" }}>
+										{saveMessage}
+									</div>
+								)}
 							</div>
 						)}
 
 						{/* Basic Info */}
 						{activeTab === "basic" && (
-							<div
-								className="basic-info-tab"
-								style={{ padding: "30px 30px 30px 30px" }}
-							>
+							<div className="basic-info-tab" style={{ padding: "30px 30px 30px 30px" }}>
 								{/* 2-column grid for fields */}
 								<div className="form-row-grid">
 									{/* First Name */}
 									<div className="form-group-custom">
-										<label className="section-label-top">
-											{t("firstName")}
-										</label>
+										<label className="section-label-top">{t("firstName")}</label>
 										<input
 											type="text"
 											name="firstName"
@@ -790,9 +835,7 @@ export default function AdminSettings() {
 											onChange={handleBasicChange}
 										/>
 										{basicErrors.firstName && (
-											<span className="error-text">
-												{basicErrors.firstName}
-											</span>
+											<span className="error-text">{basicErrors.firstName}</span>
 										)}
 									</div>
 
@@ -850,10 +893,7 @@ export default function AdminSettings() {
 									{/* Position */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("position")}</label>
-										<div
-											className="custom-select-wrapper"
-											style={{ maxWidth: "100%" }}
-										>
+										<div className="custom-select-wrapper" style={{ maxWidth: "100%" }}>
 											<select
 												name="position"
 												value={basicForm.position}
@@ -873,10 +913,7 @@ export default function AdminSettings() {
 									{/* Role */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("role")}</label>
-										<div
-											className="custom-select-wrapper"
-											style={{ maxWidth: "100%" }}
-										>
+										<div className="custom-select-wrapper" style={{ maxWidth: "100%" }}>
 											<select
 												name="role"
 												value={basicForm.role}
@@ -891,21 +928,29 @@ export default function AdminSettings() {
 								</div>
 
 								{/* Profile Picture – full width below grid */}
-								<div
-									className="profile-section-custom"
-									style={{ marginTop: "10px" }}
-								>
+								<div className="profile-section-custom" style={{ marginTop: "10px" }}>
 									<label className="section-label-top">Profile picture</label>
 									<p className="file-info-muted">
 										We support only JPEGs or PNGs under 5MB
 									</p>
 									<div className="profile-upload-container">
 										<img
-											src={profileimg}
+											src={profileImage}
 											alt="Profile"
 											className="profile-preview-circle"
 										/>
-										<button type="button" className="btn-upload-outline">
+										<input
+											type="file"
+											accept="image/jpeg, image/png"
+											style={{ display: "none" }}
+											ref={profileInputRef}
+											onChange={handleProfileImageUpload}
+										/>
+										<button
+											type="button"
+											className="btn-upload-outline"
+											onClick={() => profileInputRef.current && profileInputRef.current.click()}
+										>
 											<BsUpload className="upload-icon" /> Upload
 										</button>
 									</div>
@@ -1032,9 +1077,7 @@ export default function AdminSettings() {
 															className="checkbbig"
 															checked={
 																departments.length > 0 &&
-																Object.values(selectedDepartmentRows).every(
-																	Boolean,
-																)
+																Object.values(selectedDepartmentRows).every(Boolean)
 															}
 															onChange={(e) => {
 																const isChecked = e.target.checked;
@@ -1059,9 +1102,7 @@ export default function AdminSettings() {
 															<input
 																type="checkbox"
 																className="checkbsmall"
-																checked={
-																	selectedDepartmentRows[dept.id] || false
-																}
+																checked={selectedDepartmentRows[dept.id] || false}
 																onChange={(e) =>
 																	setSelectedDepartmentRows({
 																		...selectedDepartmentRows,
@@ -1138,11 +1179,11 @@ export default function AdminSettings() {
 															) : (
 																<div className="dept-action-btns">
 																	<button
-																		className="action-btn edit"
+																		className="dept-icon-btn dept-edit-btn"
 																		onClick={() => {
 																			setEditingDeptId(dept.id);
 																			setEditMemberCount(
-																				dept.memberCount?.toString() || "0",
+																				dept.memberCount?.toString() || "0"
 																			);
 																		}}
 																		title="Edit"

@@ -115,10 +115,26 @@ const Dashboard = () => {
 		This_Week_Hoilday: 0,
 	});
 
+	// ── Break times ───────────────────────────────────────────────────────
+	const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
+	const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
+	const [customBreaks, setCustomBreaks] = useState([]);
+	const [breakSchedules, setBreakSchedules] = useState([
+		{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+		{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+	]);
+
 	// ── Meeting ───────────────────────────────────────────────────────────
 	const [meetingStatus, setMeetingStatus] = useState("idle");
 	const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
 	const [hasJoined, setHasJoined] = useState(false);
+
+	// ── Attendance chart data ─────────────────────────────────────────────
+	const [attendanceDataSets, setAttendanceDataSets] = useState({
+		months: [],
+		weeks: [],
+		days: [],
+	});
 
 	const navigate = useNavigate();
 
@@ -164,7 +180,6 @@ const Dashboard = () => {
 				const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
 				totalBreakMsRef.current = restoredBreakMs;
 
-
 				if (data.active_break) {
 					// On break — show frozen working hours (don't start timer)
 					setIsBreak(true);
@@ -181,7 +196,74 @@ const Dashboard = () => {
 			}
 		};
 
+		const fetchBreakTimes = async () => {
+			try {
+				const res = await apiClient.get(`/api/settings/break_times`);
+				if (res.data) {
+					const lunch = res.data.lunch_break || "1:00 PM - 2:00 PM";
+					const coffee = res.data.coffee_break || "4:00 PM - 4:15 PM";
+					const custom = res.data.custom_breaks || [];
+
+					setLunchBreakStr(lunch);
+					setCoffeeBreakStr(coffee);
+					setCustomBreaks(custom);
+
+					const parseTime = (str) => {
+						if (!str) return "00:00";
+						const match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+						if (!match) {
+							const basicMatch = str.match(/(\d+):(\d+)/);
+							return basicMatch
+								? `${basicMatch[1].padStart(2, "0")}:${basicMatch[2]}`
+								: "00:00";
+						}
+						let [_, h, m, p] = match;
+						h = parseInt(h);
+						if (p.toUpperCase() === "PM" && h < 12) h += 12;
+						if (p.toUpperCase() === "AM" && h === 12) h = 0;
+						return `${String(h).padStart(2, "0")}:${m}`;
+					};
+
+					const lunchParts = lunch.split("-");
+					const coffeeParts = coffee.split("-");
+
+					const newSchedules = [
+						{
+							id: "lunch",
+							label: "Lunch Break",
+							start: parseTime(lunchParts[0]),
+							end: parseTime(lunchParts[1]),
+							range: lunch,
+						},
+						{
+							id: "coffee",
+							label: "Coffee Break",
+							start: parseTime(coffeeParts[0]),
+							end: parseTime(coffeeParts[1]),
+							range: coffee,
+						},
+					];
+
+					custom.forEach((b, idx) => {
+						const parts = (b.time || "").split("-");
+						newSchedules.push({
+							id: `custom_${idx}`,
+							label: b.name || "Custom Break",
+							start: parseTime(parts[0]),
+							end: parseTime(parts[1]),
+							range: b.time || "",
+						});
+					});
+
+					setBreakSchedules(newSchedules);
+				}
+			} catch (err) {
+				console.error("Error fetching break times:", err);
+			}
+		};
+
 		fetchTodayAttendance();
+		fetchBreakTimes();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
 
@@ -345,39 +427,6 @@ const Dashboard = () => {
 			stopWorkingTimer();
 			clearTimeout(breakTimerRef.current);
 
-			// ─────────────────────────────────────────────────────────────────────
-			// 6. Meeting status
-			// ─────────────────────────────────────────────────────────────────────
-			useEffect(() => {
-				const update = () => {
-					const now = new Date();
-					const meetingStart = new Date();
-					meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
-					const alertStart = new Date(meetingStart);
-					alertStart.setMinutes(alertStart.getMinutes() - ALERT_BEFORE_MINUTES);
-
-					if (now < alertStart) {
-						setMeetingStatus("idle"); setMeetingTimeLeft(""); return;
-					}
-					if (now >= alertStart && now < meetingStart) {
-						const diffSec = Math.floor((meetingStart - now) / 1000);
-						const mins = String(Math.floor(diffSec / 60)).padStart(2, "0");
-						const secs = String(diffSec % 60).padStart(2, "0");
-						setMeetingStatus("countdown");
-						setMeetingTimeLeft(`${mins}:${secs} Min Left`);
-						return;
-					}
-					if (now >= meetingStart && !hasJoined) {
-						setMeetingStatus("join"); setMeetingTimeLeft("Join the meet"); return;
-					}
-					if (hasJoined) {
-						setMeetingStatus("ended"); setMeetingTimeLeft("Meeting Ended");
-					}
-				};
-				update();
-				const id = setInterval(update, 1000);
-				return () => clearInterval(id);
-			}, [hasJoined]);
 			// Show final work_hours returned by backend (net of breaks)
 			const finalHours =
 				res.data?.work_hours ||
@@ -468,28 +517,45 @@ const Dashboard = () => {
 	// ─────────────────────────────────────────────────────────────────────
 	// 11. Attendance data for chart
 	// ─────────────────────────────────────────────────────────────────────
-	const attendanceDataSets = {
-		months: [
-			{ label: "Jan", value: 95 },
-			{ label: "Feb", value: 90 },
-			{ label: "Mar", value: 86, highlight: true },
-			{ label: "Apr", value: 92 },
-			{ label: "May", value: 88 },
-		],
-		weeks: [
-			{ label: "W1", value: 85 },
-			{ label: "W2", value: 88 },
-			{ label: "W3", value: 90 },
-			{ label: "W4", value: 92 },
-		],
-		days: [
-			{ label: "Mon", value: 90 },
-			{ label: "Tue", value: 85 },
-			{ label: "Wed", value: 88 },
-			{ label: "Thu", value: 92 },
-			{ label: "Fri", value: 95 },
-		],
-	};
+	useEffect(() => {
+		const fetchAttendanceGraphData = async () => {
+			try {
+				const res = await apiClient.get(`/api/attendance_graph_stats`, {
+					headers: {
+						"X-User-Role": role,
+						"X-User-ID": userId,
+					},
+				});
+
+				const monthlyData = res.data.months || [];
+				const weeksData = res.data.weeks || [];
+				const daysData = res.data.days || [];
+
+				const months = monthlyData.map((item) => ({
+					label: item.month_name || item.month,
+					value: Math.round(item.attendance_percentage || 0),
+				}));
+
+				const weeks = weeksData.map((item) => ({
+					label: item.label,
+					value: Math.round(item.value || 0),
+				}));
+
+				const days = daysData.map((item) => ({
+					label: item.label,
+					value: Math.round(item.value || 0),
+				}));
+
+				setAttendanceDataSets({ months, weeks, days });
+			} catch (err) {
+				console.error("Error fetching overall attendance graph data", err);
+			}
+		};
+
+		if (userId) {
+			fetchAttendanceGraphData();
+		}
+	}, [userId, role]);
 
 	// ─────────────────────────────────────────────────────────────────────
 	// 12. Render
@@ -582,8 +648,7 @@ const Dashboard = () => {
 													{currentTime} , {currentDate}
 												</h2>
 												<p>
-													Lunch Break 1:00 PM - 2:00 PM &amp; Coffee Break 4:00
-													PM - 4:15 PM
+													Lunch Break {lunchBreakStr} &amp; Coffee Break {coffeeBreakStr}
 												</p>
 
 												<div className="punch-info-box">
@@ -652,7 +717,7 @@ const Dashboard = () => {
 													>
 														<p className="dropdown-title">Scheduled Breaks</p>
 
-														{BREAK_SCHEDULES.map((b) => {
+														{breakSchedules.map((b) => {
 															const nowMin = getCurrentTimeInMinutes();
 															const isCurrent =
 																nowMin >= toMinutes(b.start) &&
@@ -664,9 +729,7 @@ const Dashboard = () => {
 																	onClick={() => handleStartBreak(b)}
 																>
 																	<strong>{b.label}</strong>
-																	<span>
-																		{b.start} – {b.end}
-																	</span>
+																	<span>{b.range || (b.id === "lunch" ? lunchBreakStr : coffeeBreakStr)}</span>
 																</div>
 															);
 														})}

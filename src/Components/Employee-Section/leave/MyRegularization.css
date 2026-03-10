@@ -169,3 +169,214 @@
   color: #fff;
   border-color: #00bcd4;
 }
+
+/* ─── Modal Overlay ─── */
+.regularization-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ─── Modal Box ─── */
+.regularization-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 530px;
+  max-width: 95vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Modal Header ─── */
+.regularization-headers {
+  background: #19bde8;
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.regularization-headers h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.regularization-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  transition: background 0.2s;
+}
+
+.regularization-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Modal Body ─── */
+.regularization-body {
+  padding: 20px 24px 10px;
+}
+
+.regularization-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* ─── Left Form Fields ─── */
+.regularization-left {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.regularization-left label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+.regularization-left input[type="text"],
+.regularization-left input[type="date"],
+.regularization-left select,
+.regularization-left textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: #333;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.regularization-left input[type="text"]:focus,
+.regularization-left input[type="date"]:focus,
+.regularization-left select:focus,
+.regularization-left textarea:focus {
+  border-color: #19bde8;
+}
+
+.regularization-left input[readonly] {
+  background: #f5f5f5;
+  color: #555;
+  cursor: default;
+}
+
+.regularization-left select {
+  appearance: auto;
+}
+
+.regularization-left textarea {
+  resize: none;
+  height: 72px;
+  grid-column: 2;
+}
+
+/* Reason label aligns to top */
+.regularization-left label:last-of-type {
+  align-self: flex-start;
+  padding-top: 8px;
+}
+
+/* Character count hint */
+.regularization-left textarea+span,
+.char-count {
+  grid-column: 2;
+  font-size: 11px;
+  color: #999;
+  text-align: right;
+  margin-top: -6px;
+}
+
+/* ─── Right Illustration ─── */
+.regularization-right {
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.regularization-right img {
+  width: 110px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ─── Modal Footer ─── */
+.regularization-footer {
+  padding: 14px 24px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.regularization-submit {
+  background: #19bde8;
+  color: #fff;
+  border: none;
+  padding: 9px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.regularization-submit:hover {
+  background: #0fa8d1;
+}
+
+.regularization-cancel {
+  background: #fff;
+  color: #333;
+  border: 1.5px solid #ccc;
+  padding: 9px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.regularization-cancel:hover {
+  border-color: #19bde8;
+  color: #19bde8;
+}
+
+.no-data {
+  text-align: center;
+  color: #aaa;
+  padding: 30px !important;
+}
+
+.disabled-text {
+  color: #ccc;
+  font-size: 18px;
+}

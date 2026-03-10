@@ -78,6 +78,7 @@ const AdminProfile = () => {
   const [educationBackup, setEducationBackup] = useState(null);
   const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
+  const [documentsBackup, setDocumentsBackup] = useState(null);
   const [education, setEducation] = useState({
     institution: "",
     location: "",
@@ -164,69 +165,69 @@ const AdminProfile = () => {
   };
 
   // =========== FETCH DATA FROM BACKEND ===========
-  useEffect(() => {
-    const fetchAdminProfileData = async () => {
-      try {
-        const userId = getUserId();
-        const response = await apiClient.get(`/admin_profile/${userId}`, {
-          headers: {
-            "X-User-Role": "admin",
-            "X-User-ID": userId.toString(),
-          },
+  const fetchAdminProfileData = async () => {
+    try {
+      const userId = getUserId();
+      const response = await apiClient.get(`/admin_profile/${userId}`, {
+        headers: {
+          "X-User-Role": "admin",
+          "X-User-ID": userId.toString(),
+        },
+      });
+
+      // Only update with data from backend, use empty defaults if not provided
+      if (response.data) {
+        setProfile(response.data.profile || initialProfile);
+
+        // Map backend education field names to frontend state + parse skills JSON
+        const edu = response.data.education || {};
+        let parsedSkills = [];
+        if (edu.skills) {
+          if (Array.isArray(edu.skills)) {
+            parsedSkills = edu.skills;
+          } else {
+            try {
+              parsedSkills = JSON.parse(edu.skills);
+            } catch (e) {
+              parsedSkills = [];
+            }
+            if (!Array.isArray(parsedSkills)) parsedSkills = [];
+          }
+        }
+        setEducation({
+          institution: edu.institution || "",
+          location: edu.location || "",
+          startDate: edu.eduStartDate || "",
+          endDate: edu.eduEndDate || "",
+          qualification: edu.qualification || "",
+          specialization: edu.specialization || "",
+          skills: parsedSkills,
+          portfolio: edu.portfolio || "",
         });
 
-        // Only update with data from backend, use empty defaults if not provided
-        if (response.data) {
-          setProfile(response.data.profile || initialProfile);
+        // Map backend experience field names to frontend state
+        const exp = response.data.experience || {};
+        setExperience({
+          company: exp.company || "",
+          jobTitle: exp.jobTitle || "",
+          startDate: exp.expStartDate || "",
+          endDate: exp.expEndDate || "",
+          responsibilities: exp.responsibilities || "",
+          totalYears: exp.totalYears || "",
+        });
 
-          // Map backend education field names to frontend state + parse skills JSON
-          const edu = response.data.education || {};
-          let parsedSkills = [];
-          if (edu.skills) {
-            if (Array.isArray(edu.skills)) {
-              parsedSkills = edu.skills;
-            } else {
-              try {
-                parsedSkills = JSON.parse(edu.skills);
-              } catch (e) {
-                parsedSkills = [];
-              }
-              if (!Array.isArray(parsedSkills)) parsedSkills = [];
-            }
-          }
-          setEducation({
-            institution: edu.institution || "",
-            location: edu.location || "",
-            startDate: edu.eduStartDate || "",
-            endDate: edu.eduEndDate || "",
-            qualification: edu.qualification || "",
-            specialization: edu.specialization || "",
-            skills: parsedSkills,
-            portfolio: edu.portfolio || "",
-          });
-
-          // Map backend experience field names to frontend state
-          const exp = response.data.experience || {};
-          setExperience({
-            company: exp.company || "",
-            jobTitle: exp.jobTitle || "",
-            startDate: exp.expStartDate || "",
-            endDate: exp.expEndDate || "",
-            responsibilities: exp.responsibilities || "",
-            totalYears: exp.totalYears || "",
-          });
-
-          setBank(response.data.bank || initialBank);
-          setDocuments(response.data.documents || initialDocs);
-        }
-
-        console.log("Admin profile data loaded successfully");
-      } catch (error) {
-        console.error("Error fetching admin profile data:", error);
-        // Keep empty initial state on error
+        setBank(response.data.bank || initialBank);
+        setDocuments(response.data.documents || initialDocs);
       }
-    };
 
+      console.log("Admin profile data loaded successfully");
+    } catch (error) {
+      console.error("Error fetching admin profile data:", error);
+      // Keep empty initial state on error
+    }
+  };
+
+  useEffect(() => {
     fetchAdminProfileData();
   }, []);
 
@@ -562,31 +563,34 @@ const AdminProfile = () => {
     }
   };
 
-  const handleCancelBank = () => {
-    setBank({
-      bankName: "",
-      branch: "",
-      accountNumber: "",
-      ifsc: "",
-      aadhaar: "",
-      pan: "",
-    });
+  const handleEditBank = () => {
+    setSavedBank(bank);
+    setIsEditingBank(true);
+  };
 
+  const handleCancelBank = () => {
+    setBank(savedBank);
     setErrors({});
     setIsEditingBank(false);
   };
 
   const handleSaveDocs = () => {
     setIsEditingDocs(false);
+    setDocumentsBackup(null);
     alert("Documents updated!");
   };
 
   const handleCancelDocs = () => {
-    if (docsBackup !== null) {
-      setDocuments(docsBackup);
+    if (documentsBackup) {
+      setDocuments(documentsBackup);
     }
-    setDocsBackup(null);
+    setDocumentsBackup(null);
     setIsEditingDocs(false);
+  };
+
+  const handleEditDocs = () => {
+    setDocumentsBackup([...documents]);
+    setIsEditingDocs(true);
   };
 
   // const handleCancelBank = () => {
@@ -729,7 +733,7 @@ const AdminProfile = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // validation for previous experience tab                 new
+  // validation for previous experience tab new
 
   const calculateExperienceYears = (startDate, endDate) => {
     if (!startDate || !endDate) return "";
@@ -999,9 +1003,8 @@ const AdminProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${
-                          personalErrors.dob ? "input-error" : ""
-                        }`}
+                        className={`form-input ${personalErrors.dob ? "input-error" : ""
+                          }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -1019,9 +1022,8 @@ const AdminProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${
-                        personalErrors.nationality ? "input-error" : ""
-                      }`}
+                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1044,9 +1046,8 @@ const AdminProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${
-                        personalErrors.bloodGroup ? "input-error" : ""
-                      }`}
+                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1078,11 +1079,10 @@ const AdminProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${
-                        personalErrors.emergencyContactNumber
-                          ? "input-error"
-                          : ""
-                      }`}
+                      className={`form-input ${personalErrors.emergencyContactNumber
+                        ? "input-error"
+                        : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -1532,7 +1532,7 @@ const AdminProfile = () => {
                   {!isEditingBank ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => setIsEditingBank(true)}
+                      onClick={handleEditBank}
                     >
                       Edit
                     </Button>
@@ -1654,10 +1654,7 @@ const AdminProfile = () => {
                   {!isEditingDocs ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => {
-                        setDocsBackup([...documents]);
-                        setIsEditingDocs(true);
-                      }}
+                      onClick={handleEditDocs}
                     >
                       Edit
                     </Button>

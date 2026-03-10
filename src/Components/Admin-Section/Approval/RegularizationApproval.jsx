@@ -413,23 +413,25 @@ export default function RegularizationApproval() {
                 <img src={timemgnt} alt="Time Management" />
               </div>
             </div>
-            <div className="ra-modal-footer">
-              <span className="ra-watermark">Viewdetailsregularization</span>
-              <div className="ra-footer-btns">
-                <button
-                  className="ra-approve-pill-btn"
-                  onClick={handleApproveClick}
-                >
-                  Approve
-                </button>
-                <button
-                  className="ra-reject-pill-btn"
-                  onClick={handleRejectClick}
-                >
-                  Reject
-                </button>
+              <div className="ra-modal-footer">
+                <span className="ra-watermark">Viewdetailsregularization</span>
+                {selectedLeave && selectedLeave.status && selectedLeave.status.toLowerCase() === "pending" ? (
+                  <div className="ra-footer-btns">
+                    <button
+                      className="ra-approve-pill-btn"
+                      onClick={handleApproveClick}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="ra-reject-pill-btn"
+                      onClick={handleRejectClick}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                ) : null}
               </div>
-            </div>
           </div>
         </div>
       )}

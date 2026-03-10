@@ -103,7 +103,7 @@ export default function LeaveReport() {
     const fetchAttendanceData = async () => {
       setLoadingAttendance(true);
       try {
-        const res = await apiClient.get("/api/attendance_stats", {
+        const res = await apiClient.get("/api/attendance_graph_stats", {
           params: { user_id: selectedEmployeeId },
           headers: {
             "X-User-Role": "admin",
@@ -112,42 +112,27 @@ export default function LeaveReport() {
         });
 
         // Transform API response to match AttendanceCard format
-        // Assuming API returns: { months: [...], attendance_percentage: 85 }
         const monthlyData = res.data.months || [];
+        const weeksData = res.data.weeks || [];
+        const daysData = res.data.days || [];
 
-        // Create monthly data (last 5 months)
-        const months = monthlyData.slice(-5).map((item) => ({
+        // Create monthly data
+        const months = monthlyData.map((item) => ({
           label: item.month_name || item.month,
           value: Math.round(item.attendance_percentage || 0),
         }));
 
-        // For now, use sample data for weeks and days until backend provides it
-        const weeks = [
-          {
-            label: "W1",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-          {
-            label: "W2",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-          {
-            label: "W3",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-          {
-            label: "W4",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-        ];
+        // Create weekly data
+        const weeks = weeksData.map((item) => ({
+          label: item.label,
+          value: Math.round(item.value || 0),
+        }));
 
-        const days = [
-          { label: "Mon", value: 90 },
-          { label: "Tue", value: 85 },
-          { label: "Wed", value: 88 },
-          { label: "Thu", value: 92 },
-          { label: "Fri", value: 95 },
-        ];
+        // Create daily data
+        const days = daysData.map((item) => ({
+          label: item.label,
+          value: Math.round(item.value || 0),
+        }));
 
         setAttendanceDataSets({ months, weeks, days });
       } catch (err) {

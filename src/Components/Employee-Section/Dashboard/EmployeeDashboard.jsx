@@ -56,6 +56,25 @@ const EmployeeDashboard = () => {
     }
   }, []);
 
+  // ✅ Break times
+  const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
+  const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
+
+  useEffect(() => {
+    const fetchBreakTimes = async () => {
+      try {
+        const res = await apiClient.get("/api/settings/break_times");
+        if (res.data) {
+          if (res.data.lunch_break) setLunchBreakStr(res.data.lunch_break);
+          if (res.data.coffee_break) setCoffeeBreakStr(res.data.coffee_break);
+        }
+      } catch (err) {
+        console.error("Error fetching break times:", err);
+      }
+    };
+    fetchBreakTimes();
+  }, []);
+
   // ✅ Punch In/Out
   const [isPunchedIn, setIsPunchedIn] = useState(false);
   const [punchInTime, setPunchInTime] = useState(null);
@@ -308,8 +327,7 @@ const EmployeeDashboard = () => {
                           {currentTime} , {currentDate}
                         </h2>
                         <p>
-                          Lunch Break 1:00 PM - 2:00 PM & Coffee Break 4:00 PM -
-                          4:15 PM
+                          Lunch Break {lunchBreakStr} & Coffee Break {coffeeBreakStr}
                         </p>
                         <div className="punch-info-box">
                           <div className="info-item">
