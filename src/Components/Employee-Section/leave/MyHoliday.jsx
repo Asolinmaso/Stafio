@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./MyHoliday.css";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 const MyHoliday = () => {
   const [holidays, setHolidays] = useState([]);
@@ -10,7 +10,7 @@ const MyHoliday = () => {
   useEffect(() => {
     const fetchHolidays = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/myholidays");
+        const response = await apiClient.get("/api/myholidays");
         setHolidays(response.data);
       } catch (error) {
         console.error("Error fetching holidays:", error);

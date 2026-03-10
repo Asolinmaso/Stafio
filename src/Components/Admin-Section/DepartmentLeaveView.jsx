@@ -18,20 +18,18 @@ const DepartmentLeaveView = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
-
   // Fetch leave records when department changes
   useEffect(() => {
     const fetchLeaveRecords = async () => {
       setLoading(true);
       try {
-        let url = `${API_BASE}/api/all_leave_records`;
+        let url = `/api/all_leave_records`;
 
         if (selectedDepartment !== "All") {
-          url = `${API_BASE}/api/leave_by_department?department=${encodeURIComponent(selectedDepartment)}`;
+          url = `/api/leave_by_department?department=${encodeURIComponent(selectedDepartment)}`;
         }
 
-        const response = await axios.get(url, {
+        const response = await apiClient.get(url, {
           headers: {
             "X-User-Role": "admin",
             "X-User-ID": localStorage.getItem("userId") || "1",
@@ -59,12 +57,16 @@ const DepartmentLeaveView = () => {
         <Container fluid className="p-4">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="fw-bold">Department Leave Records</h2>
-            <div style={{ width: '250px' }}>
+            <div style={{ width: "250px" }}>
               <Form.Select
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
                 className="border-0 shadow-sm"
-                style={{ height: '45px', borderRadius: '10px', background: '#fff' }}
+                style={{
+                  height: "45px",
+                  borderRadius: "10px",
+                  background: "#fff",
+                }}
               >
                 {departments.map((dept, idx) => (
                   <option key={idx} value={dept}>
@@ -92,7 +94,9 @@ const DepartmentLeaveView = () => {
                   {filteredRecords.length > 0 ? (
                     filteredRecords.map((record, index) => (
                       <tr key={index}>
-                        <td className="py-3 px-4 fw-medium text-primary">{record.employeeId}</td>
+                        <td className="py-3 px-4 fw-medium text-primary">
+                          {record.employeeId}
+                        </td>
                         <td className="py-3">{record.name}</td>
                         <td className="py-3">
                           <span className="badge bg-light text-dark px-3 py-2 border">
@@ -100,9 +104,13 @@ const DepartmentLeaveView = () => {
                           </span>
                         </td>
                         <td className="py-3">{record.leaveType}</td>
-                        <td className="py-3 small text-secondary">{record.startDate} — {record.endDate}</td>
+                        <td className="py-3 small text-secondary">
+                          {record.startDate} — {record.endDate}
+                        </td>
                         <td className="py-3 px-4">
-                          <span className={`badge ${record.status === 'Approved' ? 'bg-success' : 'bg-warning'} px-3 py-2`}>
+                          <span
+                            className={`badge ${record.status === "Approved" ? "bg-success" : "bg-warning"} px-3 py-2`}
+                          >
                             {record.status}
                           </span>
                         </td>
@@ -110,7 +118,10 @@ const DepartmentLeaveView = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="text-center py-5 text-secondary">
+                      <td
+                        colSpan="6"
+                        className="text-center py-5 text-secondary"
+                      >
                         No records found for the selected department.
                       </td>
                     </tr>

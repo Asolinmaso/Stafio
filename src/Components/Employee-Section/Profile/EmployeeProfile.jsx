@@ -1,68 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Form, Nav, Tab } from 'react-bootstrap';
-import EmployeeSidebar from '.././EmployeeSidebar';
-import Topbar from '.././Topbar';
-import ProfileBanner from './ProfileBanner';
-import './EmployeeProfile.css';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { Row, Col, Button, Form, Nav, Tab } from "react-bootstrap";
+import EmployeeSidebar from ".././EmployeeSidebar";
+import Topbar from ".././Topbar";
+import ProfileBanner from "./ProfileBanner";
+import "./EmployeeProfile.css";
+import apiClient from "../../../utils/apiClient";
 
 // ====================== INITIAL STATE ======================
 const initialProfile = {
-  profileImage: '',
-  name: '',
-  gender: '',
-  dob: '',
-  maritalStatus: '',
-  nationality: '',
-  bloodGroup: '',
-  email: '',
-  phone: '',
-  address: '',
-  emergencyContactNumber: '',
-  relationship: '',
-  empType: '',
-  department: '',
-  location: '',
-  supervisor: '',
-  hrManager: '',
-  empId: '',
-  status: ''
+  profileImage: "",
+  name: "",
+  gender: "",
+  dob: "",
+  maritalStatus: "",
+  nationality: "",
+  bloodGroup: "",
+  email: "",
+  phone: "",
+  address: "",
+  emergencyContactNumber: "",
+  relationship: "",
+  empType: "",
+  department: "",
+  location: "",
+  supervisor: "",
+  hrManager: "",
+  empId: "",
+  status: "",
 };
 
 const initialEducation = {
-  institution: '',
-  location: '',
-  startDate: '',
-  endDate: '',
-  qualification: '',
-  specialization: '',
+  institution: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  qualification: "",
+  specialization: "",
   skills: [],
-  portfolio: ''
+  portfolio: "",
 };
 
 const initialExperience = {
-  company: '',
-  jobTitle: '',
-  startDate: '',
-  endDate: '',
-  responsibilities: '',
-  totalYears: ''
+  company: "",
+  jobTitle: "",
+  startDate: "",
+  endDate: "",
+  responsibilities: "",
+  totalYears: "",
 };
 
 const initialBank = {
-  bankName: '',
-  branch: '',
-  accountNumber: '',
-  ifsc: '',
-  aadhaar: '',
-  pan: ''
+  bankName: "",
+  branch: "",
+  accountNumber: "",
+  ifsc: "",
+  aadhaar: "",
+  pan: "",
 };
 
 const initialDocs = [];
 
 // ====================== COMPONENT ======================
 const EmployeeProfile = () => {
-  const [activeTab, setActiveTab] = useState('personal');
+  const [activeTab, setActiveTab] = useState("personal");
   const [profile, setProfile] = useState(initialProfile);
   // const [education, setEducation] = useState(initialEducation);
   const [experience, setExperience] = useState(initialExperience);
@@ -72,7 +72,7 @@ const EmployeeProfile = () => {
 
   //new
   const [personalErrors, setPersonalErrors] = useState({});
-  const [personalBackup, setPersonalBackup] = useState(null);   //new
+  const [personalBackup, setPersonalBackup] = useState(null); //new
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
@@ -86,11 +86,10 @@ const EmployeeProfile = () => {
     specialization: "",
     portfolio: "",
 
-    skills: ["Illustrator", "Photoshop", "Figma", "Adobe XD"]
+    skills: ["Illustrator", "Photoshop", "Figma", "Adobe XD"],
   });
 
   const [skillInput, setSkillInput] = useState("");
-
 
   const [bank, setBank] = useState({
     bankName: "",
@@ -98,7 +97,7 @@ const EmployeeProfile = () => {
     accountNumber: "",
     ifsc: "",
     aadhaar: "",
-    pan: ""
+    pan: "",
   });
 
   const [savedBank, setSavedBank] = useState({
@@ -107,7 +106,7 @@ const EmployeeProfile = () => {
     accountNumber: "",
     ifsc: "",
     aadhaar: "",
-    pan: ""
+    pan: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -119,9 +118,8 @@ const EmployeeProfile = () => {
     qualification: "",
     specialization: "",
     skills: "",
-    portfolio: ""
+    portfolio: "",
   });
-
 
   // Per-tab edit states
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
@@ -130,27 +128,89 @@ const EmployeeProfile = () => {
   const [isEditingBank, setIsEditingBank] = useState(false);
   const [isEditingDocs, setIsEditingDocs] = useState(false);
 
+  // =========== GET USER ID ===========
+  const getUserId = () => {
+    return (
+      localStorage.getItem("employee_user_id") ||
+      localStorage.getItem("empId") ||
+      localStorage.getItem("current_user_id")
+    );
+  };
+
+  // =========== SAVE PROFILE TO BACKEND ===========
+  const saveProfileToBackend = async (dataToSave) => {
+    const userId = getUserId();
+    try {
+      const response = await apiClient.put(
+        `/api/employee_profile/${userId}`,
+        dataToSave,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-User-Role": "employee",
+            "X-User-ID": userId.toString(),
+          },
+        },
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      return {
+        success: false,
+        error: error.response?.data?.message || error.message,
+      };
+    }
+  };
 
   // =========== FETCH DATA FROM BACKEND ===========
   useEffect(() => {
     const fetchEmployeeProfileData = async () => {
       try {
-        const userId = 1; // Replace with actual logged-in employee ID
-        const response = await axios.get(
-          `http://127.0.0.1:5001/employee_profile/${userId}`,
-          {
-            headers: {
-              'X-User-Role': 'employee',
-              'X-User-ID': '1'
-            }
-          }
-        );
+        const userId = getUserId();
+        const response = await apiClient.get(`/employee_profile/${userId}`);
 
         // Only update with data from backend, use empty defaults if not provided
         if (response.data) {
           setProfile(response.data.profile || initialProfile);
-          setEducation(response.data.education || initialEducation);
-          setExperience(response.data.experience || initialExperience);
+          console.log("Employee profile data loaded successfully", response.data);
+
+          // Map backend education field names to frontend state + parse skills JSON
+          const edu = response.data.education || {};
+          let parsedSkills = [];
+          if (edu.skills) {
+            if (Array.isArray(edu.skills)) {
+              parsedSkills = edu.skills;
+            } else {
+              try {
+                parsedSkills = JSON.parse(edu.skills);
+              } catch (e) {
+                parsedSkills = [];
+              }
+              if (!Array.isArray(parsedSkills)) parsedSkills = [];
+            }
+          }
+          setEducation({
+            institution: edu.institution || "",
+            location: edu.location || "",
+            startDate: edu.eduStartDate || "",
+            endDate: edu.eduEndDate || "",
+            qualification: edu.qualification || "",
+            specialization: edu.specialization || "",
+            skills: parsedSkills,
+            portfolio: edu.portfolio || "",
+          });
+
+          // Map backend experience field names to frontend state
+          const exp = response.data.experience || {};
+          setExperience({
+            company: exp.company || "",
+            jobTitle: exp.jobTitle || "",
+            startDate: exp.expStartDate || "",
+            endDate: exp.expEndDate || "",
+            responsibilities: exp.responsibilities || "",
+            totalYears: exp.totalYears || "",
+          });
+
           setBank(response.data.bank || initialBank);
           setDocuments(response.data.documents || initialDocs);
         }
@@ -166,34 +226,37 @@ const EmployeeProfile = () => {
   }, []);
 
   // =========== HANDLERS ===========
-  const handleProfileChange = (e) => {            //new
+  const handleProfileChange = (e) => {
+    //new
     const { name, value } = e.target;
 
-    setProfile(prev => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
 
     // Clear error for that field
-    setPersonalErrors(prev => ({ ...prev, [name]: "" }));
+    setPersonalErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleEducationChange = (e) => {             //new
+  const handleEducationChange = (e) => {
+    //new
     const { name, value } = e.target;
 
-    setEducation(prev => ({ ...prev, [name]: value }));
+    setEducation((prev) => ({ ...prev, [name]: value }));
 
-    setEducationErrors(prev => ({ ...prev, [name]: "", form: "" }));
+    setEducationErrors((prev) => ({ ...prev, [name]: "", form: "" }));
   };
 
-  const handleExperienceChange = (e) => {           //new
+  const handleExperienceChange = (e) => {
+    //new
     const { name, value } = e.target;
 
-    setExperience(prev => {
+    setExperience((prev) => {
       const updated = { ...prev, [name]: value };
 
       // Auto-calc years when dates change
       if (name === "startDate" || name === "endDate") {
         const calculatedYears = calculateExperienceYears(
           updated.startDate,
-          updated.endDate
+          updated.endDate,
         );
 
         if (calculatedYears !== "") {
@@ -204,7 +267,7 @@ const EmployeeProfile = () => {
       return updated;
     });
 
-    setExperienceErrors(prev => ({ ...prev, [name]: "" }));
+    setExperienceErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   //handle bank change
@@ -231,18 +294,17 @@ const EmployeeProfile = () => {
         ...prev,
         [name]: validations[name].test(newValue)
           ? ""
-          : `Invalid ${name.replace(/([A-Z])/g, " $1")}`
+          : `Invalid ${name.replace(/([A-Z])/g, " $1")}`,
       }));
     }
   };
 
-
-  const handleImageChange = e => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () =>
-        setProfile(prev => ({ ...prev, profileImage: reader.result }));
+        setProfile((prev) => ({ ...prev, profileImage: reader.result }));
       reader.readAsDataURL(file);
     }
   };
@@ -260,7 +322,6 @@ const EmployeeProfile = () => {
   //     skills: prev.skills.filter((_, sidx) => sidx !== idx)
   //   }));
 
-
   const handleSkillInputChange = (e) => {
     setSkillInput(e.target.value);
   };
@@ -275,9 +336,9 @@ const EmployeeProfile = () => {
       return;
     }
 
-    setEducation(prev => ({
+    setEducation((prev) => ({
       ...prev,
-      skills: [...prev.skills, skillInput.trim()]
+      skills: [...prev.skills, skillInput.trim()],
     }));
 
     setSkillInput("");
@@ -285,9 +346,9 @@ const EmployeeProfile = () => {
 
   // removeskill
   const removeSkill = (idx) => {
-    setEducation(prev => ({
+    setEducation((prev) => ({
       ...prev,
-      skills: prev.skills.filter((_, i) => i !== idx)
+      skills: prev.skills.filter((_, i) => i !== idx),
     }));
   };
 
@@ -299,55 +360,85 @@ const EmployeeProfile = () => {
     }
   };
 
-
-
-  const handleDocDelete = idx =>
-    setDocuments(prev => prev.filter((_, didx) => didx !== idx));
-
-
-
+  const handleDocDelete = (idx) =>
+    setDocuments((prev) => prev.filter((_, didx) => didx !== idx));
 
   //edit handle button for personal info
   const handleEditPersonal = () => {
-    setPersonalBackup(profile);   // save current profile
+    setPersonalBackup(profile); // save current profile
     setIsEditingPersonal(true);
   };
 
   //save handle button for personal info
-  const handleSavePersonal = () => {
+  const handleSavePersonal = async () => {
     const isValid = validatePersonalInfo();
 
     if (!isValid) return;
 
-    setPersonalBackup(profile); // keep latest saved state
-    setIsEditingPersonal(false);
-    setPersonalErrors({});
-    alert("Profile updated successfully!");
+    // Prepare data for backend (nested under "profile" section)
+    const dataToSave = {
+      gender: profile.gender,
+      dob: profile.dob,
+      marital_status: profile.maritalStatus,
+      nationality: profile.nationality,
+      blood_group: profile.bloodGroup,
+      address: profile.address,
+      emergency_contact: profile.emergencyContactNumber,
+      emergency_relationship: profile.relationship,
+    };
+
+    const result = await saveProfileToBackend(dataToSave);
+
+    if (result.success) {
+      setPersonalBackup(profile);
+      setIsEditingPersonal(false);
+      setPersonalErrors({});
+      alert("Profile updated successfully!");
+    } else {
+      alert(`Error saving profile: ${result.error}`);
+    }
   };
 
   //cancel handle button for personal info
   const handleCancelPersonal = () => {
-    setProfile(personalBackup);   // restore previous values
+    setProfile(personalBackup); // restore previous values
     setPersonalErrors({});
     setIsEditingPersonal(false);
   };
 
-
-  //save button for education tab 
+  //save button for education tab
 
   const handleEditEducation = () => {
     setEducationBackup(education);
     setIsEditingEducation(true);
   };
 
-  const handleSaveEducation = () => {
-
+  const handleSaveEducation = async () => {
     if (!validateEducation()) return;
-    setIsEditingEducation(false);
-    setEducationErrors({});
-    setSavedEducation(education);
-    setEducationBackup(null)
-    alert("Education Qualification updated successfully.");
+
+    // Prepare data for backend with DB column names
+    const dataToSave = {
+      institution: education.institution,
+      edu_location: education.location,
+      edu_start_date: education.startDate,
+      edu_end_date: education.endDate,
+      qualification: education.qualification,
+      specialization: education.specialization,
+      skills: JSON.stringify(education.skills),
+      portfolio: education.portfolio,
+    };
+
+    const result = await saveProfileToBackend(dataToSave);
+
+    if (result.success) {
+      setIsEditingEducation(false);
+      setEducationErrors({});
+      setSavedEducation(education);
+      setEducationBackup(null);
+      alert("Education Qualification updated successfully.");
+    } else {
+      alert(`Error saving education: ${result.error}`);
+    }
   };
 
   const handleCancelEducation = () => {
@@ -355,8 +446,6 @@ const EmployeeProfile = () => {
     setEducationErrors({});
     setIsEditingEducation(false);
   };
-
-
 
   //handleEditExperience for buttons
   const handleEditExperience = () => {
@@ -372,24 +461,56 @@ const EmployeeProfile = () => {
   };
 
   //handleSaveExperience
-  const handleSaveExperience = () => {
+  const handleSaveExperience = async () => {
     if (!validateExperience()) return;
-    setIsEditingExperience(false);
-    setExperienceErrors({});
-    setExperienceBackup(null);
-    alert("Experience updated!");
-  };
 
+    // Prepare data for backend with DB column names
+    const dataToSave = {
+      prev_company: experience.company,
+      prev_job_title: experience.jobTitle,
+      exp_start_date: experience.startDate,
+      exp_end_date: experience.endDate,
+      responsibilities: experience.responsibilities,
+      total_experience_years: parseFloat(experience.totalYears) || 0,
+    };
+
+    const result = await saveProfileToBackend(dataToSave);
+
+    if (result.success) {
+      setIsEditingExperience(false);
+      setExperienceErrors({});
+      setExperienceBackup(null);
+      alert("Experience updated!");
+    } else {
+      alert(`Error saving experience: ${result.error}`);
+    }
+  };
 
   // handleSaveBank Save button logic
 
-  const handleSaveBank = () => {
+  const handleSaveBank = async () => {
     const isValid = validateBankForm();
     if (!isValid) return;
 
-    setSavedBank(bank);
-    setIsEditingBank(false);
-    alert("Bank details updated!");
+    // Prepare data for backend with DB column names
+    const dataToSave = {
+      bank_name: bank.bankName,
+      bank_branch: bank.branch,
+      account_number: bank.accountNumber,
+      ifsc_code: bank.ifsc,
+      aadhaar_number: bank.aadhaar,
+      pan_number: bank.pan,
+    };
+
+    const result = await saveProfileToBackend(dataToSave);
+
+    if (result.success) {
+      setSavedBank(bank);
+      setIsEditingBank(false);
+      alert("Bank details updated!");
+    } else {
+      alert(`Error saving bank details: ${result.error}`);
+    }
   };
 
   const handleCancelBank = () => {
@@ -399,23 +520,23 @@ const EmployeeProfile = () => {
       accountNumber: "",
       ifsc: "",
       aadhaar: "",
-      pan: ""
+      pan: "",
     });
 
     setErrors({});
     setIsEditingBank(false);
   };
 
-
-  const handleSaveDocs = () => { setIsEditingDocs(false); alert('Documents updated!'); };
+  const handleSaveDocs = () => {
+    setIsEditingDocs(false);
+    alert("Documents updated!");
+  };
 
   // const handleCancelBank = () => {
   //   setBank(savedBank);      // restore last saved data
   //   setErrors({});           // clear validation errors
   //   setIsEditingBank(false);
   // };
-
-
 
   // validation personal information
   const validatePersonalInfo = () => {
@@ -450,8 +571,7 @@ const EmployeeProfile = () => {
     if (!profile.emergencyContactNumber) {
       errors.emergencyContactNumber = "*This field is required";
     } else if (!/^[0-9]\d{9}$/.test(profile.emergencyContactNumber)) {
-      errors.emergencyContactNumber =
-        "*Please enter a valid phone number.";
+      errors.emergencyContactNumber = "*Please enter a valid phone number.";
     }
 
     // Address
@@ -466,7 +586,6 @@ const EmployeeProfile = () => {
 
     setPersonalErrors(errors);
     return Object.keys(errors).length === 0;
-
   };
 
   // validation for education tab                 new
@@ -496,11 +615,6 @@ const EmployeeProfile = () => {
 
     // Date validation
 
-
-
-
-
-
     // Required: Start Date
     if (!education.startDate) {
       errors.startDate = "Start Date is required.";
@@ -522,7 +636,7 @@ const EmployeeProfile = () => {
     // new
     if (!education.skills || education.skills.length === 0) {
       errors.skills = "At least one skill is required.";
-    } else if (education.skills.some(skill => !skill.trim())) {
+    } else if (education.skills.some((skill) => !skill.trim())) {
       errors.skills = "Skill cannot be empty.";
     }
     // qualification
@@ -589,7 +703,7 @@ const EmployeeProfile = () => {
         // Experience mismatch validation
         const calculated = calculateExperienceYears(
           experience.startDate,
-          experience.endDate
+          experience.endDate,
         );
 
         if (
@@ -647,18 +761,15 @@ const EmployeeProfile = () => {
     return Object.keys(errors).length === 0;
   };
 
-
-  //validation for bank details 
+  //validation for bank details
 
   const validations = {
-    bankName: /^[a-zA-Z\s]{3,}$/,                  // Text only
-    branch: /^[a-zA-Z0-9\s]{3,}$/,                 // Text + numbers
-    accountNumber: /^\d{9,18}$/,                   // 9–18 digits
-    ifsc: /^[A-Z]{4}0[A-Z0-9]{6}$/,                // IFSC format
-    aadhaar: /^\d{12}$/,                           // 12 digits
-    pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/            // PAN format
-
-
+    bankName: /^[a-zA-Z\s]{3,}$/, // Text only
+    branch: /^[a-zA-Z0-9\s]{3,}$/, // Text + numbers
+    accountNumber: /^\d{9,18}$/, // 9–18 digits
+    ifsc: /^[A-Z]{4}0[A-Z0-9]{6}$/, // IFSC format
+    aadhaar: /^\d{12}$/, // 12 digits
+    pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, // PAN format
   };
 
   const validateBankForm = () => {
@@ -705,7 +816,6 @@ const EmployeeProfile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-
   // =========== RENDER ===========
   return (
     <div className="d-flex">
@@ -714,34 +824,54 @@ const EmployeeProfile = () => {
       </div>
       <div className="main-content py-4">
         <Topbar />
-        <ProfileBanner />
+        <ProfileBanner profileData={profile} />
 
         {/* ------ Outer Card REMOVED! Tabs sit on main-content directly ---- */}
         <Tab.Container
           activeKey={activeTab}
-          onSelect={k => setActiveTab(k)}
+          onSelect={(k) => setActiveTab(k)}
           defaultActiveKey="personal"
         >
           <Nav variant="tabs" className="profile-tabs">
-            <Nav.Item><Nav.Link eventKey="personal">Personal Information</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="education">Education Qualification</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="experience">Previous Experience (if any)</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="bank">Bank Details</Nav.Link></Nav.Item>
-            <Nav.Item><Nav.Link eventKey="documents">Documents</Nav.Link></Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="personal">Personal Information</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="education">Education Qualification</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="experience">
+                Previous Experience (if any)
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="bank">Bank Details</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="documents">Documents</Nav.Link>
+            </Nav.Item>
           </Nav>
           <Tab.Content>
-
             {/* PERSONAL INFORMATION */}
             <Tab.Pane eventKey="personal">
               <div className="update-info-header-box">
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Personal Information</span>
                   {!isEditingPersonal ? (
-                    <Button className="btn-edit" onClick={handleEditPersonal}>Edit</Button>
+                    <Button className="btn-edit" onClick={handleEditPersonal}>
+                      Edit
+                    </Button>
                   ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelPersonal}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSavePersonal}>Save</Button>
+                    <div style={{ minWidth: 180, textAlign: "right" }}>
+                      <Button
+                        className="btn-cancel"
+                        onClick={handleCancelPersonal}
+                      >
+                        Cancel
+                      </Button>
+                      <Button className="btn-save" onClick={handleSavePersonal}>
+                        Save
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -769,11 +899,15 @@ const EmployeeProfile = () => {
                     </div>
                     {/* new */}
                     {personalErrors.gender && (
-                      <div className="error-text mt-1">{personalErrors.gender}</div>
+                      <div className="error-text mt-1">
+                        {personalErrors.gender}
+                      </div>
                     )}
                   </Col>
                   <Col md={6}>
-                    <Form.Label className="form-label">Marital Status</Form.Label>
+                    <Form.Label className="form-label">
+                      Marital Status
+                    </Form.Label>
                     <div className="option-box">
                       <div className="d-flex gap-4 align-items-center">
                         {["Single", "Married"].map((m) => (
@@ -793,19 +927,24 @@ const EmployeeProfile = () => {
                     </div>
                     {/* new */}
                     {personalErrors.maritalStatus && (
-                      <div className="error-text mt-1">{personalErrors.maritalStatus}</div>
+                      <div className="error-text mt-1">
+                        {personalErrors.maritalStatus}
+                      </div>
                     )}
                   </Col>
                   <Col md={6}>
-                    <Form.Label className="form-label">Date Of Birth</Form.Label>
+                    <Form.Label className="form-label">
+                      Date Of Birth
+                    </Form.Label>
                     <div className="input-icon-wrap">
                       <Form.Control
                         type="date"
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${personalErrors.dob ? "input-error" : ""
-                          }`}
+                        className={`form-input ${
+                          personalErrors.dob ? "input-error" : ""
+                        }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -820,37 +959,42 @@ const EmployeeProfile = () => {
                   <Col md={6}>
                     <Form.Label className="form-label">Nationality</Form.Label>
                     <Form.Select
-
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
-                        }`}
+                      className={`form-select ${
+                        personalErrors.nationality ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
-                      <option value="" disabled>Select Your Nationality</option>
+                      <option value="" disabled>
+                        Select Your Nationality
+                      </option>
                       <option value="India">India</option>
                       <option value="Sri Lanka">Sri Lanka</option>
                       <option value="Germany">Germany</option>
-
                     </Form.Select>
                     {/* new */}
                     {personalErrors.nationality && (
-                      <div className="error-text">{personalErrors.nationality}</div>
+                      <div className="error-text">
+                        {personalErrors.nationality}
+                      </div>
                     )}
                   </Col>
                   <Col md={6}>
                     <Form.Label className="form-label">Blood Group</Form.Label>
                     <Form.Select
-
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.bloodGroup ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
-                      <option value="" disabled>Select Blood Group</option>
+                      <option value="" disabled>
+                        Select Blood Group
+                      </option>
                       <option value="A+">A+</option>
                       <option value="A-">A-</option>
                       <option value="B+">B+</option>
@@ -859,23 +1003,29 @@ const EmployeeProfile = () => {
                       <option value="AB-">AB-</option>
                       <option value="O+">O+</option>
                       <option value="O-">O-</option>
-
                     </Form.Select>
                     {/* new */}
                     {personalErrors.bloodGroup && (
-                      <div className="error-text">{personalErrors.bloodGroup}</div>
+                      <div className="error-text">
+                        {personalErrors.bloodGroup}
+                      </div>
                     )}
                   </Col>
                   <Col md={6}>
-                    <Form.Label className="form-label">Emergency Contact Number</Form.Label>
+                    <Form.Label className="form-label">
+                      Emergency Contact Number
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       name="emergencyContactNumber"
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${personalErrors.emergencyContactNumber ? "input-error" : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.emergencyContactNumber
+                          ? "input-error"
+                          : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -898,10 +1048,11 @@ const EmployeeProfile = () => {
                     {personalErrors.address && (
                       <div className="error-text">{personalErrors.address}</div>
                     )}
-
                   </Col>
                   <Col md={6}>
-                    <Form.Label className="form-label">Relationship with Emergency Contact</Form.Label>
+                    <Form.Label className="form-label">
+                      Relationship with Emergency Contact
+                    </Form.Label>
                     <Form.Select
                       // type="text"
                       name="relationship"
@@ -911,7 +1062,9 @@ const EmployeeProfile = () => {
                       className={`form-input ${personalErrors.relationship ? "input-error" : ""}`}
                       disabled={!isEditingPersonal}
                     >
-                      <option value="" disabled>Select Relation contact</option>
+                      <option value="" disabled>
+                        Select Relation contact
+                      </option>
                       <option value="Husband">Husband</option>
                       <option value="Wife">Wife</option>
                       <option value="Father">Father</option>
@@ -919,9 +1072,10 @@ const EmployeeProfile = () => {
                     </Form.Select>
                     {/* new */}
                     {personalErrors.relationship && (
-                      <div className="error-text">{personalErrors.relationship}</div>
+                      <div className="error-text">
+                        {personalErrors.relationship}
+                      </div>
                     )}
-
                   </Col>
                 </Row>
               </Form>
@@ -933,11 +1087,23 @@ const EmployeeProfile = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Educational Qualification</span>
                   {!isEditingEducation ? (
-                    <Button className="btn-edit" onClick={handleEditEducation}>Edit</Button>
+                    <Button className="btn-edit" onClick={handleEditEducation}>
+                      Edit
+                    </Button>
                   ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelEducation}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveEducation}>Save</Button>
+                    <div style={{ minWidth: 180, textAlign: "right" }}>
+                      <Button
+                        className="btn-cancel"
+                        onClick={handleCancelEducation}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="btn-save"
+                        onClick={handleSaveEducation}
+                      >
+                        Save
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -953,7 +1119,9 @@ const EmployeeProfile = () => {
                       )}
 
                       <Form.Group>
-                        <Form.Label className="form-label">Name Of the Institution</Form.Label>
+                        <Form.Label className="form-label">
+                          Name Of the Institution
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           name="institution"
@@ -965,11 +1133,15 @@ const EmployeeProfile = () => {
                         />
                         {/* new */}
                         {educationErrors.institution && (
-                          <div className="error-text1">{educationErrors.institution}</div>
+                          <div className="error-text1">
+                            {educationErrors.institution}
+                          </div>
                         )}
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label className="form-label">Start Date</Form.Label>
+                        <Form.Label className="form-label">
+                          Start Date
+                        </Form.Label>
                         <div className="calendar-input-wrap">
                           <Form.Control
                             type="date"
@@ -981,7 +1153,9 @@ const EmployeeProfile = () => {
                           />
                           {/* new */}
                           {educationErrors.startDate && (
-                            <div className="error-text1">{educationErrors.startDate}</div>
+                            <div className="error-text1">
+                              {educationErrors.startDate}
+                            </div>
                           )}
                           <span className="calendar-icon">
                             <i className="bi bi-calendar3"></i>
@@ -989,9 +1163,10 @@ const EmployeeProfile = () => {
                         </div>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label className="form-label">Qualification</Form.Label>
+                        <Form.Label className="form-label">
+                          Qualification
+                        </Form.Label>
                         <Form.Select
-
                           name="qualification"
                           value={education.qualification}
                           onChange={handleEducationChange}
@@ -999,19 +1174,22 @@ const EmployeeProfile = () => {
                           className={`edform-input ${educationErrors.qualification ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         >
-                          <option value="" disabled>Education Qualification</option>
+                          <option value="" disabled>
+                            Education Qualification
+                          </option>
                           <option value="BE">BE</option>
                           <option value="BSC">B.SC(computer science)</option>
                           <option value="BCOM">B.COM(computer science)</option>
                         </Form.Select>
                         {/* new */}
                         {educationErrors.qualification && (
-                          <div className="error-text1">{educationErrors.qualification}</div>
+                          <div className="error-text1">
+                            {educationErrors.qualification}
+                          </div>
                         )}
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="form-label">Skills</Form.Label>
-
                         {/* Skill Input + Add Button */}
                         <div className="skill-input-wrap">
                           <Form.Control
@@ -1032,7 +1210,8 @@ const EmployeeProfile = () => {
                         </div>
                         <div className="skills-pill-wrap">
                           {education.skills.map((skill, i) => (
-                            <span className="skill-pill" key={i}>{skill}
+                            <span className="skill-pill" key={i}>
+                              {skill}
                               <span
                                 className="skill-remove"
                                 onClick={() => removeSkill(i)}
@@ -1041,11 +1220,13 @@ const EmployeeProfile = () => {
                               </span>
                             </span>
                           ))}
-                        </div>                       { /* new */}
+                        </div>{" "}
+                        {/* new */}
                         {educationErrors.skills && (
-                          <div className="error-text">{educationErrors.skills}</div>
+                          <div className="error-text">
+                            {educationErrors.skills}
+                          </div>
                         )}
-
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -1062,7 +1243,9 @@ const EmployeeProfile = () => {
                         />
                         {/* new */}
                         {educationErrors.location && (
-                          <div className="error-text1">{educationErrors.location}</div>
+                          <div className="error-text1">
+                            {educationErrors.location}
+                          </div>
                         )}
                       </Form.Group>
 
@@ -1078,7 +1261,9 @@ const EmployeeProfile = () => {
                             disabled={!isEditingEducation}
                           />
                           {educationErrors.endDate && (
-                            <div className="error-text1">{educationErrors.endDate}</div>
+                            <div className="error-text1">
+                              {educationErrors.endDate}
+                            </div>
                           )}
                           <span className="calendar-icon">
                             <i className="bi bi-calendar3"></i>
@@ -1086,9 +1271,10 @@ const EmployeeProfile = () => {
                         </div>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label className="form-label">Specialization</Form.Label>
+                        <Form.Label className="form-label">
+                          Specialization
+                        </Form.Label>
                         <Form.Select
-
                           name="specialization"
                           value={education.specialization}
                           onChange={handleEducationChange}
@@ -1096,18 +1282,26 @@ const EmployeeProfile = () => {
                           className={`edform-input ${educationErrors.specialization ? "input-error1" : ""}`}
                           disabled={!isEditingEducation}
                         >
-                          <option value="" disabled>Specialization</option>
-                          <option value="Cloud-computing">Cloud computing</option>
+                          <option value="" disabled>
+                            Specialization
+                          </option>
+                          <option value="Cloud-computing">
+                            Cloud computing
+                          </option>
                           <option value="Data-Science">Data Science</option>
                           <option value="Cyber-Security">Cyber Security</option>
                         </Form.Select>
                         {/* new */}
                         {educationErrors.specialization && (
-                          <div className="error-text1">{educationErrors.specialization}</div>
+                          <div className="error-text1">
+                            {educationErrors.specialization}
+                          </div>
                         )}
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label className="form-label">Portfolio Link</Form.Label>
+                        <Form.Label className="form-label">
+                          Portfolio Link
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           name="portfolio"
@@ -1118,7 +1312,9 @@ const EmployeeProfile = () => {
                           disabled={!isEditingEducation}
                         />
                         {educationErrors.portfolio && (
-                          <div className="error-text1">{educationErrors.portfolio}</div>
+                          <div className="error-text1">
+                            {educationErrors.portfolio}
+                          </div>
                         )}
                       </Form.Group>
                     </Col>
@@ -1133,11 +1329,23 @@ const EmployeeProfile = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Previous Experience (if any)</span>
                   {!isEditingExperience ? (
-                    <Button className="btn-edit" onClick={handleEditExperience}>Edit</Button>
+                    <Button className="btn-edit" onClick={handleEditExperience}>
+                      Edit
+                    </Button>
                   ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelExperience}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveExperience}>Save</Button>
+                    <div style={{ minWidth: 180, textAlign: "right" }}>
+                      <Button
+                        className="btn-cancel"
+                        onClick={handleCancelExperience}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        className="btn-save"
+                        onClick={handleSaveExperience}
+                      >
+                        Save
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -1145,7 +1353,8 @@ const EmployeeProfile = () => {
               <div className="profile-tab-section experience">
                 <Form>
                   <Row className="gy-4">
-                    <Col md={6}><Form.Label>Name Of the Company</Form.Label>
+                    <Col md={6}>
+                      <Form.Label>Name Of the Company</Form.Label>
                       <Form.Control
                         type="text"
                         name="company"
@@ -1156,7 +1365,9 @@ const EmployeeProfile = () => {
                         disabled={!isEditingExperience}
                       />
                       {experienceErrors.company && (
-                        <div className="error-text1">{experienceErrors.company}</div>
+                        <div className="error-text1">
+                          {experienceErrors.company}
+                        </div>
                       )}
                       <Form.Label className="form-label">Start Date</Form.Label>
                       <div className="calendar-input-wrap">
@@ -1169,14 +1380,17 @@ const EmployeeProfile = () => {
                           disabled={!isEditingExperience}
                         />
                         {experienceErrors.startDate && (
-                          <div className="error-text1">{experienceErrors.startDate}</div>
+                          <div className="error-text1">
+                            {experienceErrors.startDate}
+                          </div>
                         )}
                         <span className="calendar-icon">
                           <i className="bi bi-calendar3"></i>
                         </span>
                       </div>
                       <Form.Label>Job Responsibilities</Form.Label>
-                      <Form.Control as="textarea"
+                      <Form.Control
+                        as="textarea"
                         name="responsibilities"
                         value={experience.responsibilities}
                         onChange={handleExperienceChange}
@@ -1185,7 +1399,9 @@ const EmployeeProfile = () => {
                         disabled={!isEditingExperience}
                       />
                       {experienceErrors.responsibilities && (
-                        <div className="error-text">{experienceErrors.responsibilities}</div>
+                        <div className="error-text">
+                          {experienceErrors.responsibilities}
+                        </div>
                       )}
                     </Col>
                     <Col md={6}>
@@ -1200,7 +1416,9 @@ const EmployeeProfile = () => {
                         disabled={!isEditingExperience}
                       />
                       {experienceErrors.jobTitle && (
-                        <div className="error-text1">{experienceErrors.jobTitle}</div>
+                        <div className="error-text1">
+                          {experienceErrors.jobTitle}
+                        </div>
                       )}
                       <Form.Label className="form-label">End Date</Form.Label>
                       <div className="calendar-input-wrap">
@@ -1213,11 +1431,14 @@ const EmployeeProfile = () => {
                           disabled={!isEditingExperience}
                         />
                         {experienceErrors.endDate && (
-                          <div className="error-text1">{experienceErrors.endDate}</div>
+                          <div className="error-text1">
+                            {experienceErrors.endDate}
+                          </div>
                         )}
                         <span className="calendar-icon">
                           <i className="bi bi-calendar3"></i>
-                        </span> </div>
+                        </span>{" "}
+                      </div>
                       <Form.Label>Total Years Of Experience</Form.Label>
                       <Form.Control
                         type="number"
@@ -1230,7 +1451,9 @@ const EmployeeProfile = () => {
                         disabled={!isEditingExperience}
                       />
                       {experienceErrors.totalYears && (
-                        <div className="error-text1">{experienceErrors.totalYears}</div>
+                        <div className="error-text1">
+                          {experienceErrors.totalYears}
+                        </div>
                       )}
                     </Col>
                   </Row>
@@ -1244,11 +1467,20 @@ const EmployeeProfile = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Bank Details</span>
                   {!isEditingBank ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingBank(true)}>Edit</Button>
+                    <Button
+                      className="btn-edit"
+                      onClick={() => setIsEditingBank(true)}
+                    >
+                      Edit
+                    </Button>
                   ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={handleCancelBank} >Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveBank}>Save</Button>
+                    <div style={{ minWidth: 180, textAlign: "right" }}>
+                      <Button className="btn-cancel" onClick={handleCancelBank}>
+                        Cancel
+                      </Button>
+                      <Button className="btn-save" onClick={handleSaveBank}>
+                        Save
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -1256,7 +1488,8 @@ const EmployeeProfile = () => {
               <div className="profile-tab-section bank-details">
                 <Form>
                   <Row className="gy-4">
-                    <Col md={6}><Form.Label>Bank Name</Form.Label>
+                    <Col md={6}>
+                      <Form.Label>Bank Name</Form.Label>
                       <Form.Control
                         type="text"
                         name="bankName"
@@ -1285,7 +1518,8 @@ const EmployeeProfile = () => {
                         <div className="error-text">{errors.branch}</div>
                       )}
                     </Col>
-                    <Col md={6}><Form.Label>Account Number</Form.Label>
+                    <Col md={6}>
+                      <Form.Label>Account Number</Form.Label>
                       <Form.Control
                         type="text"
                         name="accountNumber"
@@ -1299,7 +1533,8 @@ const EmployeeProfile = () => {
                         <div className="error-text">{errors.accountNumber}</div>
                       )}
                     </Col>
-                    <Col md={6}><Form.Label>IFSC Code</Form.Label>
+                    <Col md={6}>
+                      <Form.Label>IFSC Code</Form.Label>
                       <Form.Control
                         type="text"
                         name="ifsc"
@@ -1313,7 +1548,8 @@ const EmployeeProfile = () => {
                         <div className="error-text">{errors.ifsc}</div>
                       )}
                     </Col>
-                    <Col md={6}><Form.Label>Aadhaar Number</Form.Label>
+                    <Col md={6}>
+                      <Form.Label>Aadhaar Number</Form.Label>
                       <Form.Control
                         type="text"
                         name="aadhaar"
@@ -1327,7 +1563,8 @@ const EmployeeProfile = () => {
                         <div className="error-text">{errors.aadhaar}</div>
                       )}
                     </Col>
-                    <Col md={6}><Form.Label>PAN Number</Form.Label>
+                    <Col md={6}>
+                      <Form.Label>PAN Number</Form.Label>
                       <Form.Control
                         type="text"
                         name="pan"
@@ -1352,11 +1589,23 @@ const EmployeeProfile = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Documents</span>
                   {!isEditingDocs ? (
-                    <Button className="btn-edit" onClick={() => setIsEditingDocs(true)}>Edit</Button>
+                    <Button
+                      className="btn-edit"
+                      onClick={() => setIsEditingDocs(true)}
+                    >
+                      Edit
+                    </Button>
                   ) : (
-                    <div style={{ minWidth: 180, textAlign: 'right' }}>
-                      <Button className="btn-cancel" onClick={() => setIsEditingDocs(false)}>Cancel</Button>
-                      <Button className="btn-save" onClick={handleSaveDocs}>Save</Button>
+                    <div style={{ minWidth: 180, textAlign: "right" }}>
+                      <Button
+                        className="btn-cancel"
+                        onClick={() => setIsEditingDocs(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button className="btn-save" onClick={handleSaveDocs}>
+                        Save
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -1368,17 +1617,55 @@ const EmployeeProfile = () => {
                       <div
                         className="doc-item mb-3 d-flex flex-row align-items-center p-3"
                         key={idx}
-                        style={{ background: "#F6F9FC", border: "1px solid #E2E8F0", borderRadius: "12px" }}
+                        style={{
+                          background: "#F6F9FC",
+                          border: "1px solid #E2E8F0",
+                          borderRadius: "12px",
+                        }}
                       >
-                        <span className="pdf-icon me-3" style={{ background: "#FFE4E6", color: "#E11D48", borderRadius: "8px", padding: "8px 12px", fontWeight: "bold", flexShrink: 0 }}>PDF</span>
+                        <span
+                          className="pdf-icon me-3"
+                          style={{
+                            background: "#FFE4E6",
+                            color: "#E11D48",
+                            borderRadius: "8px",
+                            padding: "8px 12px",
+                            fontWeight: "bold",
+                            flexShrink: 0,
+                          }}
+                        >
+                          PDF
+                        </span>
                         <div className="flex-grow-1 overflow-hidden">
-                          <h6 className="mb-0 text-truncate" style={{ fontSize: "15px", color: "#1E293B", fontWeight: "600" }}>{doc.fileName || doc.name}</h6>
+                          <h6
+                            className="mb-0 text-truncate"
+                            style={{
+                              fontSize: "15px",
+                              color: "#1E293B",
+                              fontWeight: "600",
+                            }}
+                          >
+                            {doc.fileName || doc.name}
+                          </h6>
                           <div className="d-flex align-items-center mt-1">
-                            <span style={{ fontSize: "13px", color: "#94A3B8" }}>
-                              {doc.size || '94'} KB of {doc.size || '94'} KB &nbsp;•&nbsp;
+                            <span
+                              style={{ fontSize: "13px", color: "#94A3B8" }}
+                            >
+                              {doc.size || "94"} KB of {doc.size || "94"} KB
+                              &nbsp;•&nbsp;
                             </span>
-                            <span className="ms-1" style={{ fontSize: "13px", color: "#10B981", fontWeight: "600", display: "flex", alignItems: "center" }}>
-                              <i className="bi bi-check-circle-fill me-1"></i> Completed
+                            <span
+                              className="ms-1"
+                              style={{
+                                fontSize: "13px",
+                                color: "#10B981",
+                                fontWeight: "600",
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <i className="bi bi-check-circle-fill me-1"></i>{" "}
+                              Completed
                             </span>
                           </div>
                         </div>
@@ -1387,7 +1674,13 @@ const EmployeeProfile = () => {
                           className="p-1 px-2 ms-2"
                           onClick={() => handleDocDelete(idx)}
                           disabled={!isEditingDocs}
-                          style={{ border: "none", background: "transparent", fontSize: "1.2rem", cursor: "pointer", color: "#94A3B8" }}
+                          style={{
+                            border: "none",
+                            background: "transparent",
+                            fontSize: "1.2rem",
+                            cursor: "pointer",
+                            color: "#94A3B8",
+                          }}
                         >
                           <i className="bi bi-trash3"></i>
                         </Button>
@@ -1396,24 +1689,34 @@ const EmployeeProfile = () => {
                   </Col>
                   <Col md={5}>
                     <div
-                      onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragOver(true);
+                      }}
                       onDragLeave={() => setIsDragOver(false)}
                       onDrop={(e) => {
                         e.preventDefault();
                         setIsDragOver(false);
-                        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                          const newDocs = Array.from(e.dataTransfer.files).map(f => ({
-                            name: f.name,
-                            fileName: f.name,
-                            size: (f.size / 1024).toFixed(0),
-                            status: "Completed",
-                            file: f
-                          }));
-                          setDocuments(prev => [...prev, ...newDocs]);
+                        if (
+                          e.dataTransfer.files &&
+                          e.dataTransfer.files.length > 0
+                        ) {
+                          const newDocs = Array.from(e.dataTransfer.files).map(
+                            (f) => ({
+                              name: f.name,
+                              fileName: f.name,
+                              size: (f.size / 1024).toFixed(0),
+                              status: "Completed",
+                              file: f,
+                            }),
+                          );
+                          setDocuments((prev) => [...prev, ...newDocs]);
                         }
                       }}
                       style={{
-                        border: isDragOver ? "2px dashed #19BDE8" : "2px dashed #CBD5E1",
+                        border: isDragOver
+                          ? "2px dashed #19BDE8"
+                          : "2px dashed #CBD5E1",
                         borderRadius: "20px",
                         background: isDragOver ? "#EFF9FF" : "#ffffff",
                         transition: "all 0.2s ease",
@@ -1427,48 +1730,67 @@ const EmployeeProfile = () => {
                       }}
                     >
                       <div style={{ marginBottom: "16px" }}>
-                        <i className="bi bi-cloud-arrow-up" style={{ fontSize: "3.5rem", color: "#19BDE8" }}></i>
+                        <i
+                          className="bi bi-cloud-arrow-up"
+                          style={{ fontSize: "3.5rem", color: "#19BDE8" }}
+                        ></i>
                       </div>
-                      <p style={{ color: "#1E293B", fontWeight: "700", fontSize: "17px", margin: "0 0 8px 0", lineHeight: "1.4" }}>
+                      <p
+                        style={{
+                          color: "#1E293B",
+                          fontWeight: "700",
+                          fontSize: "17px",
+                          margin: "0 0 8px 0",
+                          lineHeight: "1.4",
+                        }}
+                      >
                         Choose a file or drag &amp; drop it here
                       </p>
-                      <p style={{ fontSize: "12px", color: "#94A3B8", margin: "0 0 24px 0" }}>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "#94A3B8",
+                          margin: "0 0 24px 0",
+                        }}
+                      >
                         JPEG, PNG, PDG, and MP4 formats, up to 50MB
                       </p>
                       <input
                         id="employee-file-upload"
                         type="file"
-                        style={{ display: 'none' }}
+                        style={{ display: "none" }}
                         multiple
                         onChange={(e) => {
                           if (!e.target.files) return;
-                          const newDocs = Array.from(e.target.files).map(f => ({
-                            name: f.name,
-                            fileName: f.name,
-                            size: (f.size / 1024).toFixed(0),
-                            status: 'Completed',
-                            file: f
-                          }));
-                          setDocuments(prev => [...prev, ...newDocs]);
-                          e.target.value = '';
+                          const newDocs = Array.from(e.target.files).map(
+                            (f) => ({
+                              name: f.name,
+                              fileName: f.name,
+                              size: (f.size / 1024).toFixed(0),
+                              status: "Completed",
+                              file: f,
+                            }),
+                          );
+                          setDocuments((prev) => [...prev, ...newDocs]);
+                          e.target.value = "";
                         }}
                       />
                       <label
                         htmlFor="employee-file-upload"
                         style={{
-                          display: 'block',
-                          width: '100%',
-                          background: '#19BDE8',
-                          border: 'none',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontWeight: '600',
-                          padding: '12px 20px',
-                          cursor: 'pointer',
-                          fontSize: '16px',
-                          userSelect: 'none',
-                          textAlign: 'center',
-                          whiteSpace: 'nowrap',
+                          display: "block",
+                          width: "100%",
+                          background: "#19BDE8",
+                          border: "none",
+                          borderRadius: "12px",
+                          color: "white",
+                          fontWeight: "600",
+                          padding: "12px 20px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          userSelect: "none",
+                          textAlign: "center",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         Browse File
@@ -1478,11 +1800,10 @@ const EmployeeProfile = () => {
                 </Row>
               </div>
             </Tab.Pane>
-
-          </Tab.Content >
-        </Tab.Container >
-      </div >
-    </div >
+          </Tab.Content>
+        </Tab.Container>
+      </div>
+    </div>
   );
 };
 

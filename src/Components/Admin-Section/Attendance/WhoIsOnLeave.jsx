@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaFilter, FaCalendarAlt } from "react-icons/fa";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import "./WhoIsOnLeave.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 
-const API_BASE = "http://127.0.0.1:5001";
 const WhoIsOnLeave = () => {
   const [currentDate, setCurrentDate] = useState("");
   const [currentTime, setCurrentTime] = useState("");
@@ -38,7 +37,7 @@ const WhoIsOnLeave = () => {
     const fetchLeaveData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE}/api/who_is_on_leave`);
+        const response = await apiClient.get(`/api/who_is_on_leave`);
         setLeaveList(response.data);
       } catch (error) {
         console.error("Error fetching leave data:", error);
