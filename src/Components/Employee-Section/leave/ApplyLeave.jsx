@@ -1,53 +1,43 @@
-// ApplyLeave.jsx
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Card, Alert } from "react-bootstrap";
 import axios from "axios";
-import EmployeeSidebar from ".././EmployeeSidebar";
 import "./ApplyLeave.css";
-import { useNavigate } from "react-router-dom";
+import illustration from "../../../assets/Formsbro.png";
+import { FaUpload } from "react-icons/fa";
 
-const LeaveRequestForm = () => {
-  const navigate = useNavigate();
+const LeaveRequestForm = ({ onClose }) => {
+  const [employeeId, setEmployeeId] = useState("");
 
   const [formData, setFormData] = useState({
     leave_type_id: "",
+    num_days: "",
     start_date: "",
     end_date: "",
     reason: "",
-    num_days: "",
+    notify_to: "",
   });
 
-  const [responseMessage, setResponseMessage] = useState("");
-  const [variant, setVariant] = useState("success");
-
   useEffect(() => {
-    // Check both possible storage locations for user session
     const userId =
       localStorage.getItem("employee_user_id") ||
       sessionStorage.getItem("current_user_id");
-    const role =
-      localStorage.getItem("employee_role") ||
-      sessionStorage.getItem("current_role");
 
-    if (!userId || role !== "employee") {
-      setResponseMessage(
-        "Please log in as an employee before applying for leave.",
-      );
-      setVariant("danger");
-    }
+    setEmployeeId(userId);
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Get user ID from either storage location
     const userId =
       localStorage.getItem("employee_user_id") ||
       sessionStorage.getItem("current_user_id");
+
     const role =
       localStorage.getItem("employee_role") ||
       sessionStorage.getItem("current_role");
@@ -65,130 +55,124 @@ const LeaveRequestForm = () => {
             "X-User-Role": role,
             "X-User-ID": userId,
           },
-        },
+        }
       );
 
-      setVariant("success");
-      setResponseMessage(res.data.message);
+      alert(res.data.message);
 
-      // Reset form
-      setFormData({
-        leave_type_id: "",
-        start_date: "",
-        end_date: "",
-        reason: "",
-        num_days: "",
-      });
-
-      // Refresh dashboard when request submitted
       window.dispatchEvent(new Event("leaveRequestUpdated"));
+      onClose();
 
-      // Redirect back to My Leave page
-      setTimeout(() => {
-        navigate("/my-leave");
-      }, 1500);
     } catch (err) {
-      setVariant("danger");
-      setResponseMessage(err?.response?.data?.message || "An error occurred.");
+      alert(err?.response?.data?.message || "Error applying leave");
     }
   };
 
   return (
-    <div className="layout">
-      {/* Sidebar */}
-      <EmployeeSidebar />
+    <form className="apply-leave-form" onSubmit={handleSubmit}>
+      
+      {/* LEFT SIDE FORM */}
+      <div className="form-left">
 
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="apply-leave-container">
-          <Card className="apply-leave-card p-4">
-            <h3 className="text-center text-primary mb-4">
-              Leave Request Form
-            </h3>
+        <label>Employee ID:</label>
+        <input type="text" value={employeeId} readOnly />
 
-            {responseMessage && (
-              <Alert variant={variant} className="text-center">
-                {responseMessage}
-              </Alert>
-            )}
+        <label>Leave Type:</label>
+        <select
+          name="leave_type_id"
+          value={formData.leave_type_id}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select</option>
+          <option value="5">Casual Leave</option>
+          <option value="4">Sick Leave</option>
+          <option value="3">Annual Leave</option>
+        </select>
 
-            <Form onSubmit={handleSubmit}>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Leave Type ID</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="leave_type_id"
-                      value={formData.leave_type_id}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
+        <label>No Of Days:</label>
+        <input
+          type="number"
+          name="num_days"
+          value={formData.num_days}
+          onChange={handleChange}
+          required
+        />
 
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Number of Days</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="num_days"
-                      value={formData.num_days}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+        <label>Select Date:</label>
+        <div className="app-leave-date-row">
 
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Start Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      name="start_date"
-                      value={formData.start_date}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
+          <input
+            type="date"
+            name="start_date"
+            value={formData.start_date}
+            onChange={handleChange}
+            required
+          />
 
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>End Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      name="end_date"
-                      value={formData.end_date}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+          <input
+            type="date"
+            name="end_date"
+            value={formData.end_date}
+            onChange={handleChange}
+            required
+          />
 
-              <Form.Group className="mb-3">
-                <Form.Label>Reason</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-
-              <Button type="submit" className="mt-3 w-100">
-                Submit Request
-              </Button>
-            </Form>
-          </Card>
         </div>
+
+        <label>Notify Others:</label>
+        <div className="app-leave-notify-row">
+
+          <select
+            name="notify_to"
+            value={formData.notify_to}
+            onChange={handleChange}
+          >
+            <option value="">Select</option>
+            <option>Team Lead</option>
+            <option>HR</option>
+          </select>
+
+          <button type="button" className="apply-leave-upload-btn">
+            <FaUpload /> Upload File
+          </button>
+
+        </div>
+
+        <label>Reason:</label>
+        <textarea
+          name="reason"
+          value={formData.reason}
+          onChange={handleChange}
+          placeholder="ex: I am travelling to"
+          required
+        />
+
       </div>
-    </div>
+
+      {/* RIGHT SIDE IMAGE */}
+      <div className="form-right">
+        <img src={illustration} alt="Leave Illustration" />
+      </div>
+
+      {/* FOOTER BUTTONS */}
+      <div className="app-leave-modal-actions">
+
+        <button type="submit" className="apply-leave-btn">
+          Apply
+        </button>
+
+        <button
+          type="button"
+          className="app-leave-cancel-btn"
+          onClick={onClose}
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </form>
   );
 };
 
