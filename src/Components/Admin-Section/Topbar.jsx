@@ -8,6 +8,7 @@ import {
   FaDownload,
   FaEdit,
   FaShareAlt,
+  FaSearch,
 } from "react-icons/fa";
 import { MdEvent } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
@@ -568,9 +569,9 @@ const ProfilePopup = ({ onClose, username }) => {
                 ) : (
                   <p>
                     {experience.expStartDate &&
-                    experience.expEndDate &&
-                    experience.expStartDate !== "0001-01-01" &&
-                    experience.expEndDate !== "0001-01-01"
+                      experience.expEndDate &&
+                      experience.expStartDate !== "0001-01-01" &&
+                      experience.expEndDate !== "0001-01-01"
                       ? `${formatDateDisplay(experience.expStartDate)} – ${formatDateDisplay(experience.expEndDate)}`
                       : "-"}
                   </p>
@@ -852,82 +853,73 @@ const Topbar = () => {
 
   return (
     <>
-      <div className="topbar shadow-sm d-flex align-items-center justify-content-between px-3">
-        {/* Left logo */}
-        <div className="topbar-logo d-flex align-items-center">
-          <img src={stafiologoimg} alt="Logo" className="topbar-img" />
-        </div>
-
-        {/* Search box */}
-        <div className="topbar-searches flex-grow-1 mx-3 position-relative">
-          <input
-            type="text"
-            className="form-controler"
-            placeholder="Quick Search..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              console.log(e.target.value);
-            }}
-          />
-
-          {query && (
-            <div className="search-dropdown">
-              {filteredResults.length > 0 ? (
-                filteredResults.map((item, index) => (
-                  <div
-                    key={index}
-                    className="search-item"
-                    onClick={() => handleSelect(item)}
-                  >
-                    <span className="search-type">{item.type}</span>
-                    <span>{item.label}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="search-item no-result">No results found</div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Right side user + bell */}
-
-        <div className="profile d-flex align-items-center gap-3">
-          <div style={{ cursor: "pointer", position: "relative" }}>
-            <FaBell size={20} className="text-dark" onClick={togglePopup} />
+      <div className="topbar">
+        {/* Left Section: Logo + Search */}
+        <div className="topbar-left">
+          <div className="topbar-logo" onClick={() => navigate("/admin-dashboard")} style={{ cursor: "pointer" }}>
+            <img src={stafiologoimg} alt="Logo" className="topbar-img" />
           </div>
-          <div style={{ cursor: "pointer" }}>
+
+          <div className="topbar-searches">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              className="form-controler"
+              placeholder="Quick Search..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+
+            {query && (
+              <div className="search-dropdown">
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((item, index) => (
+                    <div
+                      key={index}
+                      className="search-item"
+                      onClick={() => handleSelect(item)}
+                    >
+                      <span className="search-type">{item.type}</span>
+                      <span>{item.label}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="search-item no-result">No results found</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Section: Bell + Settings + Profile */}
+        <div className="topbar-right">
+          <div className="notification-icon" onClick={togglePopup} style={{ cursor: "pointer" }}>
+            <FaBell size={20} color="#1f2937" />
+          </div>
+
+          <div className="settings-icon">
             <img
               src={topbarsettings}
-              alt="Profile Logo"
+              alt="Settings"
               className="topbar-settings"
               onClick={() => navigate("/admin-settings")}
             />
           </div>
 
-          <div
-            className="profile-data d-flex align-items-center"
+          <div className="profile-wrapper d-flex align-items-center gap-2"
             onClick={() => setShowProfilePopup((prev) => !prev)}
             style={{ cursor: "pointer" }}
           >
             <img
               src={profileimg}
               alt="User"
-              className="topbar-avatar rounded-circle me-2"
+              className="topbar-avatar"
             />
-            <div>
-              <div className="fw-bold">{username || "User"}</div>
-              <div className="text-muted small">{role}</div>
+            <div className="profile-info">
+              <div className="profile-name">{username || "User"}</div>
+              <div className="profile-role">{role || "admin"}</div>
             </div>
-          </div>
-
-          <div
-            className="chevron-container"
-            onClick={() => setShowProfilePopup((prev) => !prev)}
-            style={{ cursor: "pointer" }}
-          >
-            <FaChevronDown />
+            <FaChevronDown size={14} color="#666" style={{ marginLeft: "5px" }} />
           </div>
         </div>
       </div>

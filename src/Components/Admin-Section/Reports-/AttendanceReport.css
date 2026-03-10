@@ -13,7 +13,7 @@
 .att-report-header {
   display: flex;
   align-items: center;
-  margin: 30px 10px 40px 10px;
+  margin: 25px 0 25px 0;
 }
 
 .att-report-header h2 {

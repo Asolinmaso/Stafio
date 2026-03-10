@@ -76,6 +76,7 @@ const EmployeeProfile = () => {
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
+  const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [education, setEducation] = useState({
     institution: "",
@@ -360,8 +361,19 @@ const EmployeeProfile = () => {
     }
   };
 
-  const handleDocDelete = (idx) =>
-    setDocuments((prev) => prev.filter((_, didx) => didx !== idx));
+
+
+  const handleDocDelete = idx => {
+    const docToDelete = documents[idx];
+    if (docToDelete.id) {
+      alert("Submitted documents cannot be deleted from here. Please contact HR if you need to remove them.");
+      return;
+    }
+    setDocuments(prev => prev.filter((_, didx) => didx !== idx));
+  };
+
+
+
 
   //edit handle button for personal info
   const handleEditPersonal = () => {
@@ -372,7 +384,6 @@ const EmployeeProfile = () => {
   //save handle button for personal info
   const handleSavePersonal = async () => {
     const isValid = validatePersonalInfo();
-
     if (!isValid) return;
 
     // Prepare data for backend (nested under "profile" section)
@@ -818,11 +829,11 @@ const EmployeeProfile = () => {
 
   // =========== RENDER ===========
   return (
-    <div className="d-flex">
+    <div className="dashboard-wrapper d-flex">
       <div className="sidebar">
         <EmployeeSidebar />
       </div>
-      <div className="main-content py-4">
+      <div className="main-content flex-grow-1">
         <Topbar />
         <ProfileBanner profileData={profile} />
 
@@ -897,6 +908,7 @@ const EmployeeProfile = () => {
                         ))}
                       </div>
                     </div>
+
                     {/* new */}
                     {personalErrors.gender && (
                       <div className="error-text mt-1">
@@ -942,9 +954,8 @@ const EmployeeProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${
-                          personalErrors.dob ? "input-error" : ""
-                        }`}
+                        className={`form-input ${personalErrors.dob ? "input-error" : ""
+                          }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -962,9 +973,8 @@ const EmployeeProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${
-                        personalErrors.nationality ? "input-error" : ""
-                      }`}
+                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -987,9 +997,8 @@ const EmployeeProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${
-                        personalErrors.bloodGroup ? "input-error" : ""
-                      }`}
+                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1021,11 +1030,10 @@ const EmployeeProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${
-                        personalErrors.emergencyContactNumber
-                          ? "input-error"
-                          : ""
-                      }`}
+                      className={`form-input ${personalErrors.emergencyContactNumber
+                        ? "input-error"
+                        : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -1117,6 +1125,21 @@ const EmployeeProfile = () => {
                           {educationErrors.form}
                         </div>
                       )}
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label className="form-label">Address</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="address"
+                        value={profile.address}
+                        onChange={handleProfileChange}
+                        placeholder="Home Address"
+                        className={`form-input ${personalErrors.address ? "input-error" : ""}`}
+                        disabled={!isEditingPersonal}
+                      />
+                      {personalErrors.address && (
+                        <div className="error-text">{personalErrors.address}</div>
+                      )}
 
                       <Form.Group>
                         <Form.Label className="form-label">
@@ -1124,12 +1147,12 @@ const EmployeeProfile = () => {
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          name="institution"
-                          value={education.institution}
-                          onChange={handleEducationChange}
-                          placeholder="Institution Name"
-                          className={`edform-input ${educationErrors.institution ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
+                          name="company"
+                          value={experience.company}
+                          onChange={handleExperienceChange}
+                          placeholder="Company Name"
+                          className={`pexform-input ${experienceErrors.company ? "input-error1" : ""}`}
+                          disabled={!isEditingExperience}
                         />
                         {/* new */}
                         {educationErrors.institution && (
@@ -1146,10 +1169,10 @@ const EmployeeProfile = () => {
                           <Form.Control
                             type="date"
                             name="startDate"
-                            value={education.startDate}
-                            onChange={handleEducationChange}
-                            className={`edform-input ${educationErrors.startDate ? "input-error1" : ""}`}
-                            disabled={!isEditingEducation}
+                            value={experience.startDate}
+                            onChange={handleExperienceChange}
+                            className={`pexform-input ${experienceErrors.startDate ? "input-error1" : ""}`}
+                            disabled={!isEditingExperience}
                           />
                           {/* new */}
                           {educationErrors.startDate && (
@@ -1234,12 +1257,12 @@ const EmployeeProfile = () => {
                         <Form.Label className="form-label">Location</Form.Label>
                         <Form.Control
                           type="text"
-                          name="location"
-                          value={education.location}
-                          onChange={handleEducationChange}
-                          placeholder="Location"
-                          className={`edform-input ${educationErrors.location ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
+                          name="jobTitle"
+                          value={experience.jobTitle}
+                          onChange={handleExperienceChange}
+                          placeholder="Job Title"
+                          className={`pexform-input1 ${experienceErrors.jobTitle ? "input-error1" : ""}`}
+                          disabled={!isEditingExperience}
                         />
                         {/* new */}
                         {educationErrors.location && (
@@ -1247,18 +1270,15 @@ const EmployeeProfile = () => {
                             {educationErrors.location}
                           </div>
                         )}
-                      </Form.Group>
-
-                      <Form.Group>
                         <Form.Label className="form-label">End Date</Form.Label>
                         <div className="calendar-input-wrap">
                           <Form.Control
                             type="date"
                             name="endDate"
-                            value={education.endDate}
-                            onChange={handleEducationChange}
-                            className={`edform-input ${educationErrors.endDate ? "input-error1" : ""}`}
-                            disabled={!isEditingEducation}
+                            value={experience.endDate}
+                            onChange={handleExperienceChange}
+                            className={`pexform-input ${experienceErrors.endDate ? "input-error1" : ""}`}
+                            disabled={!isEditingExperience}
                           />
                           {educationErrors.endDate && (
                             <div className="error-text1">
@@ -1304,12 +1324,12 @@ const EmployeeProfile = () => {
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          name="portfolio"
-                          value={education.portfolio}
-                          onChange={handleEducationChange}
-                          placeholder="Portfolio Link"
-                          className={`edform-input ${educationErrors.portfolio ? "input-error1" : ""}`}
-                          disabled={!isEditingEducation}
+                          name="bankName"
+                          value={bank.bankName}
+                          onChange={handleBankChange}
+                          placeholder="Name of the Bank"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.bankName ? "input-error" : ""}`}
                         />
                         {educationErrors.portfolio && (
                           <div className="error-text1">
@@ -1372,12 +1392,13 @@ const EmployeeProfile = () => {
                       <Form.Label className="form-label">Start Date</Form.Label>
                       <div className="calendar-input-wrap">
                         <Form.Control
-                          type="date"
-                          name="startDate"
-                          value={experience.startDate}
-                          onChange={handleExperienceChange}
-                          className={`pexform-input ${experienceErrors.startDate ? "input-error1" : ""}`}
-                          disabled={!isEditingExperience}
+                          type="text"
+                          name="branch"
+                          value={bank.branch}
+                          onChange={handleBankChange}
+                          placeholder="Name of the Branch"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.branch ? "input-error" : ""}`}
                         />
                         {experienceErrors.startDate && (
                           <div className="error-text1">
@@ -1423,12 +1444,13 @@ const EmployeeProfile = () => {
                       <Form.Label className="form-label">End Date</Form.Label>
                       <div className="calendar-input-wrap">
                         <Form.Control
-                          type="date"
-                          name="endDate"
-                          value={experience.endDate}
-                          onChange={handleExperienceChange}
-                          className={`pexform-input ${experienceErrors.endDate ? "input-error1" : ""}`}
-                          disabled={!isEditingExperience}
+                          type="text"
+                          name="accountNumber"
+                          value={bank.accountNumber}
+                          onChange={handleBankChange}
+                          placeholder="Bank AC Number"
+                          disabled={!isEditingBank}
+                          className={`form-input ${errors.accountNumber ? "input-error" : ""}`}
                         />
                         {experienceErrors.endDate && (
                           <div className="error-text1">

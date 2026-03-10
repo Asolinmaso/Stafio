@@ -55,50 +55,50 @@ const App = () => {
   return (
     <Router>
       <SettingsProvider>
-      <Routes>
-        {/* Admin Routes */}
-        <Route path="/admin-sidebar" element={<AdminSidebar />} />
-        <Route path="/" element={<AdminLogin />} />
-        <Route path="/admin-dashboard" element={<Dashboard />} />
-        <Route path="/attendance" element={<AdminAttendance />} />
-        <Route path="/employees-list" element={<EmployeesList />} />
-        <Route path='/el-myteam' element={ <EmployeesMyTeam />} />
-        <Route path="/admin-broadcast" element={<AdminBroadcast />} />
-        <Route path="/leave-policies" element={<LeavePolicies />} />
-        <Route path="/addleavetype" element={<AddLeave />} />
-        <Route path='/register-admin' element={<AdminRegister />} />
-        <Route path='/performance' element={<PerformancePage />} />
-        <Route path='/payroll' element={<Payroll />} />
-        <Route path="/admin-profile" element={<AdminProfile />} />
-        <Route path='/adminlettergeneration' element={<AdminLetterGeneration />} />
-        <Route path='/admin-my-holidays' element={<Myholiday />} />
-        <Route path='/admin-my-leave' element={<MyLeave />} />
-        <Route path='/admin-my-regularization' element={<Myregularization />} />
-        <Route path='/leave-approval' element={<LeaveApproval />} />
-        <Route path='/myTeam-LeaveApproval' element={<MyTeamLeaveApproval />} />
-        <Route path='/regularization-approval' element={<RegularizationApproval />} />
-        <Route path='/ra-myteam' element={ <RAMyTean />} />
-        <Route path='/who-is-on-Leave' element={<WhoIsOnLeave />} />
-        <Route path='/admin-settings' element={<AdminSettings />} />
-        <Route path='/admin-attendance-report' element={ <AttendanceReport />} />
-        <Route path='/leave-report' element={ <LeaveReport />} />
-      
-        {/* Employee Routes */}
-        
-        <Route path="/employee-login" element={<EmployeeLogin />} />
-        <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
-        <Route path="/apply-leave" element={<ApplyLeave />} />
-        <Route path="/employee-attendance" element={<Attendance />} />
-        <Route path="/profile" element={<ProfileBanner />} />
-        <Route path='/register-employee' element={<EmployeeRegister />} />
-        <Route path='/performance-tracker' element={<EmployeePerformanceTracker />} />
-        <Route path="/employee-payroll" element={<EmployeePayroll />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path='/employeedocs' element={<EmployeeDocuments />} />
-        <Route path='/my-leave' element={<Myleave />} />
-        <Route path='/my-regularization' element={<MyRegularization />} />
-        <Route path='/my-holidays' element={<MyHoliday />} />    
-      </Routes>
+        <Routes>
+          {/* Admin Routes */}
+          <Route path="/admin-sidebar" element={<AdminSidebar />} />
+          <Route path="/" element={<AdminLogin />} />
+          <Route path="/admin-dashboard" element={<Dashboard />} />
+          <Route path="/attendance" element={<AdminAttendance />} />
+          <Route path="/employees-list" element={<EmployeesList />} />
+          <Route path='/el-myteam' element={<EmployeesMyTeam />} />
+          <Route path="/admin-broadcast" element={<AdminBroadcast />} />
+          <Route path="/leave-policies" element={<LeavePolicies />} />
+          <Route path="/addleavetype" element={<AddLeave />} />
+          <Route path='/register-admin' element={<AdminRegister />} />
+          <Route path='/performance' element={<PerformancePage />} />
+          <Route path='/payroll' element={<Payroll />} />
+          <Route path="/admin-profile" element={<AdminProfile />} />
+          <Route path='/adminlettergeneration' element={<AdminLetterGeneration />} />
+          <Route path='/admin-my-holidays' element={<Myholiday />} />
+          <Route path='/admin-my-leave' element={<MyLeave />} />
+          <Route path='/admin-my-regularization' element={<Myregularization />} />
+          <Route path='/leave-approval' element={<LeaveApproval />} />
+          <Route path='/myTeam-LeaveApproval' element={<MyTeamLeaveApproval />} />
+          <Route path='/regularization-approval' element={<RegularizationApproval />} />
+          <Route path='/ra-myteam' element={<RAMyTean />} />
+          <Route path='/who-is-on-Leave' element={<WhoIsOnLeave />} />
+          <Route path='/admin-settings' element={<AdminSettings />} />
+          <Route path='/admin-attendance-report' element={<AttendanceReport />} />
+          <Route path='/leave-report' element={<LeaveReport />} />
+
+          {/* Employee Routes */}
+
+          <Route path="/employee-login" element={<EmployeeLogin />} />
+          <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+          <Route path="/apply-leave" element={<ApplyLeave />} />
+          <Route path="/employee-attendance" element={<Attendance />} />
+          <Route path="/profile" element={<ProfileBanner />} />
+          <Route path='/register-employee' element={<EmployeeRegister />} />
+          <Route path='/performance-tracker' element={<EmployeePerformanceTracker />} />
+          <Route path="/employee-payroll" element={<EmployeePayroll />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path='/employeedocs' element={<EmployeeDocuments />} />
+          <Route path='/my-leave' element={<Myleave />} />
+          <Route path='/my-regularization' element={<MyRegularization />} />
+          <Route path='/my-holidays' element={<MyHoliday />} />
+        </Routes>
       </SettingsProvider>
     </Router>
   );

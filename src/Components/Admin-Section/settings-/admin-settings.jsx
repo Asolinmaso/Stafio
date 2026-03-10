@@ -6,7 +6,7 @@ import profileimg from "../../../assets/profileimg.png";
 import user from "../../../assets/user.png";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-import penicon from "../../../assets/penicon.png";
+import penicon from "../../../assets/penicon2.png";
 import deletebox from "../../../assets/deletebox.png";
 import {
   FaUserFriends,
@@ -166,8 +166,8 @@ export default function AdminSettings() {
   const t = (key) => translations[language]?.[key] || key;
 
   const getHeaders = () => ({
-    "X-User-Role": localStorage.getItem("current_role"),
-    "X-User-ID": localStorage.getItem("current_user_id"),
+    "X-User-Role": sessionStorage.getItem("current_role"),
+    "X-User-ID": sessionStorage.getItem("current_user_id"),
   });
 
   // Fetch General Settings on mount
@@ -407,7 +407,7 @@ export default function AdminSettings() {
           headers: getHeaders(),
         },
       );
-      const res = await apiClient.get(`/api/settings/departments`, {
+      const res = await axios.get(`${API_BASE}/api/settings/departments`, {
         headers: getHeaders(),
       });
       setDepartments(res.data);
@@ -512,16 +512,13 @@ export default function AdminSettings() {
       <div className="rightside-logo ">
         <img src={group10} alt="logo" className="rightside-logos" />
       </div>
-      {/* Sidebar */}
-      <div className="sidebar">
-        <AdminSidebar />
-      </div>
+      <AdminSidebar />
 
       {/* Main content */}
-      <div className="main-content flex-grow-1">
+      <div className="admin-settings-main">
         <Topbar />
 
-        <div className="settings-page p-4">
+        <div className="settings-page">
           {/* Header */}
           <div className="settings-header">
             <h1>{t("title")}</h1>
@@ -696,12 +693,14 @@ export default function AdminSettings() {
                   </div>
 
                   <div className="form-group-custom">
-                    <label className="section-label-top">
-                      {t("defaultThemeforUsers")}
-                    </label>
-                    <div className="theme-input-box0">
-                      <span className="setting-muted-text">Light Theme</span>
-                    </div>
+                    <label>{t("defaultThemeforUsers")}</label>
+                    <select
+                      value={userTheme}
+                      onChange={(e) => setUserTheme(e.target.value)}
+                    >
+                      <option value="light">Light Theme</option>
+                      <option value="dark">Dark Theme</option>
+                    </select>
                   </div>
 
                   {/* Row 3 */}
@@ -722,32 +721,8 @@ export default function AdminSettings() {
                   </div>
 
                   <div className="form-column">
-                    <div className="form-groupz">
-                      <label>{t("userSignup")}</label>
-                      <div className="theme-input-box0">
-                        <span className="theme-label">
-                          Allow new users to sign up
-                        </span>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={allowSignup}
-                            onChange={() => setAllowSignup(!allowSignup)}
-                          />
-                          <span className="slider round"></span>
-                        </label>
-                      </div>
-                    </div>
-                    <div className="form-group1">
-                      <label>{t("defaultThemeforUsers")}</label>
-                      <select
-                        value={userTheme}
-                        onChange={(e) => setUserTheme(e.target.value)}
-                      >
-                        <option value="light">Light Theme</option>
-                        <option value="dark">Dark Theme</option>
-                      </select>
-                    </div>
+
+
                     <div className="form-group2">
                       <label>
                         {t("dateFormat")}
@@ -1165,7 +1140,7 @@ export default function AdminSettings() {
                               ) : (
                                 <div className="dept-action-btns">
                                   <button
-                                    className="dept-icon-btn dept-edit-btn"
+                                    className="action-btn edit"
                                     onClick={() => {
                                       setEditingDeptId(dept.id);
                                       setEditMemberCount(
@@ -1174,16 +1149,24 @@ export default function AdminSettings() {
                                     }}
                                     title="Edit"
                                   >
-                                    <FaPencilAlt />
+                                    <img
+                                      className="pen-icon"
+                                      src={penicon}
+                                      alt="edit"
+                                    />
                                   </button>
                                   <button
-                                    className="dept-icon-btn dept-delete-btn"
+                                    className="action-btn delete"
                                     onClick={() =>
                                       handleDeleteDepartment(dept.id)
                                     }
                                     title="Delete"
                                   >
-                                    <FaTrashAlt />
+                                    <img
+                                      className="deletebox-icon"
+                                      src={deletebox}
+                                      alt="delete"
+                                    />
                                   </button>
                                 </div>
                               )}
@@ -1256,6 +1239,13 @@ export default function AdminSettings() {
                       </div>
                     </div>
                   </div>
+
+                  <button
+                    className="btn-create-new1"
+                    onClick={() => setShowBreakModal(true)}
+                  >
+                    Create new
+                  </button>
 
                   {/* Create New Break Time Modal */}
                   {showBreakModal && (

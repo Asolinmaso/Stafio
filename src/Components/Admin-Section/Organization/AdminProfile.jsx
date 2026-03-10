@@ -76,6 +76,7 @@ const AdminProfile = () => {
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
+  const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [education, setEducation] = useState({
     institution: "",
@@ -580,6 +581,14 @@ const AdminProfile = () => {
     alert("Documents updated!");
   };
 
+  const handleCancelDocs = () => {
+    if (docsBackup !== null) {
+      setDocuments(docsBackup);
+    }
+    setDocsBackup(null);
+    setIsEditingDocs(false);
+  };
+
   // const handleCancelBank = () => {
   //   setBank(savedBank);      // restore last saved data
   //   setErrors({});           // clear validation errors
@@ -871,7 +880,7 @@ const AdminProfile = () => {
       <div className="sidebar">
         <AdminSidebar />
       </div>
-      <div className="main-content5 py-4">
+      <div className="main-content5">
         <Topbar />
         <ProfileBanner profileData={profile} />
 
@@ -1645,7 +1654,10 @@ const AdminProfile = () => {
                   {!isEditingDocs ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => setIsEditingDocs(true)}
+                      onClick={() => {
+                        setDocsBackup([...documents]);
+                        setIsEditingDocs(true);
+                      }}
                     >
                       Edit
                     </Button>
@@ -1653,7 +1665,7 @@ const AdminProfile = () => {
                     <div style={{ minWidth: 180, textAlign: "right" }}>
                       <Button
                         className="btn-cancel"
-                        onClick={() => setIsEditingDocs(false)}
+                        onClick={handleCancelDocs}
                       >
                         Cancel
                       </Button>

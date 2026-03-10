@@ -77,16 +77,68 @@
     display: flex !important;
     flex-direction: column !important;
     padding-top: 0 !important;
-    /* Force flush with sticky topbar */
 }
 
-/* Topbar — floating card style, same across all pages */
+/* Base Topbar — default style for pages not explicitly targeted */
 .topbar {
     margin: 0 16px !important;
     width: calc(100% - 32px) !important;
     border-radius: 12px !important;
     border-bottom: none !important;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Target Pages Only: Dashboard, Attendance, Approval, Leave */
+.admin-settings-main,
+.attendance-main,
+.employee-main,
+.main-content,
+.main-content5,
+.leave-approval-main,
+.regularization-approval-main,
+.leave-policies-main,
+.myteam-main,
+.myleave-container,
+.myholiday-container,
+.att-report-main,
+.leave-report-main,
+.ra-main,
+.regularization-container {
+    padding: 0 25px 25px 25px !important;
+    flex: 1 !important;
+    position: relative;
+}
+
+.admin-settings-main .topbar,
+.attendance-main .topbar,
+.employee-main .topbar,
+.main-content .topbar,
+.main-content5 .topbar,
+.leave-approval-main .topbar,
+.regularization-approval-main .topbar,
+.leave-policies-main .topbar,
+.myteam-main .topbar,
+.myleave-container .topbar,
+.myholiday-container .topbar,
+.att-report-main .topbar,
+.leave-report-main .topbar,
+.ra-main .topbar,
+.regularization-container .topbar {
+    position: sticky !important;
+    top: 15px !important;
+    z-index: 1000 !important;
+    height: 70px !important;
+    min-height: 70px !important;
+    background: #fff !important;
+    border-radius: 12px !important;
+    margin: 15px 0 25px 0 !important;
+    padding: 0 25px !important;
+    width: 100% !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: none !important;
 }
 
 

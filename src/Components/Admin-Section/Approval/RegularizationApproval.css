@@ -2,114 +2,74 @@
   background: #eff5ff;
 }
 
-
 .regularization-approval-main {
-  padding: 1px 10px !important;
+  padding: 0 25px 25px 25px !important;
   background: #eff5ff;
 }
 
 .regularization-container {
   background: #f3f7fd;
-  margin-top: 20px;
 }
 
+/* =========================
+   HEADER
+========================= */
 .regularization-header {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin: 25px 0 25px 0;
 }
 
 .header-top h2 {
-  font-size: 30px;
-  color: #222;
-  margin-bottom: 35px !important;
-  font-weight: 600;
+  font-size: 26px;
+  color: #1a1a1a;
+  margin-bottom: 18px !important;
+  font-weight: 700;
 }
 
 .header-bottom {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .left-tabs {
-  margin-top: 40px;
   display: flex;
-  gap: 0px;
+  gap: 0;
+  width: fit-content;
 }
 
 .tab-btn {
-  background: #ffffffff !important;
-  color: #000000ff !important;
-  border: 1px solid #b8b4b4ff !important;
-  padding: 10px 28px !important;
-  border-radius: 15px 0 0 15px !important;
+  background: #fff !important;
+  color: #333 !important;
+  border: 1px solid #c5c5c5 !important;
+  padding: 10px 32px !important;
+  border-radius: 10px 0 0 10px !important;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .tab-btn.active {
   background: #19bde8 !important;
-  color: #ffffffff !important;
-  border: 1px solid #b8b4b4ff;
-  padding: 8px 12px !important;
-  border-radius: 0 15px 15px 0 !important;
+  color: #fff !important;
+  border: 1px solid #19bde8 !important;
+  padding: 10px 32px !important;
+  border-radius: 0 10px 10px 0 !important;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
+/* Row 2 — Search + Filter + Sort RIGHT */
 .right-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.search-input {
-  padding: 8px 12px;
-  border: 1px solid #acababff;
-  border-radius: 16px;
-  width: 180px;
-  font-size: 14px;
-  background: transparent;
-}
-
-.right-btn-filter {
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  background: transparent;
-  border-radius: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-  margin-bottom: -10px;
-  color: #000;
-}
-
-.sort-select {
-  padding: 10px 14px;
-  border: 1px solid #aaa8a8ff;
-  border-radius: 16px;
-  background: #fff;
-  font-size: 14px;
-  margin-top: 9px;
-  margin-bottom: 0px;
-}
-
-
-
-.tab-btn {
-  padding: 8px 18px;
-  border: none;
-  background: #e6ecf8;
-  color: #2c3e50;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.tab-btn.active {
-  background: #007bff;
-  color: #fff;
+  gap: 12px;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .right-bottom-button {
@@ -120,137 +80,113 @@
   margin-bottom: 15px;
 }
 
-
-
-.table-container {
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+/* =========================
+   SEARCH INPUT — exact pill with search icon
+========================= */
+.search-input {
+  width: 220px;
+  height: 36px;
+  border: 1px solid #d6e3ff;
+  border-radius: 20px;
+  padding: 0 14px;
+  outline: none;
+  background: #ffffff;
+  font-size: 13px;
+  color: #1f2b3d;
 }
 
-.regularization-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.regularization-table th {
-  text-align: left;
-  padding: 12px;
+.search-input::placeholder {
+  color: #aaa;
   font-size: 14px;
-  color: #6c757d;
-  border-bottom: 1px solid #eee;
 }
 
-.regularization-table td {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
-  color: #2c3e50;
-}
-
-.emp-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.emp-info img {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-}
-
-.emp-name {
-  font-weight: 600;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-left: 10px;
-}
-
-.status-badge.pending {
-  background: #fff6db;
-  color: #f5b100;
-}
-
-.status-badge.approved {
-  background: #e7fff2;
-  color: #00c26d;
-}
-
-.view-btn {
-  padding: 6px 12px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-
-
-.showing select {
-  margin-left: 5px;
-  padding: 4px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.page-btns {
-  display: block;
-  gap: 8px;
-}
-
-.page-btns button {
-  border: none;
-  background: #e6ecf8;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.page-btns .active {
-  background: #19bde8;
-  color: #fff;
+.search-input:focus {
+  border-color: #19bde8;
+  box-shadow: 0 0 0 3px rgba(25, 189, 232, 0.1);
 }
 
 /* =========================
-   FILTER ICON & POPUP
+   FILTER BUTTON — exact pill
 ========================= */
+.right-btn-filter {
+  height: 42px;
+  padding: 0 20px;
+  border: 1.5px solid #dcdcdc;
+  background: #ffffff;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: border-color 0.2s;
+}
 
+.right-btn-filter:hover {
+  border-color: #19bde8;
+  background: #f5fdff;
+}
+
+/* =========================
+   SORT DROPDOWN — exact pill
+========================= */
+.sort-select {
+  height: 42px;
+  padding: 0 20px;
+  border: 1.5px solid #dcdcdc;
+  border-radius: 50px;
+  background: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 0;
+  color: #333;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  appearance: auto;
+  transition: border-color 0.2s;
+}
+
+.sort-select:focus {
+  border-color: #19bde8;
+  outline: none;
+}
+
+/* =========================
+   FILTER POPUP
+========================= */
 .filter-wrapper {
   position: relative;
   display: inline-block;
 }
 
 .filter-icon-btn {
-  width: 38px;
-  height: 36px;
-  border-radius: 12px;
-  background: transparent;
-  border: 1px solid #b8b4b4ff;
-  color: #000000ff;
-  cursor: pointer;
+  height: 42px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-radius: 50px;
+  background: #ffffff;
+  border: 1.5px solid #dcdcdc;
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.filter-icon-btn svg {
-  font-size: 16px;
-  color: #000;
+.filter-icon-btn::after {
+  content: "Filter";
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
 }
 
-/* Popup box */
 .filter-popup {
   position: absolute;
   top: calc(100% + 10px);
-  /* below filter icon */
   right: 0;
   width: 360px;
   background: #ffffff;
@@ -260,14 +196,13 @@
   z-index: 999;
 }
 
-/* Title */
 .filter-popup h4 {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 14px;
+  text-align: center;
 }
 
-/* Labels */
 .filter-popup label {
   display: block;
   font-size: 14px;
@@ -275,7 +210,6 @@
   margin-bottom: 6px;
 }
 
-/* Inputs & selects */
 .filter-popup input,
 .filter-popup select {
   width: 100%;
@@ -286,15 +220,14 @@
   margin-bottom: 14px;
   outline: none;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
-/* Two-column layout */
 .filter-row {
   display: flex;
   gap: 16px;
 }
 
-/* Buttons */
 .filter-actions {
   display: flex;
   justify-content: space-between;
@@ -321,30 +254,153 @@
 }
 
 /* =========================
-   SHOW "Filter" TEXT NEXT TO ICON (CSS ONLY)
+   TABLE
 ========================= */
-
-.filter-icon-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 14px;
-  width: auto;
-  /* allow text */
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Add text using CSS */
-.filter-icon-btn::after {
-  content: "Filter";
+.regularization-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.regularization-table th {
+  text-align: left;
+  padding: 14px 16px;
   font-size: 14px;
-  font-weight: 500;
-  color: #000;
+  color: #6c757d;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.regularization-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.regularization-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.emp-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emp-info img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.emp-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2937;
 }
 
 /* =========================
-   VIEW DETAILS MODAL
+   STATUS BADGE
 ========================= */
+.status-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
 
+.status-badge.pending {
+  background: #fff6db;
+  color: #f5b100;
+}
+
+.status-badge.approved {
+  background: #e7fff2;
+  color: #00c26d;
+}
+
+/* =========================
+   VIEW BUTTON
+========================= */
+.view-btn {
+  padding: 6px 16px;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.view-btn:hover {
+  background: #19bde8;
+  color: #fff;
+  border-color: #19bde8;
+}
+
+/* =========================
+   PAGINATION
+========================= */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #374151;
+  padding: 0 4px;
+}
+
+.showing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.showing select {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #19bde8;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.page-btns button {
+  border: none;
+  background: #e6ecf8;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.page-btns .active {
+  background: #19bde8;
+  color: #fff;
+}
+
+/* =========================
+   MODALS
+========================= */
 .ra-modal-overlay {
   position: fixed;
   top: 0;
@@ -356,7 +412,6 @@
   justify-content: center;
   align-items: center;
   z-index: 10000;
-  font-family: 'Montserrat', sans-serif;
 }
 
 .ra-modal-content {
@@ -433,7 +488,7 @@
 
 .ra-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 30px;
@@ -506,7 +561,6 @@
 .ra-watermark {
   font-size: 14px;
   color: #b0b0b0;
-  font-weight: 400;
 }
 
 .ra-footer-btns {
@@ -525,19 +579,24 @@
   cursor: pointer;
 }
 
-/* =========================
-   REASON & RESULT MODALS (HIERARCHY)
-========================= */
+.ra-reject-pill-btn {
+  padding: 8px 30px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
 
 .ra-nested-overlay {
   z-index: 10001;
-  /* Higher than main modal */
   background: rgba(0, 0, 0, 0.2);
 }
 
 .ra-small-modal {
   background: #f1f8ff;
-  /* Light bluish tint from image */
   width: 400px;
   border-radius: 12px;
   padding: 25px;
@@ -574,6 +633,7 @@
   background: #fff;
   resize: none;
   margin-bottom: 8px;
+  box-sizing: border-box;
 }
 
 .ra-char-hint {
@@ -608,7 +668,6 @@
   cursor: pointer;
 }
 
-/* SUCCESS / REJECTED BOXES */
 .ra-result-modal {
   background: #f1f8ff;
   width: 320px;
@@ -627,15 +686,4 @@
 .ra-result-content p {
   font-size: 14px;
   color: #666;
-}
-
-.ra-reject-pill-btn {
-  padding: 8px 30px;
-  background: #fff;
-  color: #333;
-  border: 1px solid #333;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
 }
