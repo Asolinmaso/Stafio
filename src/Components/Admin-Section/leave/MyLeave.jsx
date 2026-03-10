@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./MyLeave.css";
 import {
   FaCheckCircle,
@@ -13,17 +13,16 @@ import Topbar from "../Topbar";
 import illustration from "../../../assets/Formsbro.png"; // Add your illustration image
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 export default function Myleave() {
   const [showModal, setShowModal] = useState(false);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-   // Filter states
+  // Filter states
   const [filterName, setFilterName] = useState("");
   const [filterLeaveType, setFilterLeaveType] = useState("All");
-  const [filterStatus, setFilterStatus] = useState("All")
-
+  const [filterStatus, setFilterStatus] = useState("All");
 
   const [leaveBalance, setLeaveBalance] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
@@ -41,13 +40,13 @@ export default function Myleave() {
   const filterRef = useRef(null);
   const filterButtonRef = useRef(null);
 
-const fetchMyLeaves = async () => {
+  const fetchMyLeaves = async () => {
     try {
-      const userId = sessionStorage.getItem("current_user_id");
+      const userId = localStorage.getItem("current_user_id");
 
       if (!userId) return;
 
-      const response = await axios.get("http://127.0.0.1:5001/api/myleave", {
+      const response = await apiClient.get("/api/myleave", {
         headers: {
           "X-User-ID": userId,
           "X-User-Role": "admin", // optional but safe
@@ -57,14 +56,11 @@ const fetchMyLeaves = async () => {
       setLeaveData(response.data);
 
       // 🔹 Fetch leave balance (SAME AS EMPLOYEE)
-      const balanceResponse = await axios.get(
-        "http://127.0.0.1:5001/api/leave_balance",
-        {
-          headers: {
-            "X-User-ID": userId,
-          },
+      const balanceResponse = await apiClient.get("/api/leave_balance", {
+        headers: {
+          "X-User-ID": userId,
         },
-      );
+      });
       setLeaveBalance(balanceResponse.data);
     } catch (error) {
       console.error("Error fetching admin leave data:", error);
@@ -75,9 +71,9 @@ const fetchMyLeaves = async () => {
     fetchMyLeaves();
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     if (showModal) {
-      const userId = sessionStorage.getItem("current_user_id");
+      const userId = localStorage.getItem("current_user_id");
       setFormData((prev) => ({
         ...prev,
         employee_id: userId || "",
@@ -85,17 +81,14 @@ const fetchMyLeaves = async () => {
     }
   }, [showModal]);
 
-const filteredAndSortedLeaves = leaveData.filter((leave) =>
-
-    filterStatus === "All" ? true : leave.status === filterStatus
+  const filteredAndSortedLeaves = leaveData.filter((leave) =>
+    filterStatus === "All" ? true : leave.status === filterStatus,
   );
 
-
-   const handleResetFilter = () => {
+  const handleResetFilter = () => {
     setFilterName("");
     setFilterLeaveType("All");
     setFilterStatus("All");
-  
   };
 
   const handleApplyFilter = () => {
@@ -110,15 +103,15 @@ const filteredAndSortedLeaves = leaveData.filter((leave) =>
     });
   };
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const userId = sessionStorage.getItem("current_user_id");
-      const userRole = sessionStorage.getItem("current_role");
+      const userId = localStorage.getItem("current_user_id");
+      const userRole = localStorage.getItem("current_role");
 
-      await axios.post(
-        "http://localhost:5001/api/admin/leave-requests",
+      await apiClient.post(
+        "/api/admin/leave-requests",
         {
           employee_id: formData.employee_id,
           leave_type_id: formData.leave_type,
@@ -146,8 +139,8 @@ const filteredAndSortedLeaves = leaveData.filter((leave) =>
       alert("Failed to apply leave ❌");
     }
   };
-  
-    // Close filter popup when clicking outside
+
+  // Close filter popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -159,26 +152,25 @@ const filteredAndSortedLeaves = leaveData.filter((leave) =>
       ) {
         setShowFilterPopup(false);
       }
-  };
+    };
 
-      document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showFilterPopup]);
 
-useEffect(() => {
-  if (showModal) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "auto";
-  }
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
 
-  return () => {
-    document.body.style.overflow = "auto";
-  };
-}, [showModal]);
-
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showModal]);
 
   return (
     <div className="layout">
@@ -193,7 +185,7 @@ useEffect(() => {
         {/* Header Section */}
         <div className="leave-header">
           <div className="leave-summary">
-             {leaveBalance.length > 0 ? (
+            {leaveBalance.length > 0 ? (
               leaveBalance.slice(0, 3).map((balance) => (
                 <div className="summary-card" key={balance.id}>
                   <FaCheckCircle className="summary-icon" />
@@ -207,7 +199,7 @@ useEffect(() => {
                 </div>
               ))
             ) : (
-           <div className="summary-card">
+              <div className="summary-card">
                 <FaCheckCircle className="summary-icon" />
                 <p>
                   <strong>Loading...</strong>
@@ -231,7 +223,7 @@ useEffect(() => {
                 Regularization
               </button>
             </div>
-            <div className="bottom-button" style={{ position: 'relative' }}>
+            <div className="bottom-button" style={{ position: "relative" }}>
               <button
                 ref={filterButtonRef}
                 className="app-btn-filter"
@@ -366,11 +358,11 @@ useEffect(() => {
                 <form className="apply-leave-form" onSubmit={handleSubmit}>
                   <div className="form-left">
                     <label>Employee ID:</label>
-                    <input 
-                    type="text"
-                    name="employee_id"
-                    value={formData.employee_id}
-                    readOnly 
+                    <input
+                      type="text"
+                      name="employee_id"
+                      value={formData.employee_id}
+                      readOnly
                     />
 
                     <label>Leave Type:</label>
@@ -378,7 +370,7 @@ useEffect(() => {
                       name="leave_type"
                       value={formData.leave_type}
                       onChange={handleChange}
-                      >
+                    >
                       <option value="">Select</option>
                       <option value="1">Casual Leave</option>
                       <option value="2">Sick Leave</option>
@@ -387,23 +379,23 @@ useEffect(() => {
 
                     <label>Select Date:</label>
                     <div className="app-leave-date-row">
-                      <input 
-                        type="date" 
+                      <input
+                        type="date"
                         name="start_date"
                         value={formData.start_date}
                         onChange={handleChange}
                       />
-                      <input 
+                      <input
                         type="date"
                         name="end_date"
                         value={formData.end_date}
                         onChange={handleChange}
-                       />
+                      />
                       <select
                         name="day_type"
                         value={formData.day_type}
                         onChange={handleChange}
-                        >
+                      >
                         <option value="Full Day">Full Day</option>
                         <option value="Half Day (FN)">Half Day (FN)</option>
                         <option value="Half Day (AN)">Half Day (AN)</option>
@@ -441,19 +433,19 @@ useEffect(() => {
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
                 </form>
-                
-                    <div className="app-leave-modal-actions">
-                      <button type="submit" className="apply-leave-btn">
-                        Apply
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowModal(false)}
-                        className="app-leave-cancel-btn"
-                      >
-                        Cancel
-                      </button>
-                    </div>
+
+                <div className="app-leave-modal-actions">
+                  <button type="submit" className="apply-leave-btn">
+                    Apply
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="app-leave-cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>

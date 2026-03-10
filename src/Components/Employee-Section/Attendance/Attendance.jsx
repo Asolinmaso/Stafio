@@ -4,7 +4,7 @@ import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import "./Attendance.css";
 import { FaCheck } from "react-icons/fa";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import "bootstrap-icons/font/bootstrap-icons.css"; // ✅ Needed for the filter icon
 
 const Attendance = () => {
@@ -21,24 +21,18 @@ const Attendance = () => {
       try {
         const userId =
           localStorage.getItem("employee_user_id") ||
-          sessionStorage.getItem("current_user_id");
+          localStorage.getItem("current_user_id");
 
         // Fetch attendance records
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/attendance",
-          {
-            headers: { "X-User-ID": userId },
-          },
-        );
+        const response = await apiClient.get("/api/attendance", {
+          headers: { "X-User-ID": userId },
+        });
         setAttendanceData(response.data);
 
         // Fetch attendance stats
-        const statsResponse = await axios.get(
-          "http://127.0.0.1:5001/api/attendance_stats",
-          {
-            headers: { "X-User-ID": userId },
-          },
-        );
+        const statsResponse = await apiClient.get("/api/attendance_stats", {
+          headers: { "X-User-ID": userId },
+        });
         setAttendanceStats(statsResponse.data);
       } catch (error) {
         console.error("Error fetching attendance:", error);

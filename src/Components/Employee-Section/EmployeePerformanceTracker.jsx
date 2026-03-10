@@ -13,7 +13,7 @@ import {
 } from "react-bootstrap";
 import EmployeeSidebar from "./EmployeeSidebar";
 import Topbar from "./Topbar";
-import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import {
   FaTasks,
   FaCheckCircle,
@@ -22,8 +22,6 @@ import {
   FaPlus,
 } from "react-icons/fa";
 import "./EmployeePerformanceTracker.css";
-
-const API_BASE = "http://127.0.0.1:5001";
 
 const EmployeePerformanceTracker = () => {
   const [loading, setLoading] = useState(true);
@@ -47,11 +45,11 @@ const EmployeePerformanceTracker = () => {
       setLoading(true);
       const userId =
         localStorage.getItem("employee_user_id") ||
-        sessionStorage.getItem("current_user_id");
+        localStorage.getItem("current_user_id");
 
       const [tasksRes, performanceRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/tasks?user_id=${userId}`),
-        axios.get(`${API_BASE}/api/performance?user_id=${userId}`),
+        apiClient.get(`/api/tasks?user_id=${userId}`),
+        apiClient.get(`/api/performance?user_id=${userId}`),
       ]);
 
       setTasks(tasksRes.data);
@@ -67,9 +65,9 @@ const EmployeePerformanceTracker = () => {
     try {
       const userId =
         localStorage.getItem("employee_user_id") ||
-        sessionStorage.getItem("current_user_id");
+        localStorage.getItem("current_user_id");
 
-      await axios.post(`${API_BASE}/api/tasks`, {
+      await apiClient.post(`/api/tasks`, {
         user_id: parseInt(userId),
         ...taskForm,
       });
@@ -91,7 +89,9 @@ const EmployeePerformanceTracker = () => {
 
   const handleUpdateTaskStatus = async (taskId, newStatus) => {
     try {
-      await axios.put(`${API_BASE}/api/tasks/${taskId}`, { status: newStatus });
+      await apiClient.put(`/api/tasks/${taskId}`, {
+        status: newStatus,
+      });
       fetchData();
     } catch (error) {
       console.error("Error updating task:", error);

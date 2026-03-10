@@ -44,7 +44,7 @@ const Myholiday = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post("http://127.0.0.1:5001/api/myholidays", formData);
+			const response = await apiClient.post("/api/myholidays", formData);
 			if (response.status === 201) {
 				alert("Holiday added successfully!");
 				setIsModalOpen(false);

@@ -4,7 +4,7 @@ import "./Attendance.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
 
 const Attendance = () => {
@@ -47,8 +47,8 @@ const Attendance = () => {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/attendancelist"
+        const response = await apiClient.get(
+          "/api/attendancelist"
         );
         setAttendanceData(response.data);
       } catch (error) {

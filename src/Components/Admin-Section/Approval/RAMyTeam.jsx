@@ -5,7 +5,7 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 export default function RegularizationApprovalMyTeam() {
   const [data, setData] = useState([]);
@@ -43,7 +43,7 @@ export default function RegularizationApprovalMyTeam() {
   useEffect(() => {
     const fetchMyTeamRA = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:5001/api/myteamra");
+        const response = await apiClient.get("/api/myteamra");
         setData(response.data);
       } catch (error) {
         console.error("Error fetching regularization data:", error);

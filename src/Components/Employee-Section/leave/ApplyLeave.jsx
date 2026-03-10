@@ -1,7 +1,7 @@
 // ApplyLeave.jsx
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Card, Alert } from "react-bootstrap";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import EmployeeSidebar from ".././EmployeeSidebar";
 import "./ApplyLeave.css";
 import { useNavigate } from "react-router-dom";
@@ -24,10 +24,10 @@ const LeaveRequestForm = () => {
     // Check both possible storage locations for user session
     const userId =
       localStorage.getItem("employee_user_id") ||
-      sessionStorage.getItem("current_user_id");
+      localStorage.getItem("current_user_id");
     const role =
       localStorage.getItem("employee_role") ||
-      sessionStorage.getItem("current_role");
+      localStorage.getItem("current_role");
 
     if (!userId || role !== "employee") {
       setResponseMessage(
@@ -47,14 +47,14 @@ const LeaveRequestForm = () => {
     // Get user ID from either storage location
     const userId =
       localStorage.getItem("employee_user_id") ||
-      sessionStorage.getItem("current_user_id");
+      localStorage.getItem("current_user_id");
     const role =
       localStorage.getItem("employee_role") ||
-      sessionStorage.getItem("current_role");
+      localStorage.getItem("current_role");
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:5001/leave_requests",
+      const res = await apiClient.post(
+        "/leave_requests",
         {
           ...formData,
           user_id: userId,
