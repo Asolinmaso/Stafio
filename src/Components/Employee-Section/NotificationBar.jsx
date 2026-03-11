@@ -42,7 +42,9 @@ const NotificationBar = () => {
 
       <div className="content">
         <div className="notification-container">
-          <h4 className="event-name">{latestAnnouncement.eventName || latestAnnouncement.title}</h4>
+          <h4 className="event-name">
+            {latestAnnouncement.eventName || latestAnnouncement.title}
+          </h4>
           <p className="event-message">{latestAnnouncement.message}</p>
         </div>
 

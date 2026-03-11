@@ -237,9 +237,18 @@ const WhoIsOnLeave = () => {
               />
 
               {/* ✅ NATIVE DATE PICKER OVERLAY (MATCHES ATTENDANCE) */}
-              <div className="whoisleave-date-picker" style={{ position: "relative" }}>
+              <div
+                className="whoisleave-date-picker"
+                style={{ position: "relative" }}
+              >
                 <FaCalendarAlt className="calendar-icon" />
-                <span style={{ fontSize: "14px", fontWeight: "500", marginLeft: "8px" }}>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    marginLeft: "8px",
+                  }}
+                >
                   {formatDisplayDate(selectedDate)}
                 </span>
                 <input

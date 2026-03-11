@@ -1,8 +1,8 @@
-import React from 'react';
-import AdminSidebar from './AdminSidebar';
-import Topbar from './Topbar';
-import { Container, Card } from 'react-bootstrap';
-import group10 from '../../assets/Group10.png';
+import React from "react";
+import AdminSidebar from "./AdminSidebar";
+import Topbar from "./Topbar";
+import { Container, Card } from "react-bootstrap";
+import group10 from "../../assets/Group10.png";
 
 const AdminBroadCast = () => {
   return (
@@ -16,9 +16,14 @@ const AdminBroadCast = () => {
         <Container fluid className="p-4 text-center">
           <Card className="border-0 shadow-sm p-5 mt-5">
             <h2 className="text-secondary">Admin Broadcast Center</h2>
-            <p className="text-muted mt-3">This module is under development. Soon you will be able to broadcast announcements and notifications across the organization.</p>
+            <p className="text-muted mt-3">
+              This module is under development. Soon you will be able to
+              broadcast announcements and notifications across the organization.
+            </p>
             <div className="mt-4">
-              <span className="badge bg-info p-2 px-4 shadow-sm">Coming Soon</span>
+              <span className="badge bg-info p-2 px-4 shadow-sm">
+                Coming Soon
+              </span>
             </div>
           </Card>
         </Container>

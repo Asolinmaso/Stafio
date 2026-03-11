@@ -41,16 +41,18 @@ export const OrganizationMenu = () => {
     <div className="org-menu">
       {/* Main Organization Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${isOrgActive ? "active" : ""
-          }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${
+          isOrgActive ? "active" : ""
+        }`}
         onClick={handleOrgClick}
       >
         <div className="d-flex align-items-center">
           <img
             src={Vector4}
             alt="Organization Icon"
-            className={`me-2 sidebar-icon ${isOrganizationActive ? "active" : ""
-              }`}
+            className={`me-2 sidebar-icon ${
+              isOrganizationActive ? "active" : ""
+            }`}
           />
           <div className="org">Organization</div>
         </div>
@@ -118,8 +120,9 @@ export const ApprovalMenu = () => {
     <div className="approval-menu">
       {/* Main Approval Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${isApprovalActive ? "active" : ""
-          }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${
+          isApprovalActive ? "active" : ""
+        }`}
         onClick={handleApprovalClick}
       >
         <div className="d-flex align-items-center">
@@ -200,8 +203,9 @@ export const LeaveMenu = () => {
     <div className="leave-menu">
       {/* Main Leave Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${isLeaveActive ? "active" : ""
-          }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${
+          isLeaveActive ? "active" : ""
+        }`}
         onClick={handleLeaveClick}
       >
         <div className="d-flex align-items-center">
@@ -272,8 +276,9 @@ export const ReportMenu = () => {
     <div className="report-menu">
       {/* Main Report Nav */}
       <div
-        className={`sidebar-link d-flex align-items-center justify-content-between ${isReportActive ? "active" : ""
-          }`}
+        className={`sidebar-link d-flex align-items-center justify-content-between ${
+          isReportActive ? "active" : ""
+        }`}
         onClick={handleReportClick}
       >
         <div className="d-flex align-items-center">
@@ -347,8 +352,9 @@ const AdminSidebar = () => {
 
   return (
     <div
-      className={`employee-sidebar d-flex flex-column ${showSidebar ? "show" : ""
-        }`}
+      className={`employee-sidebar d-flex flex-column ${
+        showSidebar ? "show" : ""
+      }`}
     >
       {/* Sidebar Header */}
       <div className="employee-sidebar-header text-center">
@@ -393,8 +399,9 @@ const AdminSidebar = () => {
             <img
               src={Vector5}
               alt="Profile Logo"
-              className={`me-2 sidebar-icon ${isDocumentationActive ? "active" : ""
-                }`}
+              className={`me-2 sidebar-icon ${
+                isDocumentationActive ? "active" : ""
+              }`}
             />
             Documentation
           </Nav.Link>
@@ -406,8 +413,9 @@ const AdminSidebar = () => {
             <img
               src={Group2}
               alt="Attendance Logo"
-              className={`me-2 sidebar-icon ${isAttendanceActive ? "active" : ""
-                }`}
+              className={`me-2 sidebar-icon ${
+                isAttendanceActive ? "active" : ""
+              }`}
             />
             Attendance
           </Nav.Link>
@@ -436,8 +444,6 @@ const AdminSidebar = () => {
           Logout
         </div>
       </div>
-
-
     </div>
   );
 };

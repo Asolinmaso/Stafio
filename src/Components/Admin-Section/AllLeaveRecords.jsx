@@ -39,7 +39,7 @@ const AllLeaveRecords = () => {
         r.reason,
         r.status || "Pending",
         r.department || "N/A",
-      ].join(",")
+      ].join(","),
     );
 
     const csvContent = [headers.join(","), ...rows].join("\n");
@@ -56,7 +56,9 @@ const AllLeaveRecords = () => {
 
   const filteredRecords = (leaveRecords || []).filter((record) => {
     const matchesSearch =
-      (record.employeeId?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (record.employeeId?.toLowerCase() || "").includes(
+        searchTerm.toLowerCase(),
+      ) ||
       (record.reason?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter ? record.status === statusFilter : true;
@@ -81,7 +83,7 @@ const AllLeaveRecords = () => {
             <Button
               variant="info"
               className="text-white px-4 fw-semibold"
-              style={{ borderRadius: '10px' }}
+              style={{ borderRadius: "10px" }}
               onClick={handleExport}
             >
               Export CSV
@@ -93,25 +95,29 @@ const AllLeaveRecords = () => {
               <Row className="g-3">
                 <Col md={4}>
                   <Form.Group>
-                    <Form.Label className="small fw-bold text-secondary">Search</Form.Label>
+                    <Form.Label className="small fw-bold text-secondary">
+                      Search
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Search ID or Reason..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="border-0 bg-light"
-                      style={{ height: '45px', borderRadius: '10px' }}
+                      style={{ height: "45px", borderRadius: "10px" }}
                     />
                   </Form.Group>
                 </Col>
                 <Col md={4}>
                   <Form.Group>
-                    <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
+                    <Form.Label className="small fw-bold text-secondary">
+                      Status
+                    </Form.Label>
                     <Form.Select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
                       className="border-0 bg-light"
-                      style={{ height: '45px', borderRadius: '10px' }}
+                      style={{ height: "45px", borderRadius: "10px" }}
                     >
                       <option value="">All Status</option>
                       <option value="Approved">Approved</option>
@@ -122,12 +128,14 @@ const AllLeaveRecords = () => {
                 </Col>
                 <Col md={4}>
                   <Form.Group>
-                    <Form.Label className="small fw-bold text-secondary">Department</Form.Label>
+                    <Form.Label className="small fw-bold text-secondary">
+                      Department
+                    </Form.Label>
                     <Form.Select
                       value={departmentFilter}
                       onChange={(e) => setDepartmentFilter(e.target.value)}
                       className="border-0 bg-light"
-                      style={{ height: '45px', borderRadius: '10px' }}
+                      style={{ height: "45px", borderRadius: "10px" }}
                     >
                       <option value="">All Departments</option>
                       <option value="HR">HR</option>
@@ -157,7 +165,10 @@ const AllLeaveRecords = () => {
                 <tbody>
                   {filteredRecords.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="text-center py-5 text-secondary">
+                      <td
+                        colSpan="7"
+                        className="text-center py-5 text-secondary"
+                      >
                         No leave records found.
                       </td>
                     </tr>
@@ -165,20 +176,30 @@ const AllLeaveRecords = () => {
                     filteredRecords.map((record, index) => (
                       <tr key={index}>
                         <td className="py-3 px-4">{index + 1}</td>
-                        <td className="py-3 px-4 fw-medium">{record.employeeId}</td>
+                        <td className="py-3 px-4 fw-medium">
+                          {record.employeeId}
+                        </td>
                         <td className="py-3">{record.leaveType}</td>
                         <td className="py-3 small">
                           {record.startDate} to {record.endDate}
                         </td>
                         <td className="py-3">{record.reason}</td>
                         <td className="py-3">
-                          <span className={`badge ${record.status === 'Approved' ? 'bg-success' :
-                              record.status === 'Rejected' ? 'bg-danger' : 'bg-warning'
-                            }`}>
+                          <span
+                            className={`badge ${
+                              record.status === "Approved"
+                                ? "bg-success"
+                                : record.status === "Rejected"
+                                  ? "bg-danger"
+                                  : "bg-warning"
+                            }`}
+                          >
                             {record.status || "Pending"}
                           </span>
                         </td>
-                        <td className="py-3 text-secondary">{record.department || "N/A"}</td>
+                        <td className="py-3 text-secondary">
+                          {record.department || "N/A"}
+                        </td>
                       </tr>
                     ))
                   )}

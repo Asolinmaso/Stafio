@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FaBell, FaChevronDown, FaFilePdf, FaDownload, FaSearch, FaCircle } from "react-icons/fa";
+import {
+  FaBell,
+  FaChevronDown,
+  FaFilePdf,
+  FaDownload,
+  FaSearch,
+  FaCircle,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FiEdit } from "react-icons/fi";
 import profileimg2 from "../../assets/profileimg2.png";
@@ -30,10 +37,14 @@ const Topbar = () => {
   const API_BASE_URL = "http://127.0.0.1:5001";
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("employee_username") || sessionStorage.getItem("current_username");
+    const storedUsername =
+      localStorage.getItem("employee_username") ||
+      sessionStorage.getItem("current_username");
     if (storedUsername) setUsername(storedUsername);
 
-    const storedUserrole = localStorage.getItem("employee_role") || sessionStorage.getItem("current_role");
+    const storedUserrole =
+      localStorage.getItem("employee_role") ||
+      sessionStorage.getItem("current_role");
     if (storedUserrole) setRole(storedUserrole);
 
     fetchNotifications();
@@ -44,12 +55,16 @@ const Topbar = () => {
 
   const fetchProfileData = async () => {
     try {
-      const userId = sessionStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id");
+      const userId =
+        sessionStorage.getItem("current_user_id") ||
+        localStorage.getItem("employee_user_id");
       if (!userId) return;
 
       const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
         headers: {
-          "X-User-Role": sessionStorage.getItem("current_role") || localStorage.getItem("employee_role"),
+          "X-User-Role":
+            sessionStorage.getItem("current_role") ||
+            localStorage.getItem("employee_role"),
           "X-User-ID": userId,
         },
       });
@@ -66,7 +81,8 @@ const Topbar = () => {
       fetchProfileData();
     };
     window.addEventListener("profileUpdated", handleProfileUpdate);
-    return () => window.removeEventListener("profileUpdated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
   }, []);
 
   const employeePages = [
@@ -74,7 +90,11 @@ const Topbar = () => {
     { title: "Apply Leave", path: "/apply-leave", type: "Module" },
     { title: "Attendance", path: "/employee-attendance", type: "Module" },
     { title: "Profile", path: "/profile", type: "Module" },
-    { title: "Performance Tracker", path: "/performance-tracker", type: "Module" },
+    {
+      title: "Performance Tracker",
+      path: "/performance-tracker",
+      type: "Module",
+    },
     { title: "Payroll", path: "/employee-payroll", type: "Module" },
     { title: "Settings", path: "/settings", type: "Module" },
     { title: "Documents", path: "/employeedocs", type: "Module" },
@@ -86,24 +106,26 @@ const Topbar = () => {
     { title: "PAN Card", path: "/employeedocs", type: "Document" },
   ];
 
-  const filteredPages = employeePages.filter(page =>
-    page.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPages = employeePages.filter((page) =>
+    page.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const fetchNotifications = async () => {
     try {
-      const userId = localStorage.getItem("employee_user_id") || localStorage.getItem("userId");
+      const userId =
+        localStorage.getItem("employee_user_id") ||
+        localStorage.getItem("userId");
       if (!userId) {
         console.warn("No User ID found in localStorage for notifications");
         return;
       }
 
       const response = await axios.get(`${API_BASE_URL}/api/notifications`, {
-        headers: { "X-User-ID": userId }
+        headers: { "X-User-ID": userId },
       });
 
       setNotifications(response.data);
-      const unread = response.data.filter(n => !n.is_read).length;
+      const unread = response.data.filter((n) => !n.is_read).length;
       setUnreadCount(unread);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -113,8 +135,10 @@ const Topbar = () => {
   const markAsRead = async (notifId) => {
     try {
       await axios.put(`${API_BASE_URL}/api/notifications/${notifId}/read`);
-      setNotifications(prev => prev.map(n => n.id === notifId ? { ...n, is_read: true } : n));
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notifId ? { ...n, is_read: true } : n)),
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
@@ -135,7 +159,10 @@ const Topbar = () => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setShowProfilePopup(false);
       }
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setShowNotifications(false);
       }
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -155,7 +182,11 @@ const Topbar = () => {
     <div className="topbar">
       {/* Left Section: Logo + Search */}
       <div className="topbar-left">
-        <div className="topbar-logo" onClick={() => navigate("/employee-dashboard")} style={{ cursor: "pointer" }}>
+        <div
+          className="topbar-logo"
+          onClick={() => navigate("/employee-dashboard")}
+          style={{ cursor: "pointer" }}
+        >
           <img src={stafiologoimg} alt="Logo" className="topbar-img" />
         </div>
 
@@ -190,7 +221,9 @@ const Topbar = () => {
                   </div>
                 ))
               ) : (
-                <div className="search-result-item no-results">No pages found</div>
+                <div className="search-result-item no-results">
+                  No pages found
+                </div>
               )}
             </div>
           )}
@@ -216,7 +249,7 @@ const Topbar = () => {
               <div className="notif-header">
                 <h6>Notifications</h6>
                 {notifications.length > 0 && unreadCount > 0 && (
-                  <span className="mark-all-read" onClick={() => { }}>
+                  <span className="mark-all-read" onClick={() => {}}>
                     {unreadCount} New
                   </span>
                 )}
@@ -228,7 +261,7 @@ const Topbar = () => {
                   notifications.map((notif) => (
                     <div
                       key={notif.id}
-                      className={`notif-item ${notif.is_read ? 'read' : 'unread'}`}
+                      className={`notif-item ${notif.is_read ? "read" : "unread"}`}
                       onClick={() => handleNotificationClick(notif)}
                     >
                       <div className="notif-icon-circle">
@@ -241,12 +274,21 @@ const Topbar = () => {
                           {new Date(notif.created_at).toLocaleString()}
                         </div>
                       </div>
-                      {!notif.is_read && <FaCircle size={8} color="#007bff" className="unread-dot" />}
+                      {!notif.is_read && (
+                        <FaCircle
+                          size={8}
+                          color="#007bff"
+                          className="unread-dot"
+                        />
+                      )}
                     </div>
                   ))
                 )}
               </div>
-              <div className="notif-footer" onClick={() => setShowNotifications(false)}>
+              <div
+                className="notif-footer"
+                onClick={() => setShowNotifications(false)}
+              >
                 Close
               </div>
             </div>
@@ -258,9 +300,15 @@ const Topbar = () => {
           onClick={() => setShowProfilePopup((prev) => !prev)}
           ref={popupRef}
         >
-          <img src={profile.profileImage || profileimg2} alt="User" className="topbar-avatar" />
+          <img
+            src={profile.profileImage || profileimg2}
+            alt="User"
+            className="topbar-avatar"
+          />
           <div className="profile-info">
-            <div className="profile-name">{profile.name || username || "User"}</div>
+            <div className="profile-name">
+              {profile.name || username || "User"}
+            </div>
             <div className="profile-role">{role || "Employee"}</div>
           </div>
           <FaChevronDown size={14} color="#666" style={{ marginLeft: "5px" }} />
@@ -282,59 +330,99 @@ const Topbar = () => {
               <div className="details-grid">
                 <div>
                   <h6>Personal Details</h6>
-                  <strong>Position:</strong><p> {profile.position || "-"}</p>
-                  <strong>Employment Type:</strong><p> {profile.empType || "-"}</p>
-                  <strong>Primary Supervisor:</strong> <p>{profile.supervisor || "-"}</p>
-                  <strong>Department:</strong><p> {profile.department || "-"}</p>
-                  <strong>HR Manager:</strong><p> {profile.hrManager || "-"}</p>
+                  <strong>Position:</strong>
+                  <p> {profile.position || "-"}</p>
+                  <strong>Employment Type:</strong>
+                  <p> {profile.empType || "-"}</p>
+                  <strong>Primary Supervisor:</strong>{" "}
+                  <p>{profile.supervisor || "-"}</p>
+                  <strong>Department:</strong>
+                  <p> {profile.department || "-"}</p>
+                  <strong>HR Manager:</strong>
+                  <p> {profile.hrManager || "-"}</p>
                 </div>
                 <div>
                   <h6>Personal Details</h6>
-                  <strong>Gender:</strong><p> {profile.gender || "-"}</p>
-                  <strong>Date of Birth:</strong><p> {profile.dob || "-"}</p>
-                  <strong>Blood Group:</strong><p> {profile.bloodGroup || "-"}</p>
-                  <strong>Marital Status:</strong><p> {profile.maritalStatus || "-"}</p>
-                  <strong>Portfolio:</strong><p> {education.portfolio || "-"}</p>
+                  <strong>Gender:</strong>
+                  <p> {profile.gender || "-"}</p>
+                  <strong>Date of Birth:</strong>
+                  <p> {profile.dob || "-"}</p>
+                  <strong>Blood Group:</strong>
+                  <p> {profile.bloodGroup || "-"}</p>
+                  <strong>Marital Status:</strong>
+                  <p> {profile.maritalStatus || "-"}</p>
+                  <strong>Portfolio:</strong>
+                  <p> {education.portfolio || "-"}</p>
                 </div>
                 <div>
                   <h6>Educational Qualification</h6>
-                  <strong>Institution:</strong><p> {education.institution || "-"}</p>
-                  <strong>Start & End Date:</strong><p> {education.eduStartDate || "-"} – {education.eduEndDate || "-"}</p>
-                  <strong>Course:</strong><p> {education.qualification || "-"}</p>
-                  <strong>Specialization:</strong><p> {education.specialization || "-"}</p>
-                  <strong>Skills:</strong> <p> {Array.isArray(education.skills) ? education.skills.join(", ") : (education.skills || "-")}</p>
+                  <strong>Institution:</strong>
+                  <p> {education.institution || "-"}</p>
+                  <strong>Start & End Date:</strong>
+                  <p>
+                    {" "}
+                    {education.eduStartDate || "-"} –{" "}
+                    {education.eduEndDate || "-"}
+                  </p>
+                  <strong>Course:</strong>
+                  <p> {education.qualification || "-"}</p>
+                  <strong>Specialization:</strong>
+                  <p> {education.specialization || "-"}</p>
+                  <strong>Skills:</strong>{" "}
+                  <p>
+                    {" "}
+                    {Array.isArray(education.skills)
+                      ? education.skills.join(", ")
+                      : education.skills || "-"}
+                  </p>
                 </div>
               </div>
 
               <div className="details-grid">
                 <div>
                   <h6>Address</h6>
-                  <strong>Address Line:</strong><p>{profile.address || "-"}</p>
-                  <strong>Location:</strong><p> {profile.location || "-"}</p>
+                  <strong>Address Line:</strong>
+                  <p>{profile.address || "-"}</p>
+                  <strong>Location:</strong>
+                  <p> {profile.location || "-"}</p>
                 </div>
                 <div>
                   <h6>Contact Details</h6>
                   <strong>Phone:</strong> <p>{profile.phone || "-"}</p>
-                  <strong>Emergency Contact:</strong><p> {profile.emergencyContactNumber || "-"}</p>
-                  <strong>Relationship:</strong><p> {profile.relationship || "-"}</p>
+                  <strong>Emergency Contact:</strong>
+                  <p> {profile.emergencyContactNumber || "-"}</p>
+                  <strong>Relationship:</strong>
+                  <p> {profile.relationship || "-"}</p>
                   <strong>Email:</strong> <p>{profile.email || "-"}</p>
                 </div>
                 <div>
                   <h6>Previous Experience</h6>
-                  <strong>Company:</strong><p> {experience.company || "-"}</p>
-                  <strong>Start & End:</strong><p> {experience.expStartDate || "-"} – {experience.expEndDate || "-"}</p>
-                  <strong>Job Title:</strong><p> {experience.jobTitle || "-"}</p>
-                  <strong>Description:</strong><p> {experience.responsibilities || "-"}</p>
+                  <strong>Company:</strong>
+                  <p> {experience.company || "-"}</p>
+                  <strong>Start & End:</strong>
+                  <p>
+                    {" "}
+                    {experience.expStartDate || "-"} –{" "}
+                    {experience.expEndDate || "-"}
+                  </p>
+                  <strong>Job Title:</strong>
+                  <p> {experience.jobTitle || "-"}</p>
+                  <strong>Description:</strong>
+                  <p> {experience.responsibilities || "-"}</p>
                 </div>
               </div>
 
               <div className="details-grid">
                 <div>
                   <h6>Bank Details</h6>
-                  <strong>Bank Name:</strong><p> {bankDetails.bankName || "-"}</p>
-                  <strong>Branch:</strong><p> {bankDetails.branch || "-"}</p>
-                  <strong>Account Number:</strong><p> {bankDetails.accountNumber || "-"}</p>
-                  <strong>IFSC Code:</strong><p> {bankDetails.ifsc || "-"}</p>
+                  <strong>Bank Name:</strong>
+                  <p> {bankDetails.bankName || "-"}</p>
+                  <strong>Branch:</strong>
+                  <p> {bankDetails.branch || "-"}</p>
+                  <strong>Account Number:</strong>
+                  <p> {bankDetails.accountNumber || "-"}</p>
+                  <strong>IFSC Code:</strong>
+                  <p> {bankDetails.ifsc || "-"}</p>
                 </div>
 
                 <div className="submitted-docs">

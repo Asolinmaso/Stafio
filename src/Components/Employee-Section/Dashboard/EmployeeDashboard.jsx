@@ -1,14 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  LabelList,
-} from "recharts";
 import { BsPeople } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
 import {
@@ -26,6 +17,7 @@ import {
   BsFlag,
 } from "react-icons/bs";
 import { FaChevronRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import NotificationBar from "../NotificationBar";
@@ -35,12 +27,68 @@ import arrow3 from "../../../assets/arrow3.png";
 import maleteam from "../../../assets/maleteam.png";
 import clock from "../../../assets/clock.gif";
 import apiClient from "../../../utils/apiClient";
+import axios from "axios";
 import "./EmployeeDashboard.css";
 import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
 
+// ─── Config ────────────────────────────────────────────────────────────────
+const BASE_URL = "http://127.0.0.1:5001";
+
+const BREAK_SCHEDULES = [
+  { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+  { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+];
+
+// Break durations per type (in minutes)
+const BREAK_DURATIONS = {
+  lunch: 60, // 60 minutes
+  coffee: 15, // 15 minutes
+  custom: 15, // 15 minutes
+};
+const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
+const MEETING_START_HOUR = 9;
+const MEETING_START_MIN = 0;
+const ALERT_BEFORE_MINUTES = 10;
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+const formatTime = (date) =>
+  date instanceof Date
+    ? date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    : date;
+
+const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
+  if (!punchInDate) return "00:00:00";
+  const totalMs = Math.max(
+    0,
+    Date.now() - punchInDate.getTime() - totalBreakMs,
+  );
+  const totalSec = Math.floor(totalMs / 1000);
+  const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+  const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+  const s = String(totalSec % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+};
+
+const getCurrentTimeInMinutes = () => {
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes();
+};
+const toMinutes = (time) => {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+};
+
+// ─── Component ──────────────────────────────────────────────────────────────
 const EmployeeDashboard = () => {
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const navigate = useNavigate();
+
+  // ── Auth / session ────────────────────────────────────────────────────
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(null);
 
   // ✅ Load userId from localStorage
   useEffect(() => {
@@ -81,92 +129,163 @@ const EmployeeDashboard = () => {
   const [totalHours, setTotalHours] = useState("0:00:00");
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
+
+  // ── Punch state ───────────────────────────────────────────────────────
   const [isBreak, setIsBreak] = useState(false);
+  const [activeBreak, setActiveBreak] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+  const [showBreakDropdown, setShowBreakDropdown] = useState(false);
+  const [breakAlertMsg, setBreakAlertMsg] = useState("");
 
+  // ── API loading / error ───────────────────────────────────────────────
+  const [punchLoading, setPunchLoading] = useState(false);
+  const [punchError, setPunchError] = useState("");
+
+  // ── Refs ──────────────────────────────────────────────────────────────
   const timerRef = useRef(null);
-  const startTimeRef = useRef(null);
-  const breakStartRef = useRef(null);
-  const pausedDurationRef = useRef(0);
   const breakTimerRef = useRef(null);
+  const breakDropdownRef = useRef(null);
+  const breakStartRef = useRef(null);
+  const totalBreakMsRef = useRef(0);
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
+  // ── Dashboard stats ───────────────────────────────────────────────────
+  const [dashboardData, setDashboardData] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
 
-  const calculateDuration = (start, end) => {
-    const diff = Math.floor((end - start - pausedDurationRef.current) / 1000);
-    const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
-    const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
-    const secs = String(diff % 60).padStart(2, "0");
-    return `${hrs}:${mins}:${secs}`;
-  };
+  // ── Meeting ───────────────────────────────────────────────────────────
+  const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
+  const [hasJoined, setHasJoined] = useState(false);
 
+  // ── Leave Notification ────────────────────────────────────────────────
+  const [leaveNotification, setLeaveNotification] = useState(null);
+  const [showLeaveNotif, setShowLeaveNotif] = useState(false);
+
+  // ── Axios header helper ───────────────────────────────────────────────
+  const apiHeaders = () => ({
+    "X-User-ID": userId,
+    "Content-Type": "application/json",
+  });
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 1. Session restore
+  // ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
-    // Function to update time & date every second
-    const updateTime = () => {
-      const now = new Date();
-
-      // Format time (e.g., 9:01:09 AM)
-      const time = now.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
-
-      // Format date (e.g., 10 Aug 2025)
-      const date = now.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
-
-      setCurrentTime(time);
-      setCurrentDate(date);
-    };
-
-    updateTime(); // run immediately
-    const timer = setInterval(updateTime, 1000); // update every 1s
-
-    return () => clearInterval(timer); // cleanup on unmount
+    const storedId = localStorage.getItem("employee_user_id");
+    const storedUsername = localStorage.getItem("employee_username");
+    if (storedId) setUserId(storedId);
+    if (storedUsername) setUsername(storedUsername);
   }, []);
 
-  const handlePunchIn = (e) => {
-    e.preventDefault();
-    const now = new Date();
-    setIsPunchedIn(true);
-    setPunchInTime(now);
-    startTimeRef.current = now;
-    pausedDurationRef.current = 0;
+  // ─────────────────────────────────────────────────────────────────────
+  // 2. Restore today's attendance on load / refresh
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!userId) return;
 
-    // Start timer
+    const fetchTodayAttendance = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/attendance/today`, {
+          headers: { "X-User-ID": userId },
+        });
+
+        const data = res.data;
+        if (!data || !data.check_in) return;
+
+        const checkInDate = new Date(data.check_in.replace(" GMT", ""));
+        setPunchInTime(checkInDate);
+
+        if (data.check_out) {
+          setIsPunchedIn(false);
+          setTotalHours(data.work_hours || "00:00:00");
+          return;
+        }
+
+        setIsPunchedIn(true);
+
+        const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
+        totalBreakMsRef.current = restoredBreakMs;
+
+        if (data.active_break) {
+          setIsBreak(true);
+          const breakStart = new Date();
+          breakStartRef.current = breakStart;
+          setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+
+          const savedBreakId = sessionStorage.getItem("active_break_id");
+          const savedBreakLabel = sessionStorage.getItem("active_break_label");
+          const savedBreakStart = sessionStorage.getItem("break_started_at");
+
+          if (savedBreakStart) {
+            const breakStartedAt = new Date(savedBreakStart);
+            const elapsedMs = Date.now() - breakStartedAt.getTime();
+            const durationMin = BREAK_DURATIONS[savedBreakId] || 15;
+            const durationMs = durationMin * 60 * 1000;
+            const remainingMs = durationMs - elapsedMs;
+
+            const alertMsg = `Your ${savedBreakLabel || "Break"} of ${durationMin} minutes has ended. Please resume work.`;
+            setBreakAlertMsg(alertMsg);
+
+            clearTimeout(breakTimerRef.current);
+            if (remainingMs > 0) {
+              breakTimerRef.current = setTimeout(
+                () => setShowAlert(true),
+                remainingMs,
+              );
+            } else {
+              setShowAlert(true);
+            }
+          }
+        } else {
+          setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+          startWorkingTimer(checkInDate);
+        }
+      } catch (err) {
+        console.error("Could not restore today's attendance:", err);
+      }
+    };
+
+    fetchTodayAttendance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 3. Live clock
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        }),
+      );
+      setCurrentDate(
+        now.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+      );
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 4. Working hours timer helpers
+  // ─────────────────────────────────────────────────────────────────────
+  const startWorkingTimer = (punchIn) => {
+    clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setTotalHours(calculateDuration(startTimeRef.current, new Date()));
+      setTotalHours(calcWorkingTime(punchIn, totalBreakMsRef.current));
     }, 1000);
   };
 
-  const handlePunchOut = (e) => {
-    setIsPunchedIn(false);
-    clearInterval(timerRef.current);
-    clearTimeout(breakTimerRef.current);
-    setShowAlert(false);
-    e.preventDefault();
-    if (punchInTime) {
-      const now = new Date();
-      const diff = now - punchInTime;
-      const hours = Math.floor(diff / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
-      setTotalHours(`${hours}:${minutes}:${seconds}`);
-    }
-    setIsPunchedIn(false);
-    setPunchInTime(null);
-  };
+  const stopWorkingTimer = () => clearInterval(timerRef.current);
 
   useEffect(() => {
     return () => {
@@ -175,110 +294,252 @@ const EmployeeDashboard = () => {
     };
   }, []);
 
-  const handleStartBreak = () => {
-    if (!isBreak) {
-      // 🟠 Start Break
-      setIsBreak(true);
-      breakStartRef.current = new Date();
-      clearInterval(timerRef.current);
-
-      // ⏰ Start 15-min watcher
-      breakTimerRef.current = setTimeout(() => {
-        setShowAlert(true); // show alert when break > 15 mins
-      }, 15 * 60 * 1000); // 15 minutes in ms
-    } else {
-      // 🟢 End Break
-      setIsBreak(false);
-      const breakEnd = new Date();
-      pausedDurationRef.current += breakEnd - breakStartRef.current;
-
-      // stop alert + timer
-      clearTimeout(breakTimerRef.current);
-      setShowAlert(false);
-
-      // Resume timer
-      timerRef.current = setInterval(() => {
-        setTotalHours(calculateDuration(startTimeRef.current, new Date()));
-      }, 1000);
-    }
-  };
-
-  // this is for attendance bar data
-
-  const attendanceData = [
-    { month: "Jan", value: 100 },
-    { month: "Feb", value: 90 },
-    { month: "Mar", value: 86, highlight: true },
-    { month: "Apr", value: 100 },
-    { month: "May", value: 75 },
-  ];
-
-  function AttendanceCard() {
-    return (
-      <Card className="attendance-card">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <Card.Title>Monthly Attendance</Card.Title>
-          </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={attendanceData}>
-              <XAxis dataKey="month" />
-              <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-              <Tooltip formatter={(v) => `${v}%`} />
-              <Bar
-                dataKey="value"
-                radius={[4, 4, 0, 0]}
-                fill="#E5F0F7"
-                barSize={30}
-              >
-                <LabelList
-                  dataKey="value"
-                  position="top"
-                  formatter={(val) => `${val}%`}
-                />
-              </Bar>
-              <Bar
-                dataKey="value"
-                data={attendanceData.filter((d) => d.highlight)}
-                radius={[4, 4, 0, 0]}
-                fill="#19BDE8"
-                barSize={30}
-              >
-                <LabelList
-                  dataKey="value"
-                  position="top"
-                  formatter={(val) => `${val}%`}
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </Card.Body>
-      </Card>
-    );
-  }
-
-  const [dashboardData, setDashboardData] = useState({
-    total_leaves: 0,
-    leaves_taken: 0,
-    absent_days: 0,
-    worked_days: 0,
-    completed_projects: 0,
-    this_week_holiday: 0,
-  });
-
+  // ─────────────────────────────────────────────────────────────────────
+  // 5. Close break dropdown on outside click
+  // ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const handler = (e) => {
+      if (
+        breakDropdownRef.current &&
+        !breakDropdownRef.current.contains(e.target)
+      ) {
+        setShowBreakDropdown(false);
+      }
+    };
+    if (showBreakDropdown) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showBreakDropdown]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 6. Meeting countdown
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      const meetingStart = new Date();
+      meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+      const alertStart = new Date(meetingStart);
+      alertStart.setMinutes(alertStart.getMinutes() - ALERT_BEFORE_MINUTES);
+
+      if (now >= alertStart && now < meetingStart) {
+        const diffSec = Math.floor((meetingStart - now) / 1000);
+        const mins = String(Math.floor(diffSec / 60)).padStart(2, "0");
+        const secs = String(diffSec % 60).padStart(2, "0");
+        setMeetingTimeLeft(`${mins}:${secs} Min Left`);
+      } else if (now >= meetingStart && !hasJoined) {
+        setMeetingTimeLeft("Join the meet");
+      } else if (hasJoined) {
+        setMeetingTimeLeft("Meeting Ended");
+      } else {
+        setMeetingTimeLeft("02 Min Left");
+      }
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, [hasJoined]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 7. Dashboard stats + Leave Notification
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchDashboard = async () => {
+      setDashboardLoading(true);
       try {
         const response = await apiClient.get("/dashboard");
         setDashboardData(response.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+      } finally {
+        setDashboardLoading(false); // ✅ Always runs
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    // ── Fetch leave notification ──────────────────────────────────────
+    const fetchLeaveNotification = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/leave_notification`, {
+          headers: { "X-User-ID": userId },
+        });
+        if (res.data.notification) {
+          setLeaveNotification(res.data.notification);
+          setShowLeaveNotif(true);
+        }
+      } catch (err) {
+        console.error("Leave notification fetch error:", err);
+      }
+    };
 
+    fetchDashboard();
+    fetchLeaveNotification();
+  }, [userId]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 8. Punch In
+  // ─────────────────────────────────────────────────────────────────────
+  const handlePunchIn = async (e) => {
+    e.preventDefault();
+    if (!userId) {
+      setPunchError("User session not found. Please log in again.");
+      return;
+    }
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      await axios.post(
+        `${BASE_URL}/api/attendance/punch-in`,
+        {},
+        { headers: apiHeaders() },
+      );
+
+      const now = new Date();
+      setPunchInTime(now);
+      totalBreakMsRef.current = 0;
+      setTotalHours("00:00:00");
+      setIsPunchedIn(true);
+      startWorkingTimer(now);
+    } catch (err) {
+      setPunchError(
+        err.response?.data?.message || "Punch in failed. Please try again.",
+      );
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 9. Punch Out
+  // ─────────────────────────────────────────────────────────────────────
+  const handlePunchOut = async () => {
+    if (!userId) return;
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/attendance/punch-out`,
+        {},
+        { headers: apiHeaders() },
+      );
+
+      stopWorkingTimer();
+      clearTimeout(breakTimerRef.current);
+
+      const finalHours =
+        res.data?.work_hours ||
+        calcWorkingTime(punchInTime, totalBreakMsRef.current);
+      setTotalHours(finalHours);
+
+      setIsBreak(false);
+      setActiveBreak(null);
+      setIsPunchedIn(false);
+      totalBreakMsRef.current = 0;
+    } catch (err) {
+      setPunchError(
+        err.response?.data?.message || "Punch out failed. Please try again.",
+      );
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 10. Start Break
+  // ─────────────────────────────────────────────────────────────────────
+  const handleStartBreak = async (breakItem = null) => {
+    if (!userId) return;
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      await axios.post(
+        `${BASE_URL}/api/attendance/start-break`,
+        {},
+        { headers: apiHeaders() },
+      );
+
+      const breakStart = new Date();
+      stopWorkingTimer();
+      setIsBreak(true);
+      setActiveBreak(breakItem);
+      breakStartRef.current = breakStart;
+      setShowBreakDropdown(false);
+
+      sessionStorage.setItem("active_break_id", breakItem?.id || "custom");
+      sessionStorage.setItem(
+        "active_break_label",
+        breakItem?.label || "Custom Break",
+      );
+      sessionStorage.setItem("break_started_at", breakStart.toISOString());
+
+      const durationMin = BREAK_DURATIONS[breakItem?.id] || 15;
+      const durationMs = durationMin * 60 * 1000;
+      const elapsed = 0;
+      const remaining = durationMs - elapsed;
+
+      const alertMsg = `Your ${breakItem?.label || "Break"} of ${durationMin} minutes has ended. Please resume work.`;
+      setBreakAlertMsg(alertMsg);
+
+      clearTimeout(breakTimerRef.current);
+      if (remaining > 0) {
+        breakTimerRef.current = setTimeout(() => setShowAlert(true), remaining);
+      } else {
+        setShowAlert(true);
+      }
+    } catch (err) {
+      setPunchError(err.response?.data?.message || "Could not start break.");
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 11. End Break
+  // ─────────────────────────────────────────────────────────────────────
+  const handleEndBreak = async () => {
+    if (!userId) return;
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      await axios.post(
+        `${BASE_URL}/api/attendance/end-break`,
+        {},
+        { headers: apiHeaders() },
+      );
+
+      if (breakStartRef.current) {
+        totalBreakMsRef.current += Date.now() - breakStartRef.current.getTime();
+      }
+
+      clearTimeout(breakTimerRef.current);
+      setShowAlert(false);
+      setIsBreak(false);
+      setActiveBreak(null);
+      breakStartRef.current = null;
+
+      sessionStorage.removeItem("active_break_id");
+      sessionStorage.removeItem("active_break_label");
+      sessionStorage.removeItem("break_started_at");
+
+      startWorkingTimer(punchInTime);
+    } catch (err) {
+      setPunchError(err.response?.data?.message || "Could not end break.");
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Render
+  // ─────────────────────────────────────────────────────────────────────
   return (
     <div className="dashboard-wrapper d-flex">
       <div className="sidebar">
@@ -287,12 +548,48 @@ const EmployeeDashboard = () => {
       <div className="main-content flex-grow-1">
         <Topbar />
         <Container fluid className="p-4">
+          {/* Welcome */}
           <Row className="mb-4 align-items-center">
             <div className="username">
               <h1>Hello, {username || "User"}!</h1>
             </div>
+
+            {/* ── Leave Notification Banner ── */}
+            {showLeaveNotif && leaveNotification && (
+              <div className="leave-notif-banner">
+                <span className="leave-notif-text">
+                  Your{" "}
+                  <span
+                    className="leave-notif-link"
+                    onClick={() => navigate("/my-leave")}
+                  >
+                    Leave Request
+                  </span>{" "}
+                  on &quot;{leaveNotification.start_date}&quot; has been{" "}
+                  <span
+                    className={
+                      leaveNotification.status === "approved"
+                        ? "leave-notif-status-approved"
+                        : "leave-notif-status-rejected"
+                    }
+                  >
+                    {leaveNotification.status === "approved"
+                      ? "Approved!!!"
+                      : "Rejected"}
+                  </span>
+                </span>
+                <button
+                  className="leave-notif-close"
+                  onClick={() => setShowLeaveNotif(false)}
+                  aria-label="Close notification"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </Row>
 
+          {/* Meeting / Punch Card */}
           <Row className="mb-4">
             <div md={4}>
               <NotificationTop />
@@ -302,37 +599,71 @@ const EmployeeDashboard = () => {
                 <div className="d-flex align-items-center">
                   <img src={Vector3} alt="Vector3" className="vector-img" />
                   <div className="meeting-left">
+                    {/* ── STATE 1 : Not punched in ── */}
                     {!isPunchedIn ? (
                       <>
                         <h2>
                           {currentTime} , {currentDate}
                         </h2>
-                        <div className="meeting-box">
+
+                        <a
+                          href={MEETING_LINK}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="meeting-box"
+                          onClick={() => setHasJoined(true)}
+                          style={{
+                            cursor: "pointer",
+                            textDecoration: "none",
+                            color: "inherit",
+                          }}
+                        >
                           <div className="meeting-info">
                             <h4>Standup Meeting</h4>
-                            <p>02 Min Left</p>
+                            <p>{meetingTimeLeft}</p>
                           </div>
                           <div className="meeting-time">07</div>
                           <div className="chevron-box">
                             <FaChevronRight />
                           </div>
-                        </div>
-                        <button className="btn-punch" onClick={handlePunchIn}>
-                          Check In
+                        </a>
+
+                        {punchError && (
+                          <p
+                            style={{
+                              color: "#ff4d4d",
+                              fontSize: "13px",
+                              marginTop: "6px",
+                            }}
+                          >
+                            {punchError}
+                          </p>
+                        )}
+
+                        <button
+                          className="btn-punch"
+                          onClick={handlePunchIn}
+                          disabled={punchLoading}
+                        >
+                          {punchLoading ? "Checking In…" : "Check In"}
                         </button>
                       </>
                     ) : (
+                      /* ── STATE 2 : Punched in ── */
                       <>
                         <h2>
                           {currentTime} , {currentDate}
                         </h2>
                         <p>
-                          Lunch Break {lunchBreakStr} & Coffee Break {coffeeBreakStr}
+                          Lunch Break {lunchBreakStr} & Coffee Break{" "}
+                          {coffeeBreakStr}
                         </p>
                         <div className="punch-info-box">
                           <div className="info-item">
                             <span>Check In :</span>{" "}
-                            <strong>{formatTime(punchInTime)}</strong>
+                            <strong>
+                              {punchInTime ? formatTime(punchInTime) : "—"}
+                            </strong>
                           </div>
                           <div className="info-item">
                             <span>Total Hours :</span>{" "}
@@ -340,29 +671,92 @@ const EmployeeDashboard = () => {
                           </div>
                         </div>
 
+                        {punchError && (
+                          <p
+                            style={{
+                              color: "#ff4d4d",
+                              fontSize: "13px",
+                              marginTop: "6px",
+                            }}
+                          >
+                            {punchError}
+                          </p>
+                        )}
+
                         <div className="button-row">
                           <button
                             className="btn-punch-out"
                             onClick={handlePunchOut}
+                            disabled={punchLoading}
                           >
-                            Check Out
+                            {punchLoading ? "Please wait…" : "Check Out"}
                           </button>
-                          <button
-                            className="btn-start-break"
-                            onClick={handleStartBreak}
-                          >
-                            {isBreak ? "End Break" : "Start Break"}{" "}
-                            <span>▼</span>
-                          </button>
+
+                          {isBreak ? (
+                            <button
+                              className="btn-start-break"
+                              onClick={handleEndBreak}
+                              disabled={punchLoading}
+                            >
+                              End Break
+                            </button>
+                          ) : (
+                            <button
+                              className="btn-start-break"
+                              onClick={() =>
+                                setShowBreakDropdown((prev) => !prev)
+                              }
+                              disabled={punchLoading}
+                            >
+                              Start Break ▼
+                            </button>
+                          )}
                         </div>
 
-                        {/* ⚠️ Break time alert popup */}
+                        {showBreakDropdown && !isBreak && (
+                          <div
+                            className="break-dropdown"
+                            ref={breakDropdownRef}
+                          >
+                            <p className="dropdown-title">Scheduled Breaks</p>
+                            {BREAK_SCHEDULES.map((b) => {
+                              const nowMin = getCurrentTimeInMinutes();
+                              const isCurrent =
+                                nowMin >= toMinutes(b.start) &&
+                                nowMin <= toMinutes(b.end);
+                              return (
+                                <div
+                                  key={b.id}
+                                  className={`break-item ${isCurrent ? "active-break" : ""}`}
+                                  onClick={() => handleStartBreak(b)}
+                                >
+                                  <strong>{b.label}</strong>
+                                  <span>
+                                    {b.start} – {b.end}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                            <div
+                              className="break-item custom-break"
+                              onClick={() =>
+                                handleStartBreak({
+                                  id: "custom",
+                                  label: "Custom Break",
+                                })
+                              }
+                            >
+                              ➕ Custom Break
+                            </div>
+                          </div>
+                        )}
+
                         {showAlert && (
                           <div style={alertStyle}>
                             <span>⚠️</span>
                             <span>
-                              Your break time of 15 minutes has ended. Please
-                              resume work.
+                              {breakAlertMsg ||
+                                "Your break time has ended. Please resume work."}
                             </span>
                             <button
                               style={closeBtnStyle}
@@ -376,6 +770,8 @@ const EmployeeDashboard = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Right illustration */}
                 <div className="meeting-right">
                   <img src={arrow3} alt="Illustration" className="arrow3" />
                   <img src={maleteam} alt="Illustration" className="maleteam" />
@@ -385,20 +781,29 @@ const EmployeeDashboard = () => {
             </Col>
           </Row>
 
-          {/* Leave Summary */}
+          {/* Leave Summary Cards */}
           <Row className="notice mb-4">
             <Col md={8}>
               <Row>
+                {/* ── CARD 1: Total Leaves — action: Apply Leave ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card">
                     <div className="summary-top">
-                      <h2>{dashboardData.total_leaves}</h2>
+                      <h2>
+                        {dashboardLoading
+                          ? "…"
+                          : (dashboardData?.total_leaves ?? 0)}
+                      </h2>
                       <div className="summary-icons">
                         <BsPeople />
                       </div>
                     </div>
                     <h6>Total Leaves</h6>
-                    <div className="summary-action">
+                    <div
+                      className="summary-action"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/apply-leave")}
+                    >
                       <div className="summary-action-icon">
                         <BsPlusCircle />
                       </div>{" "}
@@ -407,16 +812,25 @@ const EmployeeDashboard = () => {
                   </Card>
                 </Col>
 
+                {/* ── CARD 2: Taken — action: Check Leave Details ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card">
                     <div className="summary-top">
-                      <h2>{dashboardData.leaves_taken}</h2>
+                      <h2>
+                        {dashboardLoading
+                          ? "…"
+                          : (dashboardData?.leaves_taken ?? 0)}
+                      </h2>
                       <div className="summary-icons">
                         <IoTimeOutline />
                       </div>
                     </div>
                     <h6>Taken</h6>
-                    <div className="summary-action">
+                    <div
+                      className="summary-action"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/my-leave")}
+                    >
                       <div className="summary-action-icon">
                         <BsEye />
                       </div>{" "}
@@ -425,16 +839,25 @@ const EmployeeDashboard = () => {
                   </Card>
                 </Col>
 
+                {/* ── CARD 3: Absent — action: Add Regularization ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card">
                     <div className="summary-top">
-                      <h2>{dashboardData.absent_days}</h2>
+                      <h2>
+                        {dashboardLoading
+                          ? "…"
+                          : (dashboardData?.absent_days ?? 0)}
+                      </h2>
                       <div className="summary-icons">
                         <MdOutlineAccessTime />
                       </div>
                     </div>
                     <h6>Absent</h6>
-                    <div className="summary-action">
+                    <div
+                      className="summary-action"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/my-regularization")}
+                    >
                       <div className="summary-action-icon">
                         <BsPencilSquare />
                       </div>{" "}
@@ -443,16 +866,25 @@ const EmployeeDashboard = () => {
                   </Card>
                 </Col>
 
+                {/* ── CARD 4: Worked Days — action: Check Attendance Overview ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card">
                     <div className="summary-top">
-                      <h2>{dashboardData.worked_days}</h2>
+                      <h2>
+                        {dashboardLoading
+                          ? "…"
+                          : (dashboardData?.worked_days ?? 0)}
+                      </h2>
                       <div className="summary-icons">
                         <MdOutlineLogout />
                       </div>
                     </div>
                     <h6>Worked Days</h6>
-                    <div className="summary-action">
+                    <div
+                      className="summary-action"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/employee-attendance")}
+                    >
                       <div className="summary-action-icon">
                         <BsCalendarCheck />
                       </div>{" "}
@@ -461,10 +893,15 @@ const EmployeeDashboard = () => {
                   </Card>
                 </Col>
 
+                {/* ── CARD 5: Completed Projects — no action ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card">
                     <div className="summary-top">
-                      <h2>{dashboardData.completed_projects}</h2>
+                      <h2>
+                        {dashboardLoading
+                          ? "…"
+                          : (dashboardData?.completed_projects ?? 0)}
+                      </h2>
                       <div className="summary-icons">
                         <MdOutlineBedtime />
                       </div>
@@ -479,12 +916,15 @@ const EmployeeDashboard = () => {
                   </Card>
                 </Col>
 
+                {/* ── CARD 6: This Week Holiday — no action ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card">
                     <div className="summary-top">
-                      <div className="summary-action">
-                        <h2>{dashboardData.this_week_holiday}</h2>
-                      </div>
+                      <h2>
+                        {dashboardLoading
+                          ? "…"
+                          : (dashboardData?.this_week_holiday ?? 0)}
+                      </h2>
                       <div className="summary-icons">
                         <TbCalendarTime />
                       </div>
@@ -502,7 +942,7 @@ const EmployeeDashboard = () => {
             </Col>
 
             <Col md={4}>
-              <EmployeeAttendanceCard attendanceData={attendanceData} />
+              <EmployeeAttendanceCard userId={userId} />
             </Col>
           </Row>
 
@@ -519,7 +959,7 @@ const EmployeeDashboard = () => {
 
 export default EmployeeDashboard;
 
-
+// ─── Inline styles (existing - not touched) ────────────────────────────────
 const alertStyle = {
   position: "fixed",
   top: "50%",

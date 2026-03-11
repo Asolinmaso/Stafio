@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaCheckCircle, FaFilter, FaEdit, FaTimesCircle, FaCircleNotch, FaSearch } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaFilter,
+  FaEdit,
+  FaTimesCircle,
+  FaCircleNotch,
+  FaSearch,
+} from "react-icons/fa";
 import "./LeaveApproval.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
@@ -38,9 +45,7 @@ const LeaveApproval = () => {
   useEffect(() => {
     const fetchLeaveapprova = async () => {
       try {
-        const response = await apiClient.get(
-          "/api/leaveapproval",
-        );
+        const response = await apiClient.get("/api/leaveapproval");
         setLeaves(response.data);
       } catch (error) {
         console.error("Error fetching leave data:", error);
@@ -102,7 +107,7 @@ const LeaveApproval = () => {
     )
     // Filter by leave type
     .filter((leave) =>
-      filterLeaveType === "All" ? true : leave.type === filterLeaveType
+      filterLeaveType === "All" ? true : leave.type === filterLeaveType,
     )
     // Filter by date
     .filter((leave) => (filterDate ? leave.requestDate === filterDate : true))
@@ -111,7 +116,8 @@ const LeaveApproval = () => {
       const parseDate = (dateStr) => {
         if (!dateStr) return new Date(0);
         const parts = dateStr.split("-");
-        if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        if (parts.length === 3)
+          return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
         return new Date(dateStr);
       };
       const dateA = parseDate(a.requestDate);
@@ -150,7 +156,10 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCircleNotch className="summary-icon pending" />
               <div className="card-text-block">
-                <strong>{pendingCount < 10 ? `0${pendingCount}` : pendingCount} Request Pending</strong>
+                <strong>
+                  {pendingCount < 10 ? `0${pendingCount}` : pendingCount}{" "}
+                  Request Pending
+                </strong>
                 <span className="sub-text">Awaiting Approval</span>
               </div>
             </div>
@@ -158,7 +167,10 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaCheckCircle className="summary-icon approved" />
               <div className="card-text-block">
-                <strong>{approvedCount < 10 ? `0${approvedCount}` : approvedCount} Request Approved</strong>
+                <strong>
+                  {approvedCount < 10 ? `0${approvedCount}` : approvedCount}{" "}
+                  Request Approved
+                </strong>
                 <span className="sub-text">In this Month</span>
               </div>
             </div>
@@ -166,7 +178,10 @@ const LeaveApproval = () => {
             <div className="summary-card-leave">
               <FaTimesCircle className="summary-icon rejected" />
               <div className="card-text-block">
-                <strong>{rejectedCount < 10 ? `0${rejectedCount}` : rejectedCount} Request Rejected</strong>
+                <strong>
+                  {rejectedCount < 10 ? `0${rejectedCount}` : rejectedCount}{" "}
+                  Request Rejected
+                </strong>
                 <span className="sub-text">In this month</span>
               </div>
             </div>
@@ -175,7 +190,9 @@ const LeaveApproval = () => {
           {/* Right Side Actions */}
           <div className="right-leave-actions">
             <div className="right-top-buttons">
-              <button className="right-tab-btn right-tab-btn--active">All</button>
+              <button className="right-tab-btn right-tab-btn--active">
+                All
+              </button>
               <button
                 onClick={() => navigate("/myTeam-LeaveApproval")}
                 className="right-tab-btn right-tab-btn--cyan"
@@ -308,7 +325,7 @@ const LeaveApproval = () => {
                     <div className="emp-avatar">
                       <img
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          leave.name
+                          leave.name,
                         )}&background=random`}
                         alt={leave.name}
                       />
@@ -352,9 +369,7 @@ const LeaveApproval = () => {
         <div className="pagination">
           <div className="la-showing">
             Showing
-            <span className="la-showing-pill">
-              07 ▾
-            </span>
+            <span className="la-showing-pill">07 ▾</span>
           </div>
 
           <div className="la-pages">
@@ -370,7 +385,10 @@ const LeaveApproval = () => {
 
           {/* LEAVE DETAILS MODAL */}
           {showModal && selectedLeave && (
-            <div className="approve-modal-overlay" onClick={() => setShowModal(false)}>
+            <div
+              className="approve-modal-overlay"
+              onClick={() => setShowModal(false)}
+            >
               <div
                 className="approve-leave-modal"
                 onClick={(e) => e.stopPropagation()}
@@ -395,7 +413,11 @@ const LeaveApproval = () => {
 
                       <div className="form-row">
                         <label>Leave Type:</label>
-                        <input type="text" value={selectedLeave.type} readOnly />
+                        <input
+                          type="text"
+                          value={selectedLeave.type}
+                          readOnly
+                        />
                       </div>
 
                       <div className="form-row">
@@ -403,12 +425,20 @@ const LeaveApproval = () => {
                         <div className="date-row">
                           <div className="date-item">
                             <p>From</p>
-                            <input type="text" value={selectedLeave.from} readOnly />
+                            <input
+                              type="text"
+                              value={selectedLeave.from}
+                              readOnly
+                            />
                           </div>
 
                           <div className="date-item">
                             <p>To</p>
-                            <input type="text" value={selectedLeave.to} readOnly />
+                            <input
+                              type="text"
+                              value={selectedLeave.to}
+                              readOnly
+                            />
                           </div>
 
                           <div className="date-item">
@@ -424,7 +454,11 @@ const LeaveApproval = () => {
 
                       <div className="form-row">
                         <label>Notify Others:</label>
-                        <input type="text" value={selectedLeave.notify} readOnly />
+                        <input
+                          type="text"
+                          value={selectedLeave.notify}
+                          readOnly
+                        />
                         <input
                           type="text"
                           className="document-input"
@@ -463,7 +497,6 @@ const LeaveApproval = () => {
                           </button>
                         </div>
                       )}
-
                     </div>
 
                     <div className="form-right">
@@ -474,7 +507,6 @@ const LeaveApproval = () => {
               </div>
             </div>
           )}
-
 
           {showReasonModal && (
             <div className="reason-modal-overlay">
@@ -508,9 +540,8 @@ const LeaveApproval = () => {
                           approved_by: currentAdminId,
                         });
                         // Refresh the leave list
-                        const response = await apiClient.get(
-                          "/api/leaveapproval",
-                        );
+                        const response =
+                          await apiClient.get("/api/leaveapproval");
                         setLeaves(response.data);
                         setShowReasonModal(false);
                         setShowSuccessModal(true);
@@ -563,10 +594,8 @@ const LeaveApproval = () => {
           )}
         </div>
       </div>
-
     </div>
   );
-}
-
+};
 
 export default LeaveApproval;
