@@ -99,11 +99,11 @@ const Dashboard = () => {
 	const [punchError, setPunchError] = useState("");
 
 	// ── Refs ──────────────────────────────────────────────────────────────
-	const timerRef = useRef(null); // working hours interval
-	const breakTimerRef = useRef(null); // 15-min break alert timeout
+	const timerRef         = useRef(null);
+	const breakTimerRef    = useRef(null);
 	const breakDropdownRef = useRef(null);
-	const breakStartRef = useRef(null); // Date when current break started
-	const totalBreakMsRef = useRef(0); // accumulated break ms this session
+	const breakStartRef    = useRef(null);
+	const totalBreakMsRef  = useRef(0);
 
 	// ── Admin summary ─────────────────────────────────────────────────────
 	const [adminDashboardData, setAdminDashboardData] = useState({
@@ -115,6 +115,10 @@ const Dashboard = () => {
 		This_Week_Hoilday: 0,
 	});
 
+	// ── Admin Notification Banner ─────────────────────────────────────────
+	const [showAdminNotif,      setShowAdminNotif]      = useState(false);
+	const [pendingApprovalsCount, setPendingApprovalsCount] = useState(0);
+	const [pendingLeavesCount,    setPendingLeavesCount]    = useState(0);
 	// ── Break times ───────────────────────────────────────────────────────
 	const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
 	const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
@@ -138,7 +142,7 @@ const Dashboard = () => {
 
 	const navigate = useNavigate();
 
-	// ── Axios helper (attaches user-id header) ────────────────────────────
+	// ── Axios helper ──────────────────────────────────────────────────────
 	const apiHeaders = () => ({
 		"Content-Type": "application/json",
 	});
@@ -155,7 +159,6 @@ const Dashboard = () => {
 		}
 	}, []);
 
-	// Once userId is known, fetch today's attendance to restore UI state on refresh
 	useEffect(() => {
 		if (!userId) return;
 		const fetchTodayAttendance = async () => {
@@ -308,7 +311,6 @@ const Dashboard = () => {
 		clearInterval(timerRef.current);
 	};
 
-	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
 			clearInterval(timerRef.current);
@@ -333,13 +335,31 @@ const Dashboard = () => {
 	}, [showBreakDropdown]);
 
 	// ─────────────────────────────────────────────────────────────────────
-	// 5. Admin dashboard data
+	// 5. Admin dashboard data + notification counts
 	// ─────────────────────────────────────────────────────────────────────
 	useEffect(() => {
-		apiClient
+		const fetchAdminData = async () => {
+			try {
+					apiClient
 			.get(`/admin_dashboard`)
 			.then((r) => setAdminDashboardData(r.data))
-			.catch((e) => console.error("Admin dashboard error:", e));
+			} catch (e) {
+				console.error("Admin dashboard error:", e);
+			}
+
+			try {
+				const countRes = await axios.get(`${BASE_URL}/api/admin/pending_counts`);
+				const { pending_approvals, pending_leave_requests } = countRes.data;
+				setPendingApprovalsCount(pending_approvals);
+				setPendingLeavesCount(pending_leave_requests);
+				if (pending_approvals > 0 || pending_leave_requests > 0) {
+					setShowAdminNotif(true);
+				}
+			} catch (e) {
+				console.error("Pending counts error:", e);
+			}
+		};
+		fetchAdminData();
 	}, []);
 
 	// ─────────────────────────────────────────────────────────────────────
@@ -464,7 +484,6 @@ const Dashboard = () => {
 			breakStartRef.current = new Date();
 			setShowBreakDropdown(false);
 
-			// Alert after 15 min for coffee / custom breaks
 			const isTimed = breakItem?.id === "coffee" || breakItem?.id === "custom";
 			if (isTimed) {
 				clearTimeout(breakTimerRef.current);
@@ -493,7 +512,6 @@ const Dashboard = () => {
 		try {
 			await apiClient.post(`/api/attendance/end-break`, {});
 
-			// Accumulate break duration on frontend so working timer stays accurate
 			if (breakStartRef.current) {
 				totalBreakMsRef.current += Date.now() - breakStartRef.current.getTime();
 			}
@@ -504,7 +522,6 @@ const Dashboard = () => {
 			setActiveBreak(null);
 			breakStartRef.current = null;
 
-			// Resume working timer
 			startWorkingTimer(punchInTime);
 		} catch (err) {
 			const msg = err.response?.data?.message || "Could not end break.";
@@ -576,6 +593,36 @@ const Dashboard = () => {
 						<div className="username">
 							<h1>Welcome, {username || "User"}!</h1>
 						</div>
+
+						{/* ── Admin Notification Banner ── */}
+						{showAdminNotif && (
+							<div className="admin-notif-banner">
+								<span className="admin-notif-text">
+									You have{" "}
+									<span
+										className="admin-notif-count admin-notif-link"
+										onClick={() => navigate("/regularization-approval")}
+									>
+										{String(pendingApprovalsCount).padStart(2, "0")}
+									</span>
+									{" "}Pending Approvals &amp;{" "}
+									<span
+										className="admin-notif-count admin-notif-link"
+										onClick={() => navigate("/leave-approval")}
+									>
+										{String(pendingLeavesCount).padStart(2, "0")}
+									</span>
+									{" "}Leave Requests
+								</span>
+								<button
+									className="admin-notif-close"
+									onClick={() => setShowAdminNotif(false)}
+									aria-label="Close notification"
+								>
+									✕
+								</button>
+							</div>
+						)}
 					</Row>
 
 					{/* Notification + Meeting/Punch Card */}
@@ -620,7 +667,6 @@ const Dashboard = () => {
 													</div>
 												</a>
 
-												{/* Error message */}
 												{punchError && (
 													<p
 														style={{
@@ -664,7 +710,6 @@ const Dashboard = () => {
 													</div>
 												</div>
 
-												{/* Error message */}
 												{punchError && (
 													<p
 														style={{
@@ -678,7 +723,6 @@ const Dashboard = () => {
 												)}
 
 												<div className="button-row">
-													{/* Punch Out */}
 													<button
 														className="btn-punch-out1"
 														onClick={handlePunchOut}
@@ -687,7 +731,6 @@ const Dashboard = () => {
 														{punchLoading ? "Please wait…" : "Punch Out"}
 													</button>
 
-													{/* Start Break / End Break */}
 													{isBreak ? (
 														<button
 															className="break-btn-st-en"
@@ -709,7 +752,6 @@ const Dashboard = () => {
 													)}
 												</div>
 
-												{/* Break dropdown */}
 												{showBreakDropdown && !isBreak && (
 													<div
 														className="break-dropdown"
@@ -734,7 +776,6 @@ const Dashboard = () => {
 															);
 														})}
 
-														{/* Custom Break */}
 														<div
 															className="break-item custom-break"
 															onClick={() =>
@@ -749,7 +790,6 @@ const Dashboard = () => {
 													</div>
 												)}
 
-												{/* Break overtime alert */}
 												{showAlert && (
 													<div style={alertStyle}>
 														<span>⚠️</span>

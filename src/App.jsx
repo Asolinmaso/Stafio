@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'animate.css';
 
-
 import { SettingsProvider } from "./Components/Employee-Section/Settings-/SettingsContext";
 
 // Admin Components
@@ -32,9 +31,6 @@ import AdminSettings from './Components/Admin-Section/settings-/admin-settings';
 import AttendanceReport from './Components/Admin-Section/Reports-/AttendanceReport';
 import LeaveReport from './Components/Admin-Section/Reports-/LeaveReport';
 
-
-
-
 // Employee Components
 import EmployeeLogin from './Components/Employee-Section/EmployeeLogin';
 import EmployeeDashboard from './Components/Employee-Section/Dashboard/EmployeeDashboard';
@@ -50,6 +46,9 @@ import Myleave from './Components/Employee-Section/leave/MyLeave';
 import MyRegularization from './Components/Employee-Section/leave/MyRegularization';
 import MyHoliday from './Components/Employee-Section/leave/MyHoliday';
 
+// Employee Report Components
+import EmployeeAttendanceReport from './Components/Employee-Section/Reports/EmployeeAttendanceReport';
+import EmployeeLeaveReport from './Components/Employee-Section/Reports/EmployeeLeaveReport';
 
 const App = () => {
   return (
@@ -84,7 +83,6 @@ const App = () => {
           <Route path='/leave-report' element={<LeaveReport />} />
 
           {/* Employee Routes */}
-
           <Route path="/employee-login" element={<EmployeeLogin />} />
           <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
           <Route path="/apply-leave" element={<ApplyLeave />} />
@@ -98,6 +96,10 @@ const App = () => {
           <Route path='/my-leave' element={<Myleave />} />
           <Route path='/my-regularization' element={<MyRegularization />} />
           <Route path='/my-holidays' element={<MyHoliday />} />
+
+          {/* Employee Report Routes */}
+          <Route path='/employee-attendance-report' element={<EmployeeAttendanceReport />} />
+          <Route path='/employee-leave-report' element={<EmployeeLeaveReport />} />
         </Routes>
       </SettingsProvider>
     </Router>
