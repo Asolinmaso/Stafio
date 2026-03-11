@@ -1,17 +1,20 @@
 .dashboard-wrapper {
   display: flex;
-  align-items: stretch;   /* makes children equal height */
-  min-height: 100vh;  
+  align-items: stretch;
+  /* makes children equal height */
+  min-height: 100vh;
 
 }
 
 /* Sidebar */
 .sidebar {
-  flex: 0 0 255px;        /* fixed width for sidebar */
+  flex: 0 0 255px;
+  /* fixed width for sidebar */
 }
 
 .employee-sidebar {
-  height: 100%;           /* fill parent */
+  height: 100%;
+  /* fill parent */
   display: flex;
   flex-direction: column;
 }
@@ -19,9 +22,10 @@
 /* Main content */
 .main-content {
   flex-grow: 1;
-  height: 100%;           /* same height as sidebar */
+  height: 100%;
+  /* same height as sidebar */
   background: #eff5ff !important;
-  margin:20px 0px 0px 0px;
+  margin: 20px 0px 0px 0px;
 }
 
 
@@ -30,36 +34,39 @@
   background-color: #eff5ff !important;
 }
 
-.username h1{
-  font-weight:600;
-  margin-left:40px;
+.username h1 {
+  font-weight: 600;
+  margin-left: 40px;
   font-family: 'Montserrat', sans-serif;
 }
+
 /* Meeting Card */
 .meeting-card {
- background: linear-gradient(91.49deg, #19BDE8 61.8%, #0E6A82 100.29%);
+  background: linear-gradient(91.49deg, #19BDE8 61.8%, #0E6A82 100.29%);
   color: white;
   border-radius: 15px;
   padding: 0px 30px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
+
 .vector-img {
-  margin-right: 15px; 
-  height: 50px; 
-  margin-top:-130px;
+  margin-right: 15px;
+  height: 50px;
+  margin-top: -130px;
 }
 
-.meeting-left{
-  margin-left:10px;
-  height:250px;
+.meeting-left {
+  margin-left: 10px;
+  height: 250px;
   /* align */
 }
-.meeting-left h2{
+
+.meeting-left h2 {
   font-size: 25px;
   font-weight: 400;
   margin: 0 0 15px;
-  color: white; 
-  margin-top:30px;
+  color: white;
+  margin-top: 30px;
 }
 
 .meeting-box {
@@ -79,7 +86,7 @@
   font-size: 18px;
   margin: 0;
   font-weight: 500;
-  color:white;
+  color: white;
 }
 
 .meeting-info p {
@@ -123,21 +130,24 @@
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  min-width: 400px; /* ensures fixed layout space */
+  min-width: 400px;
+  /* ensures fixed layout space */
   position: relative;
 }
 
-.arrow3{
-  margin-top:150px;
-  margin-right:-25px;
+.arrow3 {
+  margin-top: 150px;
+  margin-right: -25px;
 }
-.maleteam{
-  width:300px;
+
+.maleteam {
+  width: 300px;
 }
-.clock{
-  margin-top:-200px;
-  margin-left:-30px;
-  margin-right:-30px;
+
+.clock {
+  margin-top: -200px;
+  margin-left: -30px;
+  margin-right: -30px;
 }
 
 .arrow3,
@@ -146,19 +156,20 @@
   position: relative;
   transition: none !important;
 }
-.meeting-card > .meeting-right img {
+
+.meeting-card>.meeting-right img {
   flex-shrink: 0;
 }
 
 .summary-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  padding: 20px 20px 10px 20px ;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px 20px 10px 20px;
   color: #000;
   border: none;
   height: 100%;
-  
+
 }
 
 .summary-top {
@@ -171,7 +182,7 @@
   font-size: 28px;
   font-weight: 600;
   margin: 0;
-  color:black;
+  color: black;
 }
 
 .summary-icons {
@@ -191,8 +202,8 @@
 
 .summary-card h6 {
   margin-top: 20px;
-  margin-bottom:0px;
-    text-align: left;    
+  margin-bottom: 0px;
+  text-align: left;
   font-weight: 600;
 }
 
@@ -205,25 +216,26 @@
   align-items: center;
   gap: 6px;
 }
+
 .summary-action-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;               
+  width: 20px;
   height: 20px;
-  border-radius: 50%;        
-  background-color: #a9e6f6;  
-  color: #19BDE8;               
-  font-size: 12px;           
+  border-radius: 50%;
+  background-color: #a9e6f6;
+  color: #19BDE8;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-right: 0px;         
-  border: 1px;  
+  margin-right: 0px;
+  border: 1px;
 }
 
 .summary-action-icon:hover {
-  background-color: #fff;     
-  color: #19BDE8;             
+  background-color: #fff;
+  color: #19BDE8;
 }
 
 
@@ -255,7 +267,8 @@
 }
 
 .attendance-card .bi-sliders:hover {
-  color: #19bde8; /* highlight on hover */
+  color: #19bde8;
+  /* highlight on hover */
 }
 
 /* Chart area */
@@ -274,10 +287,10 @@
   fill: #333;
 }
 
-.summary-icon{
-color: #2d9ae0;
-font-size:18px;
-background:#E6EAF5;
+.summary-icon {
+  color: #2d9ae0;
+  font-size: 18px;
+  background: #E6EAF5;
 }
 
 
@@ -287,24 +300,25 @@ background:#E6EAF5;
   /* justify-content: ; */
   margin: 15px 0;
   font-size: 16px;
-  
+
 }
 
-.info-item{
-  border:1px solid ;
+.info-item {
+  border: 1px solid;
   border-radius: 12px;
-  padding:8px;
+  padding: 8px;
 }
 
 .button-row {
   display: flex;
   gap: 24px;
   /* justify-content:; */
-  
+
 }
-.btn-punch-out{
-   padding: 10px 38px;
-   background: white;
+
+.btn-punch-out {
+  padding: 10px 38px;
+  background: white;
   border: none;
   border-radius: 12px;
   font-weight: 550;
