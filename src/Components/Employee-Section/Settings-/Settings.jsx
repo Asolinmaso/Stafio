@@ -25,7 +25,7 @@ export default function Settings() {
     email: "",
     phone: "",
     position: "",
-    role: ""
+    role: "",
   });
 
   const [basicErrors, setBasicErrors] = useState({});
@@ -109,8 +109,12 @@ export default function Settings() {
   const [saveMessage, setSaveMessage] = useState("");
 
   const getHeaders = () => {
-    const userId = sessionStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id");
-    const role = sessionStorage.getItem("current_role") || localStorage.getItem("employee_role");
+    const userId =
+      sessionStorage.getItem("current_user_id") ||
+      localStorage.getItem("employee_user_id");
+    const role =
+      sessionStorage.getItem("current_role") ||
+      localStorage.getItem("employee_role");
     return {
       "X-User-ID": userId,
       "X-User-Role": role,
@@ -147,7 +151,7 @@ export default function Settings() {
       language,
       theme,
       font,
-      dateFormat
+      dateFormat,
     });
   }, [language, theme, font, dateFormat]);
 
@@ -155,11 +159,11 @@ export default function Settings() {
     const { name, value } = e.target;
     setBasicForm({
       ...basicForm,
-      [name]: value
+      [name]: value,
     });
     setBasicErrors({
       ...basicErrors,
-      [name]: ""
+      [name]: "",
     });
   };
 
@@ -201,12 +205,16 @@ export default function Settings() {
   const handleBasicSave = async () => {
     if (validateBasicInfo()) {
       try {
-        await axios.put(`${API_BASE}/api/settings/basic_info`, {
-          ...basicForm,
-          profileImage: profileImage === profileimg ? "" : profileImage
-        }, {
-          headers: getHeaders(),
-        });
+        await axios.put(
+          `${API_BASE}/api/settings/basic_info`,
+          {
+            ...basicForm,
+            profileImage: profileImage === profileimg ? "" : profileImage,
+          },
+          {
+            headers: getHeaders(),
+          },
+        );
         setSaveMessage("Basic info saved successfully!");
         window.dispatchEvent(new Event("profileUpdated"));
         setTimeout(() => setSaveMessage(""), 3000);
@@ -224,7 +232,7 @@ export default function Settings() {
       email: "",
       phone: "",
       position: "",
-      role: "employee"
+      role: "employee",
     });
     setProfileImage(profileimg);
     setBasicErrors({});
@@ -244,7 +252,9 @@ export default function Settings() {
           <div className="settings-header">
             <h1>{t.title}</h1>
             <p>{t.subtitle}</p>
-            {saveMessage && <div className="alert alert-success">{saveMessage}</div>}
+            {saveMessage && (
+              <div className="alert alert-success">{saveMessage}</div>
+            )}
           </div>
 
           {/* Tabs */}
@@ -342,7 +352,9 @@ export default function Settings() {
                         onChange={handleBasicChange}
                       />
                       {basicErrors.firstName && (
-                        <span className="error-text">{basicErrors.firstName}</span>
+                        <span className="error-text">
+                          {basicErrors.firstName}
+                        </span>
                       )}
                     </div>
 
@@ -356,7 +368,9 @@ export default function Settings() {
                         onChange={handleBasicChange}
                       />
                       {basicErrors.lastName && (
-                        <span className="error-text">{basicErrors.lastName}</span>
+                        <span className="error-text">
+                          {basicErrors.lastName}
+                        </span>
                       )}
                     </div>
 
@@ -400,7 +414,9 @@ export default function Settings() {
                         onChange={handleBasicChange}
                       />
                       {basicErrors.position && (
-                        <span className="error-text">{basicErrors.position}</span>
+                        <span className="error-text">
+                          {basicErrors.position}
+                        </span>
                       )}
                     </div>
 
@@ -439,7 +455,10 @@ export default function Settings() {
                     <button
                       type="button"
                       className="upload-btn1"
-                      onClick={() => profileInputRef.current && profileInputRef.current.click()}
+                      onClick={() =>
+                        profileInputRef.current &&
+                        profileInputRef.current.click()
+                      }
                     >
                       📁 Upload
                     </button>

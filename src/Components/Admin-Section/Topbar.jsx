@@ -553,9 +553,9 @@ const ProfilePopup = ({ onClose, username }) => {
                 ) : (
                   <p>
                     {experience.expStartDate &&
-                      experience.expEndDate &&
-                      experience.expStartDate !== "0001-01-01" &&
-                      experience.expEndDate !== "0001-01-01"
+                    experience.expEndDate &&
+                    experience.expStartDate !== "0001-01-01" &&
+                    experience.expEndDate !== "0001-01-01"
                       ? `${formatDateDisplay(experience.expStartDate)} – ${formatDateDisplay(experience.expEndDate)}`
                       : "-"}
                   </p>
@@ -704,12 +704,14 @@ const Topbar = () => {
   const fetchProfileData = async () => {
     try {
       const userId =
+        localStorage.getItem("current_user_id") ||
         sessionStorage.getItem("current_user_id") ||
         localStorage.getItem("employee_user_id");
       if (userId) {
         const res = await apiClient.get(`/admin_profile/${userId}`, {
           headers: {
             "X-User-Role":
+              localStorage.getItem("current_role") ||
               sessionStorage.getItem("current_role") ||
               localStorage.getItem("employee_role"),
             "X-User-ID": userId,
@@ -849,7 +851,11 @@ const Topbar = () => {
       <div className="topbar">
         {/* Left Section: Logo + Search */}
         <div className="topbar-left">
-          <div className="topbar-logo" onClick={() => navigate("/admin-dashboard")} style={{ cursor: "pointer" }}>
+          <div
+            className="topbar-logo"
+            onClick={() => navigate("/admin-dashboard")}
+            style={{ cursor: "pointer" }}
+          >
             <img src={stafiologoimg} alt="Logo" className="topbar-img" />
           </div>
         </div>
@@ -889,8 +895,7 @@ const Topbar = () => {
 
         {/* Right side user + bell */}
         <div className="profile d-flex align-items-center gap-3">
-          <div style={{ cursor: "pointer", position: "relative" }}>
-          </div>
+          <div style={{ cursor: "pointer", position: "relative" }}></div>
 
           <div className="topbar-searches">
             {query && (
@@ -916,7 +921,11 @@ const Topbar = () => {
 
         {/* Right Section: Bell + Settings + Profile */}
         <div className="topbar-right">
-          <div className="notification-icon" onClick={togglePopup} style={{ cursor: "pointer" }}>
+          <div
+            className="notification-icon"
+            onClick={togglePopup}
+            style={{ cursor: "pointer" }}
+          >
             <FaBell size={20} color="#1f2937" />
           </div>
 
@@ -929,7 +938,8 @@ const Topbar = () => {
             />
           </div>
 
-          <div className="profile-wrapper d-flex align-items-center gap-2"
+          <div
+            className="profile-wrapper d-flex align-items-center gap-2"
             onClick={() => setShowProfilePopup((prev) => !prev)}
             style={{ cursor: "pointer" }}
           >
@@ -942,7 +952,11 @@ const Topbar = () => {
               <div className="profile-name">{username || "User"}</div>
               <div className="profile-role">{role || "admin"}</div>
             </div>
-            <FaChevronDown size={14} color="#666" style={{ marginLeft: "5px" }} />
+            <FaChevronDown
+              size={14}
+              color="#666"
+              style={{ marginLeft: "5px" }}
+            />
           </div>
         </div>
       </div>

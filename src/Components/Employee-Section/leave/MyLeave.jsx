@@ -8,187 +8,187 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "../../../utils/apiClient";
 
 export default function MyLeave() {
-	const navigate = useNavigate();
-	const [leaveData, setLeaveData] = useState([]);
-	const [leaveBalance, setLeaveBalance] = useState([]);
-	const [showApplyModal, setShowApplyModal] = useState(false);
+  const navigate = useNavigate();
+  const [leaveData, setLeaveData] = useState([]);
+  const [leaveBalance, setLeaveBalance] = useState([]);
+  const [showApplyModal, setShowApplyModal] = useState(false);
 
-	useEffect(() => {
-		const fetchLeaveData = async () => {
-			try {
-				const userId =
-					localStorage.getItem("employee_user_id") ||
-					localStorage.getItem("current_user_id");
+  useEffect(() => {
+    const fetchLeaveData = async () => {
+      try {
+        const userId =
+          localStorage.getItem("employee_user_id") ||
+          localStorage.getItem("current_user_id");
 
-				// Fetch leave requests
-				const response = await apiClient.get("/api/myleave", {
-					headers: { "X-User-ID": userId },
-				});
-				setLeaveData(response.data);
+        // Fetch leave requests
+        const response = await apiClient.get("/api/myleave", {
+          headers: { "X-User-ID": userId },
+        });
+        setLeaveData(response.data);
 
-				// Fetch leave balance
-				const balanceResponse = await apiClient.get("/api/leave_balance", {
-					headers: { "X-User-ID": userId },
-				});
-				setLeaveBalance(balanceResponse.data);
-			} catch (error) {
-				console.error("Error fetching leave data:", error);
-			}
-		};
+        // Fetch leave balance
+        const balanceResponse = await apiClient.get("/api/leave_balance", {
+          headers: { "X-User-ID": userId },
+        });
+        setLeaveBalance(balanceResponse.data);
+      } catch (error) {
+        console.error("Error fetching leave data:", error);
+      }
+    };
 
-		fetchLeaveData();
-	}, []);
+    fetchLeaveData();
+  }, []);
 
-	return (
-		<div className="layout">
-			{/* Sidebar */}
-			<EmployeeSidebar />
+  return (
+    <div className="layout">
+      {/* Sidebar */}
+      <EmployeeSidebar />
 
-			{/* Main Content Area */}
-			<div className="myleave-container1">
-				<Topbar />
+      {/* Main Content Area */}
+      <div className="myleave-container1">
+        <Topbar />
 
-				{/* Page Title */}
-				<h2 className="page-title">My Leaves</h2>
+        {/* Page Title */}
+        <h2 className="page-title">My Leaves</h2>
 
-				{/* Leave Summary Section */}
-				<div className="leave-header">
-					{/* Summary Cards - Now Dynamic */}
-					<div className="leave-summary">
-						{leaveBalance.length > 0 ? (
-							leaveBalance.slice(0, 3).map((balance) => (
-								<div className="emp-summary-card" key={balance.id}>
-									<FaCheckCircle className="summary-icon" />
-									<p>
-										<strong>
-											{balance.remaining}/{balance.total} Day(s)
-										</strong>
-										<br />
-										{balance.name}
-									</p>
-								</div>
-							))
-						) : (
-							<>
-								<div className="emp-summary-card">
-									<FaCheckCircle className="summary-icon" />
-									<p>
-										<strong>Loading...</strong>
-										<br />
-										Leave Balance
-									</p>
-								</div>
-							</>
-						)}
-					</div>
+        {/* Leave Summary Section */}
+        <div className="leave-header">
+          {/* Summary Cards - Now Dynamic */}
+          <div className="leave-summary">
+            {leaveBalance.length > 0 ? (
+              leaveBalance.slice(0, 3).map((balance) => (
+                <div className="emp-summary-card" key={balance.id}>
+                  <FaCheckCircle className="summary-icon" />
+                  <p>
+                    <strong>
+                      {balance.remaining}/{balance.total} Day(s)
+                    </strong>
+                    <br />
+                    {balance.name}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="emp-summary-card">
+                  <FaCheckCircle className="summary-icon" />
+                  <p>
+                    <strong>Loading...</strong>
+                    <br />
+                    Leave Balance
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
 
-					{/* Action Buttons */}
-					<div className="leave-actions">
-						<div className="top-buttons">
-							<button
-								className="btn-apply"
-								onClick={() => setShowApplyModal(true)}
-							>
-								Apply Leave
-							</button>
-							<button
-								className="btn-regularization"
-								onClick={() => navigate("/my-regularization")}
-							>
-								Regularization
-							</button>
-						</div>
-						<div className="bottom-button">
-							<button className="btn-filter">
-								<FaFilter /> Filter
-							</button>
-						</div>
-					</div>
-				</div>
+          {/* Action Buttons */}
+          <div className="leave-actions">
+            <div className="top-buttons">
+              <button
+                className="btn-apply"
+                onClick={() => setShowApplyModal(true)}
+              >
+                Apply Leave
+              </button>
+              <button
+                className="btn-regularization"
+                onClick={() => navigate("/my-regularization")}
+              >
+                Regularization
+              </button>
+            </div>
+            <div className="bottom-button">
+              <button className="btn-filter">
+                <FaFilter /> Filter
+              </button>
+            </div>
+          </div>
+        </div>
 
-				{/* Leave Table */}
-				<div className="leave-table">
-					<table>
-						<thead>
-							<tr>
-								<th>Sl No</th>
-								<th>Leave Type</th>
-								<th>Leave Dates</th>
-								<th>Reason</th>
-								<th>Date Of Request</th>
-								<th>Action</th>
-							</tr>
-						</thead>
+        {/* Leave Table */}
+        <div className="leave-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Sl No</th>
+                <th>Leave Type</th>
+                <th>Leave Dates</th>
+                <th>Reason</th>
+                <th>Date Of Request</th>
+                <th>Action</th>
+              </tr>
+            </thead>
 
-						<tbody>
-							{leaveData.length > 0 ? (
-								leaveData.map((leave, index) => (
-									<tr key={leave.id}>
-										<td>{String(index + 1).padStart(2, "0")}</td>
-										<td>{leave.type}</td>
-										<td>{leave.date}</td>
-										<td>{leave.reason}</td>
-										<td>
-											{leave.requestDate}
-											<span className="status">{leave.status}</span>
-										</td>
-										<td className="action-icons">
-											<FaEdit className="edit-icon" />
-											<FaTimesCircle className="delete-icon" />
-										</td>
-									</tr>
-								))
-							) : (
-								<tr>
-									<td colSpan="6" className="no-data">
-										No leave records found.
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
+            <tbody>
+              {leaveData.length > 0 ? (
+                leaveData.map((leave, index) => (
+                  <tr key={leave.id}>
+                    <td>{String(index + 1).padStart(2, "0")}</td>
+                    <td>{leave.type}</td>
+                    <td>{leave.date}</td>
+                    <td>{leave.reason}</td>
+                    <td>
+                      {leave.requestDate}
+                      <span className="status">{leave.status}</span>
+                    </td>
+                    <td className="action-icons">
+                      <FaEdit className="edit-icon" />
+                      <FaTimesCircle className="delete-icon" />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="no-data">
+                    No leave records found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-				{/* Pagination */}
-				<div className="pagination">
-					<span>Showing</span>
-					<select>
-						<option>07</option>
-						<option>10</option>
-						<option>15</option>
-					</select>
-					<div className="page-controls">
-						<button>Prev</button>
-						<button className="active">01</button>
-						<button>Next</button>
-					</div>
-				</div>
+        {/* Pagination */}
+        <div className="pagination">
+          <span>Showing</span>
+          <select>
+            <option>07</option>
+            <option>10</option>
+            <option>15</option>
+          </select>
+          <div className="page-controls">
+            <button>Prev</button>
+            <button className="active">01</button>
+            <button>Next</button>
+          </div>
+        </div>
 
-				{/* //apply leave modal */}
-				{showApplyModal && (
-					<div
-						className="apply-modal-overlay"
-						onClick={() => setShowApplyModal(false)}
-					>
-						<div className="apply-modal" onClick={(e) => e.stopPropagation()}>
-							<div className="apply-modal-header">
-								<h3>Apply Leave</h3>
+        {/* //apply leave modal */}
+        {showApplyModal && (
+          <div
+            className="apply-modal-overlay"
+            onClick={() => setShowApplyModal(false)}
+          >
+            <div className="apply-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="apply-modal-header">
+                <h3>Apply Leave</h3>
 
-								<button
-									className="close-btn"
-									onClick={() => setShowApplyModal(false)}
-								>
-									×
-								</button>
-							</div>
+                <button
+                  className="close-btn"
+                  onClick={() => setShowApplyModal(false)}
+                >
+                  ×
+                </button>
+              </div>
 
-							<div className="apply-modal-body">
-								<LeaveRequestForm onClose={() => setShowApplyModal(false)} />
-							</div>
-						</div>
-					</div>
-				)}
-			</div>
-		</div>
-	);
+              <div className="apply-modal-body">
+                <LeaveRequestForm onClose={() => setShowApplyModal(false)} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

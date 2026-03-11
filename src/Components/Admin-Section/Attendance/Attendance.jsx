@@ -12,10 +12,6 @@ const Attendance = () => {
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
 
-
-
-
-
   // ✅ ONLY CHANGE: date picker state
   const [selectedDate, setSelectedDate] = useState("");
   const dateInputRef = useRef(null);
@@ -47,9 +43,7 @@ const Attendance = () => {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        const response = await apiClient.get(
-          "/api/attendancelist"
-        );
+        const response = await apiClient.get("/api/attendancelist");
         setAttendanceData(response.data);
       } catch (error) {
         console.error("Error fetching attendance data:", error);
@@ -67,7 +61,6 @@ const Attendance = () => {
     const day = String(now.getDate()).padStart(2, "0");
     setSelectedDate(`${year}-${month}-${day}`);
   }, []);
-
 
   // ✅ ONLY CHANGE: format date like "07 Feb 2026"
   const formatDisplayDate = (dateStr) => {
@@ -133,12 +126,12 @@ const Attendance = () => {
   const filteredAttendance = attendanceData
     // SEARCH BY EMPLOYEE NAME
     .filter((record) =>
-      record.employee?.toLowerCase().includes(searchTerm.toLowerCase())
+      record.employee?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
 
     // FILTER BY STATUS
     .filter((record) =>
-      statusFilter === "All" ? true : record.status === statusFilter
+      statusFilter === "All" ? true : record.status === statusFilter,
     )
 
     // FILTER BY FROM-TO DATE
@@ -185,7 +178,7 @@ const Attendance = () => {
 
       const today = new Date();
       const daysDifference = Math.floor(
-        (today - recordDate) / (1000 * 60 * 60 * 24)
+        (today - recordDate) / (1000 * 60 * 60 * 24),
       );
 
       return daysDifference <= sortDays;

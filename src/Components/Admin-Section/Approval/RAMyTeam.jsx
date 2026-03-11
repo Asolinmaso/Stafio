@@ -20,12 +20,12 @@ export default function RegularizationApprovalMyTeam() {
   const filteredAndSortedLeaves = data
     // SEARCH by employee name
     .filter((leave) =>
-      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
 
     // FILTER by status
     .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus
+      filterStatus === "All" ? true : leave.status === filterStatus,
     )
 
     // SORT by request date
@@ -33,12 +33,8 @@ export default function RegularizationApprovalMyTeam() {
       const dateA = new Date(a.requestDate);
       const dateB = new Date(b.requestDate);
 
-      return sortOrder === "Newest"
-        ? dateB - dateA
-        : dateA - dateB;
+      return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
-
-
 
   useEffect(() => {
     const fetchMyTeamRA = async () => {
@@ -56,16 +52,17 @@ export default function RegularizationApprovalMyTeam() {
   // Filter + Search + Sort
   const filteredAndSortedData = data
     .filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .filter((item) =>
-      filterStatus === "All" ? true : item.status === filterStatus
+      filterStatus === "All" ? true : item.status === filterStatus,
     )
     .sort((a, b) => {
       const parseDate = (dateStr) => {
         if (!dateStr) return new Date(0);
         const parts = dateStr.split("-");
-        if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        if (parts.length === 3)
+          return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
         return new Date(dateStr);
       };
       const dateA = parseDate(a.requestDate);
@@ -140,9 +137,7 @@ export default function RegularizationApprovalMyTeam() {
                               type="text"
                               placeholder="Please enter name"
                               value={searchTerm}
-                              onChange={(e) =>
-                                setSearchTerm(e.target.value)
-                              }
+                              onChange={(e) => setSearchTerm(e.target.value)}
                             />
                           </div>
 
@@ -159,9 +154,7 @@ export default function RegularizationApprovalMyTeam() {
                             <label>Status</label>
                             <select
                               value={filterStatus}
-                              onChange={(e) =>
-                                setFilterStatus(e.target.value)
-                              }
+                              onChange={(e) => setFilterStatus(e.target.value)}
                             >
                               <option>All</option>
                               <option>Pending</option>

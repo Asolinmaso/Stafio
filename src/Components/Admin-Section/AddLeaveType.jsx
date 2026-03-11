@@ -35,18 +35,14 @@ const AddLeaveType = () => {
     e.preventDefault();
 
     try {
-      const res = await apiClient.post(
-        "/leave_types",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-User-Role": localStorage.getItem("role"),
-            "X-User-ID": localStorage.getItem("userId"),
-          },
-          withCredentials: true, // ✅ send cookies if needed
-        }
-      );
+      const res = await apiClient.post("/leave_types", formData, {
+        headers: {
+          "Content-Type": "application/json",
+          "X-User-Role": localStorage.getItem("role"),
+          "X-User-ID": localStorage.getItem("userId"),
+        },
+        withCredentials: true, // ✅ send cookies if needed
+      });
 
       setVariant("success");
       setMessage(`Leave type added successfully! ID: ${res.data.id}`);
@@ -100,7 +96,11 @@ const AddLeaveType = () => {
                 />
               </Form.Group>
 
-              <Button className="mt-4" type="submit" disabled={variant === "danger"}>
+              <Button
+                className="mt-4"
+                type="submit"
+                disabled={variant === "danger"}
+              >
                 Add Leave Type
               </Button>
             </Form>

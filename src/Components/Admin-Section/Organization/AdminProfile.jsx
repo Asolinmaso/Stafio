@@ -133,9 +133,9 @@ const AdminProfile = () => {
   // =========== GET USER ID ===========
   const getUserId = () => {
     return (
+      localStorage.getItem("current_user_id") ||
       localStorage.getItem("employee_user_id") ||
-      localStorage.getItem("empId") ||
-      localStorage.getItem("current_user_id")
+      localStorage.getItem("empId")
     );
   };
 
@@ -229,6 +229,13 @@ const AdminProfile = () => {
 
   useEffect(() => {
     fetchAdminProfileData();
+
+    const handleUpdate = () => {
+      fetchAdminProfileData();
+    };
+
+    window.addEventListener("profileUpdated", handleUpdate);
+    return () => window.removeEventListener("profileUpdated", handleUpdate);
   }, []);
 
   // =========== HANDLERS ===========
@@ -1003,8 +1010,9 @@ const AdminProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${personalErrors.dob ? "input-error" : ""
-                          }`}
+                        className={`form-input ${
+                          personalErrors.dob ? "input-error" : ""
+                        }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -1022,8 +1030,9 @@ const AdminProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
-                        }`}
+                      className={`form-select ${
+                        personalErrors.nationality ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1046,8 +1055,9 @@ const AdminProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.bloodGroup ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1079,10 +1089,11 @@ const AdminProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${personalErrors.emergencyContactNumber
-                        ? "input-error"
-                        : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.emergencyContactNumber
+                          ? "input-error"
+                          : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -1530,10 +1541,7 @@ const AdminProfile = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Bank Details</span>
                   {!isEditingBank ? (
-                    <Button
-                      className="btn-edit"
-                      onClick={handleEditBank}
-                    >
+                    <Button className="btn-edit" onClick={handleEditBank}>
                       Edit
                     </Button>
                   ) : (
@@ -1652,18 +1660,12 @@ const AdminProfile = () => {
                 <div className="tab-section-title personal-info d-flex align-items-center justify-content-between">
                   <span>Update Documents</span>
                   {!isEditingDocs ? (
-                    <Button
-                      className="btn-edit"
-                      onClick={handleEditDocs}
-                    >
+                    <Button className="btn-edit" onClick={handleEditDocs}>
                       Edit
                     </Button>
                   ) : (
                     <div style={{ minWidth: 180, textAlign: "right" }}>
-                      <Button
-                        className="btn-cancel"
-                        onClick={handleCancelDocs}
-                      >
+                      <Button className="btn-cancel" onClick={handleCancelDocs}>
                         Cancel
                       </Button>
                       <Button className="btn-save" onClick={handleSaveDocs}>

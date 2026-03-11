@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 export const searchData = [
   // Modules / Pages
@@ -9,10 +9,6 @@ export const searchData = [
   { type: "module", label: "My Holidays", path: "/my-holidays" },
   { type: "module", label: "My Attendance", path: "/employee-attendance" },
   { type: "module", label: "Settings", path: "/settings" },
-  
-  
+
   { type: "module", label: "", path: "/leave-approval" },
-
- 
-]
-
+];

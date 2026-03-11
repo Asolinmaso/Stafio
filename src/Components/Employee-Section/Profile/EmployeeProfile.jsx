@@ -954,8 +954,9 @@ const EmployeeProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${personalErrors.dob ? "input-error" : ""
-                          }`}
+                        className={`form-input ${
+                          personalErrors.dob ? "input-error" : ""
+                        }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -973,8 +974,9 @@ const EmployeeProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
-                        }`}
+                      className={`form-select ${
+                        personalErrors.nationality ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -997,8 +999,9 @@ const EmployeeProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
-                        }`}
+                      className={`form-input ${
+                        personalErrors.bloodGroup ? "input-error" : ""
+                      }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1030,10 +1033,11 @@ const EmployeeProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${personalErrors.emergencyContactNumber
+                      className={`form-input ${
+                        personalErrors.emergencyContactNumber
                           ? "input-error"
                           : ""
-                        }`}
+                      }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
