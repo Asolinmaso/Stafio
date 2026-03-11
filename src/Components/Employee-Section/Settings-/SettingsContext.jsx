@@ -4,7 +4,9 @@ export const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [language, setLanguage] = useState(localStorage.getItem("language") || "english");
+  const [language, setLanguage] = useState(
+    localStorage.getItem("language") || "english",
+  );
   const [font, setFont] = useState(localStorage.getItem("font") || "default");
 
   // Apply theme + font globally when changed
@@ -14,8 +16,8 @@ export const SettingsProvider = ({ children }) => {
       font === "default"
         ? "Montserrat, sans-serif"
         : font === "arial"
-        ? "Arial, sans-serif"
-        : "Roboto, sans-serif";
+          ? "Arial, sans-serif"
+          : "Roboto, sans-serif";
 
     // Save preferences
     localStorage.setItem("theme", theme);

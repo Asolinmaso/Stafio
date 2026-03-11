@@ -5,7 +5,13 @@ import "./Employees.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
-import { FaUserFriends, FaSearch, FaFilter, FaEdit, FaPlusCircle } from "react-icons/fa";
+import {
+  FaUserFriends,
+  FaSearch,
+  FaFilter,
+  FaEdit,
+  FaPlusCircle,
+} from "react-icons/fa";
 import { FiShare2, FiDownload } from "react-icons/fi";
 
 const Employee = () => {
@@ -66,7 +72,6 @@ const Employee = () => {
     setEditingId(null);
   };
 
-
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,7 +120,10 @@ const Employee = () => {
     if (validateForm()) {
       try {
         if (isEditing) {
-          const response = await apiClient.put(`/api/employees/${editingId}`, formData);
+          const response = await apiClient.put(
+            `/api/employees/${editingId}`,
+            formData,
+          );
           alert(response.data.message);
         } else {
           const response = await apiClient.post("/api/employees", formData);
@@ -137,7 +145,7 @@ const Employee = () => {
     // Helper to format date from backend (DD/MM/YYYY) to HTML date input (YYYY-MM-DD)
     const formatDate = (dateStr) => {
       if (!dateStr || dateStr === "Not Set" || dateStr === "N/A") return "";
-      const parts = dateStr.split('/');
+      const parts = dateStr.split("/");
       if (parts.length === 3) {
         return `${parts[2]}-${parts[1]}-${parts[0]}`;
       }
@@ -166,7 +174,9 @@ const Employee = () => {
       eduEndDate: formatDate(selectedEmployee.education.eduEndDate),
       course: selectedEmployee.education.qualification || "",
       specialization: selectedEmployee.education.specialization || "",
-      skills: Array.isArray(selectedEmployee.education.skills) ? selectedEmployee.education.skills.join(", ") : selectedEmployee.education.skills || "",
+      skills: Array.isArray(selectedEmployee.education.skills)
+        ? selectedEmployee.education.skills.join(", ")
+        : selectedEmployee.education.skills || "",
       status: selectedEmployee.profile.status || "Active",
     });
 
@@ -180,9 +190,9 @@ const Employee = () => {
     try {
       const response = await apiClient.get(`/admin_profile/${emp.id}`, {
         headers: {
-          'X-User-Role': 'admin',
-          'X-User-ID': '1'
-        }
+          "X-User-Role": "admin",
+          "X-User-ID": "1",
+        },
       });
       setSelectedEmployee(response.data);
       setShowProfileModal(true);
@@ -197,16 +207,11 @@ const Employee = () => {
     setSelectedEmployee(null);
   };
 
-
-
-
   // ✅ Fetch employees from backend
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await apiClient.get(
-          "/api/employeeslist"
-        );
+        const response = await apiClient.get("/api/employeeslist");
         console.log("API DATA:", response.data);
         setAllEmployees(response.data);
       } catch (error) {
@@ -222,41 +227,40 @@ const Employee = () => {
 
     //  Highlight name
     if (highlightName.trim()) {
-      data = data.filter(emp =>
-        emp.name.toLowerCase().includes(highlightName.toLowerCase())
+      data = data.filter((emp) =>
+        emp.name.toLowerCase().includes(highlightName.toLowerCase()),
       );
     }
 
     //  Search
     if (searchTerm.trim()) {
-      data = data.filter(emp =>
+      data = data.filter((emp) =>
         `${emp.name} ${emp.email} ${emp.empId}`
           .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
       );
     }
 
     // Name filter (from filter panel)
     if (filters.name.trim()) {
-      data = data.filter(emp =>
-        emp.name.toLowerCase().includes(filters.name.toLowerCase())
+      data = data.filter((emp) =>
+        emp.name.toLowerCase().includes(filters.name.toLowerCase()),
       );
     }
 
-
     // Department
     if (filters.department !== "all") {
-      data = data.filter(emp => emp.department === filters.department);
+      data = data.filter((emp) => emp.department === filters.department);
     }
 
     //  Position
     if (filters.position !== "all") {
-      data = data.filter(emp => emp.position === filters.position);
+      data = data.filter((emp) => emp.position === filters.position);
     }
 
     // Status
     if (filters.status !== "all") {
-      data = data.filter(emp => emp.status === filters.status);
+      data = data.filter((emp) => emp.status === filters.status);
     }
 
     // Sorting
@@ -279,7 +283,6 @@ const Employee = () => {
 
     return data;
   }, [allEmployees, highlightName, searchTerm, filters, sortBy]);
-
 
   return (
     <div className="employee-page">
@@ -312,7 +315,13 @@ const Employee = () => {
               </button>
             </div>
 
-            <button className="add-btn" onClick={() => { resetForm(); setShowModal(true); }}>
+            <button
+              className="add-btn"
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
+            >
               <FaPlusCircle size={16} /> New Employee
             </button>
           </div>
@@ -335,7 +344,7 @@ const Employee = () => {
               <div className="filter-wrapper">
                 <button
                   className="right-butn-filterr"
-                  onClick={() => setShowFilters(prev => !prev)}
+                  onClick={() => setShowFilters((prev) => !prev)}
                 >
                   <FaFilter size={12} /> Filter
                 </button>
@@ -349,7 +358,9 @@ const Employee = () => {
                         type="text"
                         placeholder="Please enter name"
                         value={filters.name}
-                        onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+                        onChange={(e) =>
+                          setFilters({ ...filters, name: e.target.value })
+                        }
                       />
                     </div>
                     <div className="filter-row">
@@ -357,7 +368,12 @@ const Employee = () => {
                         <label>Department</label>
                         <select
                           value={filters.department}
-                          onChange={(e) => setFilters({ ...filters, department: e.target.value })}
+                          onChange={(e) =>
+                            setFilters({
+                              ...filters,
+                              department: e.target.value,
+                            })
+                          }
                         >
                           <option value="all">Select</option>
                           <option value="Human Resource">Human Resource</option>
@@ -370,7 +386,9 @@ const Employee = () => {
                         <label>Position</label>
                         <select
                           value={filters.position}
-                          onChange={(e) => setFilters({ ...filters, position: e.target.value })}
+                          onChange={(e) =>
+                            setFilters({ ...filters, position: e.target.value })
+                          }
                         >
                           <option value="all">Select</option>
                           <option value="Designer">Designer</option>
@@ -380,8 +398,27 @@ const Employee = () => {
                       </div>
                     </div>
                     <div className="filter-actions">
-                      <button className="reset-btn" onClick={() => { setFilters({ name: "", department: "all", position: "all", status: "all" }); setSearchTerm(""); setShowFilters(false); }}>Reset</button>
-                      <button className="apply-btn" onClick={() => setShowFilters(false)}>Apply</button>
+                      <button
+                        className="reset-btn"
+                        onClick={() => {
+                          setFilters({
+                            name: "",
+                            department: "all",
+                            position: "all",
+                            status: "all",
+                          });
+                          setSearchTerm("");
+                          setShowFilters(false);
+                        }}
+                      >
+                        Reset
+                      </button>
+                      <button
+                        className="apply-btn"
+                        onClick={() => setShowFilters(false)}
+                      >
+                        Apply
+                      </button>
                     </div>
                   </div>
                 )}
@@ -417,7 +454,14 @@ const Employee = () => {
             <tbody>
               {finalEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}>
+                  <td
+                    colSpan="6"
+                    style={{
+                      textAlign: "center",
+                      padding: "40px",
+                      color: "#9ca3af",
+                    }}
+                  >
                     No employees found
                   </td>
                 </tr>
@@ -426,9 +470,15 @@ const Employee = () => {
                   <tr key={emp.id}>
                     <td>
                       <div className="emp-info">
-                        <img src={emp.image} alt={emp.name} className="emp-img" />
+                        <img
+                          src={emp.image}
+                          alt={emp.name}
+                          className="emp-img"
+                        />
                         <div>
-                          <p className={`emp-name ${highlightName && emp.name.toLowerCase().includes(highlightName.toLowerCase()) ? "highlight" : ""}`}>
+                          <p
+                            className={`emp-name ${highlightName && emp.name.toLowerCase().includes(highlightName.toLowerCase()) ? "highlight" : ""}`}
+                          >
                             {emp.name}
                           </p>
                           <p className="emp-email">{emp.email}</p>
@@ -440,7 +490,12 @@ const Employee = () => {
                     <td>{emp.department}</td>
                     <td className="status">{emp.status}</td>
                     <td>
-                      <button className="view-btn" onClick={() => handleViewDetails(emp)}>View Details</button>
+                      <button
+                        className="view-btn"
+                        onClick={() => handleViewDetails(emp)}
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -468,21 +523,24 @@ const Employee = () => {
 
         {/* ---------- Modal Popup ---------- */}
         {showModal && (
-          <div className="modal-overlay1">         {/* classname changed/modified */}
-            <div className="add-employee-modal1">  {/* classname changed/modified */}
+          <div className="modal-overlay1">
+            {" "}
+            {/* classname changed/modified */}
+            <div className="add-employee-modal1">
+              {" "}
+              {/* classname changed/modified */}
               <div className="modal-header-blue">
                 <h3>{isEditing ? "Edit Employee" : "Add New Employee"}</h3>
                 <button
                   className="close-btn"
                   onClick={() => {
                     resetForm();
-                    setShowModal(false)
+                    setShowModal(false);
                   }}
                 >
                   ×
                 </button>
               </div>
-
               <div className="modal-body">
                 <form className="add-employee-form" onSubmit={handleSubmit}>
                   <div className="form-left">
@@ -490,7 +548,8 @@ const Employee = () => {
                     <div className="profile-upload-section">
                       <div className="profile-placeholder">
                         <i className="profile-icon">
-                          <FaUserFriends size="2em" /> </i>
+                          <FaUserFriends size="2em" />{" "}
+                        </i>
                       </div>
                       <div className="upload-info">
                         <h4>Upload Profile Image</h4>
@@ -512,7 +571,9 @@ const Employee = () => {
                           value={formData.firstName}
                           onChange={handleChange}
                         />
-                        {errors.firstName && <p className="error-text">{errors.firstName}</p>}
+                        {errors.firstName && (
+                          <p className="error-text">{errors.firstName}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label>Last Name</label>
@@ -523,7 +584,9 @@ const Employee = () => {
                           value={formData.lastName}
                           onChange={handleChange}
                         />
-                        {errors.lastName && <p className="error-text">{errors.lastName}</p>}
+                        {errors.lastName && (
+                          <p className="error-text">{errors.lastName}</p>
+                        )}
                       </div>
                     </div>
 
@@ -537,7 +600,9 @@ const Employee = () => {
                           value={formData.employeeId}
                           onChange={handleChange}
                         />
-                        {errors.employeeId && <p className="error-text">{errors.employeeId}</p>}
+                        {errors.employeeId && (
+                          <p className="error-text">{errors.employeeId}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label>Joining Date</label>
@@ -548,7 +613,9 @@ const Employee = () => {
                           value={formData.joiningDate}
                           onChange={handleChange}
                         />
-                        {errors.joiningDate && <p className="error-text">{errors.joiningDate}</p>}
+                        {errors.joiningDate && (
+                          <p className="error-text">{errors.joiningDate}</p>
+                        )}
                       </div>
                     </div>
 
@@ -562,7 +629,9 @@ const Employee = () => {
                           value={formData.email}
                           onChange={handleChange}
                         />
-                        {errors.email && <p className="error-text">{errors.email}</p>}
+                        {errors.email && (
+                          <p className="error-text">{errors.email}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label>Phone Number</label>
@@ -573,38 +642,60 @@ const Employee = () => {
                           value={formData.phone}
                           onChange={handleChange}
                         />
-                        {errors.phone && <p className="error-text">{errors.phone}</p>}
+                        {errors.phone && (
+                          <p className="error-text">{errors.phone}</p>
+                        )}
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Employment Type</label>
-                        <select name="employmentType" value={formData.employmentType} onChange={handleChange}>
+                        <select
+                          name="employmentType"
+                          value={formData.employmentType}
+                          onChange={handleChange}
+                        >
                           <option value="">Select</option>
                           <option value="Full Time">Full Time</option>
                           <option value="Part Time">Part Time</option>
                           <option value="Contract">Contract</option>
                           <option value="Intern">Intern</option>
                         </select>
-                  {errors.hrManager && (
-                  <p className="error-text">{errors.hrManager}</p>
-               )}
+                        {errors.hrManager && (
+                          <p className="error-text">{errors.hrManager}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label>Department</label>
-                        <input type="text" name="department" placeholder="Enter Department" value={formData.department} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="department"
+                          placeholder="Enter Department"
+                          value={formData.department}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Designation</label>
-                        <input type="text" name="designation" placeholder="Enter Designation" value={formData.designation} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="designation"
+                          placeholder="Enter Designation"
+                          value={formData.designation}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="form-group">
                         <label>Gender</label>
-                        <select name="gender" value={formData.gender} onChange={handleChange}>
+                        <select
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleChange}
+                        >
                           <option value="">Select</option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
@@ -616,75 +707,144 @@ const Employee = () => {
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Date Of Birth</label>
-                        <input type="date" name="dob" value={formData.dob} onChange={handleChange} />
+                        <input
+                          type="date"
+                          name="dob"
+                          value={formData.dob}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="form-group">
                         <label>Blood Group</label>
-                        <input type="text" name="bloodGroup" placeholder="e.g. A+" value={formData.bloodGroup} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="bloodGroup"
+                          placeholder="e.g. A+"
+                          value={formData.bloodGroup}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Marital Status</label>
-                        <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange}>
+                        <select
+                          name="maritalStatus"
+                          value={formData.maritalStatus}
+                          onChange={handleChange}
+                        >
                           <option value="">Select</option>
                           <option value="Single">Single</option>
                           <option value="Married">Married</option>
                           <option value="Divorced">Divorced</option>
                         </select>
-                  {errors.designation && (
-                  <p className="error-text">{errors.designation}</p>
-               )}
+                        {errors.designation && (
+                          <p className="error-text">{errors.designation}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label>Portfolio Link</label>
-                        <input type="text" name="portfolioLink" placeholder="URL" value={formData.portfolioLink} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="portfolioLink"
+                          placeholder="URL"
+                          value={formData.portfolioLink}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Primary Supervisor</label>
-                        <input type="text" name="supervisor" placeholder="Supervisor Name" value={formData.supervisor} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="supervisor"
+                          placeholder="Supervisor Name"
+                          value={formData.supervisor}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="form-group">
                         <label>HR Manager</label>
-                        <input type="text" name="hrManager" placeholder="HR Manager Name" value={formData.hrManager} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="hrManager"
+                          placeholder="HR Manager Name"
+                          value={formData.hrManager}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
-                    <h4 style={{ margin: '20px 0 10px', color: '#19bde8' }}>Educational Qualification</h4>
+                    <h4 style={{ margin: "20px 0 10px", color: "#19bde8" }}>
+                      Educational Qualification
+                    </h4>
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Institution</label>
-                        <input type="text" name="institution" placeholder="Institution Name" value={formData.institution} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="institution"
+                          placeholder="Institution Name"
+                          value={formData.institution}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="form-group">
                         <label>Course</label>
-                        <input type="text" name="course" placeholder="e.g. Btech" value={formData.course} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="course"
+                          placeholder="e.g. Btech"
+                          value={formData.course}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Education Start Date</label>
-                        <input type="date" name="eduStartDate" value={formData.eduStartDate} onChange={handleChange} />
+                        <input
+                          type="date"
+                          name="eduStartDate"
+                          value={formData.eduStartDate}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="form-group">
                         <label>Education End Date</label>
-                        <input type="date" name="eduEndDate" value={formData.eduEndDate} onChange={handleChange} />
+                        <input
+                          type="date"
+                          name="eduEndDate"
+                          value={formData.eduEndDate}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
                     <div className="form-row1">
                       <div className="form-group">
                         <label>Specialization</label>
-                        <input type="text" name="specialization" placeholder="e.g. CSE" value={formData.specialization} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="specialization"
+                          placeholder="e.g. CSE"
+                          value={formData.specialization}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="form-group">
                         <label>Skills</label>
-                        <input type="text" name="skills" placeholder="comma separated" value={formData.skills} onChange={handleChange} />
+                        <input
+                          type="text"
+                          name="skills"
+                          placeholder="comma separated"
+                          value={formData.skills}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
 
@@ -697,7 +857,7 @@ const Employee = () => {
                         type="button"
                         className="cancel-btn"
                         onClick={() => {
-                          setShowModal(false)
+                          setShowModal(false);
                         }}
                       >
                         Cancel
@@ -715,7 +875,12 @@ const Employee = () => {
             <div className="profile-modal-container">
               {/* HEADER PART */}
               <div className="profile-modal-header">
-                <button className="modal-close-times" onClick={closeProfileModal}>×</button>
+                <button
+                  className="modal-close-times"
+                  onClick={closeProfileModal}
+                >
+                  ×
+                </button>
               </div>
 
               <div className="profile-modal-scrollable">
@@ -724,8 +889,13 @@ const Employee = () => {
                   <div className="profile-image-col">
                     <div className="profile-title-row">
                       <h2 className="profile-title-text">Profile</h2>
-                      <div className="header-icon-box" onClick={handleEditClick}>
-                        <button className="edit-icon-btn"><FaEdit /></button>
+                      <div
+                        className="header-icon-box"
+                        onClick={handleEditClick}
+                      >
+                        <button className="edit-icon-btn">
+                          <FaEdit />
+                        </button>
                       </div>
                       <div className="active-tag-box">
                         <span className="active-dot"></span>
@@ -736,13 +906,17 @@ const Employee = () => {
                     <div className="profile-image-card-box">
                       <div className="profile-circular-mask">
                         <img
-                          src={selectedEmployee.profile.profileImage || "https://randomuser.me/api/portraits/women/44.jpg"}
+                          src={
+                            selectedEmployee.profile.profileImage ||
+                            "https://randomuser.me/api/portraits/women/44.jpg"
+                          }
                           alt={selectedEmployee.profile.name}
                           className="profile-large-img-circle"
                         />
                       </div>
                       <div className="profile-name-id-pill">
-                        {selectedEmployee.profile.name}(ID {selectedEmployee.profile.empId})
+                        {selectedEmployee.profile.name}(ID{" "}
+                        {selectedEmployee.profile.empId})
                       </div>
                     </div>
                   </div>
@@ -751,19 +925,19 @@ const Employee = () => {
                     <h5 className="section-title">Personal Details</h5>
                     <div className="info-item">
                       <label>Position</label>
-                      <p>{selectedEmployee.profile.position || 'Not Set'}</p>
+                      <p>{selectedEmployee.profile.position || "Not Set"}</p>
                     </div>
                     <div className="info-item">
                       <label>Employment Type</label>
-                      <p>{selectedEmployee.profile.empType || 'Not Set'}</p>
+                      <p>{selectedEmployee.profile.empType || "Not Set"}</p>
                     </div>
                     <div className="info-item">
                       <label>Department</label>
-                      <p>{selectedEmployee.profile.department || 'Not Set'}</p>
+                      <p>{selectedEmployee.profile.department || "Not Set"}</p>
                     </div>
                     <div className="info-item">
                       <label>Joining Date</label>
-                      <p>{selectedEmployee.profile.joiningDate || 'Not Set'}</p>
+                      <p>{selectedEmployee.profile.joiningDate || "Not Set"}</p>
                     </div>
                   </div>
                 </div>
@@ -772,24 +946,70 @@ const Employee = () => {
                   <div className="details-section-box">
                     <h5 className="section-title">Contact & Other Info</h5>
                     <div className="full-grid-2col">
-                      <div className="info-item"><label>Email</label><p>{selectedEmployee.profile.email || 'N/A'}</p></div>
-                      <div className="info-item"><label>Phone</label><p>{selectedEmployee.profile.phone || 'N/A'}</p></div>
-                      <div className="info-item"><label>Reports To</label><p>{selectedEmployee.profile.supervisor || 'N/A'}</p></div>
-                      <div className="info-item"><label>HR Manager</label><p>{selectedEmployee.profile.hrManager || 'N/A'}</p></div>
-                      <div className="info-item"><label>Gender</label><p>{selectedEmployee.profile.gender || 'N/A'}</p></div>
-                      <div className="info-item"><label>Marital Status</label><p>{selectedEmployee.profile.maritalStatus || 'N/A'}</p></div>
-                      <div className="info-item"><label>Date of Birth</label><p>{selectedEmployee.profile.dob || 'N/A'}</p></div>
-                      <div className="info-item"><label>Blood Group</label><p>{selectedEmployee.profile.bloodGroup || 'N/A'}</p></div>
+                      <div className="info-item">
+                        <label>Email</label>
+                        <p>{selectedEmployee.profile.email || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Phone</label>
+                        <p>{selectedEmployee.profile.phone || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Reports To</label>
+                        <p>{selectedEmployee.profile.supervisor || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>HR Manager</label>
+                        <p>{selectedEmployee.profile.hrManager || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Gender</label>
+                        <p>{selectedEmployee.profile.gender || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Marital Status</label>
+                        <p>{selectedEmployee.profile.maritalStatus || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Date of Birth</label>
+                        <p>{selectedEmployee.profile.dob || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Blood Group</label>
+                        <p>{selectedEmployee.profile.bloodGroup || "N/A"}</p>
+                      </div>
                     </div>
                   </div>
 
                   <div className="details-section-box">
-                    <h5 className="section-title">Educational & Professional</h5>
+                    <h5 className="section-title">
+                      Educational & Professional
+                    </h5>
                     <div className="full-grid-2col">
-                      <div className="info-item"><label>Institution</label><p>{selectedEmployee.education.institution || 'N/A'}</p></div>
-                      <div className="info-item"><label>Qualification</label><p>{selectedEmployee.education.qualification || 'N/A'}</p></div>
-                      <div className="info-item"><label>Specialization</label><p>{selectedEmployee.education.specialization || 'N/A'}</p></div>
-                      <div className="info-item"><label>Skills</label><p>{Array.isArray(selectedEmployee.education.skills) ? selectedEmployee.education.skills.join(", ") : selectedEmployee.education.skills || 'N/A'}</p></div>
+                      <div className="info-item">
+                        <label>Institution</label>
+                        <p>{selectedEmployee.education.institution || "N/A"}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Qualification</label>
+                        <p>
+                          {selectedEmployee.education.qualification || "N/A"}
+                        </p>
+                      </div>
+                      <div className="info-item">
+                        <label>Specialization</label>
+                        <p>
+                          {selectedEmployee.education.specialization || "N/A"}
+                        </p>
+                      </div>
+                      <div className="info-item">
+                        <label>Skills</label>
+                        <p>
+                          {Array.isArray(selectedEmployee.education.skills)
+                            ? selectedEmployee.education.skills.join(", ")
+                            : selectedEmployee.education.skills || "N/A"}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

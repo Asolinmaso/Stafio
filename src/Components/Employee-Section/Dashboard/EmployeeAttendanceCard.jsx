@@ -1,8 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Card } from "react-bootstrap";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Cell, LabelList,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  LabelList,
 } from "recharts";
 import { BsSliders } from "react-icons/bs";
 import axios from "axios";
@@ -32,12 +39,14 @@ const CustomLabel = ({ x, y, width, value, maxValue }) => {
   );
 };
 
-const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ userId }) {
+const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
+  userId,
+}) {
   const [attendanceData, setAttendanceData] = useState([]);
-  const [loading, setLoading]               = useState(false);
-  const [rangeIndex, setRangeIndex]         = useState(0); // 0 = Jan-Jun, 1 = Jul-Dec
-  const [showFilter, setShowFilter]         = useState(false);
-  const filterRef                           = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [rangeIndex, setRangeIndex] = useState(0); // 0 = Jan-Jun, 1 = Jul-Dec
+  const [showFilter, setShowFilter] = useState(false);
+  const filterRef = useRef(null);
 
   // Close filter dropdown on outside click
   useEffect(() => {
@@ -70,8 +79,8 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ user
   }, [userId]);
 
   // Filter data to selected half-year range
-  const currentMonths  = RANGES[rangeIndex].months;
-  const filteredData   = currentMonths.map((month) => {
+  const currentMonths = RANGES[rangeIndex].months;
+  const filteredData = currentMonths.map((month) => {
     const found = attendanceData.find((d) => d.month === month);
     return { month, value: found ? found.value : 0 };
   });
@@ -81,9 +90,15 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ user
   return (
     <Card className="employee-attendance-card">
       <Card.Body>
-
         {/* Header row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "8px",
+          }}
+        >
           <Card.Title style={{ margin: 0 }}>Monthly Attendance</Card.Title>
 
           {/* Filter icon + dropdown */}
@@ -102,21 +117,26 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ user
 
             {/* Dropdown */}
             {showFilter && (
-              <div style={{
-                position: "absolute",
-                top: "40px",
-                right: 0,
-                background: "#fff",
-                borderRadius: "10px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-                padding: "6px",
-                zIndex: 999,
-                minWidth: "120px",
-              }}>
+              <div
+                style={{
+                  position: "absolute",
+                  top: "40px",
+                  right: 0,
+                  background: "#fff",
+                  borderRadius: "10px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+                  padding: "6px",
+                  zIndex: 999,
+                  minWidth: "120px",
+                }}
+              >
                 {RANGES.map((r, i) => (
                   <div
                     key={r.label}
-                    onClick={() => { setRangeIndex(i); setShowFilter(false); }}
+                    onClick={() => {
+                      setRangeIndex(i);
+                      setShowFilter(false);
+                    }}
                     style={{
                       padding: "8px 12px",
                       borderRadius: "8px",
@@ -138,7 +158,16 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ user
 
         {/* Chart */}
         {loading ? (
-          <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#aaa", fontSize: 14 }}>
+          <div
+            style={{
+              height: 220,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#aaa",
+              fontSize: 14,
+            }}
+          >
             Loading...
           </div>
         ) : (
@@ -148,7 +177,11 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ user
               margin={{ top: 22, right: 8, left: -14, bottom: 0 }}
               barCategoryGap="28%"
             >
-              <CartesianGrid vertical={false} stroke="#edf1f7" strokeDasharray="" />
+              <CartesianGrid
+                vertical={false}
+                stroke="#edf1f7"
+                strokeDasharray=""
+              />
 
               <XAxis
                 dataKey="month"
@@ -187,19 +220,24 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({ user
                 <LabelList
                   dataKey="value"
                   position="top"
-                  content={(props) => <CustomLabel {...props} maxValue={maxValue} />}
+                  content={(props) => (
+                    <CustomLabel {...props} maxValue={maxValue} />
+                  )}
                 />
                 {filteredData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={entry.value === maxValue && entry.value > 0 ? "#19BDE8" : "#D6EEF8"}
+                    fill={
+                      entry.value === maxValue && entry.value > 0
+                        ? "#19BDE8"
+                        : "#D6EEF8"
+                    }
                   />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         )}
-
       </Card.Body>
     </Card>
   );

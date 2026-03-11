@@ -208,7 +208,10 @@ const EmployeeSidebar = () => {
           </NavLink>
 
           {/* Reports Menu */}
-          <NavLink to="/employee-attendance-report" className="sidebar-leave-link">
+          <NavLink
+            to="/employee-attendance-report"
+            className="sidebar-leave-link"
+          >
             <ReportsMenu />
           </NavLink>
 
@@ -260,9 +263,6 @@ const EmployeeSidebar = () => {
           Logout
         </div>
       </div>
-
-
-
     </div>
   );
 };

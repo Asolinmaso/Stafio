@@ -48,25 +48,18 @@ const AttendanceCard = ({ dataSets }) => {
             <Dropdown.Item onClick={() => setView("weeks")}>
               Weeks
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => setView("days")}>
-              Days
-            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setView("days")}>Days</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
-
-      {/* Chart */}                                         {/* modified height */}
+      {/* Chart */} {/* modified height */}
       <ResponsiveContainer width="100%" height={190}>
         <BarChart data={data}>
           <XAxis
             dataKey="label"
-
-            interval={0}   // ✅ prevents text breaking
+            interval={0} // ✅ prevents text breaking
           />
-          <YAxis
-            domain={[0, 100]}
-            tickFormatter={(v) => `${v}%`}
-          />
+          <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
           <Tooltip cursor={false} formatter={(v) => `${v}%`} />
 
           <Bar

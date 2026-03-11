@@ -4,12 +4,27 @@ import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import axios from "axios";
-import { FaChevronLeft, FaChevronRight, FaCalendarAlt, FaTable } from "react-icons/fa";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaCalendarAlt,
+  FaTable,
+} from "react-icons/fa";
 
 const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const MyHoliday = () => {
@@ -25,14 +40,18 @@ const MyHoliday = () => {
 
   const fetchHolidays = async (year) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5001/api/myholidays?year=${year}`);
+      const response = await axios.get(
+        `http://127.0.0.1:5001/api/myholidays?year=${year}`,
+      );
       setHolidayData(response.data);
     } catch (error) {
       console.error("Error fetching holidays:", error);
     }
   };
 
-  useEffect(() => { fetchHolidays(calYear); }, [calYear]);
+  useEffect(() => {
+    fetchHolidays(calYear);
+  }, [calYear]);
 
   // Pagination
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -55,9 +74,9 @@ const MyHoliday = () => {
 
   // Map holidays by day for current month
   const holidayMap = {};
-  holidayData.forEach(h => {
+  holidayData.forEach((h) => {
     if (!h.full_date) return;
-    const [hYr, hMo, hDay] = h.full_date.split('-');
+    const [hYr, hMo, hDay] = h.full_date.split("-");
     const hDate = new Date(hYr, hMo - 1, hDay);
     if (hDate.getFullYear() === calYear && hDate.getMonth() === calMonth) {
       holidayMap[hDate.getDate()] = h;
@@ -65,18 +84,22 @@ const MyHoliday = () => {
   });
 
   const handlePrevMonth = () => {
-    if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); }
-    else setCalMonth(m => m - 1);
+    if (calMonth === 0) {
+      setCalMonth(11);
+      setCalYear((y) => y - 1);
+    } else setCalMonth((m) => m - 1);
   };
   const handleNextMonth = () => {
-    if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); }
-    else setCalMonth(m => m + 1);
+    if (calMonth === 11) {
+      setCalMonth(0);
+      setCalYear((y) => y + 1);
+    } else setCalMonth((m) => m + 1);
   };
 
   const upcomingHolidays = holidayData
-    .filter(h => {
+    .filter((h) => {
       if (!h.full_date) return false;
-      const [hYr, hMo, hDay] = h.full_date.split('-');
+      const [hYr, hMo, hDay] = h.full_date.split("-");
       const localDate = new Date(hYr, hMo - 1, hDay);
       return localDate >= new Date().setHours(0, 0, 0, 0);
     })
@@ -94,10 +117,16 @@ const MyHoliday = () => {
           <div className="header-left">
             <h2 className="page-title">My Holiday Calendar</h2>
             <div className="view-toggle">
-              <button className={`toggle-btn ${view === "calendar" ? "active" : ""}`} onClick={() => setView("calendar")}>
+              <button
+                className={`toggle-btn ${view === "calendar" ? "active" : ""}`}
+                onClick={() => setView("calendar")}
+              >
                 <FaCalendarAlt /> Calendar
               </button>
-              <button className={`toggle-btn ${view === "table" ? "active" : ""}`} onClick={() => setView("table")}>
+              <button
+                className={`toggle-btn ${view === "table" ? "active" : ""}`}
+                onClick={() => setView("table")}
+              >
                 <FaTable /> Table
               </button>
             </div>
@@ -110,52 +139,78 @@ const MyHoliday = () => {
             <div className="wall-calendar-card">
               {/* Nav */}
               <div className="wall-cal-nav">
-                <button className="wall-nav-btn" onClick={handlePrevMonth}><FaChevronLeft /></button>
-                <h2 className="wall-cal-title">{MONTH_NAMES[calMonth]} {calYear}</h2>
-                <button className="wall-nav-btn" onClick={handleNextMonth}><FaChevronRight /></button>
+                <button className="wall-nav-btn" onClick={handlePrevMonth}>
+                  <FaChevronLeft />
+                </button>
+                <h2 className="wall-cal-title">
+                  {MONTH_NAMES[calMonth]} {calYear}
+                </h2>
+                <button className="wall-nav-btn" onClick={handleNextMonth}>
+                  <FaChevronRight />
+                </button>
               </div>
 
               {/* Weekday headers */}
               <div className="wall-cal-grid wall-cal-headers">
-                {WEEKDAYS.map(d => (
-                  <div key={d} className={`wall-cal-header-cell ${d === "SUN" ? "sunday-header" : ""}`}>{d}</div>
+                {WEEKDAYS.map((d) => (
+                  <div
+                    key={d}
+                    className={`wall-cal-header-cell ${d === "SUN" ? "sunday-header" : ""}`}
+                  >
+                    {d}
+                  </div>
                 ))}
               </div>
 
               {/* Day tiles */}
               <div className="wall-cal-grid wall-cal-body">
                 {cells.map((day, idx) => {
-                  if (day === null) return <div key={`empty-${idx}`} className="wall-day-cell wall-day-empty" />;
+                  if (day === null)
+                    return (
+                      <div
+                        key={`empty-${idx}`}
+                        className="wall-day-cell wall-day-empty"
+                      />
+                    );
                   const colIndex = idx % 7; // 0=Mon, 6=Sun
                   const isSunday = colIndex === 6;
                   const isSaturday = colIndex === 5;
-                  const isToday = day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+                  const isToday =
+                    day === today.getDate() &&
+                    calMonth === today.getMonth() &&
+                    calYear === today.getFullYear();
                   const holiday = holidayMap[day];
                   const holidayClass = holiday
-                    ? holiday.type === 'Mandatory'
-                      ? 'wall-holiday-mandatory'
-                      : holiday.type === 'Restricted'
-                        ? 'wall-holiday-restricted'
-                        : holiday.type === 'National'
-                          ? 'wall-holiday-national'
-                          : 'wall-holiday-observance'
-                    : '';
+                    ? holiday.type === "Mandatory"
+                      ? "wall-holiday-mandatory"
+                      : holiday.type === "Restricted"
+                        ? "wall-holiday-restricted"
+                        : holiday.type === "National"
+                          ? "wall-holiday-national"
+                          : "wall-holiday-observance"
+                    : "";
                   return (
                     <div
                       key={day}
                       className={[
-                        'wall-day-cell',
-                        isSunday ? 'wall-sunday' : '',
-                        isSaturday ? 'wall-saturday' : '',
-                        isToday ? 'wall-today' : '',
+                        "wall-day-cell",
+                        isSunday ? "wall-sunday" : "",
+                        isSaturday ? "wall-saturday" : "",
+                        isToday ? "wall-today" : "",
                         holidayClass,
-                      ].filter(Boolean).join(' ')}
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                     >
                       <span className="wall-day-number">{day}</span>
                       {holiday && (
                         <div className="wall-holiday-label">
-                          <span className={`wall-holiday-dot dot-${holiday.type?.toLowerCase()}`} />
-                          <span className="wall-holiday-name">{holiday.title}</span>
+                          <span
+                            className={`wall-holiday-dot dot-${holiday.type?.toLowerCase()}`}
+                          />
+                          <span className="wall-holiday-name">
+                            {holiday.title}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -165,11 +220,26 @@ const MyHoliday = () => {
 
               {/* Legend */}
               <div className="wall-cal-legend">
-                <div className="legend-item"><span className="legend-dot dot-national" />National Holiday</div>
-                <div className="legend-item"><span className="legend-dot dot-observance" />Observance Day</div>
-                <div className="legend-item"><span className="legend-dot dot-mandatory" />Mandatory (Custom)</div>
-                <div className="legend-item"><span className="legend-dot dot-restricted" />Restricted (Custom)</div>
-                <div className="legend-item"><span className="legend-dot dot-today" />Today</div>
+                <div className="legend-item">
+                  <span className="legend-dot dot-national" />
+                  National Holiday
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot dot-observance" />
+                  Observance Day
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot dot-mandatory" />
+                  Mandatory (Custom)
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot dot-restricted" />
+                  Restricted (Custom)
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot dot-today" />
+                  Today
+                </div>
               </div>
             </div>
 
@@ -181,11 +251,18 @@ const MyHoliday = () => {
                   {upcomingHolidays.length === 0 && (
                     <p className="no-holidays-text">No upcoming holidays</p>
                   )}
-                  {upcomingHolidays.map(holiday => (
-                    <div key={holiday.id} className={`upcoming-card ${holiday.type?.toLowerCase()}`}>
+                  {upcomingHolidays.map((holiday) => (
+                    <div
+                      key={holiday.id}
+                      className={`upcoming-card ${holiday.type?.toLowerCase()}`}
+                    >
                       <div className="card-date">{holiday.date}</div>
                       <div className="card-title">{holiday.title}</div>
-                      <div className={`card-type-badge ${holiday.type?.toLowerCase()}`}>{holiday.type}</div>
+                      <div
+                        className={`card-type-badge ${holiday.type?.toLowerCase()}`}
+                      >
+                        {holiday.type}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -207,10 +284,18 @@ const MyHoliday = () => {
                 <tbody>
                   {currentHolidays.map((holiday, index) => (
                     <tr key={holiday.id}>
-                      <td>{String(indexOfFirstRow + index + 1).padStart(2, "0")}</td>
+                      <td>
+                        {String(indexOfFirstRow + index + 1).padStart(2, "0")}
+                      </td>
                       <td>{holiday.date}</td>
                       <td>{holiday.title}</td>
-                      <td><span className={`type-pill ${holiday.type?.toLowerCase()}`}>{holiday.type || "Mandatory"}</span></td>
+                      <td>
+                        <span
+                          className={`type-pill ${holiday.type?.toLowerCase()}`}
+                        >
+                          {holiday.type || "Mandatory"}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -219,18 +304,40 @@ const MyHoliday = () => {
             <div className="holiday-pagination">
               <div className="showing">
                 Showing
-                <select value={rowsPerPage} onChange={e => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+                <select
+                  value={rowsPerPage}
+                  onChange={(e) => {
+                    setRowsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
                   <option value={7}>07</option>
                   <option value={10}>10</option>
                   <option value={20}>20</option>
                 </select>
               </div>
               <div className="page-controls">
-                <button className="page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>Prev</button>
+                <button
+                  className="page-btn"
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Prev
+                </button>
                 <button className="page-number active">
                   {String(currentPage).padStart(2, "0")}
                 </button>
-                <button className="page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, Math.max(1, totalPages)))} disabled={currentPage === Math.max(1, totalPages)}>Next</button>
+                <button
+                  className="page-btn"
+                  onClick={() =>
+                    setCurrentPage((p) =>
+                      Math.min(p + 1, Math.max(1, totalPages)),
+                    )
+                  }
+                  disabled={currentPage === Math.max(1, totalPages)}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>

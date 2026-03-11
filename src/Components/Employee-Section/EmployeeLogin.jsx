@@ -116,7 +116,6 @@ const EmployeeLogin = () => {
   //     .catch(() => setErrorMsg("Google login failed"));
   // };
 
-
   const googleLogin = useGoogleLogin({
     flow: "implicit",
     onSuccess: async (tokenResponse) => {

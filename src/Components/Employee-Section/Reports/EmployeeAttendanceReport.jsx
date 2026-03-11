@@ -8,17 +8,22 @@ import "./EmployeeAttendanceReport.css";
 const EmployeeAttendanceReport = () => {
   const navigate = useNavigate();
 
-  const [allData, setAllData]   = useState([]);
-  const [stats, setStats]       = useState({ working_days: 0, total_leaves: 0, late_logins: 0, on_time_logins: 0 });
-  const [loading, setLoading]   = useState(true);
+  const [allData, setAllData] = useState([]);
+  const [stats, setStats] = useState({
+    working_days: 0,
+    total_leaves: 0,
+    late_logins: 0,
+    on_time_logins: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  const [search, setSearch]             = useState("");
+  const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [sortRange, setSortRange]       = useState("7days");
-  const [quickSearch, setQuickSearch]   = useState("");
-  const [filterDate, setFilterDate]     = useState("");
-  const [currentPage, setCurrentPage]   = useState(1);
-  const [rowsPerPage, setRowsPerPage]   = useState(6);
+  const [sortRange, setSortRange] = useState("7days");
+  const [quickSearch, setQuickSearch] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(6);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +33,12 @@ const EmployeeAttendanceReport = () => {
           sessionStorage.getItem("current_user_id");
 
         const [attRes, statsRes] = await Promise.all([
-          axios.get("http://127.0.0.1:5001/api/attendance",       { headers: { "X-User-ID": userId } }),
-          axios.get("http://127.0.0.1:5001/api/attendance_stats", { headers: { "X-User-ID": userId } }),
+          axios.get("http://127.0.0.1:5001/api/attendance", {
+            headers: { "X-User-ID": userId },
+          }),
+          axios.get("http://127.0.0.1:5001/api/attendance_stats", {
+            headers: { "X-User-ID": userId },
+          }),
         ]);
         setAllData(attRes.data);
         setStats(statsRes.data);
@@ -43,26 +52,36 @@ const EmployeeAttendanceReport = () => {
   }, []);
 
   const downloadCSV = () => {
-    const headers = ["Date", "Check-in", "Check-out", "Status", "Late", "Overtime", "Work Hours"];
-    const rows = filteredData.map(r => [
+    const headers = [
+      "Date",
+      "Check-in",
+      "Check-out",
+      "Status",
+      "Late",
+      "Overtime",
+      "Work Hours",
+    ];
+    const rows = filteredData.map((r) => [
       formatDate(r.date),
-      r.checkIn   || "-",
-      r.checkOut  || "-",
-      r.status    || "-",
-      r.late      || "-",
-      r.overtime  || "-",
+      r.checkIn || "-",
+      r.checkOut || "-",
+      r.status || "-",
+      r.late || "-",
+      r.overtime || "-",
       r.workHours || "-",
     ]);
 
     const csvContent = [headers, ...rows]
-      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","),
+      )
       .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url  = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href     = url;
-    link.download = `attendance_report_${new Date().toISOString().slice(0,10)}.csv`;
+    link.href = url;
+    link.download = `attendance_report_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -72,7 +91,11 @@ const EmployeeAttendanceReport = () => {
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
-    return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    return d.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const resetPage = () => setCurrentPage(1);
@@ -82,33 +105,47 @@ const EmployeeAttendanceReport = () => {
     const now = new Date();
 
     if (sortRange === "7days") {
-      const cut = new Date(now); cut.setDate(now.getDate() - 7);
-      data = data.filter(r => new Date(r.date) >= cut);
+      const cut = new Date(now);
+      cut.setDate(now.getDate() - 7);
+      data = data.filter((r) => new Date(r.date) >= cut);
     } else if (sortRange === "30days") {
-      const cut = new Date(now); cut.setDate(now.getDate() - 30);
-      data = data.filter(r => new Date(r.date) >= cut);
+      const cut = new Date(now);
+      cut.setDate(now.getDate() - 30);
+      data = data.filter((r) => new Date(r.date) >= cut);
     }
 
-    const statusMap = { present: "On Time", absent: "Absent", late: "Late Login" };
-    if (filterStatus) data = data.filter(r => r.status === statusMap[filterStatus]);
-    if (filterDate)   data = data.filter(r => r.date === filterDate);
+    const statusMap = {
+      present: "On Time",
+      absent: "Absent",
+      late: "Late Login",
+    };
+    if (filterStatus)
+      data = data.filter((r) => r.status === statusMap[filterStatus]);
+    if (filterDate) data = data.filter((r) => r.date === filterDate);
 
     if (search.trim()) {
       const q = search.toLowerCase();
-      data = data.filter(r =>
-        r.date?.toLowerCase().includes(q) || r.status?.toLowerCase().includes(q)
+      data = data.filter(
+        (r) =>
+          r.date?.toLowerCase().includes(q) ||
+          r.status?.toLowerCase().includes(q),
       );
     }
     if (quickSearch.trim()) {
       const q = quickSearch.toLowerCase();
-      data = data.filter(r =>
-        r.date?.toLowerCase().includes(q)      ||
-        r.status?.toLowerCase().includes(q)    ||
-        r.checkIn?.toLowerCase().includes(q)   ||
-        r.checkOut?.toLowerCase().includes(q)  ||
-        r.workHours?.toLowerCase().includes(q) ||
-        String(r.late || "").toLowerCase().includes(q) ||
-        String(r.overtime || "").toLowerCase().includes(q)
+      data = data.filter(
+        (r) =>
+          r.date?.toLowerCase().includes(q) ||
+          r.status?.toLowerCase().includes(q) ||
+          r.checkIn?.toLowerCase().includes(q) ||
+          r.checkOut?.toLowerCase().includes(q) ||
+          r.workHours?.toLowerCase().includes(q) ||
+          String(r.late || "")
+            .toLowerCase()
+            .includes(q) ||
+          String(r.overtime || "")
+            .toLowerCase()
+            .includes(q),
       );
     }
 
@@ -116,28 +153,39 @@ const EmployeeAttendanceReport = () => {
     return data;
   }, [allData, sortRange, filterStatus, filterDate, search, quickSearch]);
 
-  const totalPages    = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
-  const safePage      = Math.min(currentPage, totalPages);
-  const paginatedData = filteredData.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedData = filteredData.slice(
+    (safePage - 1) * rowsPerPage,
+    safePage * rowsPerPage,
+  );
 
-  const statusClass = s =>
-    s === "On Time"    ? "ear__status-green"  :
-    s === "Absent"     ? "ear__status-red"    : "ear__status-yellow";
+  const statusClass = (s) =>
+    s === "On Time"
+      ? "ear__status-green"
+      : s === "Absent"
+        ? "ear__status-red"
+        : "ear__status-yellow";
 
-  const timeClass = s =>
-    s === "Absent"     ? "ear__time-red"    :
-    s === "Late Login" ? "ear__time-yellow" : "ear__time-blue";
+  const timeClass = (s) =>
+    s === "Absent"
+      ? "ear__time-red"
+      : s === "Late Login"
+        ? "ear__time-yellow"
+        : "ear__time-blue";
 
   const cards = [
-    { label: "Total Working Days", value: stats.working_days   },
-    { label: "Total Leave Taken",  value: stats.total_leaves   },
-    { label: "Late Logins",        value: stats.late_logins    },
-    { label: "On Time Logins",     value: stats.on_time_logins },
+    { label: "Total Working Days", value: stats.working_days },
+    { label: "Total Leave Taken", value: stats.total_leaves },
+    { label: "Late Logins", value: stats.late_logins },
+    { label: "On Time Logins", value: stats.on_time_logins },
   ];
 
   return (
     <div style={{ display: "flex" }}>
-      <div className="sidebar"><EmployeeSidebar /></div>
+      <div className="sidebar">
+        <EmployeeSidebar />
+      </div>
 
       <div className="ear__page">
         <Topbar />
@@ -149,7 +197,13 @@ const EmployeeAttendanceReport = () => {
           {cards.map((card, idx) => (
             <div className="ear__card" key={idx}>
               <svg className="ear__card-svg" viewBox="0 0 28 28" fill="none">
-                <circle cx="14" cy="14" r="12" stroke="#28a745" strokeWidth="1.8"/>
+                <circle
+                  cx="14"
+                  cy="14"
+                  r="12"
+                  stroke="#28a745"
+                  strokeWidth="1.8"
+                />
                 <polyline
                   points="8,14 12,18 20,10"
                   stroke="#28a745"
@@ -166,30 +220,49 @@ const EmployeeAttendanceReport = () => {
 
         {/* ── Top Controls ── */}
         <div className="ear__topbar">
-
           <div className="ear__search-box">
             <svg className="ear__sb-icon" viewBox="0 0 20 20" fill="none">
-              <circle cx="9" cy="9" r="6" stroke="#999" strokeWidth="1.7"/>
-              <line x1="13.5" y1="13.5" x2="17" y2="17" stroke="#999" strokeWidth="1.7" strokeLinecap="round"/>
+              <circle cx="9" cy="9" r="6" stroke="#999" strokeWidth="1.7" />
+              <line
+                x1="13.5"
+                y1="13.5"
+                x2="17"
+                y2="17"
+                stroke="#999"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+              />
             </svg>
             <input
               type="text"
               placeholder="Search..."
               className="ear__input ear__search-input"
               value={search}
-              onChange={e => { setSearch(e.target.value); resetPage(); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                resetPage();
+              }}
             />
           </div>
 
           <div className="ear__filter-box">
             <svg className="ear__fn-icon" viewBox="0 0 24 24" fill="none">
-              <path d="M3 4h18L13 13v7l-2-1v-6L3 4z" stroke="#000" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                d="M3 4h18L13 13v7l-2-1v-6L3 4z"
+                stroke="#000"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
             <span className="ear__filter-lbl">Filter</span>
             <select
               className="ear__filter-overlay"
               value={filterStatus}
-              onChange={e => { setFilterStatus(e.target.value); resetPage(); }}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                resetPage();
+              }}
             >
               <option value="">All</option>
               <option value="present">On Time</option>
@@ -202,72 +275,158 @@ const EmployeeAttendanceReport = () => {
             <select
               className="ear__sort-sel"
               value={sortRange}
-              onChange={e => { setSortRange(e.target.value); resetPage(); }}
+              onChange={(e) => {
+                setSortRange(e.target.value);
+                resetPage();
+              }}
             >
               <option value="7days">Sort By : Last 7 Days</option>
               <option value="30days">Sort By : Last 30 Days</option>
               <option value="all">Sort By : All Time</option>
             </select>
             <svg className="ear__sort-chevron" viewBox="0 0 20 20" fill="none">
-              <polyline points="5,7 10,13 15,7" stroke="#555" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline
+                points="5,7 10,13 15,7"
+                stroke="#555"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
-
         </div>
 
         {/* ── Overview Table Card ── */}
         <div className="ear__overview">
-
           <div className="ear__overview-hdr">
             <span className="ear__overview-title">Attendance Overview</span>
             <div className="ear__overview-actions">
-
               <div className="ear__qs-box">
                 <svg className="ear__qs-icon" viewBox="0 0 24 24" fill="none">
-                  <circle cx="11" cy="11" r="7" stroke="#bbb" strokeWidth="1.8"/>
-                  <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#bbb" strokeWidth="1.8" strokeLinecap="round"/>
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="7"
+                    stroke="#bbb"
+                    strokeWidth="1.8"
+                  />
+                  <line
+                    x1="16.5"
+                    y1="16.5"
+                    x2="21"
+                    y2="21"
+                    stroke="#bbb"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
                 </svg>
                 <input
                   type="text"
                   placeholder="Quick Search..."
                   className="ear__qs-input"
                   value={quickSearch}
-                  onChange={e => { setQuickSearch(e.target.value); resetPage(); }}
+                  onChange={(e) => {
+                    setQuickSearch(e.target.value);
+                    resetPage();
+                  }}
                 />
               </div>
 
-              <div className="ear__dp-box" onClick={() => document.getElementById('ear-date-input').showPicker?.()}>
+              <div
+                className="ear__dp-box"
+                onClick={() =>
+                  document.getElementById("ear-date-input").showPicker?.()
+                }
+              >
                 <svg className="ear__dp-icon" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="4" width="18" height="17" rx="2" stroke="#aaa" strokeWidth="1.7"/>
-                  <line x1="3"  y1="9"  x2="21" y2="9"  stroke="#aaa" strokeWidth="1.7"/>
-                  <line x1="8"  y1="2"  x2="8"  y2="6"  stroke="#aaa" strokeWidth="1.7" strokeLinecap="round"/>
-                  <line x1="16" y1="2"  x2="16" y2="6"  stroke="#aaa" strokeWidth="1.7" strokeLinecap="round"/>
+                  <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="17"
+                    rx="2"
+                    stroke="#aaa"
+                    strokeWidth="1.7"
+                  />
+                  <line
+                    x1="3"
+                    y1="9"
+                    x2="21"
+                    y2="9"
+                    stroke="#aaa"
+                    strokeWidth="1.7"
+                  />
+                  <line
+                    x1="8"
+                    y1="2"
+                    x2="8"
+                    y2="6"
+                    stroke="#aaa"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                  />
+                  <line
+                    x1="16"
+                    y1="2"
+                    x2="16"
+                    y2="6"
+                    stroke="#aaa"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                  />
                 </svg>
                 <span className="ear__dp-label">
                   {filterDate
-                    ? new Date(filterDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                    ? new Date(filterDate).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
                     : "Select date"}
                 </span>
-                <svg className="ear__dp-chevron" viewBox="0 0 20 20" fill="none">
-                  <polyline points="5,7 10,13 15,7" stroke="#aaa" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  className="ear__dp-chevron"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <polyline
+                    points="5,7 10,13 15,7"
+                    stroke="#aaa"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 <input
                   id="ear-date-input"
                   type="date"
                   className="ear__dp-hidden"
                   value={filterDate}
-                  onChange={e => { setFilterDate(e.target.value); resetPage(); }}
+                  onChange={(e) => {
+                    setFilterDate(e.target.value);
+                    resetPage();
+                  }}
                 />
               </div>
 
               <button className="ear__download-btn" onClick={downloadCSV}>
                 <svg className="ear__dl-icon" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 3v13M7 11l5 5 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M4 20h16"               stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                  <path
+                    d="M12 3v13M7 11l5 5 5-5"
+                    stroke="#fff"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4 20h16"
+                    stroke="#fff"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
                 Download
               </button>
-
             </div>
           </div>
 
@@ -290,19 +449,33 @@ const EmployeeAttendanceReport = () => {
                 <tbody>
                   {paginatedData.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="ear__empty">No records found</td>
+                      <td colSpan={7} className="ear__empty">
+                        No records found
+                      </td>
                     </tr>
-                  ) : paginatedData.map((r, i) => (
-                    <tr key={i} className="ear__tbody-tr">
-                      <td>{formatDate(r.date)}</td>
-                      <td className={timeClass(r.status)}>{r.checkIn}</td>
-                      <td className={timeClass(r.status)}>{r.checkOut}</td>
-                      <td><span className={statusClass(r.status)}>{r.status}</span></td>
-                      <td>{r.late     || "-"}</td>
-                      <td>{r.overtime || "-"}</td>
-                      <td className={r.status === "Late Login" ? "ear__time-red" : ""}>{r.workHours}</td>
-                    </tr>
-                  ))}
+                  ) : (
+                    paginatedData.map((r, i) => (
+                      <tr key={i} className="ear__tbody-tr">
+                        <td>{formatDate(r.date)}</td>
+                        <td className={timeClass(r.status)}>{r.checkIn}</td>
+                        <td className={timeClass(r.status)}>{r.checkOut}</td>
+                        <td>
+                          <span className={statusClass(r.status)}>
+                            {r.status}
+                          </span>
+                        </td>
+                        <td>{r.late || "-"}</td>
+                        <td>{r.overtime || "-"}</td>
+                        <td
+                          className={
+                            r.status === "Late Login" ? "ear__time-red" : ""
+                          }
+                        >
+                          {r.workHours}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             )}
@@ -314,7 +487,10 @@ const EmployeeAttendanceReport = () => {
               <select
                 className="ear__showing-sel"
                 value={rowsPerPage}
-                onChange={e => { setRowsPerPage(Number(e.target.value)); resetPage(); }}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  resetPage();
+                }}
               >
                 <option value={6}>06</option>
                 <option value={10}>10</option>
@@ -326,8 +502,10 @@ const EmployeeAttendanceReport = () => {
               <button
                 className="ear__pag-prev"
                 disabled={safePage === 1}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              >Prev</button>
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              >
+                Prev
+              </button>
 
               <button className="ear__pag-num">
                 {String(safePage).padStart(2, "0")}
@@ -336,11 +514,14 @@ const EmployeeAttendanceReport = () => {
               <button
                 className="ear__pag-next"
                 disabled={safePage === totalPages}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              >Next</button>
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+              >
+                Next
+              </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
