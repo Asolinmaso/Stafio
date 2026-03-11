@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 import illustration from "../../../assets/Formsbro.png";
 import tick from "../../../assets/tickicon.png";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
 const LeaveApproval = () => {
@@ -38,8 +38,8 @@ const LeaveApproval = () => {
   useEffect(() => {
     const fetchLeaveapprova = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/leaveapproval",
+        const response = await apiClient.get(
+          "/api/leaveapproval",
         );
         setLeaves(response.data);
       } catch (error) {
@@ -501,15 +501,15 @@ const LeaveApproval = () => {
                       try {
                         const endpoint =
                           actionType === "Approval"
-                            ? `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/approve`
-                            : `http://127.0.0.1:5001/api/leave_requests/${selectedLeave.request_id}/reject`;
-                        await axios.put(endpoint, {
+                            ? `/api/leave_requests/${selectedLeave.request_id}/approve`
+                            : `/api/leave_requests/${selectedLeave.request_id}/reject`;
+                        await apiClient.put(endpoint, {
                           reason: approvalReason,
                           approved_by: currentAdminId,
                         });
                         // Refresh the leave list
-                        const response = await axios.get(
-                          "http://127.0.0.1:5001/api/leaveapproval",
+                        const response = await apiClient.get(
+                          "/api/leaveapproval",
                         );
                         setLeaves(response.data);
                         setShowReasonModal(false);

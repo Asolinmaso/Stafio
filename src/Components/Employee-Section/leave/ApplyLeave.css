@@ -12,26 +12,29 @@ body, html {
 
 /* Container takes full height and centers content */
 .apply-leave-container {
-  min-height: 100vh;
+  min-height: 0vh;
   width: 100%;
-  background-color: #f5faff; /* Light blue tint */
+  background-color: #f5faff; 
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: fadeIn 1s ease-in-out;
+  padding: -30px;
+
 }
 
 /* Card styling */
 .apply-leave-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 700px;
   background-color: #ffffff; /* White card */
-  border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  border-radius: 10px;
+  border : none !important;
   color: #202020; /* Text inside card */
 }
 
+.apply-leave-heading {
+  color: #000000; /* Heading color */
+}
 .sidebar {
   flex: 0 0 255px;        /* fixed width for sidebar */
 }
@@ -41,16 +44,16 @@ body, html {
   background: #eff5ff;
   margin:0px;
 }
-/* Card hover */
-.apply-leave-card:hover {
+ /* Card hover */
+/* .apply-leave-card:hover {
   transform: translateY(-5px);
-}
+}  */
 
 /* Heading styling */
-h3.text-primary {
+/* h3.text-primary {
   color: #19BDE8 !important;
   font-weight: 600;
-}
+} */
 
 /* Label and input styles */
 .form-label {

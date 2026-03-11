@@ -1,8 +1,8 @@
 // utils/sessionManager.js
-// Centralized session management for multi-tab, multi-user login
+// Centralized session management — all auth data in localStorage for persistence
 
 /**
- * Generate or retrieve unique tab ID
+ * Generate or retrieve unique tab ID (stays in sessionStorage — tab-specific is fine)
  */
 export const getOrCreateTabId = () => {
   let tabId = sessionStorage.getItem("tab_id");
@@ -14,18 +14,26 @@ export const getOrCreateTabId = () => {
 };
 
 /**
- * Save session for current tab
+ * Save session — all auth data goes to localStorage for persistence
  */
 export const saveSession = (userData, role) => {
   const tabId = getOrCreateTabId();
   
-  // Store in sessionStorage (tab-specific)
-  sessionStorage.setItem("current_user_id", userData.user_id);
-  sessionStorage.setItem("current_username", userData.username);
-  sessionStorage.setItem("current_role", role);
-  sessionStorage.setItem("current_email", userData.email || "");
+  // Store auth data in localStorage (persistent across browser close)
+  localStorage.setItem("current_user_id", userData.user_id);
+  localStorage.setItem("current_username", userData.username);
+  localStorage.setItem("current_role", role);
+  localStorage.setItem("current_email", userData.email || "");
   
-  // Track all active sessions in localStorage
+  // Store JWT tokens in localStorage
+  if (userData.access_token) {
+    localStorage.setItem("auth_token", userData.access_token);
+  }
+  if (userData.refresh_token) {
+    localStorage.setItem("refresh_token", userData.refresh_token);
+  }
+  
+  // Track all active sessions
   let allSessions = JSON.parse(localStorage.getItem("all_active_sessions") || "[]");
   
   // Remove any existing session for this tab
@@ -45,24 +53,26 @@ export const saveSession = (userData, role) => {
 };
 
 /**
- * Get current tab's session
+ * Get current session from localStorage
  */
 export const getCurrentSession = () => {
-  const user_id = sessionStorage.getItem("current_user_id");
-  const username = sessionStorage.getItem("current_username");
-  const role = sessionStorage.getItem("current_role");
-  const email = sessionStorage.getItem("current_email");
+  const user_id = localStorage.getItem("current_user_id");
+  const username = localStorage.getItem("current_username");
+  const role = localStorage.getItem("current_role");
+  const email = localStorage.getItem("current_email");
+  const token = localStorage.getItem("auth_token");
   
   if (!user_id) return null;
   
-  return { user_id, username, role, email };
+  return { user_id, username, role, email, token };
 };
 
 /**
- * Check if user is logged in current tab
+ * Check if user is logged in (checks localStorage)
  */
 export const isLoggedIn = () => {
-  return sessionStorage.getItem("current_user_id") !== null;
+  return localStorage.getItem("current_user_id") !== null &&
+         localStorage.getItem("auth_token") !== null;
 };
 
 /**
@@ -73,16 +83,26 @@ export const getAllActiveSessions = () => {
 };
 
 /**
- * Logout current tab
+ * Logout current tab — clears all auth data from localStorage
  */
 export const logoutCurrentTab = () => {
   const tabId = sessionStorage.getItem("tab_id");
   
-  // Clear sessionStorage
+  // Clear auth data from localStorage
+  localStorage.removeItem("current_user_id");
+  localStorage.removeItem("current_username");
+  localStorage.removeItem("current_role");
+  localStorage.removeItem("current_email");
+  localStorage.removeItem("auth_token");
+  localStorage.removeItem("refresh_token");
+  
+  // Also clear sessionStorage (backward compat cleanup)
   sessionStorage.removeItem("current_user_id");
   sessionStorage.removeItem("current_username");
   sessionStorage.removeItem("current_role");
   sessionStorage.removeItem("current_email");
+  sessionStorage.removeItem("auth_token");
+  sessionStorage.removeItem("refresh_token");
   
   // Remove from all_active_sessions
   let allSessions = JSON.parse(localStorage.getItem("all_active_sessions") || "[]");
@@ -91,28 +111,24 @@ export const logoutCurrentTab = () => {
 };
 
 /**
- * ✅ IMPROVED: Save Remember Me credentials per user
+ * Save Remember Me (email only, never password)
  */
-export const saveRememberMe = (identifier, password, role, userId) => {
+export const saveRememberMe = (identifier, _password, role, userId) => {
   const rememberKey = `remember_${role}_${userId}`;
   const rememberData = {
     email: identifier,
-    password: password,
     userId: userId,
     savedAt: new Date().toISOString()
   };
   
   localStorage.setItem(rememberKey, JSON.stringify(rememberData));
   
-  // Keep track of all remembered accounts for this role
   let rememberedAccounts = JSON.parse(
     localStorage.getItem(`remembered_${role}_accounts`) || "[]"
   );
   
-  // Remove existing entry for this user
   rememberedAccounts = rememberedAccounts.filter(acc => acc.userId !== userId);
   
-  // Add new entry
   rememberedAccounts.push({
     userId: userId,
     email: identifier,
@@ -126,7 +142,7 @@ export const saveRememberMe = (identifier, password, role, userId) => {
 };
 
 /**
- * ✅ IMPROVED: Get all remembered accounts for a role
+ * Get all remembered accounts for a role
  */
 export const getAllRememberedAccounts = (role) => {
   return JSON.parse(
@@ -135,7 +151,7 @@ export const getAllRememberedAccounts = (role) => {
 };
 
 /**
- * ✅ IMPROVED: Get specific user's Remember Me credentials
+ * Get specific user's Remember Me data
  */
 export const getRememberMe = (role) => {
   const rememberedAccounts = getAllRememberedAccounts(role);
@@ -154,15 +170,13 @@ export const getRememberMe = (role) => {
 
 
 /**
- * ✅ IMPROVED: Clear specific user's Remember Me credentials
+ * Clear specific user's Remember Me credentials
  */
 export const clearRememberMe = (role, userId = null) => {
   if (userId) {
-    // Clear specific user
     const rememberKey = `remember_${role}_${userId}`;
     localStorage.removeItem(rememberKey);
     
-    // Remove from tracked accounts
     let rememberedAccounts = getAllRememberedAccounts(role);
     rememberedAccounts = rememberedAccounts.filter(acc => acc.userId !== userId);
     localStorage.setItem(
@@ -170,7 +184,6 @@ export const clearRememberMe = (role, userId = null) => {
       JSON.stringify(rememberedAccounts)
     );
   } else {
-    // Clear all for this role
     const rememberedAccounts = getAllRememberedAccounts(role);
     rememberedAccounts.forEach(acc => {
       localStorage.removeItem(`remember_${role}_${acc.userId}`);
@@ -180,7 +193,7 @@ export const clearRememberMe = (role, userId = null) => {
 };
 
 /**
- * ✅ NEW: Save Google Remember Me
+ * Save Google Remember Me
  */
 export const saveGoogleRememberMe = (email, name, role, userId) => {
   const rememberKey = `remember_google_${role}_${userId}`;
@@ -194,7 +207,6 @@ export const saveGoogleRememberMe = (email, name, role, userId) => {
   
   localStorage.setItem(rememberKey, JSON.stringify(rememberData));
   
-  // Track in remembered accounts
   let rememberedAccounts = getAllRememberedAccounts(role);
   rememberedAccounts = rememberedAccounts.filter(acc => acc.userId !== userId);
   rememberedAccounts.push({
@@ -216,7 +228,6 @@ export const saveGoogleRememberMe = (email, name, role, userId) => {
 export const cleanupExpiredSessions = () => {
   let allSessions = JSON.parse(localStorage.getItem("all_active_sessions") || "[]");
   
-  // Remove sessions older than 24 hours
   const now = new Date().getTime();
   allSessions = allSessions.filter(session => {
     const loginTime = new Date(session.login_time).getTime();
@@ -226,7 +237,6 @@ export const cleanupExpiredSessions = () => {
   
   localStorage.setItem("all_active_sessions", JSON.stringify(allSessions));
   
-  // Also cleanup old remembered accounts (older than 30 days)
   ['admin', 'employee'].forEach(role => {
     let rememberedAccounts = getAllRememberedAccounts(role);
     rememberedAccounts = rememberedAccounts.filter(acc => {

@@ -11,6 +11,7 @@ import ForgotPasswordPopup from "../Admin-Section/ForgotPasswordPopup";
 import gicon from "../../assets/favicon.ico";
 
 import { useGoogleLogin } from "@react-oauth/google";
+import { saveSession } from "../../utils/sessionManager";
 
 const EmployeeLogin = () => {
   const [identifier, setIdentifier] = useState("");
@@ -34,28 +35,36 @@ const EmployeeLogin = () => {
       const response = await fetch("http://127.0.0.1:5001/employee_login", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },        
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),
       });
 
       const data = await response.json();
-      if (response.ok){
-      localStorage.setItem("employee_user_id", data.user_id);
-      localStorage.setItem("employee_role", data.role);
-      localStorage.setItem("employee_username", data.username);
+      if (response.ok) {
+        localStorage.setItem("employee_user_id", data.user_id);
+        localStorage.setItem("employee_role", data.role);
+        localStorage.setItem("employee_username", data.username);
+        // Store JWT tokens
+        if (data.access_token)
+          localStorage.setItem("auth_token", data.access_token);
+        if (data.refresh_token)
+          localStorage.setItem("refresh_token", data.refresh_token);
 
-      // ⭐ Remember Me logic
-      if (rememberMe) {
-        localStorage.setItem("remember_employee", "true");
-        localStorage.setItem("employee_email", identifier);
-        localStorage.setItem("employee_password", password);
-      } else {
-        localStorage.removeItem("remember_employee");
+        // ⭐ Remember Me logic (only store email for pre-fill, never password)
+        if (rememberMe) {
+          localStorage.setItem("remember_employee", "true");
+          localStorage.setItem("employee_email", identifier);
+          // Password is NOT stored — refresh token handles session persistence
+        } else {
+          localStorage.removeItem("remember_employee");
+          localStorage.removeItem("employee_email");
+        }
+        // Clean up any previously stored password (security fix)
+        localStorage.removeItem("employee_password");
         localStorage.removeItem("remember_email");
         localStorage.removeItem("remember_password");
-      }
 
-       navigate("/employee-dashboard");
+        navigate("/employee-dashboard");
       } else {
         setErrorMsg(data.message || "Login failed");
       }
@@ -108,28 +117,32 @@ const EmployeeLogin = () => {
   // };
 
 
-    const googleLogin = useGoogleLogin({
+  const googleLogin = useGoogleLogin({
     flow: "implicit",
     onSuccess: async (tokenResponse) => {
       try {
-        const res = await fetch(
-          "http://127.0.0.1:5001/employee_google_login",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              access_token: tokenResponse.access_token,
-              role: "employee",
-            }),
-          }
-        );
-  
+        const res = await fetch("http://127.0.0.1:5001/employee_google_login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token: tokenResponse.access_token,
+            role: "employee",
+          }),
+        });
+
         const data = await res.json();
-  
+
         if (data.user_id) {
           localStorage.setItem("employee_user_id", data.user_id);
           localStorage.setItem("employee_role", data.role);
           localStorage.setItem("employee_username", data.username);
+          // Store JWT tokens
+          if (data.access_token)
+            localStorage.setItem("auth_token", data.access_token);
+          if (data.refresh_token)
+            localStorage.setItem("refresh_token", data.refresh_token);
+          // ✅ Use standardized session management
+          saveSession(data, "employee");
           navigate("/employee-dashboard");
         } else {
           setErrorMsg("Google login failed");
@@ -190,6 +203,13 @@ const EmployeeLogin = () => {
             localStorage.setItem("employee_user_id", data.user_id);
             localStorage.setItem("employee_role", data.role);
             localStorage.setItem("employee_username", data.username);
+            // Store JWT tokens
+            if (data.access_token)
+              localStorage.setItem("auth_token", data.access_token);
+            if (data.refresh_token)
+              localStorage.setItem("refresh_token", data.refresh_token);
+            // ✅ Use standardized session management
+            saveSession(data, "employee");
             navigate("/employee-dashboard");
           }
         });
@@ -198,9 +218,12 @@ const EmployeeLogin = () => {
     }
 
     if (remember === "true" && !isGoogle) {
-      setIdentifier(localStorage.getItem("remember_email") || "");
-      setPassword(localStorage.getItem("remember_password") || "");
-      navigate("/employee-dashboard");
+      // Pre-fill email only (no password stored anymore)
+      setIdentifier(localStorage.getItem("employee_email") || "");
+      // If refresh token exists, auto-navigate (session still valid)
+      if (localStorage.getItem("refresh_token")) {
+        navigate("/employee-dashboard");
+      }
     }
   }, []);
 
@@ -215,7 +238,11 @@ const EmployeeLogin = () => {
           <img src={BGShape} className="bg-shape" alt="Background Shape" />
 
           <div className="login-left-content text-center">
-            <img src={teampluslogo} alt="Team Plus" className="teampluss-logo mb-3" />
+            <img
+              src={teampluslogo}
+              alt="Team Plus"
+              className="teampluss-logo mb-3"
+            />
             <h2 className="login-heading">One Portal,</h2>
             <h4 className="login-subheading">Unlimited Potential</h4>
             <p className="login-description">
@@ -223,11 +250,18 @@ const EmployeeLogin = () => {
             </p>
           </div>
 
-          <img src={Imagelogin} className="login-illustrations" alt="Login Illustration" />
+          <img
+            src={Imagelogin}
+            className="login-illustrations"
+            alt="Login Illustration"
+          />
         </Col>
 
         {/* RIGHT SIDE */}
-        <Col md={6} className="d-flex align-items-center justify-content-left bg-white">
+        <Col
+          md={6}
+          className="d-flex align-items-center justify-content-left bg-white"
+        >
           <div className="login-form-wrapper">
             <h5 className="mb-2">Welcome back! 👋</h5>
             <h3 className="mb-4">Employee Login</h3>
@@ -282,7 +316,7 @@ const EmployeeLogin = () => {
 
                 <span
                   onClick={() => setShowForgot(true)}
-                  className="forgot-password-link"        //new
+                  className="forgot-password-link" //new
                   style={{ cursor: "pointer" }}
                 >
                   Forgot password?
@@ -299,26 +333,17 @@ const EmployeeLogin = () => {
               </Button>
 
               {/* ⭐ GOOGLE LOGIN BUTTON (SAME AS ADMIN) */}
-              <div
-                className="custom-google-btn"
-                
-                  onClick={() => googleLogin()}
-              >
-                <img
-                  src={gicon}
-                  alt="Google"
-                  className="google-icon"
-                />
+              <div className="custom-google-btn" onClick={() => googleLogin()}>
+                <img src={gicon} alt="Google" className="google-icon" />
                 <span>Continue with Google</span>
               </div>
-              
-                          </Form>
-              
-                          <div className="signup-text mt-4">
-                            <span>New to Stafio? </span>
-                            <Link to="/register-employee" className="signup-page">
-                              Sign up
-                            </Link>
+            </Form>
+
+            <div className="signup-text mt-4">
+              <span>New to Stafio? </span>
+              <Link to="/register-employee" className="signup-page">
+                Sign up
+              </Link>
             </div>
           </div>
         </Col>

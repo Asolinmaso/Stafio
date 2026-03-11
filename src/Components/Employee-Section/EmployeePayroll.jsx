@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Table, Badge, Spinner, Button } from "react-bootstrap";
 import EmployeeSidebar from "./EmployeeSidebar";
 import Topbar from "./Topbar";
-import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import {
   FaMoneyBillWave,
   FaCalendarAlt,
@@ -10,8 +10,6 @@ import {
   FaClock,
 } from "react-icons/fa";
 import "./EmployeePayroll.css";
-
-const API_BASE = "http://127.0.0.1:5001";
 
 const EmployeePayroll = () => {
   const [loading, setLoading] = useState(true);
@@ -27,11 +25,11 @@ const EmployeePayroll = () => {
       setLoading(true);
       const userId =
         localStorage.getItem("employee_user_id") ||
-        sessionStorage.getItem("current_user_id");
+        localStorage.getItem("current_user_id");
 
       const [payrollRes, salaryRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/payroll/${userId}`),
-        axios.get(`${API_BASE}/api/salary_structure/${userId}`),
+        apiClient.get(`/api/payroll/${userId}`),
+        apiClient.get(`/api/salary_structure/${userId}`),
       ]);
 
       setPayrollData(payrollRes.data);

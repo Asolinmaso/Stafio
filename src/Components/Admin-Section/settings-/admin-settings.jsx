@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import apiClient from "../../../utils/apiClient";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
@@ -6,13 +7,20 @@ import profileimg from "../../../assets/profileimg.png";
 import user from "../../../assets/user.png";
 import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
-import penicon from "../../../assets/penicon.png";
+import penicon from "../../../assets/penicon2.png";
 import deletebox from "../../../assets/deletebox.png";
-import { FaUserFriends, FaSearch, FaFilter, FaEdit, FaPlusCircle, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import {
+	FaUserFriends,
+	FaSearch,
+	FaFilter,
+	FaEdit,
+	FaPlusCircle,
+	FaPencilAlt,
+	FaTrashAlt,
+} from "react-icons/fa";
 import { BsUpload } from "react-icons/bs";
 import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
-const API_BASE = "http://127.0.0.1:5001";
 const translations = {
 	english: {
 		title: "System Settings",
@@ -139,6 +147,24 @@ export default function AdminSettings() {
 
 	const [basicErrors, setBasicErrors] = useState({});
 
+	const [profileImage, setProfileImage] = useState(profileimg);
+	const profileInputRef = useRef(null);
+
+	const handleProfileImageUpload = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			if (file.size > 5 * 1024 * 1024) {
+				alert("File size exceeds 5MB limit");
+				return;
+			}
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setProfileImage(reader.result);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
 	// Team State
 	const [teamMembers, setTeamMembers] = useState([]);
 	const [selectedRows, setSelectedRows] = useState({});
@@ -149,6 +175,8 @@ export default function AdminSettings() {
 	const [newDeptName, setNewDeptName] = useState("");
 	const [editingDeptId, setEditingDeptId] = useState(null);
 	const [editMemberCount, setEditMemberCount] = useState("");
+	const [newDeptMemberCount, setNewDeptMemberCount] = useState("");
+	const [newDeptManagerId, setNewDeptManagerId] = useState("");
 
 	// Break Times State
 	const [lunchBreak, setLunchBreak] = useState("1:00 PM - 2:00 PM");
@@ -158,15 +186,15 @@ export default function AdminSettings() {
 	const t = (key) => translations[language]?.[key] || key;
 
 	const getHeaders = () => ({
-		"X-User-Role": sessionStorage.getItem("current_role"),
-		"X-User-ID": sessionStorage.getItem("current_user_id"),
+		"X-User-Role": localStorage.getItem("current_role"),
+		"X-User-ID": localStorage.getItem("current_user_id"),
 	});
 
 	// Fetch General Settings on mount
 	useEffect(() => {
 		const fetchGeneralSettings = async () => {
 			try {
-				const res = await axios.get(`${API_BASE}/api/settings/general`, {
+				const res = await apiClient.get(`/api/settings/general`, {
 					headers: getHeaders(),
 				});
 				const data = res.data;
@@ -190,7 +218,7 @@ export default function AdminSettings() {
 		if (activeTab === "basic") {
 			const fetchBasicInfo = async () => {
 				try {
-					const res = await axios.get(`${API_BASE}/api/settings/basic_info`, {
+					const res = await apiClient.get('/api/settings/basic_info', {
 						headers: getHeaders(),
 					});
 					setBasicForm({
@@ -201,6 +229,9 @@ export default function AdminSettings() {
 						position: res.data.position || "",
 						role: res.data.role || "admin",
 					});
+					if (res.data.profileImage) {
+						setProfileImage(res.data.profileImage);
+					}
 				} catch (err) {
 					console.error("Error fetching basic info:", err);
 				}
@@ -215,7 +246,7 @@ export default function AdminSettings() {
 			const fetchTeam = async () => {
 				setLoading(true);
 				try {
-					const res = await axios.get(`${API_BASE}/api/settings/team`, {
+					const res = await apiClient.get(`/api/settings/team`, {
 						headers: getHeaders(),
 					});
 					setTeamMembers(res.data);
@@ -241,10 +272,10 @@ export default function AdminSettings() {
 				setLoading(true);
 				try {
 					const [deptRes, teamRes] = await Promise.all([
-						axios.get(`${API_BASE}/api/settings/departments`, {
+						apiClient.get(`/api/settings/departments`, {
 							headers: getHeaders(),
 						}),
-						axios.get(`${API_BASE}/api/settings/team`, {
+						apiClient.get(`/api/settings/team`, {
 							headers: getHeaders(),
 						}),
 					]);
@@ -265,7 +296,7 @@ export default function AdminSettings() {
 		if (activeTab === "breaktimes") {
 			const fetchBreakTimes = async () => {
 				try {
-					const res = await axios.get(`${API_BASE}/api/settings/break_times`, {
+					const res = await apiClient.get(`/api/settings/break_times`, {
 						headers: getHeaders(),
 					});
 					setLunchBreak(res.data.lunch_break || "1:00 PM - 2:00 PM");
@@ -300,8 +331,8 @@ export default function AdminSettings() {
 
 	const saveGeneralSettings = async () => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/settings/general`,
+			await apiClient.put(
+				`/api/settings/general`,
 				{
 					system_language: language,
 					admin_theme: theme,
@@ -316,6 +347,8 @@ export default function AdminSettings() {
 				},
 			);
 			console.log("General settings saved");
+			setSaveMessage("General settings saved successfully!");
+			setTimeout(() => setSaveMessage(""), 3000);
 		} catch (err) {
 			console.error("Error saving general settings:", err);
 		}
@@ -362,10 +395,11 @@ export default function AdminSettings() {
 	const handleBasicSave = async () => {
 		if (validateBasicInfo()) {
 			try {
-				await axios.put(`${API_BASE}/api/settings/basic_info`, basicForm, {
+				await apiClient.put(`/api/settings/basic_info`, basicForm, {
 					headers: getHeaders(),
 				});
 				setSaveMessage("Basic info saved successfully!");
+				window.dispatchEvent(new Event("profileUpdated"));
 				setTimeout(() => setSaveMessage(""), 3000);
 			} catch (err) {
 				console.error("Error saving basic info:", err);
@@ -383,6 +417,7 @@ export default function AdminSettings() {
 			position: "",
 			role: "admin",
 		});
+		setProfileImage(profileimg);
 		setBasicErrors({});
 	};
 
@@ -390,8 +425,8 @@ export default function AdminSettings() {
 	const handleCreateDepartment = async () => {
 		if (!newDeptName.trim()) return;
 		try {
-			await axios.post(
-				`${API_BASE}/api/departments`,
+			await apiClient.post(
+				`/api/departments`,
 				{
 					name: newDeptName,
 				},
@@ -399,11 +434,14 @@ export default function AdminSettings() {
 					headers: getHeaders(),
 				},
 			);
-			const res = await axios.get(`${API_BASE}/api/settings/departments`, {
+			const res = await apiClient.get(`/api/settings/departments`, {
 				headers: getHeaders(),
 			});
 			setDepartments(res.data);
 			setNewDeptName("");
+			setNewDeptMemberCount("");
+			setNewDeptManagerId("");
+			setShowCreateDept(false);
 			setShowDeptModal(false);
 		} catch (err) {
 			console.error("Error creating department:", err);
@@ -414,7 +452,7 @@ export default function AdminSettings() {
 		if (!window.confirm("Are you sure you want to delete this department?"))
 			return;
 		try {
-			await axios.delete(`${API_BASE}/api/departments/${deptId}`, {
+			await apiClient.delete(`/api/departments/${deptId}`, {
 				headers: getHeaders(),
 			});
 			setDepartments(departments.filter((d) => d.id !== deptId));
@@ -425,12 +463,12 @@ export default function AdminSettings() {
 
 	const handleAssignHead = async (deptId, managerId) => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/departments/${deptId}`,
+			await apiClient.put(
+				`/api/departments/${deptId}`,
 				{ manager_id: managerId ? parseInt(managerId) : null },
 				{ headers: getHeaders() },
 			);
-			const res = await axios.get(`${API_BASE}/api/settings/departments`, {
+			const res = await apiClient.get(`/api/settings/departments`, {
 				headers: getHeaders(),
 			});
 			setDepartments(res.data);
@@ -441,12 +479,12 @@ export default function AdminSettings() {
 
 	const handleSaveDeptEdit = async (deptId) => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/departments/${deptId}`,
+			await apiClient.put(
+				`/api/departments/${deptId}`,
 				{ member_count: parseInt(editMemberCount) || 0 },
 				{ headers: getHeaders() },
 			);
-			const res = await axios.get(`${API_BASE}/api/settings/departments`, {
+			const res = await apiClient.get(`/api/settings/departments`, {
 				headers: getHeaders(),
 			});
 			setDepartments(res.data);
@@ -461,8 +499,8 @@ export default function AdminSettings() {
 	// Break Times Handlers
 	const saveBreakTimes = async () => {
 		try {
-			await axios.put(
-				`${API_BASE}/api/settings/break_times`,
+			await apiClient.put(
+				`/api/settings/break_times`,
 				{
 					lunch_break: lunchBreak,
 					coffee_break: coffeeBreak,
@@ -569,16 +607,26 @@ export default function AdminSettings() {
 
 									<div className="dept-form-group">
 										<label>Number of Employees</label>
-										<input type="number" placeholder="Enter number" />
+										<input
+											type="number"
+											placeholder="Enter number"
+											value={newDeptMemberCount}
+											onChange={(e) => setNewDeptMemberCount(e.target.value)}
+										/>
 									</div>
 
 									<div className="dept-form-group">
 										<label>Department Head</label>
-										<select>
+										<select
+											value={newDeptManagerId}
+											onChange={(e) => setNewDeptManagerId(e.target.value)}
+										>
 											<option value="">Select</option>
-											<option>Lakshmi</option>
-											<option>Sakshi</option>
-											<option>Asolin</option>
+											{teamMembers.map((member) => (
+												<option key={member.id} value={member.id}>
+													{member.name}
+												</option>
+											))}
 										</select>
 									</div>
 								</div>
@@ -633,7 +681,7 @@ export default function AdminSettings() {
 							<div>
 								<h3>General</h3>
 								<div className="form-row-grid">
-									{/* Row 1 */}
+									{/* Language */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("systemLanguage")}</label>
 										<div className="custom-select-wrapper">
@@ -648,20 +696,27 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
+									{/* User Signup Toggle */}
 									<div className="form-group-custom">
-										<label className="section-label-top">{t("userSignup")}</label>
+										<label className="section-label-top">
+											{t("userSignup")}
+										</label>
 										<div className="setting-item-underline">
 											<span className="setting-muted-text">
 												Allow new users to sign up
 											</span>
 											<label className="switch">
-												<input type="checkbox" defaultChecked />
+												<input
+													type="checkbox"
+													checked={allowSignup}
+													onChange={() => setAllowSignup(!allowSignup)}
+												/>
 												<span className="slider round"></span>
 											</label>
 										</div>
 									</div>
 
-									{/* Row 2 */}
+									{/* Admin Dashboard Theme */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("dashboardTheme")}</label>
 										<div className="theme-input-box0">
@@ -681,16 +736,21 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
+									{/* Default User Theme */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("defaultThemeforUsers")}</label>
-										<div className="theme-input-box0">
-											<span className="setting-muted-text">
-												Light Theme
-											</span>
+										<div className="custom-select-wrapper">
+											<select
+												value={userTheme}
+												onChange={(e) => setUserTheme(e.target.value)}
+											>
+												<option value="light">Light Theme</option>
+												<option value="dark">Dark Theme</option>
+											</select>
 										</div>
 									</div>
 
-									{/* Row 3 */}
+									{/* System Font */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("systemFont")}</label>
 										<div className="custom-select-wrapper">
@@ -706,32 +766,6 @@ export default function AdminSettings() {
 									</div>
 
 									<div className="form-column">
-										<div className="form-groupz">
-											<label>{t("userSignup")}</label>
-											<div className="theme-input-box0">
-												<span className="theme-label">
-													Allow new users to sign up
-												</span>
-												<label className="switch">
-													<input
-														type="checkbox"
-														checked={allowSignup}
-														onChange={() => setAllowSignup(!allowSignup)}
-													/>
-													<span className="slider round"></span>
-												</label>
-											</div>
-										</div>
-										<div className="form-group1">
-											<label>{t("defaultThemeforUsers")}</label>
-											<select
-												value={userTheme}
-												onChange={(e) => setUserTheme(e.target.value)}
-											>
-												<option value="light">Light Theme</option>
-												<option value="dark">Dark Theme</option>
-											</select>
-										</div>
 										<div className="form-group2">
 											<label>
 												{t("dateFormat")}
@@ -752,7 +786,7 @@ export default function AdminSettings() {
 										</div>
 									</div>
 
-									{/* Row 4 */}
+									{/* Allow Manager Edit Toggle */}
 									<div className="form-group-custom">
 										<label className="section-label-top">{t("allowManagertoeditemployeerecord")}</label>
 										<div className="theme-input-box0">
@@ -771,8 +805,15 @@ export default function AdminSettings() {
 											</label>
 										</div>
 									</div>
+
 									<div className="form-group-custom"></div>
 								</div>
+
+								{saveMessage && (
+									<div className="save-message" style={{ marginTop: "20px", color: "green", fontWeight: "bold" }}>
+										{saveMessage}
+									</div>
+								)}
 							</div>
 						)}
 
@@ -894,11 +935,22 @@ export default function AdminSettings() {
 									</p>
 									<div className="profile-upload-container">
 										<img
-											src={profileimg}
+											src={profileImage}
 											alt="Profile"
 											className="profile-preview-circle"
 										/>
-										<button type="button" className="btn-upload-outline">
+										<input
+											type="file"
+											accept="image/jpeg, image/png"
+											style={{ display: "none" }}
+											ref={profileInputRef}
+											onChange={handleProfileImageUpload}
+										/>
+										<button
+											type="button"
+											className="btn-upload-outline"
+											onClick={() => profileInputRef.current && profileInputRef.current.click()}
+										>
 											<BsUpload className="upload-icon" /> Upload
 										</button>
 									</div>
@@ -1136,14 +1188,24 @@ export default function AdminSettings() {
 																		}}
 																		title="Edit"
 																	>
-																		<FaPencilAlt />
+																		<img
+																			className="pen-icon"
+																			src={penicon}
+																			alt="edit"
+																		/>
 																	</button>
 																	<button
-																		className="dept-icon-btn dept-delete-btn"
-																		onClick={() => handleDeleteDepartment(dept.id)}
+																		className="action-btn delete"
+																		onClick={() =>
+																			handleDeleteDepartment(dept.id)
+																		}
 																		title="Delete"
 																	>
-																		<FaTrashAlt />
+																		<img
+																			className="deletebox-icon"
+																			src={deletebox}
+																			alt="delete"
+																		/>
 																	</button>
 																</div>
 															)}
@@ -1216,6 +1278,13 @@ export default function AdminSettings() {
 											</div>
 										</div>
 									</div>
+
+									<button
+										className="btn-create-new1"
+										onClick={() => setShowBreakModal(true)}
+									>
+										Create new
+									</button>
 
 									{/* Create New Break Time Modal */}
 									{showBreakModal && (

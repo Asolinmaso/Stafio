@@ -20,6 +20,7 @@ import Vector3 from "../../../assets/Vector3.svg";
 import arrow3 from "../../../assets/arrow3.png";
 import maleteam from "../../../assets/maleteam.png";
 import clock from "../../../assets/clock.gif";
+import apiClient from "../../../utils/apiClient";
 import axios from "axios";
 import "./EmployeeDashboard.css";
 import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
@@ -77,14 +78,47 @@ const EmployeeDashboard = () => {
   const [username, setUsername] = useState("");
   const [userId,   setUserId]   = useState(null);
 
-  // ── Clock ─────────────────────────────────────────────────────────────
+  // ✅ Load userId from localStorage
+  useEffect(() => {
+    const storedId = localStorage.getItem("userId");
+    if (storedId && !userId) setUserId(storedId);
+  }, [userId]);
+
+  // ✅ Fetch username from backend
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("employee_username"); // or "employeeUsername"
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  // ✅ Break times
+  const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
+  const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
+
+  useEffect(() => {
+    const fetchBreakTimes = async () => {
+      try {
+        const res = await apiClient.get("/api/settings/break_times");
+        if (res.data) {
+          if (res.data.lunch_break) setLunchBreakStr(res.data.lunch_break);
+          if (res.data.coffee_break) setCoffeeBreakStr(res.data.coffee_break);
+        }
+      } catch (err) {
+        console.error("Error fetching break times:", err);
+      }
+    };
+    fetchBreakTimes();
+  }, []);
+
+  // ✅ Punch In/Out
+  const [isPunchedIn, setIsPunchedIn] = useState(false);
+  const [punchInTime, setPunchInTime] = useState(null);
+  const [totalHours, setTotalHours] = useState("0:00:00");
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
 
   // ── Punch state ───────────────────────────────────────────────────────
-  const [isPunchedIn,        setIsPunchedIn]        = useState(false);
-  const [punchInTime,        setPunchInTime]        = useState(null);
-  const [totalHours,         setTotalHours]         = useState("00:00:00");
   const [isBreak,            setIsBreak]            = useState(false);
   const [activeBreak,        setActiveBreak]        = useState(null);
   const [showAlert,          setShowAlert]          = useState(false);
@@ -289,18 +323,16 @@ const EmployeeDashboard = () => {
     if (!userId) return;
 
     const fetchDashboard = async () => {
-      setDashboardLoading(true);
-      try {
-        const res = await axios.get(`${BASE_URL}/dashboard`, {
-          headers: { "X-User-ID": userId },
-        });
-        setDashboardData(res.data);
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-      } finally {
-        setDashboardLoading(false);
-      }
-    };
+  setDashboardLoading(true);
+  try {
+    const response = await apiClient.get("/dashboard");
+    setDashboardData(response.data);
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+  } finally {
+    setDashboardLoading(false); // ✅ Always runs
+  }
+};
 
     // ── Fetch leave notification ──────────────────────────────────────
     const fetchLeaveNotification = async () => {
@@ -554,9 +586,12 @@ const EmployeeDashboard = () => {
                     ) : (
                       /* ── STATE 2 : Punched in ── */
                       <>
-                        <h2>{currentTime} , {currentDate}</h2>
-                        <p>Lunch Break 1:00 PM - 2:00 PM &amp; Coffee Break 4:00 PM - 4:15 PM</p>
-
+                        <h2>
+                          {currentTime} , {currentDate}
+                        </h2>
+                        <p>
+                          Lunch Break {lunchBreakStr} & Coffee Break {coffeeBreakStr}
+                        </p>
                         <div className="punch-info-box">
                           <div className="info-item">
                             <span>Check In :</span>{" "}

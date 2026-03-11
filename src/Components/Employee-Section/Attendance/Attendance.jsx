@@ -5,6 +5,9 @@ import Topbar from "../Topbar";
 import "./Attendance.css";
 /* no react-icons needed for cards */
 import axios from "axios";
+import { FaCheck } from "react-icons/fa";
+import apiClient from "../../../utils/apiClient";
+import "bootstrap-icons/font/bootstrap-icons.css"; // ✅ Needed for the filter icon
 
 const Attendance = () => {
   const navigate = useNavigate();
@@ -24,16 +27,21 @@ const Attendance = () => {
       try {
         const userId =
           localStorage.getItem("employee_user_id") ||
-          sessionStorage.getItem("current_user_id");
+          localStorage.getItem("current_user_id");
 
-        const [attRes, statsRes] = await Promise.all([
-          axios.get("http://127.0.0.1:5001/api/attendance",       { headers: { "X-User-ID": userId } }),
-          axios.get("http://127.0.0.1:5001/api/attendance_stats", { headers: { "X-User-ID": userId } }),
-        ]);
-        setAllData(attRes.data);
-        setStats(statsRes.data);
-      } catch (err) {
-        console.error("Attendance fetch error:", err);
+        // Fetch attendance records
+        const response = await apiClient.get("/api/attendance", {
+          headers: { "X-User-ID": userId },
+        });
+        setAllData(response.data);
+
+        // Fetch attendance stats
+        const statsResponse = await apiClient.get("/api/attendance_stats", {
+          headers: { "X-User-ID": userId },
+        });
+        setStats(statsResponse.data);
+      } catch (error) {
+        console.error("Error fetching attendance:", error);
       }
     };
     fetchData();

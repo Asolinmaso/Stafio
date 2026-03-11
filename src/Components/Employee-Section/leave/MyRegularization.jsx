@@ -4,7 +4,7 @@ import { FaEdit, FaTimesCircle, FaFilter } from "react-icons/fa";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import illustration from "../../../assets/timemgnt.png";
 
 export default function MyRegularization() {
@@ -25,18 +25,15 @@ export default function MyRegularization() {
       try {
         const userId =
           localStorage.getItem("employee_user_id") ||
-          sessionStorage.getItem("current_user_id");
+          localStorage.getItem("current_user_id");
 
         if (!userId) return;
 
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/myregularization",
-          {
-            headers: {
-              "X-User-ID": userId,
-            },
+        const response = await apiClient.get("/api/myregularization", {
+          headers: {
+            "X-User-ID": userId,
           },
-        );
+        });
 
         setRegularizationData(response.data);
       } catch (error) {
@@ -60,7 +57,9 @@ export default function MyRegularization() {
   }, [showModal]);
 
   const handleSubmitRegularization = async () => {
-    const userId = localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id");
+    const userId =
+      localStorage.getItem("employee_user_id") ||
+      localStorage.getItem("current_user_id");
 
     // Frontend validation
     if (!formData.date) {
@@ -71,16 +70,14 @@ export default function MyRegularization() {
     try {
       if (isEdit) {
         // ✏️ EDIT
-        await axios.put(
-          `http://127.0.0.1:5001/api/regularization/${editId}`,
-          formData,
-          { headers: { "X-User-ID": userId } },
-        );
+        await apiClient.put(`/api/regularization/${editId}`, formData, {
+          headers: { "X-User-ID": userId },
+        });
 
         alert("Regularization updated successfully");
       } else {
         // ➕ ADD
-        await axios.post("http://127.0.0.1:5001/api/regularization", formData, {
+        await apiClient.post("/api/regularization", formData, {
           headers: { "X-User-ID": userId },
         });
 
@@ -100,15 +97,14 @@ export default function MyRegularization() {
       });
 
       // Refresh table
-      const res = await axios.get(
-        "http://127.0.0.1:5001/api/myregularization",
-        { headers: { "X-User-ID": userId } },
-      );
+      const res = await apiClient.get("/api/myregularization", {
+        headers: { "X-User-ID": userId },
+      });
       setRegularizationData(res.data);
     } catch (error) {
       alert(
         error.response?.data?.message ||
-        "Something went wrong. Please try again.",
+          "Something went wrong. Please try again.",
       );
     }
   };
@@ -123,7 +119,7 @@ export default function MyRegularization() {
     setFormData({
       user_id:
         localStorage.getItem("employee_user_id") ||
-        sessionStorage.getItem("current_user_id"),
+        localStorage.getItem("current_user_id"),
       date: datePart.split("-").reverse().join("-"),
       session_type: row.date.split("/")[1]?.trim() || "Full Day",
       attendance_type: row.attendanceType,
@@ -138,9 +134,11 @@ export default function MyRegularization() {
 
     if (!window.confirm("Delete this regularization?")) return;
 
-    const userId = localStorage.getItem("employee_user_id") || sessionStorage.getItem("current_user_id");
+    const userId =
+      localStorage.getItem("employee_user_id") ||
+      localStorage.getItem("current_user_id");
 
-    await axios.delete(`http://127.0.0.1:5001/api/regularization/${id}`, {
+    await apiClient.delete(`/api/regularization/${id}`, {
       headers: { "X-User-ID": userId },
     });
 
@@ -167,7 +165,7 @@ export default function MyRegularization() {
               setFormData({
                 user_id:
                   localStorage.getItem("employee_user_id") ||
-                  sessionStorage.getItem("current_user_id"),
+                  localStorage.getItem("current_user_id"),
                 date: "",
                 session_type: "Full Day",
                 attendance_type: "Present",
@@ -213,12 +211,13 @@ export default function MyRegularization() {
                     <td>{row.reason}</td>
                     <td>
                       <span
-                        className={`status-badge ${row.status === "Approved"
-                          ? "approved"
-                          : row.status === "Pending"
-                            ? "pending"
-                            : "rejected"
-                          }`}
+                        className={`status-badge ${
+                          row.status === "Approved"
+                            ? "approved"
+                            : row.status === "Pending"
+                              ? "pending"
+                              : "rejected"
+                        }`}
                       >
                         {row.status}
                       </span>

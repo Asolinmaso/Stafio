@@ -7,9 +7,7 @@ import Topbar from "../Topbar";
 import group10 from "../../../assets/Group10.png";
 import AttendanceCard from "../Dashboard/AttendanceCard";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
-
-const API_BASE = "http://127.0.0.1:5001";
+import apiClient from "../../../utils/apiClient";
 
 export default function LeaveReport() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
@@ -22,7 +20,7 @@ export default function LeaveReport() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/api/employeeslist`);
+        const res = await apiClient.get("/api/employeeslist");
         setEmployees(res.data);
       } catch (err) {
         console.error("Error fetching employees", err);
@@ -42,8 +40,8 @@ export default function LeaveReport() {
     const fetchLeaveBalance = async () => {
       setLoadingBalance(true);
       try {
-        const res = await axios.get(
-          `${API_BASE}/api/employee_leave_balance/${selectedEmployeeId}`,
+        const res = await apiClient.get(
+          `/api/employee_leave_balance/${selectedEmployeeId}`,
           {
             headers: {
               "X-User-Role": "admin",
@@ -105,7 +103,7 @@ export default function LeaveReport() {
     const fetchAttendanceData = async () => {
       setLoadingAttendance(true);
       try {
-        const res = await axios.get(`${API_BASE}/api/attendance_stats`, {
+        const res = await apiClient.get("/api/attendance_graph_stats", {
           params: { user_id: selectedEmployeeId },
           headers: {
             "X-User-Role": "admin",
@@ -114,42 +112,27 @@ export default function LeaveReport() {
         });
 
         // Transform API response to match AttendanceCard format
-        // Assuming API returns: { months: [...], attendance_percentage: 85 }
         const monthlyData = res.data.months || [];
+        const weeksData = res.data.weeks || [];
+        const daysData = res.data.days || [];
 
-        // Create monthly data (last 5 months)
-        const months = monthlyData.slice(-5).map((item) => ({
+        // Create monthly data
+        const months = monthlyData.map((item) => ({
           label: item.month_name || item.month,
           value: Math.round(item.attendance_percentage || 0),
         }));
 
-        // For now, use sample data for weeks and days until backend provides it
-        const weeks = [
-          {
-            label: "W1",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-          {
-            label: "W2",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-          {
-            label: "W3",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-          {
-            label: "W4",
-            value: Math.round(res.data.attendance_percentage || 0),
-          },
-        ];
+        // Create weekly data
+        const weeks = weeksData.map((item) => ({
+          label: item.label,
+          value: Math.round(item.value || 0),
+        }));
 
-        const days = [
-          { label: "Mon", value: 90 },
-          { label: "Tue", value: 85 },
-          { label: "Wed", value: 88 },
-          { label: "Thu", value: 92 },
-          { label: "Fri", value: 95 },
-        ];
+        // Create daily data
+        const days = daysData.map((item) => ({
+          label: item.label,
+          value: Math.round(item.value || 0),
+        }));
 
         setAttendanceDataSets({ months, weeks, days });
       } catch (err) {

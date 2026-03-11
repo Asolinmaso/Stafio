@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import {
   Container,
   Card,
@@ -22,8 +22,6 @@ import {
 } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
 
-const API_BASE = "http://127.0.0.1:5001";
-
 const MonthlyPerformanceReport = () => {
   const [loading, setLoading] = useState(true);
   const [reportData, setReportData] = useState([]);
@@ -37,8 +35,8 @@ const MonthlyPerformanceReport = () => {
     try {
       setLoading(true);
       const [performanceRes, summaryRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/performance`),
-        axios.get(`${API_BASE}/api/performance/summary`),
+        apiClient.get(`/api/performance`),
+        apiClient.get(`/api/performance/summary`),
       ]);
 
       // Map API data to expected format
@@ -201,7 +199,9 @@ const MonthlyPerformanceReport = () => {
                         <Badge bg="info" className="me-2 px-3">
                           {topFeedbackPerformer.feedbackScore} ⭐
                         </Badge>
-                        <span className="fw-bold">{topFeedbackPerformer.name}</span>
+                        <span className="fw-bold">
+                          {topFeedbackPerformer.name}
+                        </span>
                       </div>
                     </ListGroup.Item>
                   </ListGroup>
@@ -216,11 +216,28 @@ const MonthlyPerformanceReport = () => {
                 </Card.Header>
                 <Card.Body>
                   <h6 className="mt-2 fw-bold">Team Productivity</h6>
-                  <ProgressBar now={80} label={`${80}%`} variant="success" className="mb-4" style={{ height: '10px' }} />
+                  <ProgressBar
+                    now={80}
+                    label={`${80}%`}
+                    variant="success"
+                    className="mb-4"
+                    style={{ height: "10px" }}
+                  />
                   <h6 className="mt-3 fw-bold">Project Delivery Rate</h6>
-                  <ProgressBar now={90} label={`${90}%`} variant="primary" className="mb-4" style={{ height: '10px' }} />
+                  <ProgressBar
+                    now={90}
+                    label={`${90}%`}
+                    variant="primary"
+                    className="mb-4"
+                    style={{ height: "10px" }}
+                  />
                   <h6 className="mt-3 fw-bold">Average Feedback Rating</h6>
-                  <ProgressBar now={avgFeedbackScore * 20} label={`${avgFeedbackScore}⭐`} variant="warning" style={{ height: '10px' }} />
+                  <ProgressBar
+                    now={avgFeedbackScore * 20}
+                    label={`${avgFeedbackScore}⭐`}
+                    variant="warning"
+                    style={{ height: "10px" }}
+                  />
                 </Card.Body>
               </Card>
             </Col>
@@ -249,10 +266,14 @@ const MonthlyPerformanceReport = () => {
                         <td className="py-3">{employee.id}</td>
                         <td className="py-3 fw-medium">{employee.name}</td>
                         <td className="py-3">
-                          <Badge bg="primary" className="px-3">{employee.tasksCompleted}</Badge>
+                          <Badge bg="primary" className="px-3">
+                            {employee.tasksCompleted}
+                          </Badge>
                         </td>
                         <td className="py-3">
-                          <Badge bg="info" className="px-3">{employee.projectsCompleted}</Badge>
+                          <Badge bg="info" className="px-3">
+                            {employee.projectsCompleted}
+                          </Badge>
                         </td>
                         <td className="py-3">
                           <Badge bg="warning" text="dark" className="px-3">

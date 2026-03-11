@@ -6,7 +6,7 @@ import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 import timemgnt from "../../../assets/Timemgnt.png";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 
 export default function RegularizationApproval() {
   const [data, setData] = useState([]);
@@ -32,9 +32,7 @@ export default function RegularizationApproval() {
   useEffect(() => {
     const fetchRegularizationApproval = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/regularizationapproval"
-        );
+        const response = await apiClient.get("/api/regularizationapproval");
         setData(response.data);
       } catch (error) {
         console.error("Error fetching attendance data:", error);
@@ -76,17 +74,19 @@ export default function RegularizationApproval() {
   const handleApproveSubmit = async () => {
     if (selectedLeave) {
       try {
-        const userId = sessionStorage.getItem("current_user_id");
-        const userRole = sessionStorage.getItem("current_role") || "admin";
-        await axios.put(
-          `http://127.0.0.1:5001/api/admin/regularization/${selectedLeave.id}`,
+        const userId = localStorage.getItem("current_user_id");
+        const userRole = localStorage.getItem("current_role") || "admin";
+        await apiClient.put(
+          `/api/admin/regularization/${selectedLeave.id}`,
           { status: "Approved", reason: modalReason },
-          { headers: { "X-User-ID": userId, "X-User-Role": userRole } }
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
         setData((prev) =>
           prev.map((item) =>
-            item.id === selectedLeave.id ? { ...item, status: "Approved" } : item
-          )
+            item.id === selectedLeave.id
+              ? { ...item, status: "Approved" }
+              : item,
+          ),
         );
       } catch (error) {
         console.error("Error approving regularization:", error);
@@ -100,17 +100,19 @@ export default function RegularizationApproval() {
   const handleRejectSubmit = async () => {
     if (selectedLeave) {
       try {
-        const userId = sessionStorage.getItem("current_user_id");
-        const userRole = sessionStorage.getItem("current_role") || "admin";
-        await axios.put(
-          `http://127.0.0.1:5001/api/admin/regularization/${selectedLeave.id}`,
+        const userId = localStorage.getItem("current_user_id");
+        const userRole = localStorage.getItem("current_role") || "admin";
+        await apiClient.put(
+          `/api/admin/regularization/${selectedLeave.id}`,
           { status: "Rejected", reason: modalReason },
-          { headers: { "X-User-ID": userId, "X-User-Role": userRole } }
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
         setData((prev) =>
           prev.map((item) =>
-            item.id === selectedLeave.id ? { ...item, status: "Rejected" } : item
-          )
+            item.id === selectedLeave.id
+              ? { ...item, status: "Rejected" }
+              : item,
+          ),
         );
       } catch (error) {
         console.error("Error rejecting regularization:", error);
@@ -125,19 +127,20 @@ export default function RegularizationApproval() {
   const parseDate = (dateStr) => {
     if (!dateStr) return new Date(0);
     const parts = dateStr.split("-");
-    if (parts.length === 3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    if (parts.length === 3)
+      return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
     return new Date(dateStr);
   };
 
   const filteredAndSortedLeaves = data
     .filter((leave) =>
-      leave.name.toLowerCase().includes(searchTerm.toLowerCase())
+      leave.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .filter((leave) =>
-      attendanceType === "All" ? true : leave.attendance === attendanceType
+      attendanceType === "All" ? true : leave.attendance === attendanceType,
     )
     .filter((leave) =>
-      filterStatus === "All" ? true : leave.status === filterStatus
+      filterStatus === "All" ? true : leave.status === filterStatus,
     )
     .sort((a, b) => {
       const dateA = parseDate(a.requestDate);
@@ -294,12 +297,13 @@ export default function RegularizationApproval() {
                       <div className="request-status">
                         <span>{emp.requestDate}</span>
                         <p
-                          className={`status-badge ${emp.status === "Pending"
+                          className={`status-badge ${
+                            emp.status === "Pending"
                               ? "pending"
                               : emp.status === "Rejected"
                                 ? "rejected"
                                 : "approved"
-                            }`}
+                          }`}
                         >
                           {emp.status}
                         </p>
@@ -322,7 +326,10 @@ export default function RegularizationApproval() {
           {/* Pagination */}
           <div className="pagination">
             <div className="showing">
-              Showing <select><option>07</option></select>
+              Showing{" "}
+              <select>
+                <option>07</option>
+              </select>
             </div>
             <div className="page-btns">
               <button className="prev">Prev</button>
@@ -406,23 +413,25 @@ export default function RegularizationApproval() {
                 <img src={timemgnt} alt="Time Management" />
               </div>
             </div>
-            <div className="ra-modal-footer">
-              <span className="ra-watermark">Viewdetailsregularization</span>
-              <div className="ra-footer-btns">
-                <button
-                  className="ra-approve-pill-btn"
-                  onClick={handleApproveClick}
-                >
-                  Approve
-                </button>
-                <button
-                  className="ra-reject-pill-btn"
-                  onClick={handleRejectClick}
-                >
-                  Reject
-                </button>
+              <div className="ra-modal-footer">
+                <span className="ra-watermark">Viewdetailsregularization</span>
+                {selectedLeave && selectedLeave.status && selectedLeave.status.toLowerCase() === "pending" ? (
+                  <div className="ra-footer-btns">
+                    <button
+                      className="ra-approve-pill-btn"
+                      onClick={handleApproveClick}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="ra-reject-pill-btn"
+                      onClick={handleRejectClick}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                ) : null}
               </div>
-            </div>
           </div>
         </div>
       )}

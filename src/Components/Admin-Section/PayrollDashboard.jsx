@@ -1,6 +1,6 @@
 // src/components/AdminPayrollDashboard.js
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import {
   Container,
   Row,
@@ -34,8 +34,6 @@ ChartJS.register(
   Legend,
 );
 
-const API_BASE = "http://127.0.0.1:5001";
-
 const AdminPayrollDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
@@ -50,8 +48,8 @@ const AdminPayrollDashboard = () => {
     try {
       setLoading(true);
       const [summaryRes, payrollRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/payroll/summary`),
-        axios.get(`${API_BASE}/api/payroll`),
+        apiClient.get(`/api/payroll/summary`),
+        apiClient.get(`/api/payroll`),
       ]);
       setSummary(summaryRes.data);
       setEmployees(payrollRes.data);
@@ -134,7 +132,7 @@ const AdminPayrollDashboard = () => {
   // Function to mark employee as Paid
   const markAsPaid = async (payrollId) => {
     try {
-      await axios.put(`${API_BASE}/api/payroll/${payrollId}/pay`);
+      await apiClient.put(`/api/payroll/${payrollId}/pay`);
       // Refresh data
       fetchPayrollData();
     } catch (error) {

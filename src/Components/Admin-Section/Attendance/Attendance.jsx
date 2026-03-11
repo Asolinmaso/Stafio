@@ -4,7 +4,7 @@ import "./Attendance.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
 
 const Attendance = () => {
@@ -47,8 +47,8 @@ const Attendance = () => {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:5001/api/attendancelist"
+        const response = await apiClient.get(
+          "/api/attendancelist"
         );
         setAttendanceData(response.data);
       } catch (error) {
@@ -59,11 +59,15 @@ const Attendance = () => {
     fetchAttendanceData();
   }, []);
 
-  // ✅ ONLY CHANGE: set today as default date
+  // ✅ ONLY CHANGE: set today as default date (local time)
   useEffect(() => {
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    setSelectedDate(today);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    setSelectedDate(`${year}-${month}-${day}`);
   }, []);
+
 
   // ✅ ONLY CHANGE: format date like "07 Feb 2026"
   const formatDisplayDate = (dateStr) => {
@@ -118,9 +122,12 @@ const Attendance = () => {
     setSortDays(7);
     setSortOrder("newest");
 
-    // ✅ ONLY CHANGE: reset date also
-    const today = new Date().toISOString().split("T")[0];
-    setSelectedDate(today);
+    // ✅ ONLY CHANGE: reset date also (local time)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    setSelectedDate(`${year}-${month}-${day}`);
   };
 
   const filteredAttendance = attendanceData
@@ -155,8 +162,24 @@ const Attendance = () => {
       return true;
     })
 
-    // FILTER BY LAST N DAYS
+    // FILTER BY MAIN SELECTED DATE (Daily Date)
     .filter((record) => {
+      if (!selectedDate) return true;
+      const recordDate = parseRecordDate(record.date);
+      const pickedDate = toDateObj(selectedDate);
+      if (!recordDate || !pickedDate) return true;
+
+      return (
+        recordDate.getDate() === pickedDate.getDate() &&
+        recordDate.getMonth() === pickedDate.getMonth() &&
+        recordDate.getFullYear() === pickedDate.getFullYear()
+      );
+    })
+
+    // FILTER BY LAST N DAYS (Skip if a specific date is picked in the header)
+    .filter((record) => {
+      if (selectedDate) return true;
+
       const recordDate = parseRecordDate(record.date);
       if (!recordDate) return true;
 
@@ -232,22 +255,31 @@ const Attendance = () => {
                 />
               </div>
 
-              {/* ✅ ONLY CHANGE: DATE PICKER ACCESS */}
-              <div
-                className="date-picker"
-                style={{ cursor: "pointer" }}
-                onClick={() => dateInputRef.current.click()}
-              >
+              <div className="date-picker">
                 <FaCalendarAlt />
                 <span>{formatDisplayDate(selectedDate)}</span>
 
-                {/* hidden input */}
                 <input
                   ref={dateInputRef}
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  style={{ display: "none" }}
+                  onClick={(e) => {
+                    if (e.target.showPicker) {
+                      e.target.showPicker();
+                    }
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    opacity: 0,
+                    cursor: "pointer",
+                    zIndex: 10,
+                  }}
+                  title="Select Date"
                 />
               </div>
 

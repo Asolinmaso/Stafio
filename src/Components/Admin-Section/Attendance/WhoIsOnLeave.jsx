@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaFilter, FaCalendarAlt } from "react-icons/fa";
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
 import "./WhoIsOnLeave.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 
-const API_BASE = "http://127.0.0.1:5001";
 const WhoIsOnLeave = () => {
   const [currentDate, setCurrentDate] = useState("");
   const [currentTime, setCurrentTime] = useState("");
@@ -38,7 +37,7 @@ const WhoIsOnLeave = () => {
     const fetchLeaveData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE}/api/who_is_on_leave`);
+        const response = await apiClient.get(`/api/who_is_on_leave`);
         setLeaveList(response.data);
       } catch (error) {
         console.error("Error fetching leave data:", error);
@@ -49,6 +48,26 @@ const WhoIsOnLeave = () => {
     };
     fetchLeaveData();
   }, []);
+  // ✅ ONLY CHANGE: set today as default date (local time)
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    setSelectedDate(`${year}-${month}-${day}`);
+  }, []);
+
+  // ✅ ONLY CHANGE: format date like "07 Feb 2026"
+  const formatDisplayDate = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   // Update time every second
   useEffect(() => {
     const updateDate = () => {
@@ -58,7 +77,7 @@ const WhoIsOnLeave = () => {
         month: "short",
         year: "numeric",
       });
-      setCurrentDate(date);
+      setCurrentTime(now.toLocaleTimeString()); // Adding time update as well
     };
 
     updateDate();
@@ -217,30 +236,37 @@ const WhoIsOnLeave = () => {
                 className="whoisleave-search"
               />
 
-              {/* ✅ FIXED Calendar with working icon */}
-              <div className="whoisleave-date-picker">
+              {/* ✅ NATIVE DATE PICKER OVERLAY (MATCHES ATTENDANCE) */}
+              <div className="whoisleave-date-picker" style={{ position: "relative" }}>
+                <FaCalendarAlt className="calendar-icon" />
+                <span style={{ fontSize: "14px", fontWeight: "500", marginLeft: "8px" }}>
+                  {formatDisplayDate(selectedDate)}
+                </span>
                 <input
                   ref={dateRef}
                   type="date"
                   className="whoisleave-date-input"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                />
-
-                <FaCalendarAlt
-                  className="calendar-icon"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Open calendar"
-                  onClick={() => dateRef.current?.showPicker()}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      dateRef.current?.showPicker();
+                  onClick={(e) => {
+                    if (e.target.showPicker) {
+                      e.target.showPicker();
                     }
                   }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    opacity: 0,
+                    cursor: "pointer",
+                    zIndex: 10,
+                    border: "none",
+                  }}
+                  title="Select Date"
                 />
               </div>
-
               <button
                 className="whoisleave-view-btn"
                 onClick={() => navigate("/attendance")}

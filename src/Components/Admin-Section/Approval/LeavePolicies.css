@@ -5,20 +5,20 @@
   min-height: 100vh;
 }
 
-.leave-policies-layout .topbar {    /* new */
-     padding-top: 13px !important;    /* modified */
-   padding-bottom: 13px !important;   /* modified */
-  margin-top: -1px !important;           /* modified */
-  margin-left: -6px !important;         /* modified */
-  margin-bottom: 50px !important;   /* new */
+/* .leave-policies-layout .topbar {
+  padding-top: 13px !important;
+  padding-bottom: 13px !important;
+  margin-top: -1px !important;
+  margin-left: -6px !important;
+  margin-bottom: 50px !important;
   padding-bottom: 8px;
-  width: 100% ;            /* modified */
+  width: 100% ;
   display: block;
-}
+} */
 
 .leave-policies-main {
   flex: 1;
-  padding: 20px 30px;
+  padding: 0 25px 25px 25px;
 }
 
 /* ===== Header Section ===== */
@@ -26,7 +26,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 50px 0 50px 10px;
+  margin: 25px 0 25px 0;
 }
 
 .leave-policies-title {
@@ -139,7 +139,8 @@
 .leave-policies-modal-header {
   background: #19bde8;
   color: #fff;
-  padding: 7px 18px;        /* modified */
+  padding: 7px 18px;
+  /* modified */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -147,15 +148,18 @@
 
 .leave-policies-modal-title {
   margin: 0;
-  font-size: 17px;      /* modified */
-  font-weight: 600;     /* modified */
+  font-size: 17px;
+  /* modified */
+  font-weight: 600;
+  /* modified */
 }
 
 .leave-policies-close-btn {
   background: none;
   border: none;
   color: #fff;
-  font-size: 30px ;    /* modified */
+  font-size: 30px;
+  /* modified */
   cursor: pointer;
   padding: 0;
   width: 30px;
@@ -192,7 +196,8 @@
 .leave-policies-field label {
   font-size: 14px;
   font-weight: 500;
-  color: #030303;    /* modified */
+  color: #030303;
+  /* modified */
 }
 
 /* ===== Inputs & Selects ===== */
