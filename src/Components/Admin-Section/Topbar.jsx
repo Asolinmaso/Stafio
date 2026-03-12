@@ -553,9 +553,9 @@ const ProfilePopup = ({ onClose, username }) => {
                 ) : (
                   <p>
                     {experience.expStartDate &&
-                    experience.expEndDate &&
-                    experience.expStartDate !== "0001-01-01" &&
-                    experience.expEndDate !== "0001-01-01"
+                      experience.expEndDate &&
+                      experience.expStartDate !== "0001-01-01" &&
+                      experience.expEndDate !== "0001-01-01"
                       ? `${formatDateDisplay(experience.expStartDate)} – ${formatDateDisplay(experience.expEndDate)}`
                       : "-"}
                   </p>
@@ -858,46 +858,20 @@ const Topbar = () => {
           >
             <img src={stafiologoimg} alt="Logo" className="topbar-img" />
           </div>
-        </div>
 
-        {/* Search box */}
-        <div className="topbar-searches flex-grow-1 mx-3 position-relative">
-          <input
-            type="text"
-            className="form-controler"
-            placeholder="Quick Search..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              console.log(e.target.value);
-            }}
-          />
+          {/* Search box — next to logo */}
+          <div className="topbar-searches position-relative">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              className="form-controler"
+              placeholder="Quick Search..."
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+            />
 
-          {query && (
-            <div className="search-dropdown">
-              {filteredResults.length > 0 ? (
-                filteredResults.map((item, index) => (
-                  <div
-                    key={index}
-                    className="search-item"
-                    onClick={() => handleSelect(item)}
-                  >
-                    <span className="search-type">{item.type}</span>
-                    <span>{item.label}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="search-item no-result">No results found</div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Right side user + bell */}
-        <div className="profile d-flex align-items-center gap-3">
-          <div style={{ cursor: "pointer", position: "relative" }}></div>
-
-          <div className="topbar-searches">
             {query && (
               <div className="search-dropdown">
                 {filteredResults.length > 0 ? (

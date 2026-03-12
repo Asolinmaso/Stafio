@@ -1,37 +1,70 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./ApplyLeave.css";
 import illustration from "../../../assets/Formsbro.png";
 import { FaUpload } from "react-icons/fa";
+import apiClient from "../../../utils/apiClient";
 
 const LeaveRequestForm = ({ onClose }) => {
   const [employeeId, setEmployeeId] = useState("");
+  const [leaveTypes, setLeaveTypes] = useState([]);
 
   const [formData, setFormData] = useState({
     leave_type_id: "",
-    num_days: "",
     start_date: "",
     end_date: "",
     reason: "",
     notify_to: "",
+    day_type: "full",
+    num_days: 0,
   });
 
   useEffect(() => {
     const userId =
       localStorage.getItem("employee_user_id") ||
       localStorage.getItem("current_user_id");
-    const role =
-      localStorage.getItem("employee_role") ||
-      localStorage.getItem("current_role");
 
     setEmployeeId(userId);
+    fetchLeaveTypes();
   }, []);
 
+  const fetchLeaveTypes = async () => {
+    try {
+      const res = await apiClient.get("/api/leave_types");
+      setLeaveTypes(res.data);
+    } catch (error) {
+      console.error("Error fetching leave types:", error);
+    }
+  };
+
+  const calculateDays = (start, end, type) => {
+    if (!start || !end) return 0;
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    const diffTime = endDate - startDate;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+
+    return type === "half" ? diffDays * 0.5 : diffDays;
+  };
+
   const handleChange = (e) => {
-    setFormData({
+    const { name, value } = e.target;
+
+    const updatedData = {
       ...formData,
-      [e.target.name]: e.target.value,
-    });
+      [name]: value,
+    };
+
+    if (name === "start_date" || name === "end_date" || name === "day_type") {
+      updatedData.num_days = calculateDays(
+        name === "start_date" ? value : updatedData.start_date,
+        name === "end_date" ? value : updatedData.end_date,
+        name === "day_type" ? value : updatedData.day_type
+      );
+    }
+
+    setFormData(updatedData);
   };
 
   const handleSubmit = async (e) => {
@@ -40,6 +73,7 @@ const LeaveRequestForm = ({ onClose }) => {
     const userId =
       localStorage.getItem("employee_user_id") ||
       localStorage.getItem("current_user_id");
+
     const role =
       localStorage.getItem("employee_role") ||
       localStorage.getItem("current_role");
@@ -57,11 +91,10 @@ const LeaveRequestForm = ({ onClose }) => {
             "X-User-Role": role,
             "X-User-ID": userId,
           },
-        },
+        }
       );
 
       alert(res.data.message);
-
       window.dispatchEvent(new Event("leaveRequestUpdated"));
       onClose();
     } catch (err) {
@@ -70,100 +103,120 @@ const LeaveRequestForm = ({ onClose }) => {
   };
 
   return (
-    <form className="apply-leave-form" onSubmit={handleSubmit}>
-      {/* LEFT SIDE FORM */}
-      <div className="form-left">
-        <label>Employee ID:</label>
-        <input type="text" value={employeeId} readOnly />
+    <div className="apply-leave-wrapper">
+      <form className="apply-leave-form-emp" onSubmit={handleSubmit}>
+        <div className="form-left">
 
-        <label>Leave Type:</label>
-        <select
-          name="leave_type_id"
-          value={formData.leave_type_id}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select</option>
-          <option value="5">Casual Leave</option>
-          <option value="4">Sick Leave</option>
-          <option value="3">Annual Leave</option>
-        </select>
+          <div className="form-row_pop">
+            <label>Employee ID</label>
+            <input type="text" value={employeeId} readOnly />
+          </div>
 
-        <label>No Of Days:</label>
-        <input
-          type="number"
-          name="num_days"
-          value={formData.num_days}
-          onChange={handleChange}
-          required
-        />
+          <div className="form-row_pop">
+            <label>Leave Type</label>
+            <select
+              name="leave_type_id"
+              value={formData.leave_type_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select</option>
+              {leaveTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <label>Select Date:</label>
-        <div className="app-leave-date-row">
-          <input
-            type="date"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleChange}
-            required
-          />
+          <div className="form-row_pop align-top">
+            <label>Select Date</label>
 
-          <input
-            type="date"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleChange}
-            required
-          />
+            <div className="date-container">
+              <div className="date-label-row">
+                <span>From</span>
+                <span>To</span>
+                <span></span>
+              </div>
+
+              <div className="app-leave-date-row">
+                <input
+                  type="date"
+                  name="start_date"
+                  value={formData.start_date}
+                  onChange={handleChange}
+                  required
+                />
+
+                <input
+                  type="date"
+                  name="end_date"
+                  value={formData.end_date}
+                  onChange={handleChange}
+                  required
+                />
+
+                <select
+                  name="day_type"
+                  value={formData.day_type}
+                  onChange={handleChange}
+                >
+                  <option value="full">Full Day</option>
+                  <option value="half">Half Day</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-row_pop">
+            <label>Notify Others</label>
+
+            <div className="app-leave-notify-row">
+              <select
+                name="notify_to"
+                value={formData.notify_to}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option>Team Lead</option>
+                <option>HR</option>
+              </select>
+
+              <button type="button" className="apply-leave-upload-btn">
+                <FaUpload /> Upload File
+              </button>
+            </div>
+          </div>
+
+          <div className="form-row_pop align-top">
+            <label>Reason</label>
+
+            <textarea
+              name="reason"
+              value={formData.reason}
+              onChange={handleChange}
+              placeholder="ex: I am travelling to"
+              required
+            />
+          </div>
+
         </div>
 
-        <label>Notify Others:</label>
-        <div className="app-leave-notify-row">
-          <select
-            name="notify_to"
-            value={formData.notify_to}
-            onChange={handleChange}
-          >
-            <option value="">Select</option>
-            <option>Team Lead</option>
-            <option>HR</option>
-          </select>
-
-          <button type="button" className="apply-leave-upload-btn">
-            <FaUpload /> Upload File
-          </button>
+        <div className="form-right">
+          <img src={illustration} alt="Leave Illustration" />
         </div>
+      </form>
 
-        <label>Reason:</label>
-        <textarea
-          name="reason"
-          value={formData.reason}
-          onChange={handleChange}
-          placeholder="ex: I am travelling to"
-          required
-        />
-      </div>
-
-      {/* RIGHT SIDE IMAGE */}
-      <div className="form-right">
-        <img src={illustration} alt="Leave Illustration" />
-      </div>
-
-      {/* FOOTER BUTTONS */}
       <div className="app-leave-modal-actions">
-        <button type="submit" className="apply-leave-btn">
+        <button type="submit" className="apply-leave-btn" onClick={handleSubmit}>
           Apply
         </button>
 
-        <button
-          type="button"
-          className="app-leave-cancel-btn"
-          onClick={onClose}
-        >
+        <button type="button" className="app-leave-cancel-btn" onClick={onClose}>
           Cancel
         </button>
       </div>
-    </form>
+    </div>
   );
 };
 
