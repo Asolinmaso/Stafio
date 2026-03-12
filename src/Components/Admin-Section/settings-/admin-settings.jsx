@@ -207,7 +207,7 @@ export default function AdminSettings() {
         setUserTheme(data.user_theme || "light");
         setFont(data.system_font || "default");
         setDateFormat(data.date_format || "DD/MM/YYYY");
-        setAllowSignup(data.allow_signup || false);
+        setAllowSignup(data.allow_signup || true);
         setAllowManagerEdit(data.allow_manager_edit || false);
       } catch (err) {
         console.error("Error fetching general settings:", err);
@@ -955,7 +955,7 @@ export default function AdminSettings() {
                         onChange={handleBasicChange}
                       >
                         <option value="admin">Admin</option>
-                        <option value="user">User</option>
+                        <option value="employee">Employee</option>
                         <option value="manager">Manager</option>
                       </select>
                     </div>

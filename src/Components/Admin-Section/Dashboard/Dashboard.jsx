@@ -45,10 +45,10 @@ const BREAK_DURATION_MIN = 15;
 const formatTime = (date) =>
   date instanceof Date
     ? date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
     : date;
 
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
@@ -340,27 +340,25 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        apiClient
-          .get(`/admin_dashboard`)
-          .then((r) => setAdminDashboardData(r.data));
-      } catch (e) {
-        console.error("Admin dashboard error:", e);
-      }
+        // Admin dashboard data
+        const dashboardRes = await apiClient.get("/admin_dashboard");
+        setAdminDashboardData(dashboardRes.data);
 
-      try {
-        const countRes = await axios.get(
-          `${BASE_URL}/api/admin/pending_counts`,
-        );
+        // Pending counts
+        const countRes = await apiClient.get("/api/admin/pending_counts");
         const { pending_approvals, pending_leave_requests } = countRes.data;
+
         setPendingApprovalsCount(pending_approvals);
         setPendingLeavesCount(pending_leave_requests);
+
         if (pending_approvals > 0 || pending_leave_requests > 0) {
           setShowAdminNotif(true);
         }
       } catch (e) {
-        console.error("Pending counts error:", e);
+        console.error("Admin dashboard error:", e);
       }
     };
+
     fetchAdminData();
   }, []);
 
