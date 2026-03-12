@@ -60,7 +60,7 @@ const Topbar = () => {
         localStorage.getItem("employee_user_id");
       if (!userId) return;
 
-      const res = await axios.get(`${API_BASE}/admin_profile/${userId}`, {
+      const res = await axios.get(`${API_BASE}/employee_profile/${userId}`, {
         headers: {
           "X-User-Role":
             sessionStorage.getItem("current_role") ||
@@ -448,7 +448,7 @@ const Topbar = () => {
                   {profileData?.documents?.length > 0 ? (
                     profileData.documents.map((doc, idx) => (
                       <div className="doc-item" key={idx}>
-                        <FaFilePdf className="text-danger me-2" /> {doc.name}
+                        <FaFilePdf className="text-danger me-2" /> {doc.fileName || doc.name}
                         <FaDownload className="float-end" />
                       </div>
                     ))

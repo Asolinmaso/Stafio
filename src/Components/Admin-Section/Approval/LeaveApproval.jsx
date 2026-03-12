@@ -191,22 +191,22 @@ const LeaveApproval = () => {
               <span className="dots-spinner-icon">
                 <svg viewBox="0 0 32 32" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
                   {/* All 8 dots on exact circle r=12, centre=(16,16), every 45° */}
-                  {/* 12 o'clock  0°   */ }
-                  <circle cx="16"    cy="4"     r="1.4" fill="#f59e0b" opacity="0.25"/>
+                  {/* 12 o'clock  0°   */}
+                  <circle cx="16" cy="4" r="1.4" fill="#f59e0b" opacity="0.25" />
                   {/* 1:30       45°   */}
-                  <circle cx="24.49" cy="7.51"  r="1.6" fill="#f59e0b" opacity="0.38"/>
+                  <circle cx="24.49" cy="7.51" r="1.6" fill="#f59e0b" opacity="0.38" />
                   {/* 3 o'clock  90°   */}
-                  <circle cx="28"    cy="16"    r="2.0" fill="#f59e0b" opacity="0.55"/>
+                  <circle cx="28" cy="16" r="2.0" fill="#f59e0b" opacity="0.55" />
                   {/* 4:30      135°   */}
-                  <circle cx="24.49" cy="24.49" r="2.4" fill="#f59e0b" opacity="0.70"/>
+                  <circle cx="24.49" cy="24.49" r="2.4" fill="#f59e0b" opacity="0.70" />
                   {/* 6 o'clock 180°   */}
-                  <circle cx="16"    cy="28"    r="2.8" fill="#f59e0b" opacity="1.00"/>
+                  <circle cx="16" cy="28" r="2.8" fill="#f59e0b" opacity="1.00" />
                   {/* 7:30      225°   */}
-                  <circle cx="7.51"  cy="24.49" r="2.4" fill="#f59e0b" opacity="0.70"/>
+                  <circle cx="7.51" cy="24.49" r="2.4" fill="#f59e0b" opacity="0.70" />
                   {/* 9 o'clock 270°   */}
-                  <circle cx="4"     cy="16"    r="2.0" fill="#f59e0b" opacity="0.45"/>
+                  <circle cx="4" cy="16" r="2.0" fill="#f59e0b" opacity="0.45" />
                   {/* 10:30     315°   */}
-                  <circle cx="7.51"  cy="7.51"  r="1.6" fill="#f59e0b" opacity="0.30"/>
+                  <circle cx="7.51" cy="7.51" r="1.6" fill="#f59e0b" opacity="0.30" />
                 </svg>
               </span>
               <div className="card-text-block">

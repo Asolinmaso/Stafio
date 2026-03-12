@@ -30,11 +30,6 @@ import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
-const BREAK_SCHEDULES = [
-  { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-  { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
-];
-
 const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
 const MEETING_START_HOUR = 9;
 const MEETING_START_MIN = 0;
@@ -361,7 +356,6 @@ const Dashboard = () => {
 
     fetchAdminData();
   }, []);
-
   // ─────────────────────────────────────────────────────────────────────
   // 6. Meeting status
   // ─────────────────────────────────────────────────────────────────────
@@ -549,18 +543,18 @@ const Dashboard = () => {
         const daysData = res.data.days || [];
 
         const months = monthlyData.map((item) => ({
-          label: item.month_name || item.month,
-          value: Math.round(item.attendance_percentage || 0),
+          label: item.label,
+          value: item.value || 0,
         }));
 
         const weeks = weeksData.map((item) => ({
           label: item.label,
-          value: Math.round(item.value || 0),
+          value: item.value || 0,
         }));
 
         const days = daysData.map((item) => ({
           label: item.label,
-          value: Math.round(item.value || 0),
+          value: item.value || 0,
         }));
 
         setAttendanceDataSets({ months, weeks, days });

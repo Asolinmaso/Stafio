@@ -27,9 +27,11 @@ export const saveSession = (userData, role) => {
   
   // Store JWT tokens in localStorage
   if (userData.access_token) {
+    localStorage.setItem(`auth_token_${role}`, userData.access_token);
     localStorage.setItem("auth_token", userData.access_token);
   }
   if (userData.refresh_token) {
+    localStorage.setItem(`refresh_token_${role}`, userData.refresh_token);
     localStorage.setItem("refresh_token", userData.refresh_token);
   }
   
