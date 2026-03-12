@@ -81,10 +81,16 @@ export default function RegularizationApproval() {
           { status: "Approved", reason: modalReason },
           { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
+        const currentUserName = localStorage.getItem("current_user_name") || "Admin"; // Fallback if name not in storage
         setData((prev) =>
           prev.map((item) =>
             item.id === selectedLeave.id
-              ? { ...item, status: "Approved" }
+              ? {
+                  ...item,
+                  status: "Approved",
+                  approvedBy: item.approvedBy || currentUserName,
+                  approvalReason: modalReason,
+                }
               : item,
           ),
         );
@@ -107,10 +113,16 @@ export default function RegularizationApproval() {
           { status: "Rejected", reason: modalReason },
           { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
+        const currentUserName = localStorage.getItem("current_user_name") || "Admin";
         setData((prev) =>
           prev.map((item) =>
             item.id === selectedLeave.id
-              ? { ...item, status: "Rejected" }
+              ? {
+                  ...item,
+                  status: "Rejected",
+                  approvedBy: item.approvedBy || currentUserName,
+                  rejectionReason: modalReason,
+                }
               : item,
           ),
         );
@@ -399,13 +411,19 @@ export default function RegularizationApproval() {
                 </div>
                 <div className="ra-form-group">
                   <label>Approved By:</label>
-                  <input type="text" value="Sakshi" readOnly />
+                  <input
+                    type="text"
+                    value={selectedLeave.approvedBy || "N/A"}
+                    readOnly
+                  />
                 </div>
                 <div className="ra-form-group ra-reason-group">
                   <label>Reason:</label>
                   <div className="ra-reason-wrapper">
-                    <textarea value="Forgot to Clock In" readOnly />
-                    <span className="ra-char-count">30/30</span>
+                    <textarea value={selectedLeave.reason || ""} readOnly />
+                    <span className="ra-char-count">
+                      {selectedLeave.reason?.length || 0}/30
+                    </span>
                   </div>
                 </div>
               </div>
@@ -414,7 +432,7 @@ export default function RegularizationApproval() {
               </div>
             </div>
             <div className="ra-modal-footer">
-              <span className="ra-watermark">Viewdetailsregularization</span>
+              <span className="ra-watermark"></span>
               {selectedLeave &&
               selectedLeave.status &&
               selectedLeave.status.toLowerCase() === "pending" ? (
