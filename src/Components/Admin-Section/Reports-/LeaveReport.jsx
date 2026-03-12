@@ -44,8 +44,8 @@ export default function LeaveReport() {
           `/api/employee_leave_balance/${selectedEmployeeId}`,
           {
             headers: {
-              "X-User-Role": "admin",
-              "X-User-ID": localStorage.getItem("userId") || "1",
+              "X-User-Role": localStorage.getItem("current_role") || "admin",
+              "X-User-ID": localStorage.getItem("current_user_id") || "1",
             },
           },
         );
@@ -106,8 +106,8 @@ export default function LeaveReport() {
         const res = await apiClient.get("/api/attendance_graph_stats", {
           params: { user_id: selectedEmployeeId },
           headers: {
-            "X-User-Role": "admin",
-            "X-User-ID": localStorage.getItem("userId") || "1",
+            "X-User-Role": localStorage.getItem("current_role") || "admin",
+            "X-User-ID": localStorage.getItem("current_user_id") || "1",
           },
         });
 
@@ -118,20 +118,20 @@ export default function LeaveReport() {
 
         // Create monthly data
         const months = monthlyData.map((item) => ({
-          label: item.month_name || item.month,
-          value: Math.round(item.attendance_percentage || 0),
+          label: item.label,
+          value: item.value || 0,
         }));
 
         // Create weekly data
         const weeks = weeksData.map((item) => ({
           label: item.label,
-          value: Math.round(item.value || 0),
+          value: item.value || 0,
         }));
 
         // Create daily data
         const days = daysData.map((item) => ({
           label: item.label,
-          value: Math.round(item.value || 0),
+          value: item.value || 0,
         }));
 
         setAttendanceDataSets({ months, weeks, days });

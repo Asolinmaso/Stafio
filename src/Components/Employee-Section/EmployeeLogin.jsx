@@ -41,14 +41,8 @@ const EmployeeLogin = () => {
 
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem("employee_user_id", data.user_id);
-        localStorage.setItem("employee_role", data.role);
-        localStorage.setItem("employee_username", data.username);
-        // Store JWT tokens
-        if (data.access_token)
-          localStorage.setItem("auth_token", data.access_token);
-        if (data.refresh_token)
-          localStorage.setItem("refresh_token", data.refresh_token);
+        // ✅ Use standardized session management to store user data and tokens correctly
+        saveSession(data, "employee");
 
         // ⭐ Remember Me logic (only store email for pre-fill, never password)
         if (rememberMe) {
@@ -132,14 +126,7 @@ const EmployeeLogin = () => {
         const data = await res.json();
 
         if (data.user_id) {
-          localStorage.setItem("employee_user_id", data.user_id);
-          localStorage.setItem("employee_role", data.role);
-          localStorage.setItem("employee_username", data.username);
-          // Store JWT tokens
-          if (data.access_token)
-            localStorage.setItem("auth_token", data.access_token);
-          if (data.refresh_token)
-            localStorage.setItem("refresh_token", data.refresh_token);
+
           // ✅ Use standardized session management
           saveSession(data, "employee");
           navigate("/employee-dashboard");
@@ -199,14 +186,7 @@ const EmployeeLogin = () => {
         .then((res) => res.json())
         .then((data) => {
           if (data.user_id) {
-            localStorage.setItem("employee_user_id", data.user_id);
-            localStorage.setItem("employee_role", data.role);
-            localStorage.setItem("employee_username", data.username);
-            // Store JWT tokens
-            if (data.access_token)
-              localStorage.setItem("auth_token", data.access_token);
-            if (data.refresh_token)
-              localStorage.setItem("refresh_token", data.refresh_token);
+
             // ✅ Use standardized session management
             saveSession(data, "employee");
             navigate("/employee-dashboard");

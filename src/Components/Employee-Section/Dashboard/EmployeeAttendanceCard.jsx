@@ -16,10 +16,11 @@ import axios from "axios";
 
 const BASE_URL = "http://127.0.0.1:5001";
 
-// Half-year ranges
-const RANGES = [
-  { label: "Jan – Jun", months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"] },
-  { label: "Jul – Dec", months: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
+// View types
+const VIEW_TYPES = [
+  { label: "Month", key: "months" },
+  { label: "Week", key: "weeks" },
+  { label: "Day", key: "days" },
 ];
 
 // Custom % label — only on the highest bar
@@ -42,9 +43,9 @@ const CustomLabel = ({ x, y, width, value, maxValue }) => {
 const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
   userId,
 }) {
-  const [attendanceData, setAttendanceData] = useState([]);
+  const [attendanceData, setAttendanceData] = useState({ months: [], weeks: [], days: [] });
   const [loading, setLoading] = useState(false);
-  const [rangeIndex, setRangeIndex] = useState(0); // 0 = Jan-Jun, 1 = Jul-Dec
+  const [viewType, setViewType] = useState("months"); // Default to Month view
   const [showFilter, setShowFilter] = useState(false);
   const filterRef = useRef(null);
 
@@ -64,13 +65,13 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
     const fetchAttendance = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/api/attendance/monthly`, {
-          headers: { "X-User-ID": userId },
+        const res = await axios.get(`${BASE_URL}/api/attendance_graph_stats`, {
+          params: { user_id: userId },
         });
         setAttendanceData(res.data);
       } catch (err) {
         console.error("Attendance chart fetch error:", err);
-        setAttendanceData([]);
+        setAttendanceData({ months: [], weeks: [], days: [] });
       } finally {
         setLoading(false);
       }
@@ -78,13 +79,11 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
     fetchAttendance();
   }, [userId]);
 
-  // Filter data to selected half-year range
-  const currentMonths = RANGES[rangeIndex].months;
-  const filteredData = currentMonths.map((month) => {
-    const found = attendanceData.find((d) => d.month === month);
-    return { month, value: found ? found.value : 0 };
-  });
-
+  // Current view label
+  const currentViewLabel = VIEW_TYPES.find(v => v.key === viewType)?.label || "Month";
+  
+  // Data for the chart
+  const filteredData = attendanceData[viewType] || [];
   const maxValue = Math.max(...filteredData.map((d) => d.value), 0);
 
   return (
@@ -99,7 +98,7 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
             marginBottom: "8px",
           }}
         >
-          <Card.Title style={{ margin: 0 }}>Monthly Attendance</Card.Title>
+          <Card.Title style={{ margin: 0 }}>Attendance ({currentViewLabel})</Card.Title>
 
           {/* Filter icon + dropdown */}
           <div ref={filterRef} style={{ position: "relative" }}>
@@ -130,11 +129,11 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
                   minWidth: "120px",
                 }}
               >
-                {RANGES.map((r, i) => (
+                {VIEW_TYPES.map((v) => (
                   <div
-                    key={r.label}
+                    key={v.key}
                     onClick={() => {
-                      setRangeIndex(i);
+                      setViewType(v.key);
                       setShowFilter(false);
                     }}
                     style={{
@@ -142,13 +141,13 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
                       borderRadius: "8px",
                       cursor: "pointer",
                       fontSize: "13px",
-                      fontWeight: rangeIndex === i ? 600 : 400,
-                      color: rangeIndex === i ? "#19BDE8" : "#444",
-                      background: rangeIndex === i ? "#e6f7fc" : "transparent",
+                      fontWeight: viewType === v.key ? 600 : 400,
+                      color: viewType === v.key ? "#19BDE8" : "#444",
+                      background: viewType === v.key ? "#e6f7fc" : "transparent",
                       transition: "background 0.15s",
                     }}
                   >
-                    {r.label}
+                    {v.label}
                   </div>
                 ))}
               </div>
@@ -174,7 +173,7 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
           <ResponsiveContainer width="100%" height={230}>
             <BarChart
               data={filteredData}
-              margin={{ top: 22, right: 8, left: -14, bottom: 0 }}
+              margin={{ top: 22, right: 8, left: -25, bottom: 0 }}
               barCategoryGap="28%"
             >
               <CartesianGrid
@@ -184,15 +183,15 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
               />
 
               <XAxis
-                dataKey="month"
+                dataKey="label"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: "#777", fontWeight: 500 }}
-                angle={-35}
-                textAnchor="end"
-                height={45}
+                angle={viewType === 'months' ? -35 : 0}
+                textAnchor={viewType === 'months' ? 'end' : 'middle'}
+                height={viewType === 'months' ? 45 : 30}
                 interval={0}
-                dx={8}
+                dx={viewType === 'months' ? 8 : 0}
                 dy={4}
               />
 
@@ -216,7 +215,7 @@ const EmployeeAttendanceCard = React.memo(function EmployeeAttendanceCard({
                 cursor={{ fill: "rgba(25,189,232,0.06)" }}
               />
 
-              <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={34}>
+              <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={24}>
                 <LabelList
                   dataKey="value"
                   position="top"

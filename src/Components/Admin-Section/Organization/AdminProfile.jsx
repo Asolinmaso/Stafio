@@ -79,6 +79,7 @@ const AdminProfile = () => {
   const [docsBackup, setDocsBackup] = useState(null);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [documentsBackup, setDocumentsBackup] = useState(null);
+  const [deletedDocIds, setDeletedDocIds] = useState([]);
   const [education, setEducation] = useState({
     institution: "",
     location: "",
@@ -379,8 +380,13 @@ const AdminProfile = () => {
     }
   };
 
-  const handleDocDelete = (idx) =>
+  const handleDocDelete = (idx) => {
+    const docToDelete = documents[idx];
+    if (docToDelete.id) {
+      setDeletedDocIds((prev) => [...prev, docToDelete.id]);
+    }
     setDocuments((prev) => prev.filter((_, didx) => didx !== idx));
+  };
 
   // =========== SAVE HANDLERS (Frontend Only) ===========
   // const handleSavePersonal = () => {
@@ -581,16 +587,61 @@ const AdminProfile = () => {
     setIsEditingBank(false);
   };
 
-  const handleSaveDocs = () => {
-    setIsEditingDocs(false);
-    setDocumentsBackup(null);
-    alert("Documents updated!");
+  const handleSaveDocs = async () => {
+    const userId = getUserId();
+    // Filter out documents that haven't been saved to backend yet (they have a 'file' property from selection)
+    const newDocs = documents.filter((doc) => doc.file);
+
+    if (newDocs.length === 0 && deletedDocIds.length === 0) {
+      setIsEditingDocs(false);
+      setDocumentsBackup(null);
+      return;
+    }
+
+    try {
+      // Delete documents marked for removal
+      for (const docId of deletedDocIds) {
+        await apiClient.delete(`/api/documents/${docId}`);
+      }
+
+      // For each new document, call the upload API
+      for (const doc of newDocs) {
+        await apiClient.post(
+          "/api/documents",
+          {
+            user_id: userId,
+            document_type: "Other", // Default type
+            file_name: doc.fileName,
+            file_size: parseInt(doc.size) * 1024,
+            mime_type: doc.file.type || "application/pdf",
+          },
+          {
+            headers: {
+              "X-User-ID": userId.toString(),
+            },
+          },
+        );
+      }
+
+      setIsEditingDocs(false);
+      setDocumentsBackup(null);
+      setDeletedDocIds([]);
+      alert("Documents updated successfully!");
+      // Dispatch event to notify other components (like Topbar)
+      window.dispatchEvent(new Event("profileUpdated"));
+      // Fetch fresh data to get updated list from backend
+      fetchAdminProfileData();
+    } catch (error) {
+      console.error("Error saving documents:", error);
+      alert(`Error saving documents: ${error.message}`);
+    }
   };
 
   const handleCancelDocs = () => {
     if (documentsBackup) {
       setDocuments(documentsBackup);
     }
+    setDeletedDocIds([]);
     setDocumentsBackup(null);
     setIsEditingDocs(false);
   };

@@ -76,7 +76,8 @@ const EmployeeProfile = () => {
   const [educationErrors, setEducationErrors] = useState({});
   const [experienceBackup, setExperienceBackup] = useState(null);
   const [educationBackup, setEducationBackup] = useState(null);
-  const [docsBackup, setDocsBackup] = useState(null);
+  const [documentsBackup, setDocumentsBackup] = useState(null);
+  const [deletedDocIds, setDeletedDocIds] = useState([]);
   const [experienceErrors, setExperienceErrors] = useState({});
   const [education, setEducation] = useState({
     institution: "",
@@ -164,68 +165,68 @@ const EmployeeProfile = () => {
   };
 
   // =========== FETCH DATA FROM BACKEND ===========
-  useEffect(() => {
-    const fetchEmployeeProfileData = async () => {
-      try {
-        const userId = getUserId();
-        const response = await apiClient.get(`/employee_profile/${userId}`);
+  const fetchEmployeeProfileData = async () => {
+    try {
+      const userId = getUserId();
+      const response = await apiClient.get(`/employee_profile/${userId}`);
 
-        // Only update with data from backend, use empty defaults if not provided
-        if (response.data) {
-          setProfile(response.data.profile || initialProfile);
-          console.log(
-            "Employee profile data loaded successfully",
-            response.data,
-          );
+      // Only update with data from backend, use empty defaults if not provided
+      if (response.data) {
+        setProfile(response.data.profile || initialProfile);
+        console.log(
+          "Employee profile data loaded successfully",
+          response.data,
+        );
 
-          // Map backend education field names to frontend state + parse skills JSON
-          const edu = response.data.education || {};
-          let parsedSkills = [];
-          if (edu.skills) {
-            if (Array.isArray(edu.skills)) {
-              parsedSkills = edu.skills;
-            } else {
-              try {
-                parsedSkills = JSON.parse(edu.skills);
-              } catch (e) {
-                parsedSkills = [];
-              }
-              if (!Array.isArray(parsedSkills)) parsedSkills = [];
+        // Map backend education field names to frontend state + parse skills JSON
+        const edu = response.data.education || {};
+        let parsedSkills = [];
+        if (edu.skills) {
+          if (Array.isArray(edu.skills)) {
+            parsedSkills = edu.skills;
+          } else {
+            try {
+              parsedSkills = JSON.parse(edu.skills);
+            } catch (e) {
+              parsedSkills = [];
             }
+            if (!Array.isArray(parsedSkills)) parsedSkills = [];
           }
-          setEducation({
-            institution: edu.institution || "",
-            location: edu.location || "",
-            startDate: edu.eduStartDate || "",
-            endDate: edu.eduEndDate || "",
-            qualification: edu.qualification || "",
-            specialization: edu.specialization || "",
-            skills: parsedSkills,
-            portfolio: edu.portfolio || "",
-          });
-
-          // Map backend experience field names to frontend state
-          const exp = response.data.experience || {};
-          setExperience({
-            company: exp.company || "",
-            jobTitle: exp.jobTitle || "",
-            startDate: exp.expStartDate || "",
-            endDate: exp.expEndDate || "",
-            responsibilities: exp.responsibilities || "",
-            totalYears: exp.totalYears || "",
-          });
-
-          setBank(response.data.bank || initialBank);
-          setDocuments(response.data.documents || initialDocs);
         }
+        setEducation({
+          institution: edu.institution || "",
+          location: edu.location || "",
+          startDate: edu.eduStartDate || "",
+          endDate: edu.eduEndDate || "",
+          qualification: edu.qualification || "",
+          specialization: edu.specialization || "",
+          skills: parsedSkills,
+          portfolio: edu.portfolio || "",
+        });
 
-        console.log("Employee profile data loaded successfully");
-      } catch (error) {
-        console.error("Error fetching employee profile data:", error);
-        // Keep empty initial state on error
+        // Map backend experience field names to frontend state
+        const exp = response.data.experience || {};
+        setExperience({
+          company: exp.company || "",
+          jobTitle: exp.jobTitle || "",
+          startDate: exp.expStartDate || "",
+          endDate: exp.expEndDate || "",
+          responsibilities: exp.responsibilities || "",
+          totalYears: exp.totalYears || "",
+        });
+
+        setBank(response.data.bank || initialBank);
+        setDocuments(response.data.documents || initialDocs);
       }
-    };
 
+      console.log("Employee profile data loaded successfully");
+    } catch (error) {
+      console.error("Error fetching employee profile data:", error);
+      // Keep empty initial state on error
+    }
+  };
+
+  useEffect(() => {
     fetchEmployeeProfileData();
   }, []);
 
@@ -367,10 +368,7 @@ const EmployeeProfile = () => {
   const handleDocDelete = (idx) => {
     const docToDelete = documents[idx];
     if (docToDelete.id) {
-      alert(
-        "Submitted documents cannot be deleted from here. Please contact HR if you need to remove them.",
-      );
-      return;
+      setDeletedDocIds((prev) => [...prev, docToDelete.id]);
     }
     setDocuments((prev) => prev.filter((_, didx) => didx !== idx));
   };
@@ -538,9 +536,68 @@ const EmployeeProfile = () => {
     setIsEditingBank(false);
   };
 
-  const handleSaveDocs = () => {
+  const handleSaveDocs = async () => {
+    const userId = getUserId();
+    // Filter out documents that haven't been saved to backend yet (they have a 'file' property from selection)
+    const newDocs = documents.filter((doc) => doc.file);
+
+    if (newDocs.length === 0 && deletedDocIds.length === 0) {
+      setIsEditingDocs(false);
+      setDocumentsBackup(null);
+      return;
+    }
+
+    try {
+      // Delete documents marked for removal
+      for (const docId of deletedDocIds) {
+        await apiClient.delete(`/api/documents/${docId}`);
+      }
+
+      // For each new document, call the upload API
+      for (const doc of newDocs) {
+        await apiClient.post(
+          "/api/documents",
+          {
+            user_id: userId,
+            document_type: "Other", // Default type
+            file_name: doc.fileName,
+            file_size: parseInt(doc.size) * 1024,
+            mime_type: doc.file.type || "application/pdf",
+          },
+          {
+            headers: {
+              "X-User-ID": userId.toString(),
+            },
+          }
+        );
+      }
+
+      setIsEditingDocs(false);
+      setDocumentsBackup(null);
+      setDeletedDocIds([]);
+      alert("Documents updated successfully!");
+      // Dispatch event to notify other components (like Topbar)
+      window.dispatchEvent(new Event("profileUpdated"));
+      // Fetch fresh data to get updated list from backend
+      fetchEmployeeProfileData();
+    } catch (error) {
+      console.error("Error saving documents:", error);
+      alert(`Error saving documents: ${error.message}`);
+    }
+  };
+
+  const handleCancelDocs = () => {
+    if (documentsBackup) {
+      setDocuments(documentsBackup);
+    }
+    setDeletedDocIds([]);
+    setDocumentsBackup(null);
     setIsEditingDocs(false);
-    alert("Documents updated!");
+  };
+
+  const handleEditDocs = () => {
+    setDocumentsBackup([...documents]);
+    setIsEditingDocs(true);
   };
 
   // const handleCancelBank = () => {
@@ -1619,7 +1676,7 @@ const EmployeeProfile = () => {
                   {!isEditingDocs ? (
                     <Button
                       className="btn-edit"
-                      onClick={() => setIsEditingDocs(true)}
+                      onClick={handleEditDocs}
                     >
                       Edit
                     </Button>
@@ -1627,7 +1684,7 @@ const EmployeeProfile = () => {
                     <div style={{ minWidth: 180, textAlign: "right" }}>
                       <Button
                         className="btn-cancel"
-                        onClick={() => setIsEditingDocs(false)}
+                        onClick={handleCancelDocs}
                       >
                         Cancel
                       </Button>

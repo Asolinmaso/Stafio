@@ -17,9 +17,10 @@ import { BsSliders } from "react-icons/bs";
 import "./EmployeeLeaveReport.css";
 
 /* ── Half-year ranges — matching EmployeeAttendanceCard exactly ── */
-const RANGES = [
-  { label: "Jan – Jun", months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"] },
-  { label: "Jul – Dec", months: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
+const VIEW_TYPES = [
+  { label: "Month", key: "months" },
+  { label: "Week", key: "weeks" },
+  { label: "Day", key: "days" },
 ];
 
 /* ── Custom % label — only on the highest bar ── */
@@ -42,10 +43,10 @@ const CustomLabel = ({ x, y, width, value, maxValue }) => {
 /* ─── Main Component ─── */
 const EmployeeLeaveReport = () => {
   const [balances, setBalances] = useState([]);
-  const [monthlyData, setMonthlyData] = useState([]);
+  const [attendanceData, setAttendanceData] = useState({ months: [], weeks: [], days: [] });
   const [loading, setLoading] = useState(true);
   const [showFilter, setShowFilter] = useState(false);
-  const [rangeIndex, setRangeIndex] = useState(0); // 0 = Jan–Jun, 1 = Jul–Dec
+  const [viewType, setViewType] = useState("months"); // Default to Month view
   const filterRef = useRef(null);
 
   useEffect(() => {
@@ -55,16 +56,17 @@ const EmployeeLeaveReport = () => {
           localStorage.getItem("employee_user_id") ||
           sessionStorage.getItem("current_user_id");
 
-        const [balRes, monthRes] = await Promise.all([
+        const [balRes, graphRes] = await Promise.all([
           axios.get("http://127.0.0.1:5001/api/leave_balance", {
             headers: { "X-User-ID": userId },
           }),
-          axios.get("http://127.0.0.1:5001/api/attendance/monthly", {
+          axios.get("http://127.0.0.1:5001/api/attendance_graph_stats", {
+            params: { user_id: userId },
             headers: { "X-User-ID": userId },
           }),
         ]);
         setBalances(balRes.data);
-        setMonthlyData(monthRes.data);
+        setAttendanceData(graphRes.data);
       } catch (err) {
         console.error("Leave report fetch error:", err);
       } finally {
@@ -85,14 +87,10 @@ const EmployeeLeaveReport = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, [showFilter]);
 
-  /* Filter chart data to selected half-year range */
-  const currentMonths = RANGES[rangeIndex].months;
-  const chartData = currentMonths.map((month) => {
-    const found = monthlyData.find((d) => d.month === month);
-    return { month, value: found ? found.value : 0 };
-  });
-
+  /* Get data for current view */
+  const chartData = attendanceData[viewType] || [];
   const maxValue = Math.max(...chartData.map((d) => d.value), 0);
+  const currentViewLabel = VIEW_TYPES.find(v => v.key === viewType)?.label || "Month";
 
   return (
     <div style={{ display: "flex" }}>
@@ -142,9 +140,8 @@ const EmployeeLeaveReport = () => {
         <div className="elr__chart-card">
           {/* Header */}
           <div className="elr__chart-hdr">
-            <span className="elr__chart-title">Monthly Leave Report</span>
+            <span className="elr__chart-title">Attendance ({currentViewLabel})</span>
 
-            {/* Filter icon + dropdown — exact copy of EmployeeAttendanceCard */}
             <div ref={filterRef} style={{ position: "relative" }}>
               <div
                 onClick={() => setShowFilter((p) => !p)}
@@ -172,11 +169,11 @@ const EmployeeLeaveReport = () => {
                     minWidth: "120px",
                   }}
                 >
-                  {RANGES.map((r, i) => (
+                  {VIEW_TYPES.map((v) => (
                     <div
-                      key={r.label}
+                      key={v.key}
                       onClick={() => {
-                        setRangeIndex(i);
+                        setViewType(v.key);
                         setShowFilter(false);
                       }}
                       style={{
@@ -184,14 +181,13 @@ const EmployeeLeaveReport = () => {
                         borderRadius: "8px",
                         cursor: "pointer",
                         fontSize: "13px",
-                        fontWeight: rangeIndex === i ? 600 : 400,
-                        color: rangeIndex === i ? "#19BDE8" : "#444",
-                        background:
-                          rangeIndex === i ? "#e6f7fc" : "transparent",
+                        fontWeight: viewType === v.key ? 600 : 400,
+                        color: viewType === v.key ? "#19BDE8" : "#444",
+                        background: viewType === v.key ? "#e6f7fc" : "transparent",
                         transition: "background 0.15s",
                       }}
                     >
-                      {r.label}
+                      {v.label}
                     </div>
                   ))}
                 </div>
@@ -199,7 +195,7 @@ const EmployeeLeaveReport = () => {
             </div>
           </div>
 
-          {/* Recharts Bar Chart — mirrors EmployeeAttendanceCard exactly */}
+          {/* Recharts Bar Chart */}
           {loading ? (
             <div
               style={{
@@ -217,9 +213,8 @@ const EmployeeLeaveReport = () => {
             <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={chartData}
-                margin={{ top: 22, right: 4, left: -18, bottom: 0 }}
-                barCategoryGap="12%"
-                barGap={2}
+                margin={{ top: 22, right: 8, left: -20, bottom: 0 }}
+                barCategoryGap={viewType === "days" ? "15%" : "28%"}
               >
                 <CartesianGrid
                   vertical={false}
@@ -228,15 +223,15 @@ const EmployeeLeaveReport = () => {
                 />
 
                 <XAxis
-                  dataKey="month"
+                  dataKey="label"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 12, fill: "#777", fontWeight: 500 }}
-                  angle={-35}
-                  textAnchor="end"
-                  height={45}
+                  angle={viewType === "months" ? -35 : 0}
+                  textAnchor={viewType === "months" ? "end" : "middle"}
+                  height={viewType === "months" ? 45 : 30}
                   interval={0}
-                  dx={8}
+                  dx={viewType === "months" ? 8 : 0}
                   dy={4}
                 />
 
@@ -260,7 +255,7 @@ const EmployeeLeaveReport = () => {
                   cursor={{ fill: "rgba(25,189,232,0.06)" }}
                 />
 
-                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={28}>
+                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={viewType === "days" ? 35 : 28}>
                   <LabelList
                     dataKey="value"
                     position="top"
