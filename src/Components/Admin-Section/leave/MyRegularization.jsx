@@ -118,7 +118,7 @@ export default function MyRegularization() {
         alert("Regularization updated successfully");
       } else {
         // ➕ ADD
-        await apiClient.post("/api/admin/regularization", formData, {
+        await apiClient.post("/api/regularization", formData, {
           headers: { "X-User-ID": userId, "X-User-Role": userRole },
         });
 
@@ -171,18 +171,21 @@ export default function MyRegularization() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id, status) => {
-    if (status !== "Pending") return;
-
+  const handleDelete = async (id) => {
     if (!window.confirm("Delete this regularization?")) return;
 
     const userId = localStorage.getItem("current_user_id");
 
-    await apiClient.delete(`/api/regularization/${id}`, {
-      headers: { "X-User-ID": userId },
-    });
-
-    setRegularizationData((prev) => prev.filter((item) => item.id !== id));
+    try {
+      await apiClient.delete(`/api/regularization/${id}`, {
+        headers: { "X-User-ID": userId },
+      });
+      setRegularizationData((prev) => prev.filter((item) => item.id !== id));
+      alert("Regularization deleted successfully");
+    } catch (error) {
+      console.error("Error deleting regularization:", error);
+      alert(error.response?.data?.message || "Failed to delete regularization");
+    }
   };
 
   return (
@@ -342,20 +345,14 @@ export default function MyRegularization() {
                     </span>
                   </td>
                   <td className="action-icons">
-                    {row.status === "Pending" ? (
-                      <>
-                        <FaEdit
-                          className="edit-icon"
-                          onClick={() => handleEdit(row)}
-                        />
-                        <FaTimesCircle
-                          className="delete-icon"
-                          onClick={() => handleDelete(row.id, row.status)}
-                        />
-                      </>
-                    ) : (
-                      <span className="disabled-text">—</span>
-                    )}
+                    <FaEdit
+                      className="edit-icon"
+                      onClick={() => handleEdit(row)}
+                    />
+                    <FaTimesCircle
+                      className="delete-icon"
+                      onClick={() => handleDelete(row.id)}
+                    />
                   </td>
                 </tr>
               ))}

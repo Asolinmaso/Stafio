@@ -20,19 +20,30 @@ const apiClient = axios.create({
 // ---------------------------------------------------------------------------
 // Helper: get auth data from localStorage (persistent across browser close)
 // ---------------------------------------------------------------------------
-const getAuthToken = () =>
-  localStorage.getItem("auth_token");
+const getAuthToken = () => {
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes("admin")) return localStorage.getItem("auth_token_admin") || localStorage.getItem("auth_token");
+  if (path.includes("employee")) return localStorage.getItem("auth_token_employee") || localStorage.getItem("auth_token");
+  return localStorage.getItem("auth_token");
+};
 
-const getRefreshToken = () =>
-  localStorage.getItem("refresh_token");
+const getRefreshToken = () => {
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes("admin")) return localStorage.getItem("refresh_token_admin") || localStorage.getItem("refresh_token");
+  if (path.includes("employee")) return localStorage.getItem("refresh_token_employee") || localStorage.getItem("refresh_token");
+  return localStorage.getItem("refresh_token");
+};
 
 const getUserId = () =>
   localStorage.getItem("current_user_id") ||
   localStorage.getItem("employee_user_id");
 
-const getUserRole = () =>
-  localStorage.getItem("current_role") ||
-  localStorage.getItem("employee_role");
+const getUserRole = () => {
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes("admin")) return "admin";
+  if (path.includes("employee")) return "employee";
+  return localStorage.getItem("current_role") || localStorage.getItem("employee_role");
+};
 
 /**
  * Store a new access token in localStorage

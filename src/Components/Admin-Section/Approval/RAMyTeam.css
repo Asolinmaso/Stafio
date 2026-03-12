@@ -471,3 +471,173 @@
   font-size: 14px;
   cursor: pointer;
 }
+
+/* ================================================
+   MEDIA QUERIES — RA My Team Page
+   ================================================ */
+
+/* <= 1200px  (Small Laptop) */
+@media (max-width: 1200px) {
+  .ra-title {
+    font-size: 26px;
+  }
+
+  .ra-header-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ra-controls {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .ra-search {
+    width: 180px;
+  }
+
+  .ra-table-card {
+    overflow-x: auto;
+  }
+
+  .ra-bg-logo-img {
+    width: 280px;
+  }
+
+  .ra-filter-card {
+    right: 130px;
+    width: 300px;
+  }
+}
+
+/* <= 992px  (Compact Desktop) */
+@media (max-width: 992px) {
+  .ra-title {
+    font-size: 22px;
+    margin-top: 20px !important;
+    margin-bottom: 12px;
+  }
+
+  .ra-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .ra-tabs {
+    width: 100%;
+  }
+
+  .ra-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    padding: 10px 6px;
+    width: auto;
+  }
+
+  .ra-controls {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0 !important;
+  }
+
+  .ra-search {
+    width: 150px;
+    font-size: 12px;
+  }
+
+  .ra-filter-btn,
+  .ra-sort {
+    height: 32px;
+    font-size: 12px;
+    padding: 0 10px;
+  }
+
+  .ra-table thead th,
+  .ra-table tbody td {
+    padding: 12px 12px;
+    font-size: 12px;
+  }
+
+  .ra-table-card {
+    overflow-x: auto;
+  }
+
+  .ra-bg-logo-img {
+    width: 180px;
+    opacity: 0.08;
+  }
+
+  .ra-filter-card {
+    right: 10px;
+    top: auto;
+    width: 95vw;
+    max-width: 340px;
+  }
+
+  .ra-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ra-filter-field:first-child {
+    grid-column: span 1;
+  }
+
+  .ra-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* >= 1400px  (Large Desktop / Big Monitor) */
+@media (min-width: 1400px) {
+  .ra-title {
+    font-size: 34px;
+  }
+
+  .ra-tab {
+    font-size: 17px;
+    padding: 14px 14px;
+    width: 115px;
+  }
+
+  .ra-search {
+    width: 280px;
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .ra-filter-btn {
+    height: 42px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+
+  .ra-sort {
+    height: 42px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+
+  .ra-table thead th,
+  .ra-table tbody td {
+    padding: 22px 22px;
+    font-size: 14px;
+  }
+
+  .ra-bg-logo-img {
+    width: 480px;
+  }
+
+  .ra-filter-card {
+    width: 380px;
+    right: 280px;
+  }
+}

@@ -76,903 +76,902 @@ const toMinutes = (time) => {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 const Dashboard = () => {
-	// ── Auth / session ────────────────────────────────────────────────────
-	const [username, setUsername] = useState("");
-	const [role, setRole] = useState("");
-	const [userId, setUserId] = useState(null); // needed for API headers
-
-	// ── Clock ─────────────────────────────────────────────────────────────
-	const [currentTime, setCurrentTime] = useState("");
-	const [currentDate, setCurrentDate] = useState("");
-
-	// ── Punch state ───────────────────────────────────────────────────────
-	const [isPunchedIn, setIsPunchedIn] = useState(false);
-	const [punchInTime, setPunchInTime] = useState(null); // Date object
-	const [totalHours, setTotalHours] = useState("00:00:00");
-	const [isBreak, setIsBreak] = useState(false);
-	const [activeBreak, setActiveBreak] = useState(null);
-	const [showAlert, setShowAlert] = useState(false);
-	const [showBreakDropdown, setShowBreakDropdown] = useState(false);
-
-	// ── API loading / error state ─────────────────────────────────────────
-	const [punchLoading, setPunchLoading] = useState(false);
-	const [punchError, setPunchError] = useState("");
-
-	// ── Refs ──────────────────────────────────────────────────────────────
-	const timerRef = useRef(null);
-	const breakTimerRef = useRef(null);
-	const breakDropdownRef = useRef(null);
-	const breakStartRef = useRef(null);
-	const totalBreakMsRef = useRef(0);
-
-	// ── Admin summary ─────────────────────────────────────────────────────
-	const [adminDashboardData, setAdminDashboardData] = useState({
-		total_employees: 0,
-		On_Time: 0,
-		On_Leave: 0,
-		Late_Arrival: 0,
-		Pending_Approval: 0,
-		This_Week_Hoilday: 0,
-	});
-
-	// ── Admin Notification Banner ─────────────────────────────────────────
-	const [showAdminNotif, setShowAdminNotif] = useState(false);
-	const [pendingApprovalsCount, setPendingApprovalsCount] = useState(0);
-	const [pendingLeavesCount, setPendingLeavesCount] = useState(0);
-	// ── Break times ───────────────────────────────────────────────────────
-	const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
-	const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
-	const [customBreaks, setCustomBreaks] = useState([]);
-	const [breakSchedules, setBreakSchedules] = useState([
-		{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-		{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
-	]);
-
-	// ── Meeting ───────────────────────────────────────────────────────────
-	const [meetingStatus, setMeetingStatus] = useState("idle");
-	const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
-	const [hasJoined, setHasJoined] = useState(false);
-
-	// ── Attendance chart data ─────────────────────────────────────────────
-	const [attendanceDataSets, setAttendanceDataSets] = useState({
-		months: [],
-		weeks: [],
-		days: [],
-	});
-
-	const navigate = useNavigate();
-
-	// ── Axios helper ──────────────────────────────────────────────────────
-	const apiHeaders = () => ({
-		"Content-Type": "application/json",
-	});
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 1. Session + initial attendance restore
-	// ─────────────────────────────────────────────────────────────────────
-	useEffect(() => {
-		const session = getCurrentSession();
-		if (session) {
-			setUsername(session.username || "");
-			setRole(session.role || "");
-			setUserId(session.user_id || session.id || null);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (!userId) return;
-		const fetchTodayAttendance = async () => {
-			try {
-				const res = await apiClient.get(`/api/attendance/today`);
-
-				const data = res.data;
-				if (!data || !data.check_in) return;
-
-				const checkInDate = new Date(data.check_in.replace(" GMT", ""));
-				setPunchInTime(checkInDate);
-
-				if (data.check_out) {
-					setIsPunchedIn(false);
-					setTotalHours(data.work_hours || "00:00:00");
-					return;
-				}
-
-				setIsPunchedIn(true);
-
-				// Restore accumulated break ms
-				const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
-				totalBreakMsRef.current = restoredBreakMs;
-
-				if (data.active_break) {
-					// On break — show frozen working hours (don't start timer)
-					setIsBreak(true);
-					breakStartRef.current = new Date();
-					// Show correct frozen total hours instead of 00:00:00
-					setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
-				} else {
-					// Working — immediately set correct hours before timer kicks in
-					setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
-					startWorkingTimer(checkInDate);
-				}
-			} catch (err) {
-				console.error("Could not restore today's attendance:", err);
-			}
-		};
-
-		const fetchBreakTimes = async () => {
-			try {
-				const res = await apiClient.get(`/api/settings/break_times`);
-				if (res.data) {
-					const lunch = res.data.lunch_break || "1:00 PM - 2:00 PM";
-					const coffee = res.data.coffee_break || "4:00 PM - 4:15 PM";
-					const custom = res.data.custom_breaks || [];
-
-					setLunchBreakStr(lunch);
-					setCoffeeBreakStr(coffee);
-					setCustomBreaks(custom);
-
-					const parseTime = (str) => {
-						if (!str) return "00:00";
-						const match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
-						if (!match) {
-							const basicMatch = str.match(/(\d+):(\d+)/);
-							return basicMatch
-								? `${basicMatch[1].padStart(2, "0")}:${basicMatch[2]}`
-								: "00:00";
-						}
-						let [_, h, m, p] = match;
-						h = parseInt(h);
-						if (p.toUpperCase() === "PM" && h < 12) h += 12;
-						if (p.toUpperCase() === "AM" && h === 12) h = 0;
-						return `${String(h).padStart(2, "0")}:${m}`;
-					};
-
-					const lunchParts = lunch.split("-");
-					const coffeeParts = coffee.split("-");
-
-					const newSchedules = [
-						{
-							id: "lunch",
-							label: "Lunch Break",
-							start: parseTime(lunchParts[0]),
-							end: parseTime(lunchParts[1]),
-							range: lunch,
-						},
-						{
-							id: "coffee",
-							label: "Coffee Break",
-							start: parseTime(coffeeParts[0]),
-							end: parseTime(coffeeParts[1]),
-							range: coffee,
-						},
-					];
-
-					custom.forEach((b, idx) => {
-						const parts = (b.time || "").split("-");
-						newSchedules.push({
-							id: `custom_${idx}`,
-							label: b.name || "Custom Break",
-							start: parseTime(parts[0]),
-							end: parseTime(parts[1]),
-							range: b.time || "",
-						});
-					});
-
-					setBreakSchedules(newSchedules);
-				}
-			} catch (err) {
-				console.error("Error fetching break times:", err);
-			}
-		};
-
-		fetchTodayAttendance();
-		fetchBreakTimes();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userId]);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 2. Live clock
-	// ─────────────────────────────────────────────────────────────────────
-	useEffect(() => {
-		const tick = () => {
-			const now = new Date();
-			setCurrentTime(
-				now.toLocaleTimeString("en-US", {
-					hour: "numeric",
-					minute: "2-digit",
-					second: "2-digit",
-					hour12: true,
-				}),
-			);
-			setCurrentDate(
-				now.toLocaleDateString("en-GB", {
-					day: "2-digit",
-					month: "short",
-					year: "numeric",
-				}),
-			);
-		};
-		tick();
-		const id = setInterval(tick, 1000);
-		return () => clearInterval(id);
-	}, []);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 3. Working hours timer helpers
-	// ─────────────────────────────────────────────────────────────────────
-	const startWorkingTimer = (punchIn) => {
-		clearInterval(timerRef.current);
-		timerRef.current = setInterval(() => {
-			setTotalHours(calcWorkingTime(punchIn, totalBreakMsRef.current));
-		}, 1000);
-	};
-
-	const stopWorkingTimer = () => {
-		clearInterval(timerRef.current);
-	};
-
-	useEffect(() => {
-		return () => {
-			clearInterval(timerRef.current);
-			clearTimeout(breakTimerRef.current);
-		};
-	}, []);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 4. Outside click → close break dropdown
-	// ─────────────────────────────────────────────────────────────────────
-	useEffect(() => {
-		const handler = (e) => {
-			if (
-				breakDropdownRef.current &&
-				!breakDropdownRef.current.contains(e.target)
-			) {
-				setShowBreakDropdown(false);
-			}
-		};
-		if (showBreakDropdown) document.addEventListener("mousedown", handler);
-		return () => document.removeEventListener("mousedown", handler);
-	}, [showBreakDropdown]);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 5. Admin dashboard data + notification counts
-	// ─────────────────────────────────────────────────────────────────────
-	useEffect(() => {
-		const fetchAdminData = async () => {
-			try {
-				// Admin dashboard data
-				const dashboardRes = await apiClient.get("/admin_dashboard");
-				setAdminDashboardData(dashboardRes.data);
-
-				// Pending counts
-				const countRes = await apiClient.get("/api/admin/pending_counts");
-				const { pending_approvals, pending_leave_requests } = countRes.data;
-
-				setPendingApprovalsCount(pending_approvals);
-				setPendingLeavesCount(pending_leave_requests);
-
-				if (pending_approvals > 0 || pending_leave_requests > 0) {
-					setShowAdminNotif(true);
-				}
-			} catch (e) {
-				console.error("Admin dashboard error:", e);
-			}
-		};
-
-		fetchAdminData();
-	}, []);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 6. Meeting status
-	// ─────────────────────────────────────────────────────────────────────
-	useEffect(() => {
-		const update = () => {
-			const now = new Date();
-			const meetingStart = new Date();
-			meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
-			const alertStart = new Date(meetingStart);
-			alertStart.setMinutes(alertStart.getMinutes() - ALERT_BEFORE_MINUTES);
-
-			if (now < alertStart) {
-				setMeetingStatus("idle");
-				setMeetingTimeLeft("");
-				return;
-			}
-			if (now >= alertStart && now < meetingStart) {
-				const diffSec = Math.floor((meetingStart - now) / 1000);
-				const mins = String(Math.floor(diffSec / 60)).padStart(2, "0");
-				const secs = String(diffSec % 60).padStart(2, "0");
-				setMeetingStatus("countdown");
-				setMeetingTimeLeft(`${mins}:${secs} Min Left`);
-				return;
-			}
-			if (now >= meetingStart && !hasJoined) {
-				setMeetingStatus("join");
-				setMeetingTimeLeft("Join the meet");
-				return;
-			}
-			if (hasJoined) {
-				setMeetingStatus("ended");
-				setMeetingTimeLeft("Meeting Ended");
-			}
-		};
-		update();
-		const id = setInterval(update, 1000);
-		return () => clearInterval(id);
-	}, [hasJoined]);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 7. Punch In
-	// ─────────────────────────────────────────────────────────────────────
-	const handlePunchIn = async (e) => {
-		e.preventDefault();
-		if (!userId) {
-			setPunchError("User session not found. Please log in again.");
-			return;
-		}
-
-		setPunchLoading(true);
-		setPunchError("");
-
-		try {
-			await apiClient.post(`/api/attendance/punch-in`, {});
-
-			const now = new Date();
-			setPunchInTime(now);
-			totalBreakMsRef.current = 0;
-			setTotalHours("00:00:00");
-			setIsPunchedIn(true);
-			startWorkingTimer(now);
-		} catch (err) {
-			const msg =
-				err.response?.data?.message || "Punch in failed. Please try again.";
-			setPunchError(msg);
-		} finally {
-			setPunchLoading(false);
-		}
-	};
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 8. Punch Out
-	// ─────────────────────────────────────────────────────────────────────
-	const handlePunchOut = async () => {
-		if (!userId) return;
-
-		setPunchLoading(true);
-		setPunchError("");
-
-		try {
-			const res = await apiClient.post(`/api/attendance/punch-out`, {});
-
-			stopWorkingTimer();
-			clearTimeout(breakTimerRef.current);
-
-			// Show final work_hours returned by backend (net of breaks)
-			const finalHours =
-				res.data?.work_hours ||
-				calcWorkingTime(punchInTime, totalBreakMsRef.current);
-			setTotalHours(finalHours);
-
-			setIsBreak(false);
-			setActiveBreak(null);
-			setIsPunchedIn(false);
-			totalBreakMsRef.current = 0;
-		} catch (err) {
-			const msg =
-				err.response?.data?.message || "Punch out failed. Please try again.";
-			setPunchError(msg);
-		} finally {
-			setPunchLoading(false);
-		}
-	};
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 9. Start Break
-	// ─────────────────────────────────────────────────────────────────────
-	const handleStartBreak = async (breakItem = null) => {
-		if (!userId) return;
-
-		setPunchLoading(true);
-		setPunchError("");
-
-		try {
-			await apiClient.post(`/api/attendance/start-break`, {});
-
-			stopWorkingTimer();
-			setIsBreak(true);
-			setActiveBreak(breakItem);
-			breakStartRef.current = new Date();
-			setShowBreakDropdown(false);
-
-			const isTimed = breakItem?.id === "coffee" || breakItem?.id === "custom";
-			if (isTimed) {
-				clearTimeout(breakTimerRef.current);
-				breakTimerRef.current = setTimeout(
-					() => setShowAlert(true),
-					BREAK_DURATION_MIN * 60 * 1000,
-				);
-			}
-		} catch (err) {
-			const msg = err.response?.data?.message || "Could not start break.";
-			setPunchError(msg);
-		} finally {
-			setPunchLoading(false);
-		}
-	};
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 10. End Break
-	// ─────────────────────────────────────────────────────────────────────
-	const handleEndBreak = async () => {
-		if (!userId) return;
-
-		setPunchLoading(true);
-		setPunchError("");
-
-		try {
-			await apiClient.post(`/api/attendance/end-break`, {});
-
-			if (breakStartRef.current) {
-				totalBreakMsRef.current += Date.now() - breakStartRef.current.getTime();
-			}
-
-			clearTimeout(breakTimerRef.current);
-			setShowAlert(false);
-			setIsBreak(false);
-			setActiveBreak(null);
-			breakStartRef.current = null;
-
-			startWorkingTimer(punchInTime);
-		} catch (err) {
-			const msg = err.response?.data?.message || "Could not end break.";
-			setPunchError(msg);
-		} finally {
-			setPunchLoading(false);
-		}
-	};
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 11. Attendance data for chart
-	// ─────────────────────────────────────────────────────────────────────
-	useEffect(() => {
-		const fetchAttendanceGraphData = async () => {
-			try {
-				const res = await apiClient.get(`/api/attendance_graph_stats`, {
-					headers: {
-						"X-User-Role": role,
-						"X-User-ID": userId,
-					},
-				});
-
-				const monthlyData = res.data.months || [];
-				const weeksData = res.data.weeks || [];
-				const daysData = res.data.days || [];
-
-				const months = monthlyData.map((item) => ({
-					label: item.month_name || item.month,
-					value: Math.round(item.attendance_percentage || 0),
-				}));
-
-				const weeks = weeksData.map((item) => ({
-					label: item.label,
-					value: Math.round(item.value || 0),
-				}));
-
-				const days = daysData.map((item) => ({
-					label: item.label,
-					value: Math.round(item.value || 0),
-				}));
-
-				setAttendanceDataSets({ months, weeks, days });
-			} catch (err) {
-				console.error("Error fetching overall attendance graph data", err);
-			}
-		};
-
-		if (userId) {
-			fetchAttendanceGraphData();
-		}
-	}, [userId, role]);
-
-	// ─────────────────────────────────────────────────────────────────────
-	// 12. Render
-	// ─────────────────────────────────────────────────────────────────────
-	return (
-		<div className="dashboard-wrapper d-flex">
-			<div className="rightside-logo">
-				<img src={group10} alt="logo" className="rightside-logos" />
-			</div>
-			<div className="sidebar">
-				<AdminSidebar />
-			</div>
-			<div className="main-content flex-grow-1">
-				<Topbar />
-				<Container fluid className="p-4">
-					{/* Welcome */}
-					<Row className="mb-4 align-items-center">
-						<div className="username">
-							<h1>Welcome, {username || "User"}!</h1>
-						</div>
-
-						{/* ── Admin Notification Banner ── */}
-						{showAdminNotif && (
-							<div className="admin-notif-banner">
-								<span className="admin-notif-text">
-									You have{" "}
-									<span
-										className="admin-notif-count admin-notif-link"
-										onClick={() => navigate("/regularization-approval")}
-									>
-										{String(pendingApprovalsCount).padStart(2, "0")}
-									</span>{" "}
-									Pending Approvals &amp;{" "}
-									<span
-										className="admin-notif-count admin-notif-link"
-										onClick={() => navigate("/leave-approval")}
-									>
-										{String(pendingLeavesCount).padStart(2, "0")}
-									</span>{" "}
-									Leave Requests
-								</span>
-								<button
-									className="admin-notif-close"
-									onClick={() => setShowAdminNotif(false)}
-									aria-label="Close notification"
-								>
-									✕
-								</button>
-							</div>
-						)}
-					</Row>
-
-					{/* Notification + Meeting/Punch Card */}
-					<Row className="mb-4">
-						<div md={4}>
-							<NotificationTop />
-						</div>
-						<Col md={12}>
-							<div className="meeting-card d-flex justify-content-between align-items-center">
-								{/* Left group */}
-								<div className="d-flex align-items-center">
-									<img src={Vector3} alt="Vector3" className="vector-img" />
-									<div className="meeting-left">
-										{/* ── STATE 1 : Not punched in ── */}
-										{!isPunchedIn ? (
-											<>
-												<h2>
-													{currentTime} , {currentDate}
-												</h2>
-
-												<a
-													href={MEETING_LINK}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="meeting-box"
-													onClick={() => setHasJoined(true)}
-													style={{
-														cursor: "pointer",
-														textDecoration: "none",
-														color: "inherit",
-													}}
-												>
-													<div className="meeting-info">
-														<h4>Standup Meeting</h4>
-														<p>{meetingTimeLeft}</p>
-													</div>
-													<div className="meeting-time">
-														<img src={profileimg} alt="profileimg" />
-													</div>
-													<div className="chevron-box">
-														<FaChevronRight />
-													</div>
-												</a>
-
-												{punchError && (
-													<p
-														style={{
-															color: "#ff4d4d",
-															fontSize: "13px",
-															marginTop: "6px",
-														}}
-													>
-														{punchError}
-													</p>
-												)}
-
-												<button
-													className="btn-punch"
-													onClick={handlePunchIn}
-													disabled={punchLoading}
-												>
-													{punchLoading ? "Punching In…" : "Punch In"}
-												</button>
-											</>
-										) : (
-											/* ── STATE 2 & 3 : Punched in ── */
-											<>
-												<h2>
-													{currentTime} , {currentDate}
-												</h2>
-												<p>
-													Lunch Break {lunchBreakStr} &amp; Coffee Break{" "}
-													{coffeeBreakStr}
-												</p>
-
-												<div className="punch-info-box">
-													<div className="info-item">
-														<span>Punch In :</span>{" "}
-														<strong>
-															{punchInTime ? formatTime(punchInTime) : "—"}
-														</strong>
-													</div>
-													<div className="info-item">
-														<span>Total Hours :</span>{" "}
-														<strong>{totalHours}</strong>
-													</div>
-												</div>
-
-												{punchError && (
-													<p
-														style={{
-															color: "#ff4d4d",
-															fontSize: "13px",
-															marginTop: "6px",
-														}}
-													>
-														{punchError}
-													</p>
-												)}
-
-												<div className="button-row">
-													<button
-														className="btn-punch-out1"
-														onClick={handlePunchOut}
-														disabled={punchLoading}
-													>
-														{punchLoading ? "Please wait…" : "Punch Out"}
-													</button>
-
-													{isBreak ? (
-														<button
-															className="break-btn-st-en"
-															onClick={handleEndBreak}
-															disabled={punchLoading}
-														>
-															End Break
-														</button>
-													) : (
-														<button
-															className="break-btn-st-en"
-															onClick={() =>
-																setShowBreakDropdown((prev) => !prev)
-															}
-															disabled={punchLoading}
-														>
-															Start Break ▼
-														</button>
-													)}
-												</div>
-
-												{showBreakDropdown && !isBreak && (
-													<div
-														className="break-dropdown"
-														ref={breakDropdownRef}
-													>
-														<p className="dropdown-title">Scheduled Breaks</p>
-
-														{breakSchedules.map((b) => {
-															const nowMin = getCurrentTimeInMinutes();
-															const isCurrent =
-																nowMin >= toMinutes(b.start) &&
-																nowMin <= toMinutes(b.end);
-															return (
-																<div
-																	key={b.id}
-																	className={`break-item ${isCurrent ? "active-break" : ""}`}
-																	onClick={() => handleStartBreak(b)}
-																>
-																	<strong>{b.label}</strong>
-																	<span>
-																		{b.range ||
-																			(b.id === "lunch"
-																				? lunchBreakStr
-																				: coffeeBreakStr)}
-																	</span>
-																</div>
-															);
-														})}
-
-														<div
-															className="break-item custom-break"
-															onClick={() =>
-																handleStartBreak({
-																	id: "custom",
-																	label: "Custom Break",
-																})
-															}
-														>
-															➕ Custom Break
-														</div>
-													</div>
-												)}
-
-												{showAlert && (
-													<div style={alertStyle}>
-														<span>⚠️</span>
-														<span>
-															Your break time of 15 minutes has ended. Please
-															resume work.
-														</span>
-														<button
-															style={closeBtnStyle}
-															onClick={() => setShowAlert(false)}
-														>
-															✖
-														</button>
-													</div>
-												)}
-											</>
-										)}
-									</div>
-								</div>
-
-								{/* Right illustration */}
-								<div className="meeting-right">
-									<img src={arrow3} alt="Illustration" className="arrow3" />
-									<img
-										src={gradientimg}
-										alt="Illustration"
-										className="maleteam"
-									/>
-									<img src={clock} alt="Illustration" className="clock" />
-								</div>
-							</div>
-						</Col>
-					</Row>
-
-					{/* Admin Summary Cards */}
-					<Row className="notice mb-4">
-						<Col md={8}>
-							<Row>
-								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/employees-list")}
-										style={{ cursor: "pointer" }}
-									>
-										<div className="summary-top">
-											<h2>{adminDashboardData.total_employees}</h2>
-											<div className="summary-icons">
-												<BsPeople />
-											</div>
-										</div>
-										<h6>Total Employees</h6>
-										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsPlusCircle />
-											</div>
-											2 new employees added!
-										</div>
-									</Card>
-								</Col>
-								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/attendance")}
-										style={{ cursor: "pointer" }}
-									>
-										<div className="summary-top">
-											<h2>{adminDashboardData.On_Time}</h2>
-											<div className="summary-icons">
-												<IoTimeOutline />
-											</div>
-										</div>
-										<h6>On Time</h6>
-										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsEye />
-											</div>
-											Check Attendance Today
-										</div>
-									</Card>
-								</Col>
-								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/leave-approval")}
-										style={{ cursor: "pointer" }}
-									>
-										<div className="summary-top">
-											<h2>{adminDashboardData.On_Leave}</h2>
-											<div className="summary-icons">
-												<MdOutlineAccessTime />
-											</div>
-										</div>
-										<h6>On Leave</h6>
-										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsPencilSquare />
-											</div>
-											Accept or reject Leave
-										</div>
-									</Card>
-								</Col>
-								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/admin-attendance-report")}
-										style={{ cursor: "pointer" }}
-									>
-										<div className="summary-top">
-											<h2>{adminDashboardData.Late_Arrival}</h2>
-											<div className="summary-icons">
-												<MdOutlineLogout />
-											</div>
-										</div>
-										<h6>Late Arrival</h6>
-										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsCalendarCheck />
-											</div>
-											Check Attendance Overview
-										</div>
-									</Card>
-								</Col>
-								<Col md={4} className="mb-3">
-									<Card
-										className="summary-card"
-										onClick={() => navigate("/leave-approval")}
-										style={{ cursor: "pointer" }}
-									>
-										<div className="summary-top">
-											<h2>{adminDashboardData.Pending_Approval}</h2>
-											<div className="summary-icons">
-												<FaCalendarAlt />
-											</div>
-										</div>
-										<h6>Pending Approval</h6>
-										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsEnvelope />
-											</div>
-											Approve Leave
-										</div>
-									</Card>
-								</Col>
-								<Col md={4} className="mb-3">
-									<Card className="summary-card">
-										<div className="summary-top">
-											<h2>{adminDashboardData.This_Week_Hoilday}</h2>
-											<div className="summary-icons">
-												<TbCalendarTime />
-											</div>
-										</div>
-										<h6>This Week Hoilday</h6>
-										<div className="summary-action">
-											<div className="summary-action-icon">
-												<BsFlag />
-											</div>
-											Manage Holiday List
-										</div>
-									</Card>
-								</Col>
-							</Row>
-						</Col>
-						<Col md={4}>
-							<AttendanceCard dataSets={attendanceDataSets} />
-						</Col>
-					</Row>
-
-					{/* Notifications */}
-					<Row>
-						<Col md={8}>
-							<NotificationBar />
-						</Col>
-					</Row>
-				</Container>
-			</div>
-		</div>
-	);
+  // ── Auth / session ────────────────────────────────────────────────────
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
+  const [userId, setUserId] = useState(null); // needed for API headers
+
+  // ── Clock ─────────────────────────────────────────────────────────────
+  const [currentTime, setCurrentTime] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
+
+  // ── Punch state ───────────────────────────────────────────────────────
+  const [isPunchedIn, setIsPunchedIn] = useState(false);
+  const [punchInTime, setPunchInTime] = useState(null); // Date object
+  const [totalHours, setTotalHours] = useState("00:00:00");
+  const [isBreak, setIsBreak] = useState(false);
+  const [activeBreak, setActiveBreak] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showBreakDropdown, setShowBreakDropdown] = useState(false);
+
+  // ── API loading / error state ─────────────────────────────────────────
+  const [punchLoading, setPunchLoading] = useState(false);
+  const [punchError, setPunchError] = useState("");
+
+  // ── Refs ──────────────────────────────────────────────────────────────
+  const timerRef = useRef(null);
+  const breakTimerRef = useRef(null);
+  const breakDropdownRef = useRef(null);
+  const breakStartRef = useRef(null);
+  const totalBreakMsRef = useRef(0);
+
+  // ── Admin summary ─────────────────────────────────────────────────────
+  const [adminDashboardData, setAdminDashboardData] = useState({
+    total_employees: 0,
+    On_Time: 0,
+    On_Leave: 0,
+    Late_Arrival: 0,
+    Pending_Approval: 0,
+    This_Week_Hoilday: 0,
+  });
+
+  // ── Admin Notification Banner ─────────────────────────────────────────
+  const [showAdminNotif, setShowAdminNotif] = useState(false);
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(0);
+  const [pendingLeavesCount, setPendingLeavesCount] = useState(0);
+  // ── Break times ───────────────────────────────────────────────────────
+  const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
+  const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
+  const [customBreaks, setCustomBreaks] = useState([]);
+  const [breakSchedules, setBreakSchedules] = useState([
+    { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+    { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+  ]);
+
+  // ── Meeting ───────────────────────────────────────────────────────────
+  const [meetingStatus, setMeetingStatus] = useState("idle");
+  const [meetingTimeLeft, setMeetingTimeLeft] = useState("");
+  const [hasJoined, setHasJoined] = useState(false);
+
+  // ── Attendance chart data ─────────────────────────────────────────────
+  const [attendanceDataSets, setAttendanceDataSets] = useState({
+    months: [],
+    weeks: [],
+    days: [],
+  });
+
+  const navigate = useNavigate();
+
+  // ── Axios helper ──────────────────────────────────────────────────────
+  const apiHeaders = () => ({
+    "Content-Type": "application/json",
+  });
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 1. Session + initial attendance restore
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const session = getCurrentSession();
+    if (session) {
+      setUsername(session.username || "");
+      setRole(session.role || "");
+      setUserId(session.user_id || session.id || null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+    const fetchTodayAttendance = async () => {
+      try {
+        const res = await apiClient.get(`/api/attendance/today`);
+
+        const data = res.data;
+        if (!data || !data.check_in) return;
+
+        const checkInDate = new Date(data.check_in.replace(" GMT", ""));
+        setPunchInTime(checkInDate);
+
+        if (data.check_out) {
+          setIsPunchedIn(false);
+          setTotalHours(data.work_hours || "00:00:00");
+          return;
+        }
+
+        setIsPunchedIn(true);
+
+        // Restore accumulated break ms
+        const restoredBreakMs = (data.total_break_minutes || 0) * 60 * 1000;
+        totalBreakMsRef.current = restoredBreakMs;
+
+        if (data.active_break) {
+          // On break — show frozen working hours (don't start timer)
+          setIsBreak(true);
+          breakStartRef.current = new Date();
+          // Show correct frozen total hours instead of 00:00:00
+          setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+        } else {
+          // Working — immediately set correct hours before timer kicks in
+          setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+          startWorkingTimer(checkInDate);
+        }
+      } catch (err) {
+        console.error("Could not restore today's attendance:", err);
+      }
+    };
+
+    const fetchBreakTimes = async () => {
+      try {
+        const res = await apiClient.get(`/api/settings/break_times`);
+        if (res.data) {
+          const lunch = res.data.lunch_break || "1:00 PM - 2:00 PM";
+          const coffee = res.data.coffee_break || "4:00 PM - 4:15 PM";
+          const custom = res.data.custom_breaks || [];
+
+          setLunchBreakStr(lunch);
+          setCoffeeBreakStr(coffee);
+          setCustomBreaks(custom);
+
+          const parseTime = (str) => {
+            if (!str) return "00:00";
+            const match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if (!match) {
+              const basicMatch = str.match(/(\d+):(\d+)/);
+              return basicMatch
+                ? `${basicMatch[1].padStart(2, "0")}:${basicMatch[2]}`
+                : "00:00";
+            }
+            let [_, h, m, p] = match;
+            h = parseInt(h);
+            if (p.toUpperCase() === "PM" && h < 12) h += 12;
+            if (p.toUpperCase() === "AM" && h === 12) h = 0;
+            return `${String(h).padStart(2, "0")}:${m}`;
+          };
+
+          const lunchParts = lunch.split("-");
+          const coffeeParts = coffee.split("-");
+
+          const newSchedules = [
+            {
+              id: "lunch",
+              label: "Lunch Break",
+              start: parseTime(lunchParts[0]),
+              end: parseTime(lunchParts[1]),
+              range: lunch,
+            },
+            {
+              id: "coffee",
+              label: "Coffee Break",
+              start: parseTime(coffeeParts[0]),
+              end: parseTime(coffeeParts[1]),
+              range: coffee,
+            },
+          ];
+
+          custom.forEach((b, idx) => {
+            const parts = (b.time || "").split("-");
+            newSchedules.push({
+              id: `custom_${idx}`,
+              label: b.name || "Custom Break",
+              start: parseTime(parts[0]),
+              end: parseTime(parts[1]),
+              range: b.time || "",
+            });
+          });
+
+          setBreakSchedules(newSchedules);
+        }
+      } catch (err) {
+        console.error("Error fetching break times:", err);
+      }
+    };
+
+    fetchTodayAttendance();
+    fetchBreakTimes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 2. Live clock
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        }),
+      );
+      setCurrentDate(
+        now.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+      );
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 3. Working hours timer helpers
+  // ─────────────────────────────────────────────────────────────────────
+  const startWorkingTimer = (punchIn) => {
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTotalHours(calcWorkingTime(punchIn, totalBreakMsRef.current));
+    }, 1000);
+  };
+
+  const stopWorkingTimer = () => {
+    clearInterval(timerRef.current);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearInterval(timerRef.current);
+      clearTimeout(breakTimerRef.current);
+    };
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 4. Outside click → close break dropdown
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handler = (e) => {
+      if (
+        breakDropdownRef.current &&
+        !breakDropdownRef.current.contains(e.target)
+      ) {
+        setShowBreakDropdown(false);
+      }
+    };
+    if (showBreakDropdown) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showBreakDropdown]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 5. Admin dashboard data + notification counts
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchAdminData = async () => {
+      try {
+        // Admin dashboard data
+        const dashboardRes = await apiClient.get("/admin_dashboard");
+        setAdminDashboardData(dashboardRes.data);
+
+        // Pending counts
+        const countRes = await apiClient.get("/api/admin/pending_counts");
+        const { pending_approvals, pending_leave_requests } = countRes.data;
+
+        setPendingApprovalsCount(pending_approvals);
+        setPendingLeavesCount(pending_leave_requests);
+
+        if (pending_approvals > 0 || pending_leave_requests > 0) {
+          setShowAdminNotif(true);
+        }
+      } catch (e) {
+        console.error("Admin dashboard error:", e);
+      }
+    };
+
+    fetchAdminData();
+  }, []);
+  // ─────────────────────────────────────────────────────────────────────
+  // 6. Meeting status
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      const meetingStart = new Date();
+      meetingStart.setHours(MEETING_START_HOUR, MEETING_START_MIN, 0, 0);
+      const alertStart = new Date(meetingStart);
+      alertStart.setMinutes(alertStart.getMinutes() - ALERT_BEFORE_MINUTES);
+
+      if (now < alertStart) {
+        setMeetingStatus("idle");
+        setMeetingTimeLeft("");
+        return;
+      }
+      if (now >= alertStart && now < meetingStart) {
+        const diffSec = Math.floor((meetingStart - now) / 1000);
+        const mins = String(Math.floor(diffSec / 60)).padStart(2, "0");
+        const secs = String(diffSec % 60).padStart(2, "0");
+        setMeetingStatus("countdown");
+        setMeetingTimeLeft(`${mins}:${secs} Min Left`);
+        return;
+      }
+      if (now >= meetingStart && !hasJoined) {
+        setMeetingStatus("join");
+        setMeetingTimeLeft("Join the meet");
+        return;
+      }
+      if (hasJoined) {
+        setMeetingStatus("ended");
+        setMeetingTimeLeft("Meeting Ended");
+      }
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, [hasJoined]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 7. Punch In
+  // ─────────────────────────────────────────────────────────────────────
+  const handlePunchIn = async (e) => {
+    e.preventDefault();
+    if (!userId) {
+      setPunchError("User session not found. Please log in again.");
+      return;
+    }
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      await apiClient.post(`/api/attendance/punch-in`, {});
+
+      const now = new Date();
+      setPunchInTime(now);
+      totalBreakMsRef.current = 0;
+      setTotalHours("00:00:00");
+      setIsPunchedIn(true);
+      startWorkingTimer(now);
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "Punch in failed. Please try again.";
+      setPunchError(msg);
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 8. Punch Out
+  // ─────────────────────────────────────────────────────────────────────
+  const handlePunchOut = async () => {
+    if (!userId) return;
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      const res = await apiClient.post(`/api/attendance/punch-out`, {});
+
+      stopWorkingTimer();
+      clearTimeout(breakTimerRef.current);
+
+      // Show final work_hours returned by backend (net of breaks)
+      const finalHours =
+        res.data?.work_hours ||
+        calcWorkingTime(punchInTime, totalBreakMsRef.current);
+      setTotalHours(finalHours);
+
+      setIsBreak(false);
+      setActiveBreak(null);
+      setIsPunchedIn(false);
+      totalBreakMsRef.current = 0;
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "Punch out failed. Please try again.";
+      setPunchError(msg);
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 9. Start Break
+  // ─────────────────────────────────────────────────────────────────────
+  const handleStartBreak = async (breakItem = null) => {
+    if (!userId) return;
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      await apiClient.post(`/api/attendance/start-break`, {});
+
+      stopWorkingTimer();
+      setIsBreak(true);
+      setActiveBreak(breakItem);
+      breakStartRef.current = new Date();
+      setShowBreakDropdown(false);
+
+      const isTimed = breakItem?.id === "coffee" || breakItem?.id === "custom";
+      if (isTimed) {
+        clearTimeout(breakTimerRef.current);
+        breakTimerRef.current = setTimeout(
+          () => setShowAlert(true),
+          BREAK_DURATION_MIN * 60 * 1000,
+        );
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Could not start break.";
+      setPunchError(msg);
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 10. End Break
+  // ─────────────────────────────────────────────────────────────────────
+  const handleEndBreak = async () => {
+    if (!userId) return;
+
+    setPunchLoading(true);
+    setPunchError("");
+
+    try {
+      await apiClient.post(`/api/attendance/end-break`, {});
+
+      if (breakStartRef.current) {
+        totalBreakMsRef.current += Date.now() - breakStartRef.current.getTime();
+      }
+
+      clearTimeout(breakTimerRef.current);
+      setShowAlert(false);
+      setIsBreak(false);
+      setActiveBreak(null);
+      breakStartRef.current = null;
+
+      startWorkingTimer(punchInTime);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Could not end break.";
+      setPunchError(msg);
+    } finally {
+      setPunchLoading(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 11. Attendance data for chart
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchAttendanceGraphData = async () => {
+      try {
+        const res = await apiClient.get(`/api/attendance_graph_stats`, {
+          headers: {
+            "X-User-Role": role,
+            "X-User-ID": userId,
+          },
+        });
+
+        const monthlyData = res.data.months || [];
+        const weeksData = res.data.weeks || [];
+        const daysData = res.data.days || [];
+
+        const months = monthlyData.map((item) => ({
+          label: item.label,
+          value: item.value || 0,
+        }));
+
+        const weeks = weeksData.map((item) => ({
+          label: item.label,
+          value: item.value || 0,
+        }));
+
+        const days = daysData.map((item) => ({
+          label: item.label,
+          value: item.value || 0,
+        }));
+
+        setAttendanceDataSets({ months, weeks, days });
+      } catch (err) {
+        console.error("Error fetching overall attendance graph data", err);
+      }
+    };
+
+    if (userId) {
+      fetchAttendanceGraphData();
+    }
+  }, [userId, role]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 12. Render
+  // ─────────────────────────────────────────────────────────────────────
+  return (
+    <div className="dashboard-wrapper d-flex">
+      <div className="rightside-logo">
+        <img src={group10} alt="logo" className="rightside-logos" />
+      </div>
+      <div className="sidebar">
+        <AdminSidebar />
+      </div>
+      <div className="main-content flex-grow-1">
+        <Topbar />
+        <Container fluid className="p-4">
+          {/* Welcome */}
+          <Row className="mb-4 align-items-center">
+            <div className="username">
+              <h1>Welcome, {username || "User"}!</h1>
+            </div>
+
+            {/* ── Admin Notification Banner ── */}
+            {showAdminNotif && (
+              <div className="admin-notif-banner">
+                <span className="admin-notif-text">
+                  You have{" "}
+                  <span
+                    className="admin-notif-count admin-notif-link"
+                    onClick={() => navigate("/regularization-approval")}
+                  >
+                    {String(pendingApprovalsCount).padStart(2, "0")}
+                  </span>{" "}
+                  Pending Approvals &amp;{" "}
+                  <span
+                    className="admin-notif-count admin-notif-link"
+                    onClick={() => navigate("/leave-approval")}
+                  >
+                    {String(pendingLeavesCount).padStart(2, "0")}
+                  </span>{" "}
+                  Leave Requests
+                </span>
+                <button
+                  className="admin-notif-close"
+                  onClick={() => setShowAdminNotif(false)}
+                  aria-label="Close notification"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </Row>
+
+          {/* Notification + Meeting/Punch Card */}
+          <Row className="mb-4">
+            <div md={4}>
+              <NotificationTop />
+            </div>
+            <Col md={12}>
+              <div className="meeting-card d-flex justify-content-between align-items-center">
+                {/* Left group */}
+                <div className="d-flex align-items-center">
+                  <img src={Vector3} alt="Vector3" className="vector-img" />
+                  <div className="meeting-left">
+                    {/* ── STATE 1 : Not punched in ── */}
+                    {!isPunchedIn ? (
+                      <>
+                        <h2>
+                          {currentTime} , {currentDate}
+                        </h2>
+
+                        <a
+                          href={MEETING_LINK}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="meeting-box"
+                          onClick={() => setHasJoined(true)}
+                          style={{
+                            cursor: "pointer",
+                            textDecoration: "none",
+                            color: "inherit",
+                          }}
+                        >
+                          <div className="meeting-info">
+                            <h4>Standup Meeting</h4>
+                            <p>{meetingTimeLeft}</p>
+                          </div>
+                          <div className="meeting-time">
+                            <img src={profileimg} alt="profileimg" />
+                          </div>
+                          <div className="chevron-box">
+                            <FaChevronRight />
+                          </div>
+                        </a>
+
+                        {punchError && (
+                          <p
+                            style={{
+                              color: "#ff4d4d",
+                              fontSize: "13px",
+                              marginTop: "6px",
+                            }}
+                          >
+                            {punchError}
+                          </p>
+                        )}
+
+                        <button
+                          className="btn-punch"
+                          onClick={handlePunchIn}
+                          disabled={punchLoading}
+                        >
+                          {punchLoading ? "Punching In…" : "Punch In"}
+                        </button>
+                      </>
+                    ) : (
+                      /* ── STATE 2 & 3 : Punched in ── */
+                      <>
+                        <h2>
+                          {currentTime} , {currentDate}
+                        </h2>
+                        <p>
+                          Lunch Break {lunchBreakStr} &amp; Coffee Break{" "}
+                          {coffeeBreakStr}
+                        </p>
+
+                        <div className="punch-info-box">
+                          <div className="info-item">
+                            <span>Punch In :</span>{" "}
+                            <strong>
+                              {punchInTime ? formatTime(punchInTime) : "—"}
+                            </strong>
+                          </div>
+                          <div className="info-item">
+                            <span>Total Hours :</span>{" "}
+                            <strong>{totalHours}</strong>
+                          </div>
+                        </div>
+
+                        {punchError && (
+                          <p
+                            style={{
+                              color: "#ff4d4d",
+                              fontSize: "13px",
+                              marginTop: "6px",
+                            }}
+                          >
+                            {punchError}
+                          </p>
+                        )}
+
+                        <div className="button-row">
+                          <button
+                            className="btn-punch-out1"
+                            onClick={handlePunchOut}
+                            disabled={punchLoading}
+                          >
+                            {punchLoading ? "Please wait…" : "Punch Out"}
+                          </button>
+
+                          {isBreak ? (
+                            <button
+                              className="break-btn-st-en"
+                              onClick={handleEndBreak}
+                              disabled={punchLoading}
+                            >
+                              End Break
+                            </button>
+                          ) : (
+                            <button
+                              className="break-btn-st-en"
+                              onClick={() =>
+                                setShowBreakDropdown((prev) => !prev)
+                              }
+                              disabled={punchLoading}
+                            >
+                              Start Break ▼
+                            </button>
+                          )}
+                        </div>
+
+                        {showBreakDropdown && !isBreak && (
+                          <div
+                            className="break-dropdown"
+                            ref={breakDropdownRef}
+                          >
+                            <p className="dropdown-title">Scheduled Breaks</p>
+
+                            {breakSchedules.map((b) => {
+                              const nowMin = getCurrentTimeInMinutes();
+                              const isCurrent =
+                                nowMin >= toMinutes(b.start) &&
+                                nowMin <= toMinutes(b.end);
+                              return (
+                                <div
+                                  key={b.id}
+                                  className={`break-item ${isCurrent ? "active-break" : ""}`}
+                                  onClick={() => handleStartBreak(b)}
+                                >
+                                  <strong>{b.label}</strong>
+                                  <span>
+                                    {b.range ||
+                                      (b.id === "lunch"
+                                        ? lunchBreakStr
+                                        : coffeeBreakStr)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+
+                            <div
+                              className="break-item custom-break"
+                              onClick={() =>
+                                handleStartBreak({
+                                  id: "custom",
+                                  label: "Custom Break",
+                                })
+                              }
+                            >
+                              ➕ Custom Break
+                            </div>
+                          </div>
+                        )}
+
+                        {showAlert && (
+                          <div style={alertStyle}>
+                            <span>⚠️</span>
+                            <span>
+                              Your break time of 15 minutes has ended. Please
+                              resume work.
+                            </span>
+                            <button
+                              style={closeBtnStyle}
+                              onClick={() => setShowAlert(false)}
+                            >
+                              ✖
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right illustration */}
+                <div className="meeting-right">
+                  <img src={arrow3} alt="Illustration" className="arrow3" />
+                  <img
+                    src={gradientimg}
+                    alt="Illustration"
+                    className="maleteam"
+                  />
+                  <img src={clock} alt="Illustration" className="clock" />
+                </div>
+              </div>
+            </Col>
+          </Row>
+
+          {/* Admin Summary Cards */}
+          <Row className="notice mb-4">
+            <Col md={8}>
+              <Row>
+                <Col md={4} className="mb-3">
+                  <Card
+                    className="summary-card"
+                    onClick={() => navigate("/employees-list")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="summary-top">
+                      <h2>{adminDashboardData.total_employees}</h2>
+                      <div className="summary-icons">
+                        <BsPeople />
+                      </div>
+                    </div>
+                    <h6>Total Employees</h6>
+                    <div className="summary-action">
+                      <div className="summary-action-icon">
+                        <BsPlusCircle />
+                      </div>
+                      2 new employees added!
+                    </div>
+                  </Card>
+                </Col>
+                <Col md={4} className="mb-3">
+                  <Card
+                    className="summary-card"
+                    onClick={() => navigate("/attendance")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="summary-top">
+                      <h2>{adminDashboardData.On_Time}</h2>
+                      <div className="summary-icons">
+                        <IoTimeOutline />
+                      </div>
+                    </div>
+                    <h6>On Time</h6>
+                    <div className="summary-action">
+                      <div className="summary-action-icon">
+                        <BsEye />
+                      </div>
+                      Check Attendance Today
+                    </div>
+                  </Card>
+                </Col>
+                <Col md={4} className="mb-3">
+                  <Card
+                    className="summary-card"
+                    onClick={() => navigate("/leave-approval")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="summary-top">
+                      <h2>{adminDashboardData.On_Leave}</h2>
+                      <div className="summary-icons">
+                        <MdOutlineAccessTime />
+                      </div>
+                    </div>
+                    <h6>On Leave</h6>
+                    <div className="summary-action">
+                      <div className="summary-action-icon">
+                        <BsPencilSquare />
+                      </div>
+                      Accept or reject Leave
+                    </div>
+                  </Card>
+                </Col>
+                <Col md={4} className="mb-3">
+                  <Card
+                    className="summary-card"
+                    onClick={() => navigate("/admin-attendance-report")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="summary-top">
+                      <h2>{adminDashboardData.Late_Arrival}</h2>
+                      <div className="summary-icons">
+                        <MdOutlineLogout />
+                      </div>
+                    </div>
+                    <h6>Late Arrival</h6>
+                    <div className="summary-action">
+                      <div className="summary-action-icon">
+                        <BsCalendarCheck />
+                      </div>
+                      Check Attendance Overview
+                    </div>
+                  </Card>
+                </Col>
+                <Col md={4} className="mb-3">
+                  <Card
+                    className="summary-card"
+                    onClick={() => navigate("/leave-approval")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="summary-top">
+                      <h2>{adminDashboardData.Pending_Approval}</h2>
+                      <div className="summary-icons">
+                        <FaCalendarAlt />
+                      </div>
+                    </div>
+                    <h6>Pending Approval</h6>
+                    <div className="summary-action">
+                      <div className="summary-action-icon">
+                        <BsEnvelope />
+                      </div>
+                      Approve Leave
+                    </div>
+                  </Card>
+                </Col>
+                <Col md={4} className="mb-3">
+                  <Card className="summary-card">
+                    <div className="summary-top">
+                      <h2>{adminDashboardData.This_Week_Hoilday}</h2>
+                      <div className="summary-icons">
+                        <TbCalendarTime />
+                      </div>
+                    </div>
+                    <h6>This Week Hoilday</h6>
+                    <div className="summary-action">
+                      <div className="summary-action-icon">
+                        <BsFlag />
+                      </div>
+                      Manage Holiday List
+                    </div>
+                  </Card>
+                </Col>
+              </Row>
+            </Col>
+            <Col md={4}>
+              <AttendanceCard dataSets={attendanceDataSets} />
+            </Col>
+          </Row>
+
+          {/* Notifications */}
+          <Row>
+            <Col md={8}>
+              <NotificationBar />
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;

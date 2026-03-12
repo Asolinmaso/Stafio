@@ -34,11 +34,6 @@ import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
 // ─── Config ────────────────────────────────────────────────────────────────
 const BASE_URL = "http://127.0.0.1:5001";
 
-const BREAK_SCHEDULES = [
-  { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-  { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
-];
-
 // Break durations per type (in minutes)
 const BREAK_DURATIONS = {
   lunch: 60, // 60 minutes
@@ -54,10 +49,10 @@ const ALERT_BEFORE_MINUTES = 10;
 const formatTime = (date) =>
   date instanceof Date
     ? date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
     : date;
 
 const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
@@ -92,13 +87,13 @@ const EmployeeDashboard = () => {
 
   // ✅ Load userId from localStorage
   useEffect(() => {
-    const storedId = localStorage.getItem("userId");
+    const storedId = localStorage.getItem("employee_user_id") || localStorage.getItem("current_user_id");
     if (storedId && !userId) setUserId(storedId);
   }, [userId]);
 
   // ✅ Fetch username from backend
   useEffect(() => {
-    const storedUsername = localStorage.getItem("employee_username"); // or "employeeUsername"
+    const storedUsername = localStorage.getItem("employee_username") || localStorage.getItem("current_username"); // or "employeeUsername"
     if (storedUsername) {
       setUsername(storedUsername);
     }
@@ -107,14 +102,71 @@ const EmployeeDashboard = () => {
   // ✅ Break times
   const [lunchBreakStr, setLunchBreakStr] = useState("1:00 PM - 2:00 PM");
   const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
+  const [breakSchedules, setBreakSchedules] = useState([
+    { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+    { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+  ]);
 
   useEffect(() => {
     const fetchBreakTimes = async () => {
       try {
         const res = await apiClient.get("/api/settings/break_times");
         if (res.data) {
-          if (res.data.lunch_break) setLunchBreakStr(res.data.lunch_break);
-          if (res.data.coffee_break) setCoffeeBreakStr(res.data.coffee_break);
+          const lunch = res.data.lunch_break || "1:00 PM - 2:00 PM";
+          const coffee = res.data.coffee_break || "4:00 PM - 4:15 PM";
+          const custom = res.data.custom_breaks || [];
+
+          setLunchBreakStr(lunch);
+          setCoffeeBreakStr(coffee);
+
+          const parseTime = (str) => {
+            if (!str) return "00:00";
+            const match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if (!match) {
+              const basicMatch = str.match(/(\d+):(\d+)/);
+              return basicMatch
+                ? `${basicMatch[1].padStart(2, "0")}:${basicMatch[2]}`
+                : "00:00";
+            }
+            let [_, h, m, p] = match;
+            h = parseInt(h);
+            if (p.toUpperCase() === "PM" && h < 12) h += 12;
+            if (p.toUpperCase() === "AM" && h === 12) h = 0;
+            return `${String(h).padStart(2, "0")}:${m}`;
+          };
+
+          const lunchParts = lunch.split("-");
+          const coffeeParts = coffee.split("-");
+
+          const newSchedules = [
+            {
+              id: "lunch",
+              label: "Lunch Break",
+              start: parseTime(lunchParts[0]),
+              end: parseTime(lunchParts[1]),
+              range: lunch,
+            },
+            {
+              id: "coffee",
+              label: "Coffee Break",
+              start: parseTime(coffeeParts[0]),
+              end: parseTime(coffeeParts[1]),
+              range: coffee,
+            },
+          ];
+
+          custom.forEach((b, idx) => {
+            const parts = (b.time || "").split("-");
+            newSchedules.push({
+              id: `custom_${idx}`,
+              label: b.name || "Custom Break",
+              start: parseTime(parts[0]),
+              end: parseTime(parts[1]),
+              range: b.time || "",
+            });
+          });
+
+          setBreakSchedules(newSchedules);
         }
       } catch (err) {
         console.error("Error fetching break times:", err);
@@ -719,7 +771,8 @@ const EmployeeDashboard = () => {
                             ref={breakDropdownRef}
                           >
                             <p className="dropdown-title">Scheduled Breaks</p>
-                            {BREAK_SCHEDULES.map((b) => {
+
+                            {breakSchedules.map((b) => {
                               const nowMin = getCurrentTimeInMinutes();
                               const isCurrent =
                                 nowMin >= toMinutes(b.start) &&
@@ -732,11 +785,15 @@ const EmployeeDashboard = () => {
                                 >
                                   <strong>{b.label}</strong>
                                   <span>
-                                    {b.start} – {b.end}
+                                    {b.range ||
+                                      (b.id === "lunch"
+                                        ? lunchBreakStr
+                                        : coffeeBreakStr)}
                                   </span>
                                 </div>
                               );
                             })}
+
                             <div
                               className="break-item custom-break"
                               onClick={() =>

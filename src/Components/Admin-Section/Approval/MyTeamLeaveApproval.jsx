@@ -291,77 +291,116 @@ export default function MyTeamLeaveApproval() {
               {/* Header */}
               <div className="modal-header-blue">
                 <h3>Leave Approval</h3>
-                <button
-                  className="close-btn"
-                  onClick={() => setShowModal(false)}
-                >
+                <button className="close-btn" onClick={() => setShowModal(false)}>
                   ×
                 </button>
               </div>
+
               {/* Body */}
               <div className="modal-body">
                 <form className="apply-leave-form">
+
+                  {/* Left: all form rows */}
                   <div className="form-left">
-                    <label>Employee ID:</label>
-                    <input type="text" value={selectedLeave.empId} readOnly />
-                    <label>Leave Type:</label>
-                    <input type="text" value={selectedLeave.type} readOnly />
-                    <label>Date Of Leave:</label>
-                    <div className="date-row">
-                      <input type="text" value={selectedLeave.from} readOnly />
-                      <input type="text" value={selectedLeave.to} readOnly />
-                      <input
-                        type="text"
-                        value={selectedLeave.session}
-                        readOnly
-                      />
+
+                    {/* Employee ID */}
+                    <div className="form-row">
+                      <label>Employee ID:</label>
+                      <input type="text" value={selectedLeave.empId} readOnly />
                     </div>
-                    <label>Notify Others:</label>
-                    <input type="text" value={selectedLeave.notify} readOnly />
-                    <label>Uploaded Document:</label>
-                    <input
-                      type="text"
-                      value={selectedLeave.document || "No File Uploaded"}
-                      readOnly
-                    />
-                    <label>Reason:</label>
-                    <textarea value={selectedLeave.reason} readOnly />
-                    {/* ACTION BUTTONS – ONLY IF PENDING */}
-                    {/* ACTION BUTTONS – ONLY IF PENDING */}
-                    {selectedLeave.status === "Pending" && (
-                      <div className="modal-actions">
-                        <button
-                          type="button"
-                          className="apply-btn"
-                          onClick={() => {
-                            setActionType("Approval");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          type="button"
-                          className="cancel-btn"
-                          onClick={() => {
-                            setActionType("Rejection");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Reject
-                        </button>
+
+                    {/* Leave Type */}
+                    <div className="form-row">
+                      <label>Leave Type:</label>
+                      <input type="text" value={selectedLeave.type} readOnly />
+                    </div>
+
+                    {/* Date Of Leave */}
+                    <div className="form-row">
+                      <label>Date Of Leave:</label>
+                      <div className="date-row">
+                        <div className="date-item">
+                          <p>From</p>
+                          <input type="text" value={selectedLeave.from} readOnly />
+                        </div>
+                        <div className="date-item">
+                          <p>To</p>
+                          <input type="text" value={selectedLeave.to} readOnly />
+                        </div>
+                        <div className="date-item">
+                          <p>&nbsp;</p>
+                          <div className="full-day-tag">
+                            {selectedLeave.session || "Full Day"}
+                          </div>
+                        </div>
                       </div>
-                    )}
+                    </div>
+
+                    {/* Notify Others + Upload */}
+                    <div className="form-row">
+                      <label>Notify Others:</label>
+                      <input type="text" value={selectedLeave.notify} readOnly />
+                      <div className="upload-file-btn">
+                        <span>{selectedLeave.document || "Upload File"}</span>
+                        <span className="upload-arrow">↑</span>
+                      </div>
+                    </div>
+
+                    {/* Reason */}
+                    <div className="form-row reason-row">
+                      <label>Reason:</label>
+                      <div className="reason-wrapper">
+                        <textarea value={selectedLeave.reason} readOnly />
+                        <span className="char-counter">
+                          {(selectedLeave.reason?.length || 0)}/30
+                        </span>
+                      </div>
+                    </div>
+
                   </div>
-                  {/* Right Image */}
+
+                  {/* Right: illustration */}
                   <div className="form-right">
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
+
                 </form>
+
+                {/* Footer action buttons */}
+                <div className="modal-footer">
+                  {selectedLeave.status === "Pending" ? (
+                    <>
+                      <button
+                        type="button"
+                        className="apply-btn"
+                        onClick={() => { setActionType("Approval"); setShowReasonModal(true); }}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        className="cancel-btn"
+                        onClick={() => { setActionType("Rejection"); setShowReasonModal(true); }}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Close
+                    </button>
+                  )}
+                </div>
+
               </div>
             </div>
           </div>
         )}
+
         {showReasonModal && (
           <div className="modal-overlay">
             <div className="reason-modal">
