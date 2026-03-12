@@ -6,11 +6,11 @@ import { IoTimeOutline } from "react-icons/io5";
 import { MdOutlineAccessTime, MdOutlineLogout } from "react-icons/md";
 import { TbCalendarTime } from "react-icons/tb";
 import {
-  BsEye,
-  BsPencilSquare,
-  BsCalendarCheck,
-  BsEnvelope,
-  BsFlag,
+	BsEye,
+	BsPencilSquare,
+	BsCalendarCheck,
+	BsEnvelope,
+	BsFlag,
 } from "react-icons/bs";
 import { BsPlusCircle } from "react-icons/bs";
 import AdminSidebar from "../AdminSidebar";
@@ -30,6 +30,11 @@ import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
+const BREAK_SCHEDULES = [
+	{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+	{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+];
+
 const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
 const MEETING_START_HOUR = 9;
 const MEETING_START_MIN = 0;
@@ -38,35 +43,35 @@ const BREAK_DURATION_MIN = 15;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const formatTime = (date) =>
-  date instanceof Date
-    ? date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    })
-    : date;
+	date instanceof Date
+		? date.toLocaleTimeString([], {
+				hour: "2-digit",
+				minute: "2-digit",
+				second: "2-digit",
+			})
+		: date;
 
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
 const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
-  if (!punchInDate) return "00:00:00";
-  const totalMs = Math.max(
-    0,
-    Date.now() - punchInDate.getTime() - totalBreakMs,
-  );
-  const totalSec = Math.floor(totalMs / 1000);
-  const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
-  const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
-  const s = String(totalSec % 60).padStart(2, "0");
-  return `${h}:${m}:${s}`;
+	if (!punchInDate) return "00:00:00";
+	const totalMs = Math.max(
+		0,
+		Date.now() - punchInDate.getTime() - totalBreakMs,
+	);
+	const totalSec = Math.floor(totalMs / 1000);
+	const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+	const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+	const s = String(totalSec % 60).padStart(2, "0");
+	return `${h}:${m}:${s}`;
 };
 
 const getCurrentTimeInMinutes = () => {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
+	const now = new Date();
+	return now.getHours() * 60 + now.getMinutes();
 };
 const toMinutes = (time) => {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
+	const [h, m] = time.split(":").map(Number);
+	return h * 60 + m;
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -973,28 +978,28 @@ export default Dashboard;
 
 // ─── Inline styles (kept identical to original) ────────────────────────────
 const alertStyle = {
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  backgroundColor: "#f47c3c",
-  color: "white",
-  padding: "16px 24px",
-  borderRadius: "8px",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-  fontSize: "16px",
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  zIndex: 9999,
-  width: "30%",
+	position: "fixed",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	backgroundColor: "#f47c3c",
+	color: "white",
+	padding: "16px 24px",
+	borderRadius: "8px",
+	boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+	fontSize: "16px",
+	display: "flex",
+	alignItems: "center",
+	gap: "10px",
+	zIndex: 9999,
+	width: "30%",
 };
 
 const closeBtnStyle = {
-  background: "transparent",
-  color: "white",
-  border: "none",
-  fontSize: "18px",
-  cursor: "pointer",
-  marginLeft: "10px",
+	background: "transparent",
+	color: "white",
+	border: "none",
+	fontSize: "18px",
+	cursor: "pointer",
+	marginLeft: "10px",
 };
