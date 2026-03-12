@@ -30,11 +30,6 @@ import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
-const BREAK_SCHEDULES = [
-  { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-  { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
-];
-
 const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
 const MEETING_START_HOUR = 9;
 const MEETING_START_MIN = 0;
@@ -45,10 +40,10 @@ const BREAK_DURATION_MIN = 15;
 const formatTime = (date) =>
   date instanceof Date
     ? date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
     : date;
 
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
@@ -340,30 +335,27 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        apiClient
-          .get(`/admin_dashboard`)
-          .then((r) => setAdminDashboardData(r.data));
-      } catch (e) {
-        console.error("Admin dashboard error:", e);
-      }
+        // Admin dashboard data
+        const dashboardRes = await apiClient.get("/admin_dashboard");
+        setAdminDashboardData(dashboardRes.data);
 
-      try {
-        const countRes = await axios.get(
-          `${BASE_URL}/api/admin/pending_counts`,
-        );
+        // Pending counts
+        const countRes = await apiClient.get("/api/admin/pending_counts");
         const { pending_approvals, pending_leave_requests } = countRes.data;
+
         setPendingApprovalsCount(pending_approvals);
         setPendingLeavesCount(pending_leave_requests);
+
         if (pending_approvals > 0 || pending_leave_requests > 0) {
           setShowAdminNotif(true);
         }
       } catch (e) {
-        console.error("Pending counts error:", e);
+        console.error("Admin dashboard error:", e);
       }
     };
+
     fetchAdminData();
   }, []);
-
   // ─────────────────────────────────────────────────────────────────────
   // 6. Meeting status
   // ─────────────────────────────────────────────────────────────────────
@@ -551,18 +543,18 @@ const Dashboard = () => {
         const daysData = res.data.days || [];
 
         const months = monthlyData.map((item) => ({
-          label: item.month_name || item.month,
-          value: Math.round(item.attendance_percentage || 0),
+          label: item.label,
+          value: item.value || 0,
         }));
 
         const weeks = weeksData.map((item) => ({
           label: item.label,
-          value: Math.round(item.value || 0),
+          value: item.value || 0,
         }));
 
         const days = daysData.map((item) => ({
           label: item.label,
-          value: Math.round(item.value || 0),
+          value: item.value || 0,
         }));
 
         setAttendanceDataSets({ months, weeks, days });

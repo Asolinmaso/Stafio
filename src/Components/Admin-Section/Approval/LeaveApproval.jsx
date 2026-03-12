@@ -373,9 +373,6 @@ const LeaveApproval = () => {
           </div>
 
           <div className="la-pages">
-            <button className="la-page-btn">Prev</button>
-            <button className="la-page-btn la-page-btn--active">01</button>
-            <button className="la-page-btn">Next</button>
             <div className="page-nav">
               <button>Prev</button>
               <span className="page-num">01</span>

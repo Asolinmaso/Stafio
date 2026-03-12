@@ -61,68 +61,73 @@ const ProfilePopup = ({ onClose, username }) => {
     };
   };
 
-  React.useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const userId =
-          localStorage.getItem("current_user_id") ||
-          localStorage.getItem("empId") ||
-          localStorage.getItem("employee_user_id");
-        console.log(userId || "nothing");
-        const res = await apiClient.get(`/admin_profile/${userId}`, {
-          headers: {
-            ...getAuthHeaders(),
-          },
-        });
+  const fetchProfile = async () => {
+    try {
+      const userId =
+        localStorage.getItem("current_user_id") ||
+        localStorage.getItem("empId") ||
+        localStorage.getItem("employee_user_id");
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+      const res = await apiClient.get(`/admin_profile/${userId}`, {
+        headers: {
+          ...getAuthHeaders(),
+        },
+      });
 
-        const data = { ...res.data };
-        if (
-          data.education &&
-          data.education.skills &&
-          typeof data.education.skills === "string"
-        ) {
-          try {
-            const parsed = JSON.parse(data.education.skills);
-            data.education = {
-              ...data.education,
-              skills: Array.isArray(parsed) ? parsed : [],
-            };
-          } catch (e) {
-            data.education = { ...data.education, skills: [] };
-          }
-        }
-
-        if (data.profile && data.profile.dob) {
-          data.profile = {
-            ...data.profile,
-            dob: toInputDateFormat(data.profile.dob),
-          };
-        }
-        if (data.education) {
+      const data = { ...res.data };
+      if (
+        data.education &&
+        data.education.skills &&
+        typeof data.education.skills === "string"
+      ) {
+        try {
+          const parsed = JSON.parse(data.education.skills);
           data.education = {
             ...data.education,
-            eduStartDate: toInputDateFormat(data.education.eduStartDate),
-            eduEndDate: toInputDateFormat(data.education.eduEndDate),
+            skills: Array.isArray(parsed) ? parsed : [],
           };
+        } catch (e) {
+          data.education = { ...data.education, skills: [] };
         }
-        if (data.experience) {
-          data.experience = {
-            ...data.experience,
-            expStartDate: toInputDateFormat(data.experience.expStartDate),
-            expEndDate: toInputDateFormat(data.experience.expEndDate),
-          };
-        }
-
-        setProfileData(data);
-        setEditableData(data);
-        console.log(data);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      } finally {
-        setLoading(false);
       }
-    };
+
+      if (data.profile && data.profile.dob) {
+        data.profile = {
+          ...data.profile,
+          dob: toInputDateFormat(data.profile.dob),
+        };
+      }
+      if (data.education) {
+        data.education = {
+          ...data.education,
+          eduStartDate: toInputDateFormat(data.education.eduStartDate),
+          eduEndDate: toInputDateFormat(data.education.eduEndDate),
+        };
+      }
+      if (data.experience) {
+        data.experience = {
+          ...data.experience,
+          expStartDate: toInputDateFormat(data.experience.expStartDate),
+          expEndDate: toInputDateFormat(data.experience.expEndDate),
+        };
+      }
+
+      setProfileData(data);
+      setEditableData(data);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
     fetchProfile();
+    window.addEventListener("profileUpdated", fetchProfile);
+    return () => window.removeEventListener("profileUpdated", fetchProfile);
   }, []);
 
   const profile = profileData?.profile || {};
@@ -553,9 +558,9 @@ const ProfilePopup = ({ onClose, username }) => {
                 ) : (
                   <p>
                     {experience.expStartDate &&
-                    experience.expEndDate &&
-                    experience.expStartDate !== "0001-01-01" &&
-                    experience.expEndDate !== "0001-01-01"
+                      experience.expEndDate &&
+                      experience.expStartDate !== "0001-01-01" &&
+                      experience.expEndDate !== "0001-01-01"
                       ? `${formatDateDisplay(experience.expStartDate)} – ${formatDateDisplay(experience.expEndDate)}`
                       : "-"}
                   </p>
@@ -639,7 +644,16 @@ const ProfilePopup = ({ onClose, username }) => {
               </div>
               <div className="submitted-docs">
                 <h6>Submitted Documents</h6>
-                <div className="doc-item">No documents uploaded</div>
+                {profileData?.documents?.length > 0 ? (
+                  profileData.documents.map((doc, idx) => (
+                    <div className="doc-item" key={idx}>
+                      <i className="bi bi-file-earmark-pdf me-2 text-danger"></i>
+                      {doc.fileName}
+                    </div>
+                  ))
+                ) : (
+                  <div className="doc-item">No documents uploaded</div>
+                )}
               </div>
             </div>
           </div>
@@ -858,46 +872,20 @@ const Topbar = () => {
           >
             <img src={stafiologoimg} alt="Logo" className="topbar-img" />
           </div>
-        </div>
 
-        {/* Search box */}
-        <div className="topbar-searches flex-grow-1 mx-3 position-relative">
-          <input
-            type="text"
-            className="form-controler"
-            placeholder="Quick Search..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              console.log(e.target.value);
-            }}
-          />
+          {/* Search box — next to logo */}
+          <div className="topbar-searches position-relative">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              className="form-controler"
+              placeholder="Quick Search..."
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+            />
 
-          {query && (
-            <div className="search-dropdown">
-              {filteredResults.length > 0 ? (
-                filteredResults.map((item, index) => (
-                  <div
-                    key={index}
-                    className="search-item"
-                    onClick={() => handleSelect(item)}
-                  >
-                    <span className="search-type">{item.type}</span>
-                    <span>{item.label}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="search-item no-result">No results found</div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Right side user + bell */}
-        <div className="profile d-flex align-items-center gap-3">
-          <div style={{ cursor: "pointer", position: "relative" }}></div>
-
-          <div className="topbar-searches">
             {query && (
               <div className="search-dropdown">
                 {filteredResults.length > 0 ? (
