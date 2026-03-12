@@ -313,3 +313,108 @@
   font-size: 13px !important;
   margin-top: -3px !important;
 }
+
+/* ================================================
+   MEDIA QUERIES — Leave Policies Page
+   ================================================ */
+
+/* <= 1200px  (Small Laptop) */
+@media (max-width: 1200px) {
+  .leave-policies-main {
+    padding: 0 18px 18px 18px;
+  }
+
+  .leave-policies-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .leave-policies-title {
+    font-size: 26px;
+  }
+
+  .leave-policies-table th,
+  .leave-policies-table td {
+    padding: 15px;
+    font-size: 13px;
+  }
+
+  .leave-policies-modal {
+    width: 460px;
+  }
+}
+
+/* <= 992px  (Compact Desktop) */
+@media (max-width: 992px) {
+  .leave-policies-main {
+    padding: 0 12px 16px 12px;
+  }
+
+  .leave-policies-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .leave-policies-title {
+    font-size: 22px;
+  }
+
+  .leave-policies-add-btn {
+    width: 100%;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .leave-policies-table th,
+  .leave-policies-table td {
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+
+  .leave-policies-modal {
+    width: 95%;
+  }
+
+  .leave-policies-modal-body {
+    padding: 18px 14px;
+  }
+
+  .leave-policies-checkbox-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* >= 1400px  (Large Desktop / Big Monitor) */
+@media (min-width: 1400px) {
+  .leave-policies-main {
+    padding: 0 36px 36px 36px;
+  }
+
+  .leave-policies-title {
+    font-size: 34px;
+  }
+
+  .leave-policies-add-btn {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .leave-policies-table th,
+  .leave-policies-table td {
+    padding: 24px 24px;
+    font-size: 15px;
+  }
+
+  .leave-policies-modal {
+    width: 600px;
+  }
+
+  .leave-policies-input,
+  .leave-policies-select {
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+}

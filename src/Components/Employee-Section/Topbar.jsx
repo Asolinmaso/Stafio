@@ -148,9 +148,27 @@ const Topbar = () => {
     if (!notif.is_read) {
       markAsRead(notif.id);
     }
-    if (notif.link) {
-      navigate(notif.link);
+
+    const title = (notif.title || "").toLowerCase();
+
+    // Explicit title-based mapping (takes priority over potentially broken backend notif.link strings)
+    if (title.includes("leave")) {
+      navigate("/my-leave");
+    } else if (title.includes("regularization")) {
+      navigate("/my-regularization");
+    } else if (title.includes("holiday")) {
+      navigate("/my-holidays");
+    } else if (title.includes("attendance")) {
+      navigate("/employee-attendance");
+    } else if (notif.link) {
+      // Correct common backend link typos
+      if (notif.link === "/employee/attendance") {
+        navigate("/employee-attendance");
+      } else {
+        navigate(notif.link);
+      }
     }
+
     setShowNotifications(false);
   };
 
@@ -249,7 +267,7 @@ const Topbar = () => {
               <div className="notif-header">
                 <h6>Notifications</h6>
                 {notifications.length > 0 && unreadCount > 0 && (
-                  <span className="mark-all-read" onClick={() => {}}>
+                  <span className="mark-all-read" onClick={() => { }}>
                     {unreadCount} New
                   </span>
                 )}

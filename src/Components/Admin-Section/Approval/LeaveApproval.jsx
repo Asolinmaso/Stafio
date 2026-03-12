@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  FaCheckCircle,
   FaFilter,
   FaEdit,
-  FaTimesCircle,
-  FaCircleNotch,
   FaSearch,
 } from "react-icons/fa";
 import "./LeaveApproval.css";
@@ -27,6 +24,12 @@ const LeaveApproval = () => {
   const [approvalReason, setApprovalReason] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [showRowsDropdown, setShowRowsDropdown] = useState(false);
+  const rowsDropdownRef = useRef(null);
 
   const session = getCurrentSession();
   const currentAdminId = session?.user_id;
@@ -96,6 +99,25 @@ const LeaveApproval = () => {
     };
   }, [showFilterPopup]);
 
+  // Outside click close for rows dropdown
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        showRowsDropdown &&
+        rowsDropdownRef.current &&
+        !rowsDropdownRef.current.contains(e.target)
+      ) {
+        setShowRowsDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showRowsDropdown]);
+
   const filteredAndSortedLeaves = leaves
     // Search by name
     .filter((leave) =>
@@ -126,15 +148,24 @@ const LeaveApproval = () => {
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
-  const pendingCount = leaves.filter(
-    (leave) => leave.status === "Pending",
-  ).length;
-  const approvedCount = leaves.filter(
-    (leave) => leave.status === "Approved",
-  ).length;
-  const rejectedCount = leaves.filter(
-    (leave) => leave.status === "Rejected",
-  ).length;
+  const pendingCount = leaves.filter((leave) => leave.status === "Pending").length;
+  const approvedCount = leaves.filter((leave) => leave.status === "Approved").length;
+  const rejectedCount = leaves.filter((leave) => leave.status === "Rejected").length;
+
+  // Computed pagination values
+  const totalPages = Math.max(1, Math.ceil(filteredAndSortedLeaves.length / rowsPerPage));
+  const paginatedLeaves = filteredAndSortedLeaves.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  // Reset to page 1 when filters/sort/search change
+  const resetPage = () => setCurrentPage(1);
+
+  useEffect(() => {
+    resetPage();
+  }, [searchTerm, filterStatus, filterLeaveType, filterDate, sortOrder]);
+
 
   return (
     <div className="leave-approval-layout">
@@ -150,11 +181,34 @@ const LeaveApproval = () => {
         <Topbar />
         <h2 className="page-title">Leave Approval</h2>
 
-        {/* Leave Summary Cards */}
+        {/* ── HEADER: 3 summary cards LEFT | controls RIGHT ── */}
         <div className="leave-header">
+          {/* 3-card single-box with vertical dividers — matches design */}
           <div className="leave-summary">
+            {/* Card 1 — Pending */}
             <div className="summary-card-leave">
-              <FaCircleNotch className="summary-icon pending" />
+              {/* SVG dots-clock spinner — matches design exactly */}
+              <span className="dots-spinner-icon">
+                <svg viewBox="0 0 32 32" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* All 8 dots on exact circle r=12, centre=(16,16), every 45° */}
+                  {/* 12 o'clock  0°   */}
+                  <circle cx="16" cy="4" r="1.4" fill="#f59e0b" opacity="0.25" />
+                  {/* 1:30       45°   */}
+                  <circle cx="24.49" cy="7.51" r="1.6" fill="#f59e0b" opacity="0.38" />
+                  {/* 3 o'clock  90°   */}
+                  <circle cx="28" cy="16" r="2.0" fill="#f59e0b" opacity="0.55" />
+                  {/* 4:30      135°   */}
+                  <circle cx="24.49" cy="24.49" r="2.4" fill="#f59e0b" opacity="0.70" />
+                  {/* 6 o'clock 180°   */}
+                  <circle cx="16" cy="28" r="2.8" fill="#f59e0b" opacity="1.00" />
+                  {/* 7:30      225°   */}
+                  <circle cx="7.51" cy="24.49" r="2.4" fill="#f59e0b" opacity="0.70" />
+                  {/* 9 o'clock 270°   */}
+                  <circle cx="4" cy="16" r="2.0" fill="#f59e0b" opacity="0.45" />
+                  {/* 10:30     315°   */}
+                  <circle cx="7.51" cy="7.51" r="1.6" fill="#f59e0b" opacity="0.30" />
+                </svg>
+              </span>
               <div className="card-text-block">
                 <strong>
                   {pendingCount < 10 ? `0${pendingCount}` : pendingCount}{" "}
@@ -164,8 +218,14 @@ const LeaveApproval = () => {
               </div>
             </div>
 
+            {/* Card 2 — Approved: outlined green circle + checkmark */}
             <div className="summary-card-leave">
-              <FaCheckCircle className="summary-icon approved" />
+              <span className="summary-svg-icon">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="16" cy="16" r="13" stroke="#22c55e" strokeWidth="1.8" />
+                  <path d="M10 16.5L14.5 21L22 12" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
               <div className="card-text-block">
                 <strong>
                   {approvedCount < 10 ? `0${approvedCount}` : approvedCount}{" "}
@@ -175,8 +235,14 @@ const LeaveApproval = () => {
               </div>
             </div>
 
+            {/* Card 3 — Rejected: outlined red circle + bold X */}
             <div className="summary-card-leave">
-              <FaTimesCircle className="summary-icon rejected" />
+              <span className="summary-svg-icon">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="16" cy="16" r="13" stroke="#ef4444" strokeWidth="2" />
+                  <path d="M11 11L21 21M21 11L11 21" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </span>
               <div className="card-text-block">
                 <strong>
                   {rejectedCount < 10 ? `0${rejectedCount}` : rejectedCount}{" "}
@@ -318,278 +384,324 @@ const LeaveApproval = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredAndSortedLeaves.map((leave, index) => (
-              <tr key={index}>
-                <td>
-                  <div className="employee-info">
-                    <div className="emp-avatar">
-                      <img
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          leave.name,
-                        )}&background=random`}
-                        alt={leave.name}
-                      />
-                    </div>
-                    <div>
-                      <p className="emp-name">{leave.name}</p>
-                      <span className="emp-id">{leave.id}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span className="leave-type-name">{leave.type}</span>
-                  <div className="leave-type-days">{leave.days}</div>
-                </td>
-                <td>{leave.dates}</td>
-                <td>
-                  <div className="req-date-text">{leave.requestDate}</div>
-                  <span
-                    className={`status-badge ${getStatusClass(leave.status)}`}
-                  >
-                    {leave.status}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="view-btn"
-                    onClick={() => {
-                      setSelectedLeave(leave);
-                      setShowModal(true);
-                    }}
-                  >
-                    View Details
-                  </button>
+            {paginatedLeaves.length === 0 ? (
+              <tr>
+                <td colSpan={5} style={{ textAlign: "center", padding: "32px", color: "#9ca3af" }}>
+                  No leave records found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              paginatedLeaves.map((leave, index) => (
+                <tr key={index}>
+                  <td>
+                    <div className="employee-info">
+                      <div className="emp-avatar">
+                        <img
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            leave.name,
+                          )}&background=random`}
+                          alt={leave.name}
+                        />
+                      </div>
+                      <div>
+                        <p className="emp-name">{leave.name}</p>
+                        <span className="emp-id">{leave.id}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className="leave-type-name">{leave.type}</span>
+                    <div className="leave-type-days">{leave.days}</div>
+                  </td>
+                  <td>{leave.dates}</td>
+                  <td>
+                    <div className="req-date-text">{leave.requestDate}</div>
+                    <span className={`status-badge ${getStatusClass(leave.status)}`}>
+                      {leave.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="view-btn"
+                      onClick={() => {
+                        setSelectedLeave(leave);
+                        setShowModal(true);
+                      }}
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
 
         {/* PAGINATION */}
         <div className="pagination">
-          <div className="la-showing">
-            Showing
-            <span className="la-showing-pill">07 ▾</span>
-          </div>
-
-          <div className="la-pages">
-            <div className="page-nav">
-              <button>Prev</button>
-              <span className="page-num">01</span>
-              <button>Next</button>
-            </div>
-          </div>
-
-          {/* LEAVE DETAILS MODAL */}
-          {showModal && selectedLeave && (
-            <div
-              className="approve-modal-overlay"
-              onClick={() => setShowModal(false)}
+          {/* LEFT: Showing [N] dropdown */}
+          <div className="la-showing" ref={rowsDropdownRef} style={{ position: "relative" }}>
+            <span>Showing</span>
+            <span
+              className="la-showing-pill"
+              onClick={() => setShowRowsDropdown((p) => !p)}
+              style={{ cursor: "pointer", userSelect: "none" }}
             >
-              <div
-                className="approve-leave-modal"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="approve-modal-header-blue">
-                  <h3>Leave Approval</h3>
-                  <button
-                    className="close-btn"
-                    onClick={() => setShowModal(false)}
-                  >
-                    ×
-                  </button>
-                </div>
-
-                <div className="approve-form-modal-body">
-                  <form className="approve-leave-form">
-                    <div className="form-left">
-                      <div className="form-row">
-                        <label>Employee ID:</label>
-                        <input type="text" value={selectedLeave.id} readOnly />
-                      </div>
-
-                      <div className="form-row">
-                        <label>Leave Type:</label>
-                        <input
-                          type="text"
-                          value={selectedLeave.type}
-                          readOnly
-                        />
-                      </div>
-
-                      <div className="form-row">
-                        <label>Date Of Leave:</label>
-                        <div className="date-row">
-                          <div className="date-item">
-                            <p>From</p>
-                            <input
-                              type="text"
-                              value={selectedLeave.from}
-                              readOnly
-                            />
-                          </div>
-
-                          <div className="date-item">
-                            <p>To</p>
-                            <input
-                              type="text"
-                              value={selectedLeave.to}
-                              readOnly
-                            />
-                          </div>
-
-                          <div className="date-item">
-                            <p>Session</p>
-                            <input
-                              type="text"
-                              value={selectedLeave.session}
-                              readOnly
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <label>Notify Others:</label>
-                        <input
-                          type="text"
-                          value={selectedLeave.notify}
-                          readOnly
-                        />
-                        <input
-                          type="text"
-                          className="document-input"
-                          value={selectedLeave.document || "No File Uploaded"}
-                          readOnly
-                        />
-                      </div>
-
-                      <div className="form-row reason-row">
-                        <label>Reason:</label>
-                        <textarea value={selectedLeave.reason} readOnly />
-                      </div>
-
-                      {/* ACTION BUTTONS – ONLY IF PENDING */}
-                      {selectedLeave.status === "Pending" && (
-                        <div className="action-approve-modal-actions">
-                          <button
-                            type="button"
-                            className="approve-apply-btn"
-                            onClick={() => {
-                              setActionType("Approval");
-                              setShowReasonModal(true);
-                            }}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            type="button"
-                            className="approve-cancel-btn"
-                            onClick={() => {
-                              setActionType("Rejection");
-                              setShowReasonModal(true);
-                            }}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="form-right">
-                      <img src={illustration} alt="Leave Illustration" />
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {showReasonModal && (
-            <div className="reason-modal-overlay">
-              <div className="reason-modal">
-                <button
-                  className="reason-close-btn"
-                  onClick={() => setShowReasonModal(false)}
-                >
-                  ×
-                </button>
-                <h3>Reason For {actionType}</h3>
-
-                <textarea
-                  placeholder="Please fill out the note for approvals"
-                  maxLength={250}
-                  value={approvalReason}
-                  onChange={(e) => setApprovalReason(e.target.value)}
-                />
-                <small>maximum character limit 250</small>
-                <div className="reason-modal-actions">
-                  <button
-                    className="reason-apply-btn"
-                    onClick={async () => {
-                      try {
-                        const endpoint =
-                          actionType === "Approval"
-                            ? `/api/leave_requests/${selectedLeave.request_id}/approve`
-                            : `/api/leave_requests/${selectedLeave.request_id}/reject`;
-                        await apiClient.put(endpoint, {
-                          reason: approvalReason,
-                          approved_by: currentAdminId,
-                        });
-                        // Refresh the leave list
-                        const response =
-                          await apiClient.get("/api/leaveapproval");
-                        setLeaves(response.data);
-                        setShowReasonModal(false);
-                        setShowSuccessModal(true);
-                        setApprovalReason("");
-                      } catch (error) {
-                        console.error(
-                          "Error processing leave request:",
-                          error.response.data.message,
-                        );
-                        alert(
-                          `Failed to process leave request. Please try again.\n ${error.response.data.message}`,
-                        );
-                      }
+              {String(rowsPerPage).padStart(2, "0")} ▾
+            </span>
+            {/* Rows-per-page dropdown */}
+            {showRowsDropdown && (
+              <div className="rows-dropdown">
+                {[7, 10, 15, 20].map((n) => (
+                  <div
+                    key={n}
+                    className={`rows-option${rowsPerPage === n ? " rows-option--active" : ""}`}
+                    onClick={() => {
+                      setRowsPerPage(n);
+                      setCurrentPage(1);
+                      setShowRowsDropdown(false);
                     }}
                   >
-                    Submit
-                  </button>
-                  <button
-                    className="reason-cancel-btn"
-                    onClick={() => setShowReasonModal(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                    {String(n).padStart(2, "0")}
+                  </div>
+                ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* SUCCESS MODAL */}
-          {showSuccessModal && (
-            <div className="success-modal-overlay">
-              <div className="success-modal">
+          {/* RIGHT: Prev / page / Next */}
+          <div className="la-pages">
+            <div className="page-nav">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                style={{ opacity: currentPage === 1 ? 0.4 : 1 }}
+              >
+                Prev
+              </button>
+              <span className="page-num">
+                {String(currentPage).padStart(2, "0")}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                style={{ opacity: currentPage === totalPages ? 0.4 : 1 }}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* LEAVE DETAILS MODAL */}
+        {showModal && selectedLeave && (
+          <div
+            className="approve-modal-overlay"
+            onClick={() => setShowModal(false)}
+          >
+            <div
+              className="approve-leave-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="approve-modal-header-blue">
+                <h3>Leave Approval</h3>
                 <button
-                  className="success-close-btn"
-                  onClick={() => {
-                    setShowSuccessModal(false);
-                    setShowModal(false);
-                  }}
+                  className="close-btn"
+                  onClick={() => setShowModal(false)}
                 >
                   ×
                 </button>
-                <img className="tick-icon" src={tick} alt="tick-icon" />
-                <h2>Success</h2>
-                <p>
-                  Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
-                  Successfully
-                </p>
+              </div>
+
+              <div className="approve-form-modal-body">
+                <form className="approve-leave-form">
+                  <div className="form-left">
+                    <div className="form-row">
+                      <label>Employee ID:</label>
+                      <input type="text" value={selectedLeave.id} readOnly />
+                    </div>
+
+                    <div className="form-row">
+                      <label>Leave Type:</label>
+                      <input
+                        type="text"
+                        value={selectedLeave.type}
+                        readOnly
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label>Date Of Leave:</label>
+                      <div className="date-row">
+                        <div className="date-item">
+                          <p>From</p>
+                          <input
+                            type="text"
+                            value={selectedLeave.from}
+                            readOnly
+                          />
+                        </div>
+
+                        <div className="date-item">
+                          <p>To</p>
+                          <input
+                            type="text"
+                            value={selectedLeave.to}
+                            readOnly
+                          />
+                        </div>
+
+                        <div className="date-item">
+                          <p>Session</p>
+                          <input
+                            type="text"
+                            value={selectedLeave.session}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <label>Notify Others:</label>
+                      <input
+                        type="text"
+                        value={selectedLeave.notify}
+                        readOnly
+                      />
+                      <input
+                        type="text"
+                        className="document-input"
+                        value={selectedLeave.document || "No File Uploaded"}
+                        readOnly
+                      />
+                    </div>
+
+                    <div className="form-row reason-row">
+                      <label>Reason:</label>
+                      <textarea value={selectedLeave.reason} readOnly />
+                    </div>
+
+                    {/* ACTION BUTTONS – ONLY IF PENDING */}
+                    {selectedLeave.status === "Pending" && (
+                      <div className="action-approve-modal-actions">
+                        <button
+                          type="button"
+                          className="approve-apply-btn"
+                          onClick={() => {
+                            setActionType("Approval");
+                            setShowReasonModal(true);
+                          }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          type="button"
+                          className="approve-cancel-btn"
+                          onClick={() => {
+                            setActionType("Rejection");
+                            setShowReasonModal(true);
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-right">
+                    <img src={illustration} alt="Leave Illustration" />
+                  </div>
+                </form>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {showReasonModal && (
+          <div className="reason-modal-overlay">
+            <div className="reason-modal">
+              <button
+                className="reason-close-btn"
+                onClick={() => setShowReasonModal(false)}
+              >
+                ×
+              </button>
+              <h3>Reason For {actionType}</h3>
+
+              <textarea
+                placeholder="Please fill out the note for approvals"
+                maxLength={250}
+                value={approvalReason}
+                onChange={(e) => setApprovalReason(e.target.value)}
+              />
+              <small>maximum character limit 250</small>
+              <div className="reason-modal-actions">
+                <button
+                  className="reason-apply-btn"
+                  onClick={async () => {
+                    try {
+                      const endpoint =
+                        actionType === "Approval"
+                          ? `/api/leave_requests/${selectedLeave.request_id}/approve`
+                          : `/api/leave_requests/${selectedLeave.request_id}/reject`;
+                      await apiClient.put(endpoint, {
+                        reason: approvalReason,
+                        approved_by: currentAdminId,
+                      });
+                      // Refresh the leave list
+                      const response =
+                        await apiClient.get("/api/leaveapproval");
+                      setLeaves(response.data);
+                      setShowReasonModal(false);
+                      setShowSuccessModal(true);
+                      setApprovalReason("");
+                    } catch (error) {
+                      console.error(
+                        "Error processing leave request:",
+                        error.response.data.message,
+                      );
+                      alert(
+                        `Failed to process leave request. Please try again.\n ${error.response.data.message}`,
+                      );
+                    }
+                  }}
+                >
+                  Submit
+                </button>
+                <button
+                  className="reason-cancel-btn"
+                  onClick={() => setShowReasonModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SUCCESS MODAL */}
+        {showSuccessModal && (
+          <div className="success-modal-overlay">
+            <div className="success-modal">
+              <button
+                className="success-close-btn"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setShowModal(false);
+                }}
+              >
+                ×
+              </button>
+              <img className="tick-icon" src={tick} alt="tick-icon" />
+              <h2>Success</h2>
+              <p>
+                Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
+                Successfully
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

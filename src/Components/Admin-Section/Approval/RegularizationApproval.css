@@ -687,3 +687,166 @@
   font-size: 14px;
   color: #666;
 }
+
+/* ================================================
+   MEDIA QUERIES — Regularization Approval Page
+   ================================================ */
+
+/* <= 1200px  (Small Laptop) */
+@media (max-width: 1200px) {
+  .regularization-approval-main {
+    padding: 0 18px 18px 18px !important;
+  }
+
+  .right-bottom-button {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .search-input {
+    width: 180px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .ra-modal-content {
+    width: 90vw;
+  }
+}
+
+/* <= 992px  (Compact Desktop) */
+@media (max-width: 992px) {
+  .regularization-approval-main {
+    padding: 0 12px 14px 12px !important;
+  }
+
+  .header-top h2 {
+    font-size: 22px;
+  }
+
+  .header-bottom {
+    gap: 10px;
+  }
+
+  .left-tabs {
+    width: 100%;
+  }
+
+  .tab-btn,
+  .tab-btn.active {
+    flex: 1;
+    text-align: center;
+    padding: 9px 14px !important;
+    font-size: 13px;
+  }
+
+  .right-bottom-button {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .search-input {
+    width: 150px;
+    font-size: 12px;
+  }
+
+  .right-btn-filter {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  .sort-select {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  .filter-icon-btn {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  .regularization-table th,
+  .regularization-table td {
+    padding: 10px 10px;
+    font-size: 13px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .ra-modal-content {
+    width: 95vw;
+  }
+
+  .ra-modal-body {
+    padding: 20px 20px;
+    flex-direction: column;
+  }
+
+  .ra-illustration-section {
+    display: none;
+  }
+
+  .ra-form-group label {
+    width: 100px;
+    font-size: 13px;
+  }
+}
+
+/* >= 1400px  (Large Desktop / Big Monitor) */
+@media (min-width: 1400px) {
+  .regularization-approval-main {
+    padding: 0 36px 36px 36px !important;
+  }
+
+  .header-top h2 {
+    font-size: 30px;
+  }
+
+  .tab-btn,
+  .tab-btn.active {
+    padding: 12px 40px !important;
+    font-size: 15px;
+  }
+
+  .search-input {
+    width: 280px;
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .right-btn-filter {
+    height: 48px;
+    padding: 0 24px;
+    font-size: 15px;
+  }
+
+  .sort-select {
+    height: 48px;
+    padding: 0 24px;
+    font-size: 15px;
+  }
+
+  .filter-icon-btn {
+    height: 48px;
+    padding: 0 24px;
+    font-size: 15px;
+  }
+
+  .regularization-table th,
+  .regularization-table td {
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+
+  .ra-modal-content {
+    width: 800px;
+  }
+}

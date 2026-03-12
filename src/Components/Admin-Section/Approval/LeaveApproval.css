@@ -1,5 +1,5 @@
 /* ================================================
-   LEAVE APPROVAL — pixel-perfect match to Image 2
+   LEAVE APPROVAL — pixel-perfect match to design
    ================================================ */
 * {
 	box-sizing: border-box;
@@ -8,7 +8,7 @@
 /* ── Layout ── */
 .leave-approval-layout {
 	display: flex;
-	background: #edf2fb;
+	background: #eff5ff;
 	height: 100vh;
 	overflow: hidden;
 	position: relative;
@@ -23,9 +23,9 @@
 }
 
 .rightside-logos {
-	width: 500px;
+	width: 420px;
 	height: auto;
-	opacity: 0.85;
+	opacity: 0.6;
 	pointer-events: none;
 }
 
@@ -36,14 +36,15 @@
 	overflow-y: auto;
 	position: relative;
 	z-index: 1;
+	padding: 0 24px 24px 24px;
 }
 
 /* ── Title ── */
 .page-title {
-	font-size: 26px !important;
+	font-size: 28px !important;
 	font-weight: 700 !important;
 	color: #111827 !important;
-	margin: 25px 0 !important;
+	margin: 22px 0 18px 0 !important;
 }
 
 /* ================================================
@@ -54,94 +55,61 @@
 	justify-content: space-between;
 	align-items: flex-start;
 	padding: 0;
-	margin-bottom: 25px;
+	margin-bottom: 20px;
 	gap: 20px;
 	flex-wrap: nowrap;
 }
 
 /* =====================================
-   SUMMARY CARDS — EXACT IMAGE MATCH
+   SUMMARY CARDS
 ===================================== */
-
-/* container */
 .leave-summary {
 	display: flex;
-	gap: 18px;
+	gap: 14px;
 	background: transparent;
 	box-shadow: none;
+	flex-shrink: 0;
+	align-items: stretch;
 }
 
 /* individual card */
 .summary-card-leave {
 	background: #ffffff;
-	min-width: 250px;
-	padding: 20px 24px;
-	border-radius: 14px;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+	min-width: 229px;
+	height: 115px;
+	padding: 14px 20px;
+	border-radius: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 	border: none;
+	border-right: none !important;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	justify-content: center;
 }
 
-/* icon circle */
-.summary-icon {
-	width: 34px;
-	height: 34px;
-	border-radius: 50%;
-	display: flex;
+/* ── Spinner & SVG icons ── */
+/* ── Dots spinner wrapper (SVG rendered inside via JSX) ── */
+.dots-spinner-icon {
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 16px;
-	margin-bottom: 12px;
+	width: 32px;
+	height: 32px;
+	margin-bottom: 8px;
+	animation: spin 1.5s linear infinite;
 }
 
-/* icon colors */
-.summary-icon.pending {
-	color: #f59e0b;
-	border: 2px dotted #f59e0b;
-	animation: spin 2s linear infinite;
+.summary-svg-icon {
+	width: 26px;
+	height: 26px;
+	display: inline-block;
+	margin-bottom: 8px;
 }
 
-.summary-icon.approved {
-	color: #22c55e;
-	border: 2px solid #f9faf9;
-}
-
-.summary-icon.rejected {
-	color: #ef4444;
-	border: 2px solid #fdfcfc;
-}
-
-/* text */
-.card-text-block strong {
-	font-size: 15px;
-	font-weight: 700;
-	color: #111827;
-	line-height: 1.4;
-}
-
-.sub-text {
-	font-size: 13px;
-	color: #9ca3af;
-	margin-top: 6px;
-	font-weight: 400;
-}
-
-/* remove old divider effect if any */
-.summary-card-leave {
-	border-right: none !important;
-}
-
-/* animation */
-@keyframes spin {
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(360deg);
-	}
+.summary-svg-icon svg {
+	width: 100%;
+	height: 100%;
 }
 
 /* Card text */
@@ -163,14 +131,26 @@
 	font-size: 12px;
 	color: #9ca3af;
 	font-weight: 400;
-	margin-top: 10px;
+	margin-top: 6px;
 	display: block;
+}
+
+/* animation */
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 /* ── Right controls ── */
 .right-leave-actions {
 	display: flex;
 	flex-direction: column;
+	justify-content: flex-start;
 	align-items: flex-end;
 	gap: 10px;
 	flex-shrink: 0;
@@ -183,12 +163,12 @@
 }
 
 .right-tab-btn {
-	padding: 8px 24px;
+	padding: 9px 26px;
 	font-size: 13px;
 	font-weight: 500;
 	color: #374151;
 	background: #ffffff;
-	border: 1.5px solid #d1d5db;
+	border: 1px solid #e2e8f0;
 	cursor: pointer;
 	transition: all 0.2s;
 	line-height: 1.4;
@@ -204,7 +184,6 @@
 	border-radius: 0 8px 8px 0;
 }
 
-/* Active All — white with border */
 .right-tab-btn--active {
 	background: #ffffff;
 	color: #111827;
@@ -212,7 +191,6 @@
 	border-color: #d1d5db;
 }
 
-/* Active My Team — cyan fill */
 .right-tab-btn--cyan {
 	background: #12b3e6 !important;
 	color: #ffffff !important;
@@ -236,19 +214,19 @@
 
 .search-icon-inside {
 	position: absolute;
-	left: 12px;
+	left: 11px;
 	color: #9ca3af;
-	font-size: 13px;
+	font-size: 12px;
 	pointer-events: none;
 }
 
 .right-search-input-new {
-	padding: 8px 14px 8px 34px;
+	padding: 7px 12px 7px 30px;
 	border: 1px solid #e2e8f0;
 	border-radius: 20px;
 	background: #f8fafc;
 	font-size: 13px;
-	width: 155px;
+	width: 150px;
 	outline: none;
 	color: #374151;
 	transition: border-color 0.2s;
@@ -302,52 +280,69 @@
 	display: inline-block;
 }
 
+/* Compact dropdown anchored below the Filter button */
 .filter-dropdown {
 	position: absolute;
-	top: 44px;
-	right: 0;
-	width: 300px;
+	top: calc(100% + 6px);
+	left: -250px;
+	width: 240px;
 	background: #fff;
-	border-radius: 12px;
-	padding: 18px;
-	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
-	z-index: 999;
+	border-radius: 10px;
+	padding: 14px 14px 12px 14px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13);
+	border: 1px solid #e2e8f0;
+	z-index: 9999;
 }
 
 .filter-title {
-	font-size: 16px;
+	font-size: 13px;
 	font-weight: 600;
-	margin-bottom: 14px;
+	margin-bottom: 10px;
 	text-align: center;
 	color: #1f2937;
 }
 
+/* 2-col grid: Name spans both cols, Leave Type + Status side by side */
 .filter-grid {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px 8px;
+}
+
+/* Name field spans full width */
+.filter-grid .filter-field:first-child {
+	grid-column: 1 / -1;
 }
 
 .filter-field {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 3px;
 }
 
 .filter-field label {
-	font-size: 13px;
-	font-weight: 500;
-	color: #374151;
+	font-size: 11px;
+	font-weight: 600;
+	color: #1e3a5f;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
 }
 
 .filter-field input,
 .filter-field select {
-	padding: 7px 10px;
+	padding: 5px 8px;
 	border: 1px solid #d1d5db;
-	border-radius: 8px;
-	font-size: 13px;
+	border-radius: 6px;
+	font-size: 12px;
 	outline: none;
 	background: #fff;
+	width: 100%;
+	color: #12b3e6;
+}
+
+.filter-field input::placeholder {
+	color: #d97706;
+	font-size: 12px;
 }
 
 .filter-field input:focus,
@@ -358,17 +353,20 @@
 .filter-actions {
 	display: flex;
 	justify-content: space-between;
-	margin-top: 14px;
+	align-items: center;
+	margin-top: 10px;
+	gap: 8px;
 }
 
 .reset-btn {
 	background: #f3f4f6;
 	color: #374151;
 	border: none;
-	padding: 7px 14px;
-	border-radius: 8px;
-	font-size: 13px;
+	padding: 5px 12px;
+	border-radius: 6px;
+	font-size: 12px;
 	cursor: pointer;
+	flex: 1;
 }
 
 .reset-btn:hover {
@@ -379,10 +377,11 @@
 	background: #12b3e6;
 	color: #fff;
 	border: none;
-	padding: 7px 18px;
-	border-radius: 8px;
-	font-size: 13px;
+	padding: 5px 12px;
+	border-radius: 6px;
+	font-size: 12px;
 	cursor: pointer;
+	flex: 1;
 }
 
 .apply-btn:hover {
@@ -403,7 +402,7 @@
 }
 
 .leave-table th {
-	padding: 14px 20px;
+	padding: 14px 18px;
 	font-size: 13px;
 	font-weight: 600;
 	color: #374151;
@@ -426,7 +425,7 @@
 }
 
 .leave-table td {
-	padding: 14px 20px;
+	padding: 14px 18px;
 	font-size: 13px;
 	color: #374151;
 	text-align: left;
@@ -437,19 +436,19 @@
 .employee-info {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
 }
 
 .emp-avatar img {
-	width: 38px;
-	height: 38px;
+	width: 40px;
+	height: 40px;
 	border-radius: 50%;
 	object-fit: cover;
 }
 
 .emp-name {
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 600;
 	color: #111827;
 	margin: 0;
 }
@@ -465,6 +464,7 @@
 .leave-type-name {
 	font-size: 13px;
 	color: #374151;
+	font-weight: 500;
 }
 
 .leave-type-days {
@@ -477,13 +477,14 @@
 .req-date-text {
 	font-size: 13px;
 	color: #374151;
-	margin-bottom: 5px;
+	margin-bottom: 6px;
+	font-weight: 500;
 }
 
-/* Status badges — exact reference colors */
+/* Status badges */
 .status-badge {
 	display: inline-block;
-	padding: 3px 16px;
+	padding: 3px 14px;
 	border-radius: 20px;
 	font-size: 12px;
 	font-weight: 500;
@@ -521,8 +522,8 @@
 }
 
 .view-btn:hover {
-	border-color: #2563eb;
-	color: #2563eb;
+	border-color: #12b3e6;
+	color: #12b3e6;
 }
 
 /* ================================================
@@ -532,7 +533,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 14px 24px 16px;
+	padding: 12px 4px 8px 4px;
 	font-size: 13px;
 	color: #374151;
 }
@@ -551,40 +552,85 @@
 	gap: 4px;
 	background: #12b3e6;
 	color: #fff;
-	padding: 4px 10px;
+	padding: 3px 10px;
 	border-radius: 6px;
 	font-size: 13px;
 	font-weight: 600;
 	cursor: pointer;
+	user-select: none;
 }
 
+/* Rows-per-page dropdown */
+.rows-dropdown {
+	position: absolute;
+	bottom: calc(100% + 6px);
+	left: 0;
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+	z-index: 200;
+	min-width: 70px;
+}
+
+.rows-option {
+	padding: 8px 16px;
+	font-size: 13px;
+	color: #374151;
+	cursor: pointer;
+	text-align: center;
+	transition: background 0.15s;
+}
+
+.rows-option:hover {
+	background: #f1f5f9;
+}
+
+.rows-option--active {
+	background: #e0f7fe;
+	color: #12b3e6;
+	font-weight: 600;
+}
+
+/* Right: Prev | 01 | Next */
 .la-pages {
 	display: flex;
 	align-items: center;
-	gap: 4px;
 }
 
-.la-page-btn {
+.page-nav {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.page-nav button {
 	background: transparent;
 	border: none;
-	padding: 6px 10px;
+	padding: 5px 10px;
 	border-radius: 6px;
 	font-size: 13px;
 	color: #374151;
 	cursor: pointer;
-	transition: all 0.2s;
+	transition: background 0.15s;
+	font-weight: 500;
 }
 
-.la-page-btn:hover {
-	background: #f3f4f6;
+.page-nav button:hover:not(:disabled) {
+	background: #e5e7eb;
 }
 
-.la-page-btn--active {
+.page-num {
 	background: #12b3e6;
-	color: #fff;
-	font-weight: 600;
-	padding: 6px 12px;
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 13px;
+	padding: 4px 12px;
 	border-radius: 6px;
+	display: inline-block;
+	min-width: 32px;
+	text-align: center;
 }
 
 /* ================================================
@@ -636,18 +682,21 @@
 
 .approve-form-modal-body {
 	padding: 24px 28px;
+	position: relative;
 }
 
 .approve-leave-form {
 	display: flex;
-	gap: 20px;
+	gap: 0;
+	align-items: flex-start;
 }
 
 .form-left {
-	flex: 1.4;
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	padding-right: 10px;
 }
 
 .form-row {
@@ -666,7 +715,7 @@
 
 .form-row input {
 	flex: 1;
-	height: 40px;
+	height: 36px;
 	background: #f3f8ff;
 	border: 1px solid #d1d5db;
 	border-radius: 8px;
@@ -677,7 +726,7 @@
 
 .form-row textarea {
 	flex: 1;
-	height: 70px;
+	height: 80px;
 	background: #f3f8ff;
 	border: 1px solid #d1d5db;
 	border-radius: 8px;
@@ -689,8 +738,9 @@
 
 .date-row {
 	display: flex;
-	gap: 16px;
+	gap: 10px;
 	flex: 1;
+	align-items: flex-end;
 }
 
 .date-item {
@@ -712,7 +762,7 @@
 
 .document-input {
 	flex: 1;
-	height: 40px;
+	height: 36px;
 	background: #f3f8ff;
 	border: 1px solid #d1d5db;
 	border-radius: 8px;
@@ -746,15 +796,19 @@
 }
 
 .form-right {
-	flex: 1;
+	flex: 0 0 175px;
 	display: flex;
 	align-items: flex-end;
 	justify-content: flex-end;
+	align-self: flex-end;
+	padding-bottom: 4px;
 }
 
 .form-right img {
-	width: 180px;
-	object-fit: contain;
+	width: 175px !important;
+	height: 175px !important;
+	object-fit: contain !important;
+	display: block;
 }
 
 /* Reason modal */
@@ -902,5 +956,728 @@
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+/* ================================================
+   MEDIA QUERIES — Leave Approval Page
+   All Laptop & Desktop Breakpoints (incl. Filter Popup)
+   ================================================ */
+
+/* ── Small Laptop: 768px – 1024px ── */
+@media (min-width: 768px) and (max-width: 1024px) {
+	.leave-approval-main {
+		padding: 0 14px 18px 14px;
+	}
+
+	.page-title {
+		font-size: 20px !important;
+		margin: 16px 0 14px 0 !important;
+	}
+
+	.leave-header {
+		flex-direction: column;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+
+	.leave-summary {
+		flex-wrap: wrap;
+		gap: 10px;
+		width: 100%;
+	}
+
+	.summary-card-leave {
+		min-width: 140px;
+		height: auto;
+		flex: 1 1 140px;
+		padding: 12px 14px;
+	}
+
+	.right-leave-actions {
+		width: 100%;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.right-tab-btn {
+		padding: 7px 14px;
+		font-size: 12px;
+	}
+
+	.right-search-input-new {
+		width: 110px;
+	}
+
+	.right-btn-filter-new {
+		padding: 6px 10px;
+		font-size: 12px;
+	}
+
+	.right-sort-select-new {
+		font-size: 12px;
+		padding: 6px 8px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 210px;
+		padding: 12px 12px 10px 12px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 12px;
+		margin-bottom: 8px;
+	}
+
+	.filter-field label {
+		font-size: 10px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 4px 7px;
+		font-size: 11px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 11px;
+		padding: 4px 10px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 10px 10px;
+		font-size: 12px;
+	}
+
+	.emp-avatar img {
+		width: 32px;
+		height: 32px;
+	}
+
+	.emp-name {
+		font-size: 12px;
+	}
+
+	.status-badge {
+		font-size: 11px;
+		padding: 2px 10px;
+	}
+
+	.view-btn {
+		padding: 5px 10px;
+		font-size: 12px;
+	}
+
+	.rightside-logos {
+		width: 260px;
+	}
+
+	.approve-leave-modal {
+		width: 95%;
+	}
+
+	.approve-leave-form {
+		flex-direction: column;
+	}
+
+	.form-right {
+		display: none;
+	}
+
+	.pagination {
+		font-size: 12px;
+	}
+}
+
+/* ── Standard Laptop: 1025px – 1280px ── */
+@media (min-width: 1025px) and (max-width: 1280px) {
+	.leave-approval-main {
+		padding: 0 18px 20px 18px;
+	}
+
+	.page-title {
+		font-size: 22px !important;
+		margin: 18px 0 16px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+
+	.leave-summary {
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	.summary-card-leave {
+		min-width: 160px;
+		height: auto;
+		padding: 14px 16px;
+	}
+
+	.right-leave-actions {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+
+	.right-tab-btn {
+		padding: 8px 18px;
+		font-size: 12px;
+	}
+
+	.right-search-input-new {
+		width: 125px;
+	}
+
+	.right-btn-filter-new {
+		padding: 7px 11px;
+		font-size: 12px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 224px;
+		padding: 13px 13px 11px 13px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 12px;
+		margin-bottom: 9px;
+	}
+
+	.filter-field label {
+		font-size: 10px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 5px 8px;
+		font-size: 11px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 11px;
+		padding: 5px 10px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 12px 14px;
+		font-size: 13px;
+	}
+
+	.rightside-logos {
+		width: 320px;
+	}
+
+	.approve-leave-modal {
+		width: 640px;
+	}
+
+	.pagination {
+		font-size: 12px;
+	}
+}
+
+/* ── Laptop / Small Desktop: 1281px – 1440px ── */
+@media (min-width: 1281px) and (max-width: 1440px) {
+	.leave-approval-main {
+		padding: 0 22px 22px 22px;
+	}
+
+	.page-title {
+		font-size: 25px !important;
+		margin: 20px 0 17px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: nowrap;
+		gap: 18px;
+	}
+
+	.leave-summary {
+		gap: 12px;
+	}
+
+	.summary-card-leave {
+		min-width: 200px;
+		height: 115px;
+		padding: 14px 18px;
+	}
+
+	.right-leave-actions {
+		flex-shrink: 0;
+		gap: 10px;
+	}
+
+	.right-tab-btn {
+		padding: 8px 22px;
+		font-size: 13px;
+	}
+
+	.right-search-input-new {
+		width: 145px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 234px;
+		padding: 14px 14px 12px 14px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 13px;
+		margin-bottom: 10px;
+	}
+
+	.filter-field label {
+		font-size: 11px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 5px 8px;
+		font-size: 12px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 12px;
+		padding: 5px 12px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 13px 16px;
+		font-size: 13px;
+	}
+
+	.rightside-logos {
+		width: 380px;
+	}
+
+	.approve-leave-modal {
+		width: 680px;
+	}
+}
+
+/* ── Standard Desktop: 1441px – 1600px ── */
+@media (min-width: 1441px) and (max-width: 1600px) {
+	.leave-approval-main {
+		padding: 0 26px 26px 26px;
+	}
+
+	.page-title {
+		font-size: 26px !important;
+		margin: 22px 0 18px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: nowrap;
+		gap: 20px;
+	}
+
+	.leave-summary {
+		gap: 14px;
+	}
+
+	.summary-card-leave {
+		min-width: 215px;
+		height: 115px;
+		padding: 14px 20px;
+	}
+
+	.right-search-input-new {
+		width: 160px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 240px;
+		padding: 14px 14px 12px 14px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 13px;
+		margin-bottom: 10px;
+	}
+
+	.filter-field label {
+		font-size: 11px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 5px 8px;
+		font-size: 12px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 12px;
+		padding: 5px 12px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 14px 18px;
+		font-size: 13px;
+	}
+
+	.rightside-logos {
+		width: 420px;
+	}
+
+	.approve-leave-modal {
+		width: 700px;
+	}
+}
+
+/* ── Large Desktop: 1601px – 1920px (Full HD) ── */
+@media (min-width: 1601px) and (max-width: 1920px) {
+	.leave-approval-main {
+		padding: 0 30px 30px 30px;
+	}
+
+	.page-title {
+		font-size: 28px !important;
+		margin: 22px 0 18px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: nowrap;
+		gap: 22px;
+	}
+
+	.leave-summary {
+		gap: 16px;
+	}
+
+	.summary-card-leave {
+		min-width: 229px;
+		height: 115px;
+		padding: 14px 20px;
+	}
+
+	.card-text-block strong {
+		font-size: 15px;
+	}
+
+	.right-search-input-new {
+		width: 180px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 248px;
+		padding: 15px 15px 13px 15px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 13px;
+		margin-bottom: 10px;
+	}
+
+	.filter-field label {
+		font-size: 11px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 6px 9px;
+		font-size: 12px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 12px;
+		padding: 6px 13px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 15px 20px;
+		font-size: 14px;
+	}
+
+	.rightside-logos {
+		width: 480px;
+	}
+
+	.approve-leave-modal {
+		width: 740px;
+	}
+}
+
+/* ── Extra Large / 2K: 1921px – 2560px ── */
+@media (min-width: 1921px) and (max-width: 2560px) {
+	.leave-approval-main {
+		padding: 0 36px 36px 36px;
+	}
+
+	.page-title {
+		font-size: 32px !important;
+		margin: 26px 0 22px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: nowrap;
+		gap: 28px;
+	}
+
+	.leave-summary {
+		gap: 18px;
+	}
+
+	.summary-card-leave {
+		min-width: 260px;
+		height: 130px;
+		padding: 20px 28px;
+	}
+
+	.card-text-block strong {
+		font-size: 17px;
+	}
+
+	.sub-text {
+		font-size: 14px;
+	}
+
+	.right-search-input-new {
+		width: 220px;
+	}
+
+	.right-tab-btn {
+		padding: 10px 30px;
+		font-size: 14px;
+	}
+
+	.right-btn-filter-new {
+		padding: 9px 18px;
+		font-size: 14px;
+	}
+
+	.right-sort-select-new {
+		padding: 9px 14px;
+		font-size: 14px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 300px;
+		padding: 18px 18px 15px 18px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 15px;
+		margin-bottom: 13px;
+	}
+
+	.filter-field label {
+		font-size: 13px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 7px 10px;
+		font-size: 13px;
+	}
+
+	.filter-field input::placeholder {
+		font-size: 13px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 13px;
+		padding: 7px 16px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 18px 26px;
+		font-size: 15px;
+	}
+
+	.emp-avatar img {
+		width: 46px;
+		height: 46px;
+	}
+
+	.emp-name {
+		font-size: 16px;
+	}
+
+	.emp-id {
+		font-size: 13px;
+	}
+
+	.rightside-logos {
+		width: 650px;
+	}
+
+	.approve-leave-modal {
+		width: 820px;
+	}
+
+	.view-btn {
+		padding: 8px 18px;
+		font-size: 14px;
+	}
+
+	.status-badge {
+		font-size: 13px;
+		padding: 4px 16px;
+	}
+
+	.pagination {
+		font-size: 14px;
+		padding: 16px 4px 10px 4px;
+	}
+}
+
+/* ── Ultra-Wide / 4K: > 2560px ── */
+@media (min-width: 2561px) {
+	.leave-approval-main {
+		padding: 0 48px 48px 48px;
+		max-width: 2400px;
+		margin: 0 auto;
+	}
+
+	.page-title {
+		font-size: 36px !important;
+		margin: 30px 0 24px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: nowrap;
+		gap: 32px;
+	}
+
+	.leave-summary {
+		gap: 22px;
+	}
+
+	.summary-card-leave {
+		min-width: 300px;
+		height: 145px;
+		padding: 24px 34px;
+	}
+
+	.card-text-block strong {
+		font-size: 19px;
+	}
+
+	.sub-text {
+		font-size: 15px;
+	}
+
+	.right-search-input-new {
+		width: 260px;
+	}
+
+	.right-tab-btn {
+		padding: 12px 36px;
+		font-size: 15px;
+	}
+
+	.right-btn-filter-new {
+		padding: 10px 22px;
+		font-size: 15px;
+	}
+
+	.right-sort-select-new {
+		padding: 10px 16px;
+		font-size: 15px;
+	}
+
+	/* Filter popup */
+	.filter-dropdown {
+		width: 340px;
+		padding: 20px 20px 17px 20px;
+		right: 0;
+	}
+
+	.filter-title {
+		font-size: 16px;
+		margin-bottom: 14px;
+	}
+
+	.filter-field label {
+		font-size: 14px;
+	}
+
+	.filter-field input,
+	.filter-field select {
+		padding: 9px 12px;
+		font-size: 14px;
+	}
+
+	.filter-field input::placeholder {
+		font-size: 14px;
+	}
+
+	.reset-btn,
+	.apply-btn {
+		font-size: 14px;
+		padding: 8px 18px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 20px 32px;
+		font-size: 16px;
+	}
+
+	.emp-avatar img {
+		width: 52px;
+		height: 52px;
+	}
+
+	.emp-name {
+		font-size: 18px;
+	}
+
+	.emp-id {
+		font-size: 14px;
+	}
+
+	.status-badge {
+		font-size: 14px;
+		padding: 5px 20px;
+	}
+
+	.view-btn {
+		padding: 9px 22px;
+		font-size: 15px;
+	}
+
+	.rightside-logos {
+		width: 800px;
+	}
+
+	.approve-leave-modal {
+		width: 900px;
+	}
+
+	.pagination {
+		font-size: 15px;
+		padding: 20px 4px 12px 4px;
 	}
 }
