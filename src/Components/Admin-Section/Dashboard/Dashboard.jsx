@@ -6,11 +6,11 @@ import { IoTimeOutline } from "react-icons/io5";
 import { MdOutlineAccessTime, MdOutlineLogout } from "react-icons/md";
 import { TbCalendarTime } from "react-icons/tb";
 import {
-	BsEye,
-	BsPencilSquare,
-	BsCalendarCheck,
-	BsEnvelope,
-	BsFlag,
+  BsEye,
+  BsPencilSquare,
+  BsCalendarCheck,
+  BsEnvelope,
+  BsFlag,
 } from "react-icons/bs";
 import { BsPlusCircle } from "react-icons/bs";
 import AdminSidebar from "../AdminSidebar";
@@ -31,47 +31,46 @@ import AttendanceCard from "./AttendanceCard";
 import { getCurrentSession } from "../../../utils/sessionManager";
 
 const BREAK_SCHEDULES = [
-	{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-	{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+  { id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
+  { id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
 ];
 
 const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
 const MEETING_START_HOUR = 9;
 const MEETING_START_MIN = 0;
 const ALERT_BEFORE_MINUTES = 10;
-const BREAK_DURATION_MIN = 15;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const formatTime = (date) =>
-	date instanceof Date
-		? date.toLocaleTimeString([], {
-				hour: "2-digit",
-				minute: "2-digit",
-				second: "2-digit",
-			})
-		: date;
+  date instanceof Date
+    ? date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    : date;
 
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
 const calcWorkingTime = (punchInDate, totalBreakMs = 0) => {
-	if (!punchInDate) return "00:00:00";
-	const totalMs = Math.max(
-		0,
-		Date.now() - punchInDate.getTime() - totalBreakMs,
-	);
-	const totalSec = Math.floor(totalMs / 1000);
-	const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
-	const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
-	const s = String(totalSec % 60).padStart(2, "0");
-	return `${h}:${m}:${s}`;
+  if (!punchInDate) return "00:00:00";
+  const totalMs = Math.max(
+    0,
+    Date.now() - punchInDate.getTime() - totalBreakMs,
+  );
+  const totalSec = Math.floor(totalMs / 1000);
+  const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+  const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+  const s = String(totalSec % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
 };
 
 const getCurrentTimeInMinutes = () => {
-	const now = new Date();
-	return now.getHours() * 60 + now.getMinutes();
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes();
 };
 const toMinutes = (time) => {
-	const [h, m] = time.split(":").map(Number);
-	return h * 60 + m;
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -93,6 +92,7 @@ const Dashboard = () => {
   const [activeBreak, setActiveBreak] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [showBreakDropdown, setShowBreakDropdown] = useState(false);
+  const [breakAlertMsg, setBreakAlertMsg] = useState("");
 
   // ── API loading / error state ─────────────────────────────────────────
   const [punchLoading, setPunchLoading] = useState(false);
@@ -186,9 +186,36 @@ const Dashboard = () => {
         if (data.active_break) {
           // On break — show frozen working hours (don't start timer)
           setIsBreak(true);
-          breakStartRef.current = new Date();
+          const breakStart = new Date();
+          breakStartRef.current = breakStart;
           // Show correct frozen total hours instead of 00:00:00
           setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
+
+          // Restore break alert timer from sessionStorage
+          const savedBreakId = sessionStorage.getItem("active_break_id");
+          const savedBreakLabel = sessionStorage.getItem("active_break_label");
+          const savedBreakStart = sessionStorage.getItem("break_started_at");
+
+          if (savedBreakStart) {
+            const breakStartedAt = new Date(savedBreakStart);
+            const elapsedMs = Date.now() - breakStartedAt.getTime();
+            const durationMin = parseInt(sessionStorage.getItem("break_duration_min")) || 15;
+            const durationMs = durationMin * 60 * 1000;
+            const remainingMs = durationMs - elapsedMs;
+
+            const alertMsg = `Your ${savedBreakLabel || "Break"} of ${durationMin} minutes has ended. Please resume work.`;
+            setBreakAlertMsg(alertMsg);
+
+            clearTimeout(breakTimerRef.current);
+            if (remainingMs > 0) {
+              breakTimerRef.current = setTimeout(
+                () => setShowAlert(true),
+                remainingMs,
+              );
+            } else {
+              setShowAlert(true);
+            }
+          }
         } else {
           // Working — immediately set correct hours before timer kicks in
           setTotalHours(calcWorkingTime(checkInDate, restoredBreakMs));
@@ -477,20 +504,35 @@ const Dashboard = () => {
     try {
       await apiClient.post(`/api/attendance/start-break`, {});
 
+      const breakStart = new Date();
       stopWorkingTimer();
       setIsBreak(true);
       setActiveBreak(breakItem);
-      breakStartRef.current = new Date();
+      breakStartRef.current = breakStart;
       setShowBreakDropdown(false);
 
-      const isTimed = breakItem?.id === "coffee" || breakItem?.id === "custom";
-      if (isTimed) {
-        clearTimeout(breakTimerRef.current);
-        breakTimerRef.current = setTimeout(
-          () => setShowAlert(true),
-          BREAK_DURATION_MIN * 60 * 1000,
-        );
-      }
+      // Persist break info in sessionStorage (survives page refresh)
+      sessionStorage.setItem("active_break_id", breakItem?.id || "custom");
+      sessionStorage.setItem(
+        "active_break_label",
+        breakItem?.label || "Custom Break",
+      );
+      sessionStorage.setItem("break_started_at", breakStart.toISOString());
+
+      // Calculate duration dynamically from break schedule start/end times
+      const durationMin = (breakItem?.start && breakItem?.end)
+        ? toMinutes(breakItem.end) - toMinutes(breakItem.start)
+        : 15;
+      const durationMs = durationMin * 60 * 1000;
+
+      // Persist duration for page refresh restore
+      sessionStorage.setItem("break_duration_min", String(durationMin));
+
+      const alertMsg = `Your ${breakItem?.label || "Break"} of ${durationMin} minutes has ended. Please resume work.`;
+      setBreakAlertMsg(alertMsg);
+
+      clearTimeout(breakTimerRef.current);
+      breakTimerRef.current = setTimeout(() => setShowAlert(true), durationMs);
     } catch (err) {
       const msg = err.response?.data?.message || "Could not start break.";
       setPunchError(msg);
@@ -520,6 +562,12 @@ const Dashboard = () => {
       setIsBreak(false);
       setActiveBreak(null);
       breakStartRef.current = null;
+
+      // Clear persisted break state
+      sessionStorage.removeItem("active_break_id");
+      sessionStorage.removeItem("active_break_label");
+      sessionStorage.removeItem("break_started_at");
+      sessionStorage.removeItem("break_duration_min");
 
       startWorkingTimer(punchInTime);
     } catch (err) {
@@ -799,8 +847,8 @@ const Dashboard = () => {
                           <div style={alertStyle}>
                             <span>⚠️</span>
                             <span>
-                              Your break time of 15 minutes has ended. Please
-                              resume work.
+                              {breakAlertMsg ||
+                                "Your break time has ended. Please resume work."}
                             </span>
                             <button
                               style={closeBtnStyle}
@@ -978,28 +1026,28 @@ export default Dashboard;
 
 // ─── Inline styles (kept identical to original) ────────────────────────────
 const alertStyle = {
-	position: "fixed",
-	top: "50%",
-	left: "50%",
-	transform: "translate(-50%, -50%)",
-	backgroundColor: "#f47c3c",
-	color: "white",
-	padding: "16px 24px",
-	borderRadius: "8px",
-	boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-	fontSize: "16px",
-	display: "flex",
-	alignItems: "center",
-	gap: "10px",
-	zIndex: 9999,
-	width: "30%",
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  backgroundColor: "#f47c3c",
+  color: "white",
+  padding: "16px 24px",
+  borderRadius: "8px",
+  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+  fontSize: "16px",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  zIndex: 9999,
+  width: "30%",
 };
 
 const closeBtnStyle = {
-	background: "transparent",
-	color: "white",
-	border: "none",
-	fontSize: "18px",
-	cursor: "pointer",
-	marginLeft: "10px",
+  background: "transparent",
+  color: "white",
+  border: "none",
+  fontSize: "18px",
+  cursor: "pointer",
+  marginLeft: "10px",
 };
