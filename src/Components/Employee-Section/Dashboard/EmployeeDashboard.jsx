@@ -34,12 +34,6 @@ import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
 // ─── Config ────────────────────────────────────────────────────────────────
 const BASE_URL = "http://127.0.0.1:5001";
 
-// Break durations per type (in minutes)
-const BREAK_DURATIONS = {
-  lunch: 60, // 60 minutes
-  coffee: 15, // 15 minutes
-  custom: 15, // 15 minutes
-};
 const MEETING_LINK = "https://meet.google.com/shm-kuvn-xqb";
 const MEETING_START_HOUR = 9;
 const MEETING_START_MIN = 0;
@@ -270,7 +264,7 @@ const EmployeeDashboard = () => {
           if (savedBreakStart) {
             const breakStartedAt = new Date(savedBreakStart);
             const elapsedMs = Date.now() - breakStartedAt.getTime();
-            const durationMin = BREAK_DURATIONS[savedBreakId] || 15;
+            const durationMin = parseInt(sessionStorage.getItem("break_duration_min")) || 15;
             const durationMs = durationMin * 60 * 1000;
             const remainingMs = durationMs - elapsedMs;
 
@@ -530,17 +524,21 @@ const EmployeeDashboard = () => {
       );
       sessionStorage.setItem("break_started_at", breakStart.toISOString());
 
-      const durationMin = BREAK_DURATIONS[breakItem?.id] || 15;
+      // Calculate duration dynamically from break schedule start/end times
+      const durationMin = (breakItem?.start && breakItem?.end)
+        ? toMinutes(breakItem.end) - toMinutes(breakItem.start)
+        : 15;
       const durationMs = durationMin * 60 * 1000;
-      const elapsed = 0;
-      const remaining = durationMs - elapsed;
+
+      // Persist duration for page refresh restore
+      sessionStorage.setItem("break_duration_min", String(durationMin));
 
       const alertMsg = `Your ${breakItem?.label || "Break"} of ${durationMin} minutes has ended. Please resume work.`;
       setBreakAlertMsg(alertMsg);
 
       clearTimeout(breakTimerRef.current);
-      if (remaining > 0) {
-        breakTimerRef.current = setTimeout(() => setShowAlert(true), remaining);
+      if (durationMs > 0) {
+        breakTimerRef.current = setTimeout(() => setShowAlert(true), durationMs);
       } else {
         setShowAlert(true);
       }
@@ -580,6 +578,7 @@ const EmployeeDashboard = () => {
       sessionStorage.removeItem("active_break_id");
       sessionStorage.removeItem("active_break_label");
       sessionStorage.removeItem("break_started_at");
+      sessionStorage.removeItem("break_duration_min");
 
       startWorkingTimer(punchInTime);
     } catch (err) {
@@ -844,7 +843,10 @@ const EmployeeDashboard = () => {
               <Row>
                 {/* ── CARD 1: Total Leaves — action: Apply Leave ── */}
                 <Col md={4} lg={4} className="mb-3">
-                  <Card className="summary-card">
+                  <Card className="summary-card"
+                   style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/my-leave")}
+                  >
                     <div className="summary-top">
                       <h2>
                         {dashboardLoading
@@ -859,7 +861,7 @@ const EmployeeDashboard = () => {
                     <div
                       className="summary-action"
                       style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/apply-leave")}
+                      onClick={() => navigate("/my-leave")}
                     >
                       <div className="summary-action-icon">
                         <BsPlusCircle />
@@ -871,7 +873,10 @@ const EmployeeDashboard = () => {
 
                 {/* ── CARD 2: Taken — action: Check Leave Details ── */}
                 <Col md={4} lg={4} className="mb-3">
-                  <Card className="summary-card">
+                  <Card className="summary-card"
+                   style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/my-leave")}
+                  >
                     <div className="summary-top">
                       <h2>
                         {dashboardLoading
@@ -898,7 +903,10 @@ const EmployeeDashboard = () => {
 
                 {/* ── CARD 3: Absent — action: Add Regularization ── */}
                 <Col md={4} lg={4} className="mb-3">
-                  <Card className="summary-card">
+                  <Card className="summary-card"
+                  style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/my-regularization")}
+                  >
                     <div className="summary-top">
                       <h2>
                         {dashboardLoading
@@ -925,7 +933,10 @@ const EmployeeDashboard = () => {
 
                 {/* ── CARD 4: Worked Days — action: Check Attendance Overview ── */}
                 <Col md={4} lg={4} className="mb-3">
-                  <Card className="summary-card">
+                  <Card className="summary-card"
+                  style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/employee-attendance")}
+                  >
                     <div className="summary-top">
                       <h2>
                         {dashboardLoading
@@ -975,7 +986,10 @@ const EmployeeDashboard = () => {
 
                 {/* ── CARD 6: This Week Holiday — no action ── */}
                 <Col md={4} lg={4} className="mb-3">
-                  <Card className="summary-card">
+                  <Card className="summary-card"
+                  style={{ cursor: "pointer" }}
+                      onClick={() => navigate("/my-holidays")}
+                  >
                     <div className="summary-top">
                       <h2>
                         {dashboardLoading
