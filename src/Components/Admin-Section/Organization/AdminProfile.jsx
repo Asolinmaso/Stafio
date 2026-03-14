@@ -938,7 +938,7 @@ const AdminProfile = () => {
 
   // =========== RENDER ===========
   return (
-    <div className="d-flex">
+    <div className="d-flex" style={{ height: "100vh", overflow: "hidden" }}>
       <div className="sidebar">
         <AdminSidebar />
       </div>

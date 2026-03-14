@@ -3,7 +3,6 @@
   display: flex;
   min-height: 100vh;
   background: #f0f2f5;
-
 }
 
 /* ===== Sidebar ===== */
@@ -28,12 +27,6 @@
   overflow-y: auto;
 }
 
-/* ===== Topbar ===== */
-/* .myleave-container .topbar {
-  width: 97%;
-  margin-bottom: 20px;
-} */
-
 /* ===== Page Title ===== */
 .page-title {
   font-size: 25px;
@@ -42,17 +35,29 @@
   color: #000;
 }
 
+.leave-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  gap: 20px;
+  flex-wrap: nowrap;
+  /* Header should NOT wrap on desktop */
+}
+
 /* ===== Leave Summary Cards ===== */
 .leave-summary {
   display: flex;
   gap: 20px;
-  margin-bottom: 25px;
+  flex: 1;
+  flex-wrap: nowrap;
+  /* Prevent cards from wrapping to second line */
 }
 
 .summary-card {
   background: #fff;
   flex: 1;
-  min-width: 200px;
+  min-width: 180px;
   border-radius: 12px !important;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
   text-align: left;
@@ -71,15 +76,13 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+  flex-shrink: 0;
+  /* Don't squash the buttons */
 }
 
 .top-buttons {
   display: flex;
   gap: 0;
-}
-
-.bottom-button {
-  margin-top: auto;
 }
 
 /* Buttons */
@@ -92,6 +95,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
+  white-space: nowrap;
 }
 
 .btn-apply:hover {
@@ -106,6 +110,7 @@
   border-radius: 0 15px 15px 0;
   cursor: pointer;
   transition: 0.3s;
+  white-space: nowrap;
 }
 
 .btn-regularization:hover {
@@ -215,172 +220,92 @@
   border-color: #00bcd4;
 }
 
-/* ===== Modal Overlay ===== */
+/* ===== Modal Styles ===== */
 .app-leave-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: none;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* ===== Modal Box ===== */
 .apply-leave-modal {
-  background: #ffffff;
+  background: #fff;
   border-radius: 12px;
   width: 700px;
   max-width: 95%;
   overflow: hidden;
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
 }
 
-/* ===== Blue Header ===== */
 .app-leave-modal-header-blue {
   background: #19bde8;
   color: #fff;
-  height: 50px;
   padding: 14px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.app-leave-modal-header-blue h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  padding: 10px 10px;
-}
-
-.apply-leave-close-btn {
-  background: transparent;
-  color: #fff;
-  font-size: 30px;
-  cursor: pointer;
-  border: none;
-
-}
-
-/* ===== Modal Body ===== */
 .app-leave-modal-body {
-  padding: 45px;
-  padding-bottom: 20px;
-  margin: 0px 10px 1px 2px;
+  padding: 30px;
 }
 
-/* ===== Apply Leave Form Layout ===== */
 .apply-leave-form {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  /* pushes image to bottom */
   gap: 20px;
-  height: 430px;
-  width: 100%;
 }
 
-/* ===== Left Form Section ===== */
 .form-left {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
 .form-left label {
   font-weight: 600;
-  font-size: 14px;
-  margin: -15px;
-  color: #2d2d2d;
+  font-size: 13px;
+  color: #333;
 }
 
 .form-left input,
-.form-left select {
-  width: 60%;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  margin: -10px;
-}
-
+.form-left select,
 .form-left textarea {
-  width: 100%;
-  padding: 8px 8px;
-  border: 1px solid #ccc;
+  padding: 10px;
+  border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
-  /* height: 0px; */
-  resize: none;
 }
 
-.form-left input:focus,
-.form-left select:focus,
-.form-left textarea:focus {
-  border-color: #19bde8;
-}
-
-.app-leave-date-row,
-.app-leave-notify-row {
+.app-leave-date-row {
   display: flex;
-  gap: 40px;
-  width: 100%;
+  gap: 10px;
 }
 
 .app-leave-date-row input,
-.app-leave-date-row select,
-.app-leave-notify-row select {
+.app-leave-date-row select {
   flex: 1;
 }
 
-.app-leave-notify-row select {
-  width: 150px;
-  height: 42px;
-}
-
-.apply-leave-upload-btn {
+.form-right {
+  width: 180px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: #f7f7f7;
-  color: #000000;
-  border: 1px solid #b5e6fa;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-textarea {
-  resize: none;
-  height: 70px;
-}
-
-/* ===== Right Image Section ===== */
-.form-right {
-  flex: 0 0 180px;
-  /* width of right section */
-  display: flex;
-  align-items: flex-end;
-  /* align image to bottom */
   justify-content: center;
 }
 
 .form-right img {
-  width: 150px;
+  width: 100%;
   height: auto;
-  margin: 0;
 }
 
-/* ===== Modal Footer Buttons ===== */
 .app-leave-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
   margin-top: 20px;
 }
 
@@ -388,65 +313,33 @@ textarea {
   background: #19bde8;
   color: #fff;
   border: none;
-  padding: 8px 18px !important;
+  padding: 10px 24px;
   border-radius: 6px;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.apply-leave-btn:hover {
-  background: #009edb;
+  font-weight: 600;
 }
 
 .app-leave-cancel-btn {
-  background: #f2f2f2;
-  border: 1px solid #ccc;
-  padding: 8px 18px;
+  background: #f1f5f9;
+  border: 1px solid #ddd;
+  padding: 10px 24px;
   border-radius: 6px;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.app-leave-cancel-btn:hover {
-  background: #e4e4e4;
-}
-
-
-
-/* ===== Animation ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* filter button */
 .app-btn-filter {
-  color: #000000;
-  font-size: 14px;
+  color: #333;
+  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  background: none;
-  border-radius: 12px;
-  border: 1px solid #b3b1b1 !important;
-  padding: 6px 14px;
-  transition: 0.3s;
-  height: 38px;
-  font-weight: 500;
-  transition: background 0.2s ease;
-  margin-left: 10px;
-}
-
-.app-btn-filter svg {
-  font-size: 14px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  transition: 0.2s;
 }
 
 /* ====== Filter Dropdown Box ====== */
@@ -455,160 +348,134 @@ textarea {
   top: 45px;
   right: 0;
   background: #fff;
-  width: 340px;
+  width: 320px;
   border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  animation: filterSlideDown 0.2s ease-out;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
 }
 
-@keyframes filterSlideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+/* ==========================================================================
+   MEDIA QUERIES: Laptop & Desktop Breakpoint Suite
+   Optimized for: 13", 14", 15" Laptops, Full HD, 2K, and 4K Displays
+   ========================================================================== */
+
+/* â”€â”€ 1. Small Laptop / Large Tablet (768px â€“ 1024px) â”€â”€ */
+@media (max-width: 1024px) {
+  .myleave-container {
+    padding: 0 14px 20px 14px;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .page-title {
+    font-size: 20px !important;
+  }
+
+  .leave-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .leave-summary {
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .summary-card {
+    min-width: 140px;
+    flex: 1 1 140px;
+    padding: 12px !important;
+  }
+
+  .leave-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .leave-table th,
+  .leave-table td {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 }
 
-/* ====== Filter Popup Header ====== */
-.filter-popup-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e6e6e6;
+/* â”€â”€ 2. Standard & High-Res Laptops (1025px â€“ 1550px) â”€â”€ */
+/* Covers physical 1366px, 1440px, and 1536px resolutions */
+@media (min-width: 1025px) and (max-width: 1550px) {
+  .myleave-container {
+    padding: 0 18px 20px 18px;
+  }
+
+  .page-title {
+    font-size: 23px !important;
+  }
+
+  .leave-header {
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  .leave-summary {
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  .summary-card {
+    min-width: 160px;
+    padding: 15px 12px !important;
+  }
+
+  .summary-card strong {
+    font-size: 14px;
+  }
+
+  .leave-table th,
+  .leave-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .AdminSidebar {
+    width: 230px;
+  }
 }
 
-.filter-popup-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-  color: #1a1a1a;
+/* â”€â”€ 3. Transition Range Fix (1551px â€“ 1700px) â”€â”€ */
+@media (min-width: 1551px) and (max-width: 1700px) {
+  .myleave-container {
+    padding: 0 24px 24px 24px;
+  }
+
+  .summary-card {
+    min-width: 190px;
+  }
 }
 
-.filter-popup-close {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 20px;
-  color: #6b7280;
-}
+/* â”€â”€ 4. Large Desktop / Big Monitor (1701px and above) â”€â”€ */
+@media (min-width: 1701px) {
+  .myleave-container {
+    padding: 0 40px 40px 40px;
+  }
 
-.filter-popup-close:hover {
-  background: #f3f4f6;
-}
+  .page-title {
+    font-size: 30px !important;
+  }
 
-/* ====== Filter Popup Body ====== */
-.filter-popup-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  .leave-summary {
+    gap: 24px;
+  }
 
-.filter-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+  .summary-card {
+    min-width: 240px;
+    padding: 25px !important;
+  }
 
-.filter-field label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.filter-field input,
-.filter-field select {
-  width: 100%;
-  height: 38px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  padding: 8px 10px;
-  font-size: 13px;
-  outline: none;
-  transition: all 0.2s;
-}
-
-.filter-field input::placeholder {
-  color: #9ca3af;
-  font-size: 13px;
-}
-
-.filter-field input:focus,
-.filter-field select:focus {
-  border-color: #19bde8;
-  box-shadow: 0px 0px 0px 3px rgba(25, 189, 232, 0.1);
-}
-
-/* ====== Filter Row ====== */
-.filter-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-/* ====== Filter Popup Footer ====== */
-.filter-popup-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #f9fafb;
-  border-top: 1px solid #e6e6e6;
-}
-
-.filter-reset-btn {
-  flex: 1;
-  height: 38px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  color: #4b5563;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.2s;
-}
-
-.filter-reset-btn:hover {
-  background: #f3f4f6;
-}
-
-.filter-apply-btn {
-  flex: 1;
-  height: 38px;
-  border: none;
-  background: #2563eb;
-  color: #fff;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.2s;
-}
-
-.filter-apply-btn:hover {
-  background: #1d4ed8;
-}
-
-/* ====== Remove old filter select styles ====== */
-.right-butn-filter {
-  display: none;
-  /* Hide the old dropdown */
+  .leave-table th,
+  .leave-table td {
+    padding: 18px 25px;
+    font-size: 15px;
+  }
 }

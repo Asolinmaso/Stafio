@@ -689,164 +689,43 @@
 }
 
 /* ================================================
-   MEDIA QUERIES — Regularization Approval Page
+   MEDIA QUERIES — Professional Breakpoint Suite
+   Optimized for: 13", 14", 15" Laptops (1536px), HD & 4K
    ================================================ */
 
-/* <= 1200px  (Small Laptop) */
-@media (max-width: 1200px) {
-  .regularization-approval-main {
-    padding: 0 18px 18px 18px !important;
-  }
-
-  .right-bottom-button {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .search-input {
-    width: 180px;
-  }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  .ra-modal-content {
-    width: 90vw;
-  }
+/* ── 1. Small Laptop / Large Tablet (Up to 1024px) ── */
+@media (max-width: 1024px) {
+  .regularization-approval-main { padding: 0 14px 20px 14px !important; }
+  .header-top h2 { font-size: 20px; }
+  .left-tabs { width: 100%; }
+  .tab-btn, .tab-btn.active { flex: 1; text-align: center; padding: 9px 14px !important; font-size: 13px; }
+  .right-bottom-button { flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  .search-input { width: 150px; font-size: 12px; }
+  .ra-modal-content { width: 95vw; }
+  .ra-modal-body { padding: 20px; flex-direction: column; }
+  .ra-illustration-section { display: none; }
 }
 
-/* <= 992px  (Compact Desktop) */
-@media (max-width: 992px) {
-  .regularization-approval-main {
-    padding: 0 12px 14px 12px !important;
-  }
-
-  .header-top h2 {
-    font-size: 22px;
-  }
-
-  .header-bottom {
-    gap: 10px;
-  }
-
-  .left-tabs {
-    width: 100%;
-  }
-
-  .tab-btn,
-  .tab-btn.active {
-    flex: 1;
-    text-align: center;
-    padding: 9px 14px !important;
-    font-size: 13px;
-  }
-
-  .right-bottom-button {
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  .search-input {
-    width: 150px;
-    font-size: 12px;
-  }
-
-  .right-btn-filter {
-    height: 36px;
-    padding: 0 14px;
-    font-size: 13px;
-  }
-
-  .sort-select {
-    height: 36px;
-    padding: 0 14px;
-    font-size: 13px;
-  }
-
-  .filter-icon-btn {
-    height: 36px;
-    padding: 0 14px;
-    font-size: 13px;
-  }
-
-  .regularization-table th,
-  .regularization-table td {
-    padding: 10px 10px;
-    font-size: 13px;
-  }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  .ra-modal-content {
-    width: 95vw;
-  }
-
-  .ra-modal-body {
-    padding: 20px 20px;
-    flex-direction: column;
-  }
-
-  .ra-illustration-section {
-    display: none;
-  }
-
-  .ra-form-group label {
-    width: 100px;
-    font-size: 13px;
-  }
+/* ── 2. Standard & High-Res Laptops (1025px – 1550px) ── */
+/* Optimized for 1366px, 1440px, and 1536px screens */
+@media (min-width: 1025px) and (max-width: 1550px) {
+  .regularization-approval-main { padding: 0 18px 20px 18px !important; }
+  .header-top h2 { font-size: 23px; margin-bottom: 12px !important; }
+  .right-controls { flex-wrap: wrap; }
+  .regularization-table th, .regularization-table td { padding: 12px 14px; font-size: 13px; }
+  .search-input { width: 170px; }
 }
 
-/* >= 1400px  (Large Desktop / Big Monitor) */
-@media (min-width: 1400px) {
-  .regularization-approval-main {
-    padding: 0 36px 36px 36px !important;
-  }
+/* ── 3. Transition Range Fix (1551px – 1700px) ── */
+@media (min-width: 1551px) and (max-width: 1700px) {
+  .regularization-approval-main { padding: 0 24px 24px 24px !important; }
+  .header-top h2 { font-size: 26px; }
+}
 
-  .header-top h2 {
-    font-size: 30px;
-  }
-
-  .tab-btn,
-  .tab-btn.active {
-    padding: 12px 40px !important;
-    font-size: 15px;
-  }
-
-  .search-input {
-    width: 280px;
-    height: 42px;
-    font-size: 14px;
-  }
-
-  .right-btn-filter {
-    height: 48px;
-    padding: 0 24px;
-    font-size: 15px;
-  }
-
-  .sort-select {
-    height: 48px;
-    padding: 0 24px;
-    font-size: 15px;
-  }
-
-  .filter-icon-btn {
-    height: 48px;
-    padding: 0 24px;
-    font-size: 15px;
-  }
-
-  .regularization-table th,
-  .regularization-table td {
-    padding: 16px 20px;
-    font-size: 15px;
-  }
-
-  .ra-modal-content {
-    width: 800px;
-  }
+/* ── 4. Large Desktop / Big Monitor (1701px and above) ── */
+@media (min-width: 1701px) {
+  .regularization-approval-main { padding: 0 40px 40px 40px !important; }
+  .header-top h2 { font-size: 30px; }
+  .search-input { width: 280px; height: 42px; }
+  .regularization-table th, .regularization-table td { padding: 18px 22px; font-size: 15px; }
 }
