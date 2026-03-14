@@ -396,3 +396,61 @@
 .notif-footer:hover {
   background: #f0f0f0;
 }
+
+/* ── 4K / UHD — 2560px+  (Base 70px → 104px) ───────────── */
+@media screen and (min-width: 2560px) {
+  .topbar {
+    height: 104px !important;
+    padding: 0 52px !important;
+    margin: 20px 0 36px 0 !important;
+    border-radius: 22px !important;
+    top: 18px !important;
+  }
+
+  .topbar-searches {
+    width: 660px;
+  }
+
+  .form-controler {
+    height: 64px !important;
+    font-size: 20px;
+    padding: 12px 26px 12px 62px !important;
+    border-radius: 34px !important;
+  }
+
+  .search-icon {
+    font-size: 22px;
+    left: 22px;
+  }
+
+  .topbar-img {
+    width: 66px;
+    height: 66px;
+  }
+
+  .topbar-avatar {
+    width: 68px;
+    height: 68px;
+  }
+
+  .topbar-left {
+    gap: 30px;
+  }
+
+  .topbar-right {
+    gap: 36px;
+  }
+
+  .topbar-username {
+    font-size: 21px;
+  }
+
+  .topbar-role {
+    font-size: 15px;
+  }
+
+  .notif-icon,
+  .settings-icon {
+    font-size: 30px;
+  }
+}
