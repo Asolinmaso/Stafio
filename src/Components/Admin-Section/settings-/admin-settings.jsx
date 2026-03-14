@@ -1,5 +1,6 @@
 import apiClient from "../../../utils/apiClient";
 import React, { useState, useEffect, useContext, useRef } from "react";
+import ReactDOM from "react-dom";
 import axios from "axios";
 import "./admin-settings.css";
 import AdminSidebar from "../AdminSidebar";
@@ -17,6 +18,7 @@ import {
 	FaPlusCircle,
 	FaPencilAlt,
 	FaTrashAlt,
+	FaRegClock,
 } from "react-icons/fa";
 import { BsUpload } from "react-icons/bs";
 import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
@@ -187,6 +189,14 @@ export default function AdminSettings() {
 	const [lunchBreak, setLunchBreak] = useState("1:00 PM - 2:00 PM");
 	const [coffeeBreak, setCoffeeBreak] = useState("4:00 PM - 4:15 PM");
 	const [customBreaks, setCustomBreaks] = useState([]);
+
+	const [activePicker, setActivePicker] = useState(null); // 'lunch', 'coffee', or index
+	const [pickerStartHour, setPickerStartHour] = useState("01");
+	const [pickerStartMin, setPickerStartMin] = useState("00");
+	const [pickerStartAMPM, setPickerStartAMPM] = useState("AM");
+	const [pickerEndHour, setPickerEndHour] = useState("02");
+	const [pickerEndMin, setPickerEndMin] = useState("00");
+	const [pickerEndAMPM, setPickerEndAMPM] = useState("PM");
 
 	const t = (key) => translations[language]?.[key] || key;
 
@@ -485,13 +495,13 @@ export default function AdminSettings() {
 		}
 	};
 
-	const saveBreakTimesData = async (overrideBreaks = undefined) => {
+	const saveBreakTimesData = async (overrideBreaks = undefined, overrideLunch = undefined, overrideCoffee = undefined) => {
 		try {
 			await apiClient.put(
 				`/api/settings/break_times`,
 				{
-					lunch_break: lunchBreak,
-					coffee_break: coffeeBreak,
+					lunch_break: overrideLunch !== undefined ? overrideLunch : lunchBreak,
+					coffee_break: overrideCoffee !== undefined ? overrideCoffee : coffeeBreak,
 					custom_breaks: overrideBreaks !== undefined ? overrideBreaks : customBreaks,
 				}
 			);
@@ -544,6 +554,131 @@ export default function AdminSettings() {
 		setStartTime("");
 		setEndTime("");
 	};
+
+	const parseAmPmTime = (timeStr) => {
+		try {
+			const parts = timeStr.trim().split(" ");
+			const ampm = parts[1] || "AM";
+			const [h, m] = parts[0].split(":");
+			const hNum = parseInt(h) % 12 || 12;
+			return {
+				h: hNum.toString().padStart(2, "0"),
+				m: (m || "00").padStart(2, "0"),
+				ampm,
+			};
+		} catch {
+			return { h: "01", m: "00", ampm: "AM" };
+		}
+	};
+
+	const openPicker = (type, currentVal) => {
+		const [startStr, endStr] = currentVal.split(" - ");
+		const start = parseAmPmTime(startStr);
+		const end = parseAmPmTime(endStr);
+		setPickerStartHour(start.h);
+		setPickerStartMin(start.m);
+		setPickerStartAMPM(start.ampm);
+		setPickerEndHour(end.h);
+		setPickerEndMin(end.m);
+		setPickerEndAMPM(end.ampm);
+		setActivePicker(type);
+	};
+
+	const savePickerData = () => {
+		const sh = parseInt(pickerStartHour);
+		const sm = parseInt(pickerStartMin);
+		const eh = parseInt(pickerEndHour);
+		const em = parseInt(pickerEndMin);
+		const startStr = `${sh}:${sm.toString().padStart(2,"0")} ${pickerStartAMPM}`;
+		const endStr = `${eh}:${em.toString().padStart(2,"0")} ${pickerEndAMPM}`;
+		const newVal = `${startStr} - ${endStr}`;
+		if (activePicker === "lunch") {
+			setLunchBreak(newVal);
+			saveBreakTimesData(undefined, newVal, coffeeBreak);
+		} else if (activePicker === "coffee") {
+			setCoffeeBreak(newVal);
+			saveBreakTimesData(undefined, lunchBreak, newVal);
+		} else if (typeof activePicker === "number") {
+			const updated = [...customBreaks];
+			updated[activePicker].time = newVal;
+			setCustomBreaks(updated);
+			saveBreakTimesData(updated, lunchBreak, coffeeBreak);
+		}
+		setActivePicker(null);
+	};
+
+	const hours12 = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+	const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"));
+
+	const TimePickerPopover = () => ReactDOM.createPortal(
+		<div className="tp-popover-overlay" onClick={() => setActivePicker(null)}>
+			<div className="tp-modal-box" onClick={(e) => e.stopPropagation()}>
+				<div className="tp-field-group">
+					<label>Start Time</label>
+					<div className="tp-input-wrapper">
+						<select
+							className="tp-time-input"
+							value={pickerStartHour}
+							onChange={(e) => setPickerStartHour(e.target.value)}
+						>
+							{hours12.map(h => <option key={h} value={h}>{h}</option>)}
+						</select>
+						<span style={{ fontSize: "16px", color: "#9ca3af", flexShrink: 0 }}>:</span>
+						<select
+							className="tp-time-input"
+							value={pickerStartMin}
+							onChange={(e) => setPickerStartMin(e.target.value)}
+						>
+							{minutes.map(m => <option key={m} value={m}>{m}</option>)}
+						</select>
+						<select
+							className="tp-ampm-select"
+							value={pickerStartAMPM}
+							onChange={(e) => setPickerStartAMPM(e.target.value)}
+						>
+							<option value="AM">AM</option>
+							<option value="PM">PM</option>
+						</select>
+					</div>
+				</div>
+
+				<div className="tp-field-group">
+					<label>End Time</label>
+					<div className="tp-input-wrapper">
+						<select
+							className="tp-time-input"
+							value={pickerEndHour}
+							onChange={(e) => setPickerEndHour(e.target.value)}
+						>
+							{hours12.map(h => <option key={h} value={h}>{h}</option>)}
+						</select>
+						<span style={{ fontSize: "16px", color: "#9ca3af", flexShrink: 0 }}>:</span>
+						<select
+							className="tp-time-input"
+							value={pickerEndMin}
+							onChange={(e) => setPickerEndMin(e.target.value)}
+						>
+							{minutes.map(m => <option key={m} value={m}>{m}</option>)}
+						</select>
+						<select
+							className="tp-ampm-select"
+							value={pickerEndAMPM}
+							onChange={(e) => setPickerEndAMPM(e.target.value)}
+						>
+							<option value="AM">AM</option>
+							<option value="PM">PM</option>
+						</select>
+					</div>
+				</div>
+
+				<div className="tp-footer">
+					<button className="tp-btn-cancel" onClick={() => setActivePicker(null)}>Cancel</button>
+					<button className="tp-btn-save" onClick={savePickerData}>Save</button>
+				</div>
+			</div>
+		</div>,
+		document.body
+	);
 
 	return (
 		<div className={`dashboard-wrapper d-flex admin-theme-${theme}`}>
@@ -1277,23 +1412,19 @@ export default function AdminSettings() {
 												<input
 													type="text"
 													value={lunchBreak}
-													onChange={(e) => setLunchBreak(e.target.value)}
-													readOnly={!isEditing}
-													onBlur={() => {
-														saveBreakTimesData();
-														setIsEditing(false);
-													}}
+													readOnly
 												/>
 												<button
 													className="edit-btn inside"
-													onClick={() => setIsEditing(true)}
+													onClick={() => openPicker("lunch", lunchBreak)}
 												>
 													<img
 														className="pen-icon"
 														src={penicon}
-														alt="tick-icon"
+														alt="edit-icon"
 													/>
 												</button>
+												{activePicker === "lunch" && <TimePickerPopover />}
 											</div>
 										</div>
 									</div>
@@ -1305,23 +1436,19 @@ export default function AdminSettings() {
 												<input
 													type="text"
 													value={coffeeBreak}
-													onChange={(e) => setCoffeeBreak(e.target.value)}
-													readOnly={!isEditing}
-													onBlur={() => {
-														saveBreakTimesData();
-														setIsEditing(false);
-													}}
+													readOnly
 												/>
 												<button
 													className="edit-btn inside"
-													onClick={() => setIsEditing(true)}
+													onClick={() => openPicker("coffee", coffeeBreak)}
 												>
 													<img
 														className="pen-icon"
 														src={penicon}
-														alt="tick-icon"
+														alt="edit-icon"
 													/>
 												</button>
+												{activePicker === "coffee" && <TimePickerPopover />}
 											</div>
 										</div>
 									</div>
@@ -1336,17 +1463,32 @@ export default function AdminSettings() {
 														value={cb.time}
 														readOnly
 													/>
-													<button
-														className="edit-btn inside"
-														style={{ color: "red", fontSize: "16px", background: "none" }}
-														onClick={() => {
-															const updated = customBreaks.filter((_, i) => i !== idx);
-															setCustomBreaks(updated);
-															saveBreakTimesData(updated);
-														}}
-													>
-														&#10005;
-													</button>
+													<div style={{ display: "flex", position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", gap: "5px" }}>
+														<button
+															className="edit-btn"
+															style={{ padding: 0 }}
+															onClick={() => openPicker(idx, cb.time)}
+														>
+															<img
+																className="pen-icon"
+																src={penicon}
+																alt="edit"
+																style={{ width: "16px" }}
+															/>
+														</button>
+														<button
+															className="edit-btn"
+															style={{ color: "red", fontSize: "16px", background: "none", padding: 0 }}
+															onClick={() => {
+																const updated = customBreaks.filter((_, i) => i !== idx);
+																setCustomBreaks(updated);
+																saveBreakTimesData(updated);
+															}}
+														>
+															&#10005;
+														</button>
+													</div>
+													{activePicker === idx && <TimePickerPopover />}
 												</div>
 											</div>
 										</div>

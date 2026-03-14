@@ -11,17 +11,21 @@ export default function AttendanceReport() {
   const [currentDate, setCurrentDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
-  const [sortDays, setSortDays] = useState(7);
+  const [sortDays, setSortDays] = useState(9999);
+
+  /* PAGINATION STATES */
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   /* FILTER POPUP STATES */
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [popupName, setPopupName] = useState("");
-  const [popupStatus, setPopupStatus] = useState("On Time");
-  const [popupSortDays, setPopupSortDays] = useState(7);
+  const [popupStatus, setPopupStatus] = useState("");
+  const [popupSortDays, setPopupSortDays] = useState(9999);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  const [statusFilter, setStatusFilter] = useState("On Time");
+  const [statusFilter, setStatusFilter] = useState("");
   const [employees, setEmployees] = useState([]);
 
   // ✅ NEW: date picker value
@@ -63,9 +67,10 @@ export default function AttendanceReport() {
   /* FILTER LOGIC */
   const filteredAttendance = attendanceData
     .filter((r) => r.employee?.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter(
-      (r) =>
-        r.status?.toLowerCase().trim() === statusFilter.toLowerCase().trim(),
+    .filter((r) =>
+      statusFilter
+        ? r.status?.toLowerCase().trim() === statusFilter.toLowerCase().trim()
+        : true,
     )
     .filter((r) =>
       selectedEmployeeName ? r.employee === selectedEmployeeName : true,
@@ -99,11 +104,29 @@ export default function AttendanceReport() {
       );
     });
 
+  /* Reset to page 1 whenever filters change */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedEmployeeName, statusFilter, sortDays, fromDate, toDate, selectedDate]);
+
+  /* PAGINATION DERIVED VALUES
+     - No employee selected → show ALL records on one page (no slicing)
+     - Employee selected    → normal rowsPerPage pagination */
+  const isAllEmployees = selectedEmployeeName === "";
+  const effectiveRows = isAllEmployees ? Math.max(filteredAttendance.length, 1) : rowsPerPage;
+  const totalPages = Math.max(1, Math.ceil(filteredAttendance.length / effectiveRows));
+  const paginatedAttendance = isAllEmployees
+    ? filteredAttendance
+    : filteredAttendance.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+      );
+
   /* FILTER ACTIONS */
   const handleResetFilters = () => {
     setPopupName("");
-    setPopupStatus("On Time");
-    setPopupSortDays(7);
+    setPopupStatus("");
+    setPopupSortDays(9999);
     setFromDate("");
     setToDate("");
   };
@@ -177,7 +200,10 @@ export default function AttendanceReport() {
           <select
             className="leave-report-dropdown"
             value={selectedEmployeeName}
-            onChange={(e) => setSelectedEmployeeName(e.target.value)}
+            onChange={(e) => {
+              setSelectedEmployeeName(e.target.value);
+              setCurrentPage(1); // always start from page 1 when employee changes
+            }}
           >
             <option value="">Select Employee</option>
             {employees.map((emp) => (
@@ -229,6 +255,7 @@ export default function AttendanceReport() {
                       value={popupStatus}
                       onChange={(e) => setPopupStatus(e.target.value)}
                     >
+                      <option value="">All Statuses</option>
                       <option value="On Time">On Time</option>
                       <option value="Late Login">Late Login</option>
                       <option value="Absent">Absent</option>
@@ -242,6 +269,7 @@ export default function AttendanceReport() {
                       value={popupSortDays}
                       onChange={(e) => setPopupSortDays(Number(e.target.value))}
                     >
+                      <option value={9999}>All Dates</option>
                       <option value={5}>Last 5 Days</option>
                       <option value={10}>Last 10 Days</option>
                       <option value={20}>Last 20 Days</option>
@@ -351,36 +379,89 @@ export default function AttendanceReport() {
               </tr>
             </thead>
             <tbody>
-              {filteredAttendance.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.id}</td>
-                  <td>{r.employee}</td>
-                  <td>{r.role}</td>
-                  <td>{r.status}</td>
-                  <td>{r.date}</td>
-                  <td>{r.checkIn}</td>
-                  <td>{r.checkOut}</td>
-                  <td>{r.workHours}</td>
+              {paginatedAttendance.length > 0 ? (
+                paginatedAttendance.map((r, i) => {
+                  const status = r.status?.toLowerCase().trim();
+                  const statusClass =
+                    status === "on time" ? "att-status-ontime" :
+                    status === "absent"  ? "att-status-absent" :
+                    status === "late login" ? "att-status-late" : "";
+                  const timeClass =
+                    status === "on time" ? "att-time-ontime" :
+                    status === "absent"  ? "att-time-absent" :
+                    status === "late login" ? "att-time-late" : "";
+                  return (
+                    <tr key={`${r.employee}-${r.date}-${r.checkIn}-${i}`}>
+                      <td>{r.id}</td>
+                      <td>{r.employee}</td>
+                      <td>{r.role || "—"}</td>
+                      <td><span className={statusClass}>{r.status}</span></td>
+                      <td>{r.date}</td>
+                      <td className={timeClass}>{r.checkIn}</td>
+                      <td className={timeClass}>{r.checkOut}</td>
+                      <td>{r.workHours}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: "center", padding: "30px", color: "#94a3b8" }}>
+                    No records found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Pagination — always visible */}
         <div className="att-report-pagination">
+          {/* LEFT: Showing [05 ▾] */}
           <div className="att-report-showing">
             <span>Showing</span>
-            <select>
-              <option>05</option>
-              <option>10</option>
-              <option>15</option>
-            </select>
+            <div className="att-showing-pill" style={{ position: "relative" }}>
+              <span
+                className="att-showing-pill-btn"
+                onClick={() => document.getElementById("att-rows-select").click()}
+              >
+                {String(isAllEmployees ? filteredAttendance.length : rowsPerPage).padStart(2, "0")} ▾
+              </span>
+              {!isAllEmployees && (
+                <select
+                  id="att-rows-select"
+                  value={rowsPerPage}
+                  onChange={(e) => {
+                    setRowsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  style={{ position: "absolute", opacity: 0, top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                >
+                  <option value={5}>05</option>
+                  <option value={10}>10</option>
+                  <option value={15}>15</option>
+                  <option value={20}>20</option>
+                </select>
+              )}
+            </div>
           </div>
+
+          {/* RIGHT: Prev / 01 / Next */}
           <div className="att-report-page-controls">
-            <button>Prev</button>
-            <button className="active">01</button>
-            <button>Next</button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1 || isAllEmployees}
+            >
+              Prev
+            </button>
+            <button className="active">
+              {String(currentPage).padStart(2, "0")}
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || isAllEmployees}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

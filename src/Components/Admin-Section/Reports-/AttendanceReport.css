@@ -2,10 +2,12 @@
 	display: flex;
 	background: #eff5ff;
 	min-height: 100vh;
+	align-items: flex-start;
 }
 
 .att-report-main {
 	flex: 1;
+	padding-bottom: 40px;
 }
 
 /* ===== Header ===== */
@@ -96,6 +98,8 @@ input.search-input2 {
 }
 
 /* ===== Table Wrapper ===== */
+/* overflow-y:clip removes the auto scrollbar that the browser adds
+   when overflow-x:auto is set — CSS spec coerces visible → auto on same element */
 .att-report-table-wrapper {
 	background: #fff;
 	border-radius: 6px;
@@ -103,6 +107,7 @@ input.search-input2 {
 	width: 97%;
 	margin-left: 15px;
 	overflow-x: auto;
+	overflow-y: clip;
 }
 
 .att-report-table-header {
@@ -198,36 +203,36 @@ input.search-input2 {
 	font-weight: 600;
 }
 
-.att-report-time.on-time {
+/* ===== Status colours ===== */
+.att-status-ontime {
+	color: #16a34a;
+	font-weight: 600;
+}
+
+.att-status-absent {
+	color: #dc2626;
+	font-weight: 600;
+}
+
+.att-status-late {
+	color: #d97706;
+	font-weight: 600;
+}
+
+/* ===== Time colours (check-in / check-out) ===== */
+.att-time-ontime {
 	color: #3b82f6;
 	font-weight: 600;
 }
 
-.att-report-time.absent {
+.att-time-absent {
 	color: #ef4444;
 	font-weight: 600;
 }
 
-.att-report-time.late-login {
-	color: #eab308;
+.att-time-late {
+	color: #d97706;
 	font-weight: 600;
-}
-
-.att-report-status {
-	font-weight: 500;
-	font-weight: 600;
-}
-
-.att-report-status.on-time {
-	color: #16a34a;
-}
-
-.att-report-status.absent {
-	color: #dc2626;
-}
-
-.att-report-status.late-login {
-	color: #eab308;
 }
 
 /* ===== Pagination ===== */
@@ -246,12 +251,25 @@ input.search-input2 {
 	font-size: 14px;
 }
 
-.att-report-showing select {
-	padding: 6px 12px;
-	border: 1px solid #19bde8;
+/* Blue pill — matches LeaveApproval style */
+.att-showing-pill {
+	position: relative;
+	display: inline-flex;
+}
+
+.att-showing-pill-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	background: #19bde8;
 	color: #fff;
+	padding: 4px 12px;
 	border-radius: 6px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	user-select: none;
+	white-space: nowrap;
 }
 
 .att-report-page-controls {
@@ -273,6 +291,11 @@ input.search-input2 {
 	background: #19bde8;
 	color: #fff;
 	border: 1px solid #19bde8;
+}
+
+.att-report-page-controls button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
 }
 
 /* ============================= */
@@ -580,7 +603,8 @@ input.search-input2 {
 	}
 
 	.att-report-table-wrapper {
-		overflow-x: auto; /*   table scroll */
+		overflow-x: auto;
+		/*   table scroll */
 	}
 
 	.att-report-table {
