@@ -1,8 +1,8 @@
 .employee-page {
   display: flex;
- 
   height: 100vh;
   overflow: hidden;
+  background: #eff5ff;
 }
 
 .employee-main {
@@ -10,24 +10,16 @@
   display: flex;
   flex-direction: column;
   background: #eff5ff;
+  height: 100vh;
   overflow-y: auto;
-   height: 100vh;   /* new */
+  overflow-x: hidden;
 }
 
 .employee-content {
-  padding: 10px 30px 0px 30px;
+  padding: 10px 30px 20px 30px;
   background: #eff5ff;
 }
-.employee-page .topbar {
-   padding-top: 12px!important; /* new */
-  margin-top: 30px;
-  padding-bottom: 12px !important;  /* new */
-  width: 95%;
-  margin-left: 20px !important;        /* modified */
-  margin-right: auto; /* centers horizontally */
-  display: block;
-  margin-bottom: 30px;      /* new */
-}
+
 
 /* HEADER LAYOUT */
 .employee-header {

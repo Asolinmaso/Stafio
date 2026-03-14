@@ -138,8 +138,8 @@ const Attendance = () => {
         : "att__time-blue";
 
   return (
-    <div style={{ display: "flex" }}>
-      <div className="sidebar">
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <div className="sidebar" style={{ flexShrink: 0, width: "255px", overflow: "hidden" }}>
         <EmployeeSidebar />
       </div>
 
