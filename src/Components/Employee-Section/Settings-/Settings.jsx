@@ -109,12 +109,8 @@ export default function Settings() {
   const [saveMessage, setSaveMessage] = useState("");
 
   const getHeaders = () => {
-    const userId =
-      sessionStorage.getItem("current_user_id") ||
-      localStorage.getItem("employee_user_id");
-    const role =
-      sessionStorage.getItem("current_role") ||
-      localStorage.getItem("employee_role");
+    const userId = localStorage.getItem("current_user_id");
+    const role = localStorage.getItem("current_role");
     return {
       "X-User-ID": userId,
       "X-User-Role": role,

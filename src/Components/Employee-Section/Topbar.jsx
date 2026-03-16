@@ -37,14 +37,10 @@ const Topbar = () => {
   const API_BASE_URL = "http://127.0.0.1:5001";
 
   useEffect(() => {
-    const storedUsername =
-      localStorage.getItem("employee_username") ||
-      sessionStorage.getItem("current_username");
+    const storedUsername = localStorage.getItem("current_username");
     if (storedUsername) setUsername(storedUsername);
 
-    const storedUserrole =
-      localStorage.getItem("employee_role") ||
-      sessionStorage.getItem("current_role");
+    const storedUserrole = localStorage.getItem("current_role");
     if (storedUserrole) setRole(storedUserrole);
 
     fetchNotifications();
@@ -55,16 +51,12 @@ const Topbar = () => {
 
   const fetchProfileData = async () => {
     try {
-      const userId =
-        sessionStorage.getItem("current_user_id") ||
-        localStorage.getItem("employee_user_id");
+      const userId = localStorage.getItem("current_user_id");
       if (!userId) return;
 
       const res = await axios.get(`${API_BASE}/employee_profile/${userId}`, {
         headers: {
-          "X-User-Role":
-            sessionStorage.getItem("current_role") ||
-            localStorage.getItem("employee_role"),
+          "X-User-Role": localStorage.getItem("current_role"),
           "X-User-ID": userId,
         },
       });
@@ -112,9 +104,7 @@ const Topbar = () => {
 
   const fetchNotifications = async () => {
     try {
-      const userId =
-        localStorage.getItem("employee_user_id") ||
-        localStorage.getItem("userId");
+      const userId = localStorage.getItem("current_user_id");
       if (!userId) {
         console.warn("No User ID found in localStorage for notifications");
         return;
