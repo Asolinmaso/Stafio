@@ -730,8 +730,8 @@
 	height: 40px;
 	/* modified */
 	padding: 6px;
-	min-width: 470px !important;
-	/* modified */
+	width: 100%;
+	min-width: unset !important; /* modified */
 }
 
 .empl-form-group input:focus,
@@ -967,8 +967,8 @@
 }
 
 /* Ensure empty first column in middle/bottom grids */
-.profile-middle-grid>.details-col:first-child,
-.profile-bottom-grid>.details-col:first-child {
+.profile-middle-grid > .details-col:first-child,
+.profile-bottom-grid > .details-col:first-child {
 	grid-column: 2;
 }
 
@@ -1176,4 +1176,129 @@
 
 .doc-action-btn:hover {
 	opacity: 0.7;
+}
+
+/* ================= 1400px LARGE SCREEN ================= */
+@media (min-width: 1400px) {
+	.employee-main {
+		max-width: 1400px;
+		margin: auto;
+	}
+
+	.employee-content {
+		padding: 20px 40px;
+	}
+
+	.employee-table thead th {
+		font-size: 16px;
+	}
+
+	.employee-table tbody td {
+		font-size: 15px;
+	}
+
+	.profile-modal-container {
+		width: 65%;
+	}
+}
+
+/* ================= 1200px ================= */
+@media (max-width: 1200px) {
+	.employee-content {
+		padding: 10px 20px;
+	}
+
+	.employee-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.header-right {
+		width: 100%;
+		align-items: flex-start;
+	}
+
+	.filter-sort {
+		justify-content: flex-start;
+	}
+
+	.employee-table thead th {
+		font-size: 14px;
+	}
+
+	.employee-table tbody td {
+		font-size: 13px;
+		padding: 15px 8px;
+	}
+
+	/* FORM FIX */
+	.empl-form-group input,
+	.empl-form-group select {
+		min-width: 100% !important;
+	}
+
+	/* profile modal */
+	.profile-modal-container {
+		width: 85%;
+	}
+
+	.profile-top-grid {
+		grid-template-columns: 220px repeat(2, 1fr);
+	}
+
+	.profile-image-card-box {
+		width: 220px;
+		height: 220px;
+	}
+}
+
+/* ================= 992px ================= */
+@media (max-width: 992px) {
+	.employee-header {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.search-input0 {
+		width: 250px !important;
+	}
+
+	.header-right {
+		align-items: flex-start;
+	}
+
+	.filter-sort {
+		flex-wrap: wrap;
+	}
+
+	/* TABLE SCROLL */
+	.employee-table {
+		display: block;
+		overflow-x: auto;
+	}
+
+	/* ADD EMPLOYEE MODAL */
+	.add-employee-modal1 {
+		max-width: 95%;
+		margin-left: 0;
+	}
+
+	/* FORM LAYOUT */
+	.form-row1 {
+		grid-template-columns: 1fr;
+	}
+
+	/* PROFILE MODAL */
+	.profile-top-grid {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+
+	.profile-image-card-box {
+		margin: auto;
+	}
+
+	.profile-details-full-grid {
+		grid-template-columns: 1fr;
+	}
 }
