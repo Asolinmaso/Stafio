@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./RegularizationApproval.css";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaSearch } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
@@ -189,13 +189,16 @@ export default function RegularizationApproval() {
               </div>
 
               <div className="right-controls">
-                <input
-                  type="text"
-                  placeholder="🔍 Search..."
-                  className="right-search-input"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <div className="right-search-wrapper">
+                  <FaSearch className="search-icon-inside" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="right-search-input"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
 
                 {/* Filter Icon + Popup */}
                 <div className="filter-wrapper" ref={filterRef}>

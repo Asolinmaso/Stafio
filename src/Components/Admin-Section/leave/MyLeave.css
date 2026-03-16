@@ -224,107 +224,223 @@
 .app-leave-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .apply-leave-modal {
   background: #fff;
-  border-radius: 12px;
-  width: 700px;
-  max-width: 95%;
+  border-radius: 6px;
+  width: 280px;
+  max-width: 95vw;
+  max-height: 85vh;
   overflow: hidden;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.apply-leave-modal form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .app-leave-modal-header-blue {
   background: #19bde8;
   color: #fff;
-  padding: 14px 20px;
+  padding: 3px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
+}
+
+.app-leave-modal-header-blue h3 {
+  font-size: 11px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.apply-leave-close-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.apply-leave-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .app-leave-modal-body {
-  padding: 30px;
+  padding: 2px 6px;
+  flex: 1;
+  overflow: hidden;
 }
 
 .apply-leave-form {
   display: flex;
-  gap: 20px;
+  gap: 3px;
+  align-items: flex-start;
 }
 
 .form-left {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0px;
+  min-width: 0;
 }
 
 .form-left label {
   font-weight: 600;
-  font-size: 13px;
-  color: #333;
+  font-size: 9px;
+  color: #555;
+  margin-top: 0px;
 }
 
 .form-left input,
 .form-left select,
 .form-left textarea {
-  padding: 10px;
+  padding: 0 4px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 3px;
+  font-size: 9px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #f9fbfc;
+  height: 18px;
+  outline: none;
+}
+
+.form-left textarea {
+  resize: none;
+  height: 22px;
+  padding: 1px 4px;
 }
 
 .app-leave-date-row {
   display: flex;
-  gap: 10px;
+  gap: 6px;
 }
 
 .app-leave-date-row input,
 .app-leave-date-row select {
   flex: 1;
+  min-width: 0;
+  font-size: 8.5px;
 }
 
 .form-right {
-  width: 180px;
+  width: 32px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: flex-start;
+  padding-top: 2px;
 }
-
 .form-right img {
   width: 100%;
   height: auto;
 }
 
+.app-leave-notify-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.app-leave-notify-row select {
+  flex: 1;
+  min-width: 0;
+}
+
+.apply-leave-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 20px;
+}
+
+.apply-leave-upload-btn:hover {
+  background: #f4f4f4;
+}
+
 .app-leave-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 4px;
+  padding: 3px 8px;
+  background: #f8fafc;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
 }
 
 .apply-leave-btn {
   background: #19bde8;
   color: #fff;
   border: none;
-  padding: 10px 24px;
-  border-radius: 6px;
+  padding: 3px 8px;
+  border-radius: 3px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 9px;
+}
+
+.apply-leave-btn:hover {
+  background: #00a5bb;
 }
 
 .app-leave-cancel-btn {
   background: #f1f5f9;
   border: 1px solid #ddd;
-  padding: 10px 24px;
-  border-radius: 6px;
+  padding: 3px 8px;
+  border-radius: 3px;
   cursor: pointer;
+  font-size: 9px;
+}
+
+/* Modal sizing for all zoom levels */
+@media (max-height: 650px) {
+  .apply-leave-modal { max-height: 94vh; width: 320px; }
+  .app-leave-modal-body { padding: 2px 6px; }
+  .form-left { gap: 0px; }
+  .form-left label { margin-top: 0; }
+  .form-left input, .form-left select { height: 20px; font-size: 10px; }
+  .form-left textarea { height: 28px; }
+  .form-right { display: none; }
+}
+
+@media (max-width: 540px) {
+  .apply-leave-modal { width: 98vw; max-height: 96vh; }
+  .form-right { display: none; }
+  .app-leave-modal-body {
+    padding: 8px 10px;
+  }
 }
 
 /* filter button */
