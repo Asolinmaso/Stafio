@@ -13,7 +13,14 @@ const NotificationBar = () => {
         if (res.ok) {
           const parsed = await res.json();
           if (parsed.length > 0) {
-            setLatestAnnouncement(parsed[0]);
+            const newAnn = parsed[0];
+            setLatestAnnouncement((prev) => {
+              if (!prev || prev.id !== newAnn.id || prev.message !== newAnn.message) {
+                setVisible(true);
+                return newAnn;
+              }
+              return prev;
+            });
           }
         }
       } catch (error) {
@@ -24,10 +31,14 @@ const NotificationBar = () => {
     // Load initially
     loadLatestAnnouncement();
 
-    // 🔥 Listen for updates
+    // Poll every 5 seconds for cross-browser updates
+    const interval = setInterval(loadLatestAnnouncement, 5000);
+
+    // 🔥 Listen for updates locally
     window.addEventListener("announcementUpdated", loadLatestAnnouncement);
 
     return () => {
+      clearInterval(interval);
       window.removeEventListener("announcementUpdated", loadLatestAnnouncement);
     };
   }, []);

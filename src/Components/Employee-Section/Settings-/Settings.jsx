@@ -109,12 +109,8 @@ export default function Settings() {
   const [saveMessage, setSaveMessage] = useState("");
 
   const getHeaders = () => {
-    const userId =
-      sessionStorage.getItem("current_user_id") ||
-      localStorage.getItem("employee_user_id");
-    const role =
-      sessionStorage.getItem("current_role") ||
-      localStorage.getItem("employee_role");
+    const userId = localStorage.getItem("current_user_id");
+    const role = localStorage.getItem("current_role");
     return {
       "X-User-ID": userId,
       "X-User-Role": role,
@@ -359,22 +355,6 @@ export default function Settings() {
                     </div>
 
                     <div className="form-group">
-                      <label>{t.lastName}</label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={basicForm.lastName}
-                        placeholder={t.lastName}
-                        onChange={handleBasicChange}
-                      />
-                      {basicErrors.lastName && (
-                        <span className="error-text">
-                          {basicErrors.lastName}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="form-group">
                       <label>{t.email}</label>
                       <input
                         type="email"
@@ -385,22 +365,6 @@ export default function Settings() {
                       />
                       {basicErrors.email && (
                         <span className="error-text">{basicErrors.email}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="form-column">
-                    <div className="form-group">
-                      <label>{t.phone}</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={basicForm.phone}
-                        placeholder={t.phone}
-                        onChange={handleBasicChange}
-                      />
-                      {basicErrors.phone && (
-                        <span className="error-text">{basicErrors.phone}</span>
                       )}
                     </div>
 
@@ -417,6 +381,38 @@ export default function Settings() {
                         <span className="error-text">
                           {basicErrors.position}
                         </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="form-column">
+                    <div className="form-group">
+                      <label>{t.lastName}</label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={basicForm.lastName}
+                        placeholder={t.lastName}
+                        onChange={handleBasicChange}
+                      />
+                      {basicErrors.lastName && (
+                        <span className="error-text">
+                          {basicErrors.lastName}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label>{t.phone}</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={basicForm.phone}
+                        placeholder={t.phone}
+                        onChange={handleBasicChange}
+                      />
+                      {basicErrors.phone && (
+                        <span className="error-text">{basicErrors.phone}</span>
                       )}
                     </div>
 
@@ -460,7 +456,7 @@ export default function Settings() {
                         profileInputRef.current.click()
                       }
                     >
-                      📁 Upload
+                      <BsUpload /> Upload
                     </button>
                   </div>
                 </div>
