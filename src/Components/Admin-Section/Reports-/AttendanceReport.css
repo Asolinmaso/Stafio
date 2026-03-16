@@ -1,13 +1,46 @@
-.att-report-layout {
-	display: flex;
-	background: #eff5ff;
-	min-height: 100vh;
-	align-items: flex-start;
+.att-report-layout.att-report-layout {
+	display: flex !important;
+	background: #eff5ff !important;
+	min-height: 100vh !important;
+	height: auto !important;
+	overflow: visible !important;
+	position: relative !important;
+	width: 100% !important;
 }
 
-.att-report-main {
-	flex: 1;
-	padding-bottom: 40px;
+/* Pin the sidebar for whole page scroll */
+.att-report-layout .employee-sidebar {
+	position: sticky !important;
+	top: 0 !important;
+	height: 100vh !important;
+	flex-shrink: 0 !important;
+	z-index: 1050 !important;
+}
+
+.att-report-main.att-report-main {
+	flex: 1 !important;
+	display: flex !important;
+	flex-direction: column !important;
+	height: auto !important;
+	overflow-y: visible !important;
+	position: relative !important;
+	z-index: 1 !important;
+	padding: 0 24px 24px 24px !important;
+}
+
+.rightside-logo {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 0;
+	pointer-events: none;
+}
+
+.rightside-logos {
+	width: 420px;
+	height: auto;
+	opacity: 0.6;
+	pointer-events: none;
 }
 
 /* ===== Header ===== */
@@ -25,12 +58,16 @@
 }
 
 .att-report-dropdown {
-	padding: 6px 16px;
-	border: 1px solid #b9b9b9ff;
-	border-radius: 8px;
+	padding: 8px 16px;
+	border: 1px solid #c2c2c2;
+	border-radius: 20px;
 	font-size: 14px;
-	background: transparent;
+	background: #fff;
 	margin-left: 20px;
+	outline: none;
+	cursor: pointer;
+	color: #4b5563;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* ===== Filter Bar ===== */
@@ -104,10 +141,9 @@ input.search-input2 {
 	background: #fff;
 	border-radius: 6px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	width: 97%;
-	margin-left: 15px;
+	width: 100% !important;
+	margin-top: 15px;
 	overflow-x: auto;
-	overflow-y: clip;
 }
 
 .att-report-table-header {
@@ -246,9 +282,10 @@ input.search-input2 {
 .att-report-showing {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	color: #64748b;
-	font-size: 14px;
+	gap: 6px;
+	color: #4b5563;
+	font-size: 13px;
+	font-weight: 500;
 }
 
 /* Blue pill — matches LeaveApproval style */
@@ -260,16 +297,51 @@ input.search-input2 {
 .att-showing-pill-btn {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	padding: 4px 10px;
 	background: #19bde8;
 	color: #fff;
-	padding: 4px 12px;
 	border-radius: 6px;
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
 	user-select: none;
-	white-space: nowrap;
+	transition: background 0.2s;
+}
+
+.att-showing-pill-btn:hover {
+	background: #12b3e6;
+}
+
+.rows-dropdown-popup {
+	position: absolute;
+	bottom: calc(100% + 5px);
+	left: 0;
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	min-width: 60px;
+	z-index: 1000;
+	overflow: hidden;
+}
+
+.rows-option {
+	padding: 8px 12px;
+	font-size: 13px;
+	color: #475569;
+	cursor: pointer;
+	text-align: center;
+	transition: background 0.15s;
+}
+
+.rows-option:hover {
+	background: #f1f5f9;
+}
+
+.rows-option.active {
+	background: #e0f7ff;
+	color: #19bde8;
+	font-weight: 700;
 }
 
 .att-report-page-controls {
@@ -413,21 +485,7 @@ input.search-input2 {
 	position: relative;
 }
 
-/* We will place icon using pseudo element on wrapper */
-.att-report-table-header .header-controls {
-	position: relative;
-}
-
-/* icon style */
-.att-report-table-header .header-controls::before {
-	position: absolute;
-	left: 14px;
-	top: 50%;
-	transform: translateY(-50%);
-	font-size: 16px;
-	opacity: 0.6;
-	pointer-events: none;
-}
+/* removed pseudo icon */
 
 /* Calendar container */
 .att-report-date {
@@ -615,10 +673,7 @@ input.search-input2 {
 /* >= 1400px  (Large Desktop / Big Monitor) */
 
 @media (min-width: 1400px) {
-	.att-report-main {
-		max-width: 1400px;
-		margin: 0 auto;
-	}
+	/* matching leave approval - removed max-width centering */
 
 	.att-header-search {
 		width: 520px;

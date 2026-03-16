@@ -1088,8 +1088,8 @@ const EmployeeProfile = () => {
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
                       className={`form-input ${personalErrors.emergencyContactNumber
-                          ? "input-error"
-                          : ""
+                        ? "input-error"
+                        : ""
                         }`}
                       disabled={!isEditingPersonal}
                     />
@@ -1413,7 +1413,7 @@ const EmployeeProfile = () => {
                   <Row className="gy-4">
                     <Col md={6}>
                       <Form.Label>Name Of the Company</Form.Label>
-                       <Form.Control
+                      <Form.Control
                         type="text"
                         name="company"
                         value={experience.company}

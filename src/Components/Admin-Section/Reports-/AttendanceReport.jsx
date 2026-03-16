@@ -31,6 +31,10 @@ export default function AttendanceReport() {
   // ✅ NEW: date picker value
   const [selectedDate, setSelectedDate] = useState("");
 
+  /* CUSTOM DROPDOWN STATE */
+  const [showRowsDropdown, setShowRowsDropdown] = useState(false);
+  const rowsDropdownRef = React.useRef(null);
+
   /* FETCH ATTENDANCE */
   useEffect(() => {
     apiClient
@@ -45,6 +49,17 @@ export default function AttendanceReport() {
       .get("/api/employeeslist")
       .then((res) => setEmployees(res.data))
       .catch((err) => console.error(err));
+  }, []);
+
+  /* CLOSE DROPDOWN ON OUTSIDE CLICK */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (rowsDropdownRef.current && !rowsDropdownRef.current.contains(event.target)) {
+        setShowRowsDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   /* DATE */
@@ -109,18 +124,12 @@ export default function AttendanceReport() {
     setCurrentPage(1);
   }, [searchTerm, selectedEmployeeName, statusFilter, sortDays, fromDate, toDate, selectedDate]);
 
-  /* PAGINATION DERIVED VALUES
-     - No employee selected → show ALL records on one page (no slicing)
-     - Employee selected    → normal rowsPerPage pagination */
-  const isAllEmployees = selectedEmployeeName === "";
-  const effectiveRows = isAllEmployees ? Math.max(filteredAttendance.length, 1) : rowsPerPage;
-  const totalPages = Math.max(1, Math.ceil(filteredAttendance.length / effectiveRows));
-  const paginatedAttendance = isAllEmployees
-    ? filteredAttendance
-    : filteredAttendance.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage
-      );
+  /* PAGINATION DERIVED VALUES */
+  const totalPages = Math.max(1, Math.ceil(filteredAttendance.length / rowsPerPage));
+  const paginatedAttendance = filteredAttendance.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
 
   /* FILTER ACTIONS */
   const handleResetFilters = () => {
@@ -198,7 +207,7 @@ export default function AttendanceReport() {
         <div className="att-report-header">
           <h2>Attendance Report</h2>
           <select
-            className="leave-report-dropdown"
+            className="att-report-dropdown"
             value={selectedEmployeeName}
             onChange={(e) => {
               setSelectedEmployeeName(e.target.value);
@@ -417,30 +426,31 @@ export default function AttendanceReport() {
         {/* Pagination — always visible */}
         <div className="att-report-pagination">
           {/* LEFT: Showing [05 ▾] */}
-          <div className="att-report-showing">
+          <div className="att-report-showing" ref={rowsDropdownRef}>
             <span>Showing</span>
-            <div className="att-showing-pill" style={{ position: "relative" }}>
+            <div className="att-showing-pill">
               <span
                 className="att-showing-pill-btn"
-                onClick={() => document.getElementById("att-rows-select").click()}
+                onClick={() => setShowRowsDropdown(!showRowsDropdown)}
               >
-                {String(isAllEmployees ? filteredAttendance.length : rowsPerPage).padStart(2, "0")} ▾
+                {String(rowsPerPage).padStart(2, "0")} ▾
               </span>
-              {!isAllEmployees && (
-                <select
-                  id="att-rows-select"
-                  value={rowsPerPage}
-                  onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  style={{ position: "absolute", opacity: 0, top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
-                >
-                  <option value={5}>05</option>
-                  <option value={10}>10</option>
-                  <option value={15}>15</option>
-                  <option value={20}>20</option>
-                </select>
+              {showRowsDropdown && (
+                <div className="rows-dropdown-popup">
+                  {[5, 10, 15, 20].map((n) => (
+                    <div
+                      key={n}
+                      className={`rows-option ${rowsPerPage === n ? "active" : ""}`}
+                      onClick={() => {
+                        setRowsPerPage(n);
+                        setCurrentPage(1);
+                        setShowRowsDropdown(false);
+                      }}
+                    >
+                      {String(n).padStart(2, "0")}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -449,7 +459,7 @@ export default function AttendanceReport() {
           <div className="att-report-page-controls">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1 || isAllEmployees}
+              disabled={currentPage === 1}
             >
               Prev
             </button>
@@ -458,7 +468,7 @@ export default function AttendanceReport() {
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages || isAllEmployees}
+              disabled={currentPage === totalPages}
             >
               Next
             </button>
