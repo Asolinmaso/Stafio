@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./RAMyTeam.css";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaSearch } from "react-icons/fa";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
@@ -208,13 +208,16 @@ export default function RegularizationApprovalMyTeam() {
 
               {/* Right Controls */}
               <div className="ra-controls">
-                <input
-                  type="text"
-                  placeholder="🔍 Search..."
-                  className="ra-search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <div className="ra-search-wrapper">
+                  <FaSearch className="ra-search-icon-inside" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="ra-search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
 
                 {/* FILTER WRAPPER */}
                 <div className="ra-filter-wrapper">

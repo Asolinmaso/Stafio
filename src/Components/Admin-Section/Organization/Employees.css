@@ -731,7 +731,8 @@
 	/* modified */
 	padding: 6px;
 	width: 100%;
-	min-width: unset !important; /* modified */
+	min-width: unset !important;
+	/* modified */
 }
 
 .empl-form-group input:focus,
@@ -967,8 +968,8 @@
 }
 
 /* Ensure empty first column in middle/bottom grids */
-.profile-middle-grid > .details-col:first-child,
-.profile-bottom-grid > .details-col:first-child {
+.profile-middle-grid>.details-col:first-child,
+.profile-bottom-grid>.details-col:first-child {
 	grid-column: 2;
 }
 

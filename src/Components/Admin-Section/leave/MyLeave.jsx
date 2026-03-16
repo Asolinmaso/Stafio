@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import "./MyLeave.css";
 import {
   FaCheckCircle,
@@ -340,9 +341,12 @@ export default function Myleave() {
           </table>
         </div>
 
-        {/* Modal Popup */}
-        {showModal && (
-          <div className="app-leave-modal-overlay">
+        {/* Modal via Portal — renders into document.body, works at ALL zoom levels */}
+        {showModal && ReactDOM.createPortal(
+          <div
+            className="app-leave-modal-overlay"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}
+          >
             <div className="apply-leave-modal">
               <div className="app-leave-modal-header-blue">
                 <h3>Apply Leave</h3>
@@ -354,86 +358,89 @@ export default function Myleave() {
                 </button>
               </div>
 
-              <div className="app-leave-modal-body">
-                <form className="apply-leave-form" onSubmit={handleSubmit}>
-                  <div className="form-left">
-                    <label>Employee ID:</label>
-                    <input
-                      type="text"
-                      name="employee_id"
-                      value={formData.employee_id}
-                      readOnly
-                    />
-
-                    <label>Leave Type:</label>
-                    <select
-                      name="leave_type"
-                      value={formData.leave_type}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select</option>
-                      <option value="1">Casual Leave</option>
-                      <option value="2">Sick Leave</option>
-                      <option value="3">Annual Leave</option>
-                    </select>
-
-                    <label>Select Date:</label>
-                    <div className="app-leave-date-row">
+              <form onSubmit={handleSubmit}>
+                <div className="app-leave-modal-body">
+                  <div className="apply-leave-form">
+                    <div className="form-left">
+                      <label>Employee ID:</label>
                       <input
-                        type="date"
-                        name="start_date"
-                        value={formData.start_date}
-                        onChange={handleChange}
+                        type="text"
+                        name="employee_id"
+                        value={formData.employee_id}
+                        readOnly
                       />
-                      <input
-                        type="date"
-                        name="end_date"
-                        value={formData.end_date}
-                        onChange={handleChange}
-                      />
-                      <select
-                        name="day_type"
-                        value={formData.day_type}
-                        onChange={handleChange}
-                      >
-                        <option value="Full Day">Full Day</option>
-                        <option value="Half Day (FN)">Half Day (FN)</option>
-                        <option value="Half Day (AN)">Half Day (AN)</option>
-                      </select>
-                    </div>
 
-                    <label>Notify Others:</label>
-                    <div className="app-leave-notify-row">
+                      <label>Leave Type:</label>
                       <select
-                        name="notify_to"
-                        value={formData.notify_to}
+                        name="leave_type"
+                        value={formData.leave_type}
                         onChange={handleChange}
                       >
                         <option value="">Select</option>
-                        <option>Team Lead</option>
-                        <option>HR</option>
+                        <option value="1">Casual Leave</option>
+                        <option value="2">Sick Leave</option>
+                        <option value="3">Annual Leave</option>
                       </select>
-                      <button type="button" className="apply-leave-upload-btn">
-                        <FaUpload /> Upload File
-                      </button>
+
+                      <label>Select Date:</label>
+                      <div className="app-leave-date-row">
+                        <input
+                          type="date"
+                          name="start_date"
+                          value={formData.start_date}
+                          onChange={handleChange}
+                        />
+                        <input
+                          type="date"
+                          name="end_date"
+                          value={formData.end_date}
+                          onChange={handleChange}
+                        />
+                        <select
+                          name="day_type"
+                          value={formData.day_type}
+                          onChange={handleChange}
+                        >
+                          <option value="Full Day">Full Day</option>
+                          <option value="Half Day (FN)">Half Day (FN)</option>
+                          <option value="Half Day (AN)">Half Day (AN)</option>
+                        </select>
+                      </div>
+
+                      <label>Notify Others:</label>
+                      <div className="app-leave-notify-row">
+                        <select
+                          name="notify_to"
+                          value={formData.notify_to}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select</option>
+                          <option>Team Lead</option>
+                          <option>HR</option>
+                        </select>
+                        <button type="button" className="apply-leave-upload-btn">
+                          <FaUpload /> Upload File
+                        </button>
+                      </div>
+
+                      <label>Reason:</label>
+                      <textarea
+                        name="reason"
+                        value={formData.reason}
+                        onChange={handleChange}
+                        placeholder="ex: I am travelling to"
+                        maxLength={30}
+                      ></textarea>
                     </div>
 
-                    <label>Reason:</label>
-                    <textarea
-                      name="reason"
-                      value={formData.reason}
-                      onChange={handleChange}
-                      placeholder="ex: I am travelling to"
-                      maxLength={30}
-                    ></textarea>
+                    {/* Right illustration */}
+                    <div className="form-right">
+                      <img src={illustration} alt="Leave Illustration" />
+                    </div>
                   </div>
+                </div>
 
-                  {/* Right illustration */}
-                  <div className="form-right">
-                    <img src={illustration} alt="Leave Illustration" />
-                  </div>
-                </form>
-
+                {/* Footer actions */}
                 <div className="app-leave-modal-actions">
                   <button type="submit" className="apply-leave-btn">
                     Apply
@@ -446,9 +453,10 @@ export default function Myleave() {
                     Cancel
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </div>
