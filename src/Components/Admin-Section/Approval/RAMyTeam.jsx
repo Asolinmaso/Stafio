@@ -5,7 +5,9 @@ import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
+import timemgnt from "../../../assets/Timemgnt.png";
 import apiClient from "../../../utils/apiClient";
+import "../Approval/RegularizationApproval.css";
 
 export default function RegularizationApprovalMyTeam() {
   const [data, setData] = useState([]);
@@ -13,10 +15,36 @@ export default function RegularizationApprovalMyTeam() {
   const [filterStatus, setFilterStatus] = useState("All");
   const [sortOrder, setSortOrder] = useState("Newest");
 
+  // View Details Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [showApproveReasonModal, setShowApproveReasonModal] = useState(false);
+  const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showRejectedResultModal, setShowRejectedResultModal] = useState(false);
+  const [modalReason, setModalReason] = useState("");
+
   // Filter popup state
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const navigate = useNavigate();
+  const handleViewDetails = (leave) => {
+    setSelectedLeave(leave);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedLeave(null);
+    setShowApproveReasonModal(false);
+    setShowRejectReasonModal(false);
+    setShowSuccessModal(false);
+    setShowRejectedResultModal(false);
+    setModalReason("");
+  };
+
+  const handleApproveClick = () => setShowApproveReasonModal(true);
+  const handleRejectClick = () => setShowRejectReasonModal(true);
   const filteredAndSortedLeaves = data
     // SEARCH by employee name
     .filter((leave) =>
@@ -39,7 +67,11 @@ export default function RegularizationApprovalMyTeam() {
   useEffect(() => {
     const fetchMyTeamRA = async () => {
       try {
-        const response = await apiClient.get("/api/myteamra");
+        const managerId = localStorage.getItem("current_user_id");
+        const response = await apiClient.get("/api/myteamra", {
+          headers: { "X-User-ID": managerId },
+        });
+        console.log("MyTeam RA Data:", response.data);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching regularization data:", error);
@@ -70,6 +102,80 @@ export default function RegularizationApprovalMyTeam() {
 
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
+
+  const handleApproveSubmit = async () => {
+    if (selectedLeave) {
+      try {
+        const userId = localStorage.getItem("current_user_id");
+        const userRole = localStorage.getItem("current_role") || "admin";
+
+        await apiClient.put(
+          `/api/admin/regularization/${selectedLeave.id}`,
+          { status: "Approved", reason: modalReason },
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
+        );
+
+        const currentUserName =
+          localStorage.getItem("current_user_name") || "Admin";
+
+        setData((prev) =>
+          prev.map((item) =>
+            item.id === selectedLeave.id
+              ? {
+                  ...item,
+                  status: "Approved",
+                  approvedBy: item.approvedBy || currentUserName,
+                  approvalReason: modalReason,
+                }
+              : item,
+          ),
+        );
+      } catch (error) {
+        console.error("Error approving regularization:", error);
+      }
+    }
+
+    setShowApproveReasonModal(false);
+    setShowSuccessModal(true);
+    setTimeout(() => handleCloseModal(), 2000);
+  };
+
+  const handleRejectSubmit = async () => {
+    if (selectedLeave) {
+      try {
+        const userId = localStorage.getItem("current_user_id");
+        const userRole = localStorage.getItem("current_role") || "admin";
+
+        await apiClient.put(
+          `/api/admin/regularization/${selectedLeave.id}`,
+          { status: "Rejected", reason: modalReason },
+          { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
+        );
+
+        const currentUserName =
+          localStorage.getItem("current_user_name") || "Admin";
+
+        setData((prev) =>
+          prev.map((item) =>
+            item.id === selectedLeave.id
+              ? {
+                  ...item,
+                  status: "Rejected",
+                  approvedBy: item.approvedBy || currentUserName,
+                  rejectionReason: modalReason,
+                }
+              : item,
+          ),
+        );
+      } catch (error) {
+        console.error("Error rejecting regularization:", error);
+      }
+    }
+
+    setShowRejectReasonModal(false);
+    setShowRejectedResultModal(true);
+    setTimeout(() => handleCloseModal(), 2000);
+  };
 
   return (
     <div className="ra-page">
@@ -244,7 +350,12 @@ export default function RegularizationApprovalMyTeam() {
                     </td>
 
                     <td>
-                      <button className="ra-view-btn">View Details</button>
+                      <button
+                        className="ra-view-btn"
+                        onClick={() => handleViewDetails(emp)}
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -271,6 +382,223 @@ export default function RegularizationApprovalMyTeam() {
           </div>
         </div>
       </div>
+      {/* ── View Details Modal ── */}
+      {isModalOpen && selectedLeave && (
+        <div className="ra-modal-overlay">
+          <div className="ra-modal-content">
+            <div className="ra-modal-header">
+              <h2>Regularization Approval</h2>
+              <button className="ra-close-btn" onClick={handleCloseModal}>
+                &times;
+              </button>
+            </div>
+
+            <div className="ra-modal-body">
+              <div className="ra-form-section">
+                <div className="ra-form-group">
+                  <label>Employee ID:</label>
+                  <input
+                    type="text"
+                    value={`${selectedLeave.name} (${selectedLeave.empId})`}
+                    readOnly
+                  />
+                </div>
+
+                <div className="ra-form-group">
+                  <label>Leave Type:</label>
+                  <select disabled className="ra-select">
+                    <option>
+                      {selectedLeave.regDate?.split("/")[1] || "Full Day"}
+                    </option>
+                  </select>
+                </div>
+
+                <div className="ra-form-group">
+                  <label>Select Date:</label>
+                  <div className="ra-date-input-wrapper">
+                    <input
+                      type="text"
+                      value={
+                        selectedLeave.regDate?.split("/")[0] || "DD-MM-YYYY"
+                      }
+                      readOnly
+                    />
+                    <span className="ra-date-icon">📅</span>
+                  </div>
+                </div>
+
+                <div className="ra-form-group">
+                  <label>Attendance Type:</label>
+                  <input
+                    type="text"
+                    value={selectedLeave.attendance || ""}
+                    readOnly
+                  />
+                </div>
+
+                <div className="ra-form-group">
+                  <label>Status:</label>
+                  <input
+                    type="text"
+                    value={selectedLeave.status || ""}
+                    readOnly
+                  />
+                </div>
+
+                <div className="ra-form-group">
+                  <label>Approved By:</label>
+                  <input
+                    type="text"
+                    value={selectedLeave.approvedBy || "N/A"}
+                    readOnly
+                  />
+                </div>
+
+                <div className="ra-form-group ra-reason-group">
+                  <label>Reason:</label>
+                  <div className="ra-reason-wrapper">
+                    <textarea value={selectedLeave.reason || ""} readOnly />
+                    <span className="ra-char-count">
+                      {selectedLeave.reason?.length || 0}/30
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ra-illustration-section">
+                <img src={timemgnt} alt="Time Management" />
+              </div>
+            </div>
+
+            <div className="ra-modal-footer">
+              <span className="ra-watermark"></span>
+
+              {selectedLeave.status &&
+              selectedLeave.status.toLowerCase() === "pending" ? (
+                <div className="ra-footer-btns">
+                  <button
+                    className="ra-approve-pill-btn"
+                    onClick={handleApproveClick}
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    className="ra-reject-pill-btn"
+                    onClick={handleRejectClick}
+                  >
+                    Reject
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
+      {showApproveReasonModal && (
+        <div className="ra-modal-overlay ra-nested-overlay">
+          <div className="ra-small-modal">
+            <button
+              className="ra-small-close"
+              onClick={() => setShowApproveReasonModal(false)}
+            >
+              &times;
+            </button>
+
+            <h3>Reason For Approval</h3>
+
+            <div className="ra-small-body">
+              <textarea
+                placeholder="Please fill out the note for approvals"
+                value={modalReason}
+                maxLength={250}
+                onChange={(e) => setModalReason(e.target.value)}
+              />
+
+              <p className="ra-char-hint">maximum character limit 250</p>
+
+              <div className="ra-small-footer">
+                <button className="ra-submit-btn" onClick={handleApproveSubmit}>
+                  Submit
+                </button>
+
+                <button
+                  className="ra-cancel-btn"
+                  onClick={() => setShowApproveReasonModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showRejectReasonModal && (
+        <div className="ra-modal-overlay ra-nested-overlay">
+          <div className="ra-small-modal">
+            <button
+              className="ra-small-close"
+              onClick={() => setShowRejectReasonModal(false)}
+            >
+              &times;
+            </button>
+
+            <h3>Reason For Rejection</h3>
+
+            <div className="ra-small-body">
+              <textarea
+                placeholder="Please fill out the note for rejection"
+                value={modalReason}
+                maxLength={250}
+                onChange={(e) => setModalReason(e.target.value)}
+              />
+
+              <p className="ra-char-hint">maximum character limit 250</p>
+
+              <div className="ra-small-footer">
+                <button className="ra-submit-btn" onClick={handleRejectSubmit}>
+                  Submit
+                </button>
+
+                <button
+                  className="ra-cancel-btn"
+                  onClick={() => setShowRejectReasonModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showSuccessModal && (
+        <div className="ra-modal-overlay ra-nested-overlay">
+          <div className="ra-result-modal ra-success-box">
+            <button className="ra-small-close" onClick={handleCloseModal}>
+              &times;
+            </button>
+
+            <div className="ra-result-content">
+              <h2>Success</h2>
+              <p>Leave Approved Successfully</p>
+            </div>
+          </div>
+        </div>
+      )}
+      {showRejectedResultModal && (
+        <div className="ra-modal-overlay ra-nested-overlay">
+          <div className="ra-result-modal ra-reject-box">
+            <button className="ra-small-close" onClick={handleCloseModal}>
+              &times;
+            </button>
+
+            <div className="ra-result-content">
+              <h2>Rejected</h2>
+              <p>Leave Approval Rejected</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
