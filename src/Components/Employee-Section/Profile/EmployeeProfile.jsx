@@ -1181,13 +1181,6 @@ const EmployeeProfile = () => {
                 <Form>
                   <Row className="gy-4">
                     <Col md={6}>
-                      {educationErrors.form && (
-                        <div className="error-text mb-3">
-                          {educationErrors.form}
-                        </div>
-                      )}
-                    </Col>
-                    <Col md={6}>
                       <Form.Label className="form-label">Address</Form.Label>
                       <Form.Control
                         type="text"
