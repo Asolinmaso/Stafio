@@ -13,7 +13,14 @@ const NotificationBar = () => {
         if (res.ok) {
           const parsed = await res.json();
           if (parsed.length > 0) {
-            setLatestAnnouncement(parsed[0]);
+            const newAnn = parsed[0];
+            setLatestAnnouncement(prev => {
+              if (!prev || prev.id !== newAnn.id || prev.message !== newAnn.message) {
+                setVisible(true);
+                return newAnn;
+              }
+              return prev;
+            });
           }
         }
       } catch (error) {
@@ -22,6 +29,8 @@ const NotificationBar = () => {
     };
 
     fetchAnnouncements();
+    const interval = setInterval(fetchAnnouncements, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   if (!visible || !latestAnnouncement) return null;

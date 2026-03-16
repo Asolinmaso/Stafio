@@ -694,16 +694,42 @@ const Topbar = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const dateInputRef = useRef(null);
 
-  useEffect(() => {
-    const savedAnnouncements = localStorage.getItem("announcements");
-    if (savedAnnouncements && savedAnnouncements !== "undefined") {
-      try {
-        setAnnouncements(JSON.parse(savedAnnouncements));
-      } catch (err) {
-        console.error("Error parsing announcements:", err);
-        setAnnouncements([]);
-      }
+  const fetchAnnouncements = async () => {
+    try {
+      const res = await apiClient.get("/api/admin/announcements", {
+        headers: {
+          "X-User-Role": localStorage.getItem("current_role"),
+          "X-User-ID": localStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id"),
+        },
+      });
+      // map backend data to the format used in topbar
+      const formatted = res.data.map(item => ({
+        id: item.id,
+        date: item.event_date || "",
+        eventName: item.title || item.event_name || "",
+        time: item.event_time || "",
+        eventType: item.event_type || "",
+        message: item.message || "",
+        name: item.author_name || item.sent_by_name || "",
+        email: item.author_email || "",
+        designation: item.author_designation || "",
+        reactions_count: item.reactions_count || 0
+      }));
+      setAnnouncements(formatted);
+    } catch (err) {
+      console.error("Error fetching announcements:", err);
     }
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
+    const handleAnnouncementUpdated = () => fetchAnnouncements();
+    window.addEventListener("announcementUpdated", handleAnnouncementUpdated);
+    const interval = setInterval(fetchAnnouncements, 5000);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("announcementUpdated", handleAnnouncementUpdated);
+    };
   }, []);
 
   useEffect(() => {
@@ -749,11 +775,7 @@ const Topbar = () => {
       window.removeEventListener("profileUpdated", handleProfileUpdate);
   }, []);
 
-  useEffect(() => {
-    if (announcements.length > 0) {
-      localStorage.setItem("announcements", JSON.stringify(announcements));
-    }
-  }, [announcements]);
+  // Removed localStorage sync effect
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -789,7 +811,7 @@ const Topbar = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.message.trim()) {
@@ -797,23 +819,43 @@ const Topbar = () => {
       return;
     }
 
-    const updatedAnnouncements = [...announcements, { ...formData }];
-    setAnnouncements(updatedAnnouncements);
-    localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
-    window.dispatchEvent(new Event("announcementUpdated"));
+    try {
+      const payload = {
+        event_date: formData.date || null,
+        event_name: formData.eventName,
+        event_time: formData.time,
+        event_type: formData.eventType,
+        message: formData.message,
+        author_name: formData.name,
+        author_email: formData.email,
+        author_designation: formData.designation
+      };
 
-    setFormData({
-      date: "",
-      eventName: "",
-      time: "",
-      eventType: "",
-      message: "",
-      employee: "",
-      name: "",
-      email: "",
-      designation: "",
-    });
-    setShowAddForm(false);
+      await apiClient.post("/api/admin/announcements", payload, {
+        headers: {
+          "X-User-Role": localStorage.getItem("current_role"),
+          "X-User-ID": localStorage.getItem("current_user_id") || localStorage.getItem("employee_user_id"),
+        }
+      });
+
+      window.dispatchEvent(new Event("announcementUpdated"));
+
+      setFormData({
+        date: "",
+        eventName: "",
+        time: "",
+        eventType: "",
+        message: "",
+        employee: "",
+        name: "",
+        email: "",
+        designation: "",
+      });
+      setShowAddForm(false);
+    } catch (err) {
+      console.error("Error submitting announcement", err);
+      alert("Failed to submit announcement.");
+    }
   };
 
   const navigate = useNavigate();
