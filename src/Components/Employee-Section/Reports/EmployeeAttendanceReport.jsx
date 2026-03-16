@@ -28,9 +28,7 @@ const EmployeeAttendanceReport = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId =
-          localStorage.getItem("employee_user_id") ||
-          sessionStorage.getItem("current_user_id");
+        const userId = localStorage.getItem("current_user_id");
 
         const [attRes, statsRes] = await Promise.all([
           axios.get("http://127.0.0.1:5001/api/attendance", {

@@ -14,15 +14,12 @@ const LeaveRequestForm = ({ onClose }) => {
     end_date: "",
     reason: "",
     notify_to: "",
-    day_type: "full",
+    day_type: "full_day",
     num_days: 0,
   });
 
   useEffect(() => {
-    const userId =
-      localStorage.getItem("employee_user_id") ||
-      localStorage.getItem("current_user_id");
-
+    const userId = localStorage.getItem("current_user_id");
     setEmployeeId(userId);
     fetchLeaveTypes();
   }, []);
@@ -45,7 +42,7 @@ const LeaveRequestForm = ({ onClose }) => {
     const diffTime = endDate - startDate;
     const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
 
-    return type === "half" ? diffDays * 0.5 : diffDays;
+    return type === "half_day" ? diffDays * 0.5 : diffDays;
   };
 
   const handleChange = (e) => {
@@ -70,13 +67,9 @@ const LeaveRequestForm = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const userId =
-      localStorage.getItem("employee_user_id") ||
-      localStorage.getItem("current_user_id");
+    const userId = localStorage.getItem("current_user_id");
 
-    const role =
-      localStorage.getItem("employee_role") ||
-      localStorage.getItem("current_role");
+    const role = localStorage.getItem("current_role");
 
     try {
       const res = await apiClient.post(
@@ -161,8 +154,8 @@ const LeaveRequestForm = ({ onClose }) => {
                   value={formData.day_type}
                   onChange={handleChange}
                 >
-                  <option value="full">Full Day</option>
-                  <option value="half">Half Day</option>
+                  <option value="full_day">Full Day</option>
+                  <option value="half_day">Half Day</option>
                 </select>
               </div>
             </div>
