@@ -21,7 +21,6 @@ import { useNavigate } from "react-router-dom";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import NotificationBar from "../NotificationBar";
-import NotificationTop from "../NotificationTop";
 import Vector3 from "../../../assets/Vector3.svg";
 import arrow3 from "../../../assets/arrow3.png";
 import maleteam from "../../../assets/maleteam.png";
@@ -642,9 +641,7 @@ const EmployeeDashboard = () => {
 
           {/* Meeting / Punch Card */}
           <Row className="mb-4">
-            <div md={4}>
-              <NotificationTop />
-            </div>
+
             <Col md={12}>
               <div className="meeting-card d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
