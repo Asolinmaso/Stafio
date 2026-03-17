@@ -649,8 +649,8 @@
 .approve-leave-modal {
 	background: #fff;
 	border-radius: 12px;
-	width: 700px;
-	max-width: 95%;
+	width: 600px;
+	max-width: 65%;
 	overflow: hidden;
 	box-shadow: 0 6px 28px rgba(0, 0, 0, 0.2);
 	animation: fadeIn 0.3s ease;
@@ -703,6 +703,8 @@
 	display: flex;
 	align-items: center;
 	gap: 16px;
+	flex-wrap: nowrap;
+	width: 100%;
 }
 
 .form-row label {
@@ -711,6 +713,10 @@
 	font-size: 14px;
 	color: #333;
 	flex-shrink: 0;
+}
+
+.reason-row {
+	align-items: flex-start !important;
 }
 
 .form-row input {
@@ -741,6 +747,17 @@
 	gap: 10px;
 	flex: 1;
 	align-items: flex-end;
+}
+
+.notify-row {
+	display: flex;
+	gap: 10px;
+	flex: 1;
+}
+
+.notify-row input {
+	flex: 1;
+	max-width: 100px;
 }
 
 .date-item {
@@ -805,9 +822,9 @@
 }
 
 .form-right img {
-	width: 175px !important;
-	height: 175px !important;
-	object-fit: contain !important;
+	width: 150px;
+	height: 120px;
+	object-fit: contain;
 	display: block;
 }
 
@@ -966,41 +983,132 @@
 
 /* ── 1. Small Laptop / Large Tablet (Up to 1024px) ── */
 @media (max-width: 1024px) {
-	.leave-approval-main { padding: 0 14px 20px 14px; }
-	.page-title { font-size: 20px !important; margin: 16px 0 14px 0 !important; }
-	.leave-header { flex-direction: column; gap: 15px; }
-	.leave-summary { flex-wrap: wrap; gap: 10px; width: 100%; }
-	.summary-card-leave { min-width: 140px; height: auto; flex: 1 1 140px; padding: 12px 14px; }
+	.leave-approval-main {
+		padding: 0 14px 20px 14px;
+	}
+
+	.page-title {
+		font-size: 20px !important;
+		margin: 16px 0 14px 0 !important;
+	}
+
+	.leave-header {
+		flex-direction: column;
+		gap: 15px;
+	}
+
+	.leave-summary {
+		flex-wrap: wrap;
+		gap: 10px;
+		width: 100%;
+	}
+
+	.summary-card-leave {
+		min-width: 140px;
+		height: auto;
+		flex: 1 1 140px;
+		padding: 12px 14px;
+	}
 }
 
 /* ── 2. Standard & High-Res Laptops (1025px – 1550px) ── */
 /* Optimized for your current 1536px logical resolution */
 @media (min-width: 1025px) and (max-width: 1550px) {
-	.leave-approval-main { padding: 0 18px 20px 18px; }
-	.page-title { font-size: 23px !important; margin: 20px 0 16px 0 !important; }
-	.leave-header { flex-wrap: wrap; gap: 15px; justify-content: space-between; }
-	.leave-summary { flex-wrap: nowrap; gap: 8px; flex-shrink: 1; }
-	.summary-card-leave { min-width: 160px; height: 100px; padding: 10px 12px; flex-shrink: 1; }
-	.card-text-block strong { font-size: 13px; }
-	.leave-table th, .leave-table td { padding: 10px 14px; font-size: 13px; }
-	.right-search-input-new { width: 110px; }
-	.right-leave-actions { align-items: flex-end; flex-shrink: 0; }
+	.leave-approval-main {
+		padding: 0 18px 20px 18px;
+	}
+
+	.page-title {
+		font-size: 23px !important;
+		margin: 20px 0 16px 0 !important;
+	}
+
+	.leave-header {
+		flex-wrap: wrap;
+		gap: 15px;
+		justify-content: space-between;
+	}
+
+	.leave-summary {
+		flex-wrap: nowrap;
+		gap: 8px;
+		flex-shrink: 1;
+	}
+
+	.summary-card-leave {
+		min-width: 160px;
+		height: 100px;
+		padding: 10px 12px;
+		flex-shrink: 1;
+	}
+
+	.card-text-block strong {
+		font-size: 13px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 10px 14px;
+		font-size: 13px;
+	}
+
+	.right-search-input-new {
+		width: 110px;
+	}
+
+	.right-leave-actions {
+		align-items: flex-end;
+		flex-shrink: 0;
+	}
 }
 
 /* ── 3. Transition Range (1551px – 1800px) ── */
 @media (min-width: 1551px) and (max-width: 1800px) {
-	.leave-approval-main { padding: 0 24px 24px 24px; }
-	.page-title { font-size: 26px !important; }
-	.summary-card-leave { min-width: 210px; height: 115px; }
+	.leave-approval-main {
+		padding: 0 24px 24px 24px;
+	}
+
+	.page-title {
+		font-size: 26px !important;
+	}
+
+	.summary-card-leave {
+		min-width: 210px;
+		height: 115px;
+	}
 }
 
 /* ── 4. Large Desktop / Big Monitor (1801px and above) ── */
 @media (min-width: 1801px) {
-	.leave-approval-main { padding: 0 40px 40px 40px; }
-	.page-title { font-size: 30px !important; }
-	.summary-card-leave { min-width: 260px; height: 130px; padding: 20px 28px; }
-	.card-text-block strong { font-size: 17px; }
-	.leave-table th, .leave-table td { padding: 18px 25px; font-size: 15px; }
-	.approve-leave-modal { width: 900px; }
-	.pagination { padding: 20px 4px 12px 4px; }
+	.leave-approval-main {
+		padding: 0 40px 40px 40px;
+	}
+
+	.page-title {
+		font-size: 30px !important;
+	}
+
+	.summary-card-leave {
+		min-width: 260px;
+		height: 130px;
+		padding: 20px 28px;
+	}
+
+	.card-text-block strong {
+		font-size: 17px;
+	}
+
+	.leave-table th,
+	.leave-table td {
+		padding: 18px 25px;
+		font-size: 15px;
+	}
+
+	.approve-leave-modal {
+		width: 700px;
+	}
+
+	.pagination {
+		padding: 20px 4px 12px 4px;
+	}
 }
