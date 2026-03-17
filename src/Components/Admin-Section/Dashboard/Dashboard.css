@@ -42,7 +42,8 @@
 }
 
 .meeting-card {
-	width: 1045px;
+	width: 100%;
+	max-width: 1045px;
 	height: 285px;
 	margin-left: -11px;
 	/*modified*/
@@ -328,14 +329,14 @@
 }
 
 /* ================= 1400px ================= */
-@media (min-width: 1400px) {
+/* @media (max-width: 1400px) {
 	.dashboard-wrapper {
 		max-width: 1500px;
 		margin: auto;
 	}
 
 	.meeting-card {
-		width: 100%;
+		width: 103% !important;
 		height: 300px;
 	}
 
@@ -351,12 +352,12 @@
 	.username h1 {
 		font-size: 2.1rem;
 	}
-}
+} */
 
 /* ================= 1200px ================= */
-@media (max-width: 1200px) {
+/* @media (max-width: 1200px) {
 	.meeting-card {
-		width: 100%;
+		width: 103% !important;
 		height: auto;
 		padding: 20px;
 	}
@@ -394,10 +395,10 @@
 	.notice .summary-card {
 		margin-left: 0;
 	}
-}
+} */
 
 /* ================= 992px ================= */
-@media (max-width: 992px) {
+/* @media (max-width: 992px) {
 	.username h1 {
 		font-size: 1.6rem;
 	}
@@ -431,6 +432,7 @@
 
 	.clock {
 		display: none;
+	
 	}
 
 	.meeting-box {
@@ -452,4 +454,102 @@
 	.summary-icons {
 		font-size: 1rem;
 	}
+} */
+
+@media (min-width: 993px) and (max-width: 1200px) {
+
+.meeting-card{
+  width:100%;
+  height:auto;
+  padding:20px;
+}
+
+.vector-img{
+  margin-bottom:120px;
+}
+
+.maleteam{
+  width:320px !important;
+  height:250px;
+  margin-right:-80px !important;
+}
+
+.clock{
+  margin-right:10px !important;
+}
+
+.meeting-box{
+  width:240px !important;
+}
+
+.punch-info-box{
+  width:300px;
+}
+
+.info-item{
+  width:300px;
+}
+
+.summary-card{
+  padding:18px;
+}
+
+.notice .summary-card{
+  margin-left:0;
+}
+
+}
+
+@media (min-width:1201px) and (max-width:1400px){
+
+.dashboard-wrapper{
+  max-width:1400px;
+  margin:auto;
+}
+
+.meeting-card{
+  width:100% !important;
+  height:300px;
+}
+
+.maleteam{
+  width:380px !important;
+  height:300px;
+}
+
+.summary-card{
+  padding:20px;
+}
+
+.username h1{
+  font-size:2rem;
+}
+
+}
+
+@media (min-width:1401px) and (max-width:1550px){
+
+.dashboard-wrapper{
+  max-width:1500px;
+  margin:auto;
+}
+
+.meeting-card{
+  width:100% !important;
+  height:300px;
+}
+
+.maleteam{
+  width:420px !important;
+  height:320px;
+}
+
+.summary-card{
+  padding:22px;
+}
+
+.username h1{
+  font-size:2.1rem;
+}
+
 }
