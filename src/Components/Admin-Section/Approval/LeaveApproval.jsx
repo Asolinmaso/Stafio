@@ -564,17 +564,19 @@ const LeaveApproval = () => {
 
                     <div className="form-row">
                       <label>Notify Others:</label>
-                      <input
-                        type="text"
-                        value={selectedLeave.notify}
-                        readOnly
-                      />
-                      <input
-                        type="text"
-                        className="document-input"
-                        value={selectedLeave.document || "No File Uploaded"}
-                        readOnly
-                      />
+                      <div className="notify-row">
+                        <input
+                          type="text"
+                          value={selectedLeave.notify}
+                          readOnly
+                        />
+                        <input
+                          type="text"
+                          className="document-input"
+                          value={selectedLeave.document || "No File Uploaded"}
+                          readOnly
+                        />
+                      </div>
                     </div>
 
                     <div className="form-row reason-row">

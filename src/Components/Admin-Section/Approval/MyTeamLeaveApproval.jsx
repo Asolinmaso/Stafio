@@ -321,35 +321,63 @@ export default function MyTeamLeaveApproval() {
                       <div className="date-row">
                         <div className="date-item">
                           <p>From</p>
-                          <input type="text" value={selectedLeave.from} readOnly />
+                          <input
+                            type="text"
+                            value={selectedLeave.from}
+                            readOnly
+                          />
                         </div>
                         <div className="date-item">
                           <p>To</p>
-                          <input type="text" value={selectedLeave.to} readOnly />
+                          <input
+                            type="text"
+                            value={selectedLeave.to}
+                            readOnly
+                          />
                         </div>
-                        <div className="date-item">
-                          <p>&nbsp;</p>
-                          <div className="full-day-tag">
-                            {selectedLeave.session || "Full Day"}
-                          </div>
+                        <div className="date-item no-label">
+                          <input
+                            type="text"
+                            value={selectedLeave.session || "Full Day"}
+                            readOnly
+                          />
                         </div>
                       </div>
                     </div>
 
-                    {/* Notify Others + Upload */}
+                    {/* Approved By + Upload */}
                     <div className="form-row">
-                      <label>Notify Others:</label>
-                      <input type="text" value={selectedLeave.notify} readOnly />
-                      <div className="upload-file-btn">
-                        <span>{selectedLeave.document || "Upload File"}</span>
-                        <span className="upload-arrow">↑</span>
+                      <label>Approved By:</label>
+                      <div className="approved-by-row">
+                        <input
+                          type="text"
+                          value={selectedLeave.notify}
+                          readOnly
+                        />
+                        <div className="document-box">
+                          <span>Upload File</span>
+                          <div className="upload-icon-blue">
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M18 15l-6-6-6 6" />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
                     {/* Reason */}
                     <div className="form-row reason-row">
                       <label>Reason:</label>
-                      <div className="reason-wrapper">
+                      <div className="reason-container">
                         <textarea value={selectedLeave.reason} readOnly />
                         <span className="char-counter">
                           {(selectedLeave.reason?.length || 0)}/30
@@ -365,38 +393,34 @@ export default function MyTeamLeaveApproval() {
                   </div>
 
                 </form>
-
-                {/* Footer action buttons */}
-                <div className="modal-footer">
-                  {selectedLeave.status === "Pending" ? (
-                    <>
-                      <button
-                        type="button"
-                        className="apply-btn"
-                        onClick={() => { setActionType("Approval"); setShowReasonModal(true); }}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        type="button"
-                        className="cancel-btn"
-                        onClick={() => { setActionType("Rejection"); setShowReasonModal(true); }}
-                      >
-                        Reject
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      className="cancel-btn"
-                      onClick={() => setShowModal(false)}
-                    >
-                      Close
-                    </button>
-                  )}
-                </div>
-
               </div>
+
+              {/* Footer action buttons */}
+              {selectedLeave.status === "Pending" && (
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="modal-approve-btn"
+                    onClick={() => {
+                      setActionType("Approval");
+                      setShowReasonModal(true);
+                    }}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    className="modal-reject-btn"
+                    onClick={() => {
+                      setActionType("Rejection");
+                      setShowReasonModal(true);
+                    }}
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+
             </div>
           </div>
         )}

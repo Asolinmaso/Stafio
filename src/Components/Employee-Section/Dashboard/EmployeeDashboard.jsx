@@ -641,7 +641,6 @@ const EmployeeDashboard = () => {
 
           {/* Meeting / Punch Card */}
           <Row className="mb-4">
-
             <Col md={12}>
               <div className="meeting-card d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
@@ -841,8 +840,8 @@ const EmployeeDashboard = () => {
                 {/* ── CARD 1: Total Leaves — action: Apply Leave ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card"
-                   style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/my-leave")}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/my-leave")}
                   >
                     <div className="summary-top">
                       <h2>
@@ -871,8 +870,8 @@ const EmployeeDashboard = () => {
                 {/* ── CARD 2: Taken — action: Check Leave Details ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card"
-                   style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/my-leave")}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/my-leave")}
                   >
                     <div className="summary-top">
                       <h2>
@@ -901,8 +900,8 @@ const EmployeeDashboard = () => {
                 {/* ── CARD 3: Absent — action: Add Regularization ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card"
-                  style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/my-regularization")}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/my-regularization")}
                   >
                     <div className="summary-top">
                       <h2>
@@ -931,8 +930,8 @@ const EmployeeDashboard = () => {
                 {/* ── CARD 4: Worked Days — action: Check Attendance Overview ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card"
-                  style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/employee-attendance")}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/employee-attendance")}
                   >
                     <div className="summary-top">
                       <h2>
@@ -984,8 +983,8 @@ const EmployeeDashboard = () => {
                 {/* ── CARD 6: This Week Holiday — no action ── */}
                 <Col md={4} lg={4} className="mb-3">
                   <Card className="summary-card"
-                  style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/my-holidays")}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/my-holidays")}
                   >
                     <div className="summary-top">
                       <h2>
