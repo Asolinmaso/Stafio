@@ -39,8 +39,11 @@ const LeaveRequestForm = ({ onClose }) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
 
-    const diffTime = endDate - startDate;
-    const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+    // Use Math.round to handle potential DST issues or slight precision errors
+    const diffTime = endDate.getTime() - startDate.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    if (diffDays <= 0) return 0;
 
     return type === "half_day" ? diffDays * 0.5 : diffDays;
   };
@@ -158,6 +161,11 @@ const LeaveRequestForm = ({ onClose }) => {
                   <option value="half_day">Half Day</option>
                 </select>
               </div>
+              {formData.start_date && formData.end_date && (
+                <div className="duration-display" style={{ marginTop: '5px', fontSize: '0.9rem', color: '#666' }}>
+                  Duration: <strong>{formData.num_days} Day(s)</strong>
+                </div>
+              )}
             </div>
           </div>
 
