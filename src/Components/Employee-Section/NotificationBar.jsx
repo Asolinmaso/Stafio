@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaRocket } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./NotificationBar.css";
 
 const NotificationBar = () => {
   const [visible, setVisible] = useState(true);
   const [latestAnnouncement, setLatestAnnouncement] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadLatestAnnouncement = async () => {
@@ -43,6 +45,15 @@ const NotificationBar = () => {
     };
   }, []);
 
+  const handleViewAll = () => {
+    const role = localStorage.getItem("current_role");
+    if (role === "admin") {
+      navigate("/admin-broadcast");
+      window.scrollTo(0, 0);
+    }
+    // Add employee routing here if needed in future
+  };
+
   if (!visible || !latestAnnouncement) return null;
 
   return (
@@ -63,7 +74,9 @@ const NotificationBar = () => {
           <span className="dismiss" onClick={() => setVisible(false)}>
             Dismiss
           </span>
-          <span className="viewAll">View All</span>
+          <span className="viewAll" onClick={handleViewAll}>
+            View All
+          </span>
         </div>
       </div>
 
