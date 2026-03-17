@@ -573,7 +573,7 @@ const Employee = () => {
 											<div className="upload-info">
 												<h4>Upload Profile Image</h4>
 												<p>Image should be below 4 MB</p>
-												<button type="button" className="upload-btn1">
+												<button type="button" className="new-empl-upload-btn1">
 													Upload
 												</button>
 											</div>
@@ -779,7 +779,7 @@ const Employee = () => {
 											</button>
 											<button
 												type="button"
-												className="cancel-btn"
+												className="action-cancel-btn"
 												onClick={() => {
 													setShowModal(false);
 												}}
@@ -794,7 +794,7 @@ const Employee = () => {
 					</div>
 				)}
 
-				{/* ---------- High-Fidelity Profile Detail Modal ---------- */}
+				{/* ---------- High-Fidelity Profile Detail Modal ---------- (View details) */}
 				{showProfileModal && selectedEmployee && (
 					<div className="profile-overlay-fixed">
 						<div className="profile-modal-container">
