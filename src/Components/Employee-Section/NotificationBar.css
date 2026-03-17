@@ -1,7 +1,7 @@
 .notification {
-   position: relative; /* now it's part of the normal flow */
-  left: auto;         /* reset */
-  transform: none;    /* reset */
+  position: sticky;
+  top: 80px;
+  z-index: 100;
   background: #fff;
   border:1px solid #dad8d8ff;
   border-radius: 10px;

@@ -19,6 +19,9 @@ const Attendance = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
   // days filter
   const [sortDays, setSortDays] = useState(7);
 
@@ -54,13 +57,13 @@ const Attendance = () => {
   }, []);
 
   // ✅ ONLY CHANGE: set today as default date (local time)
-  useEffect(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    setSelectedDate(`${year}-${month}-${day}`);
-  }, []);
+  // useEffect(() => {
+  //   const now = new Date();
+  //   const year = now.getFullYear();
+  //   const month = String(now.getMonth() + 1).padStart(2, "0");
+  //   const day = String(now.getDate()).padStart(2, "0");
+  //   setSelectedDate(`${year}-${month}-${day}`);
+  // }, []);
 
   // ✅ ONLY CHANGE: format date like "07 Feb 2026"
   const formatDisplayDate = (dateStr) => {
@@ -198,6 +201,31 @@ const Attendance = () => {
       }
     });
 
+  const totalPages = Math.ceil(filteredAttendance.length / pageSize);
+
+  const paginatedData = filteredAttendance.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchTerm,
+    statusFilter,
+    selectedDate,
+    sortDays,
+    sortOrder,
+    filterFromDate,
+    filterToDate,
+  ]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages]);
+
   return (
     <div className="attendance-layout">
       <div className="rightside-logo ">
@@ -250,7 +278,7 @@ const Attendance = () => {
 
               <div className="date-picker">
                 <FaCalendarAlt />
-                <span>{formatDisplayDate(selectedDate)}</span>
+                <span>{selectedDate ? formatDisplayDate(selectedDate) : "Select Date"}</span>
 
                 <input
                   ref={dateInputRef}
@@ -300,8 +328,8 @@ const Attendance = () => {
             </thead>
 
             <tbody>
-              {filteredAttendance.length > 0 ? (
-                filteredAttendance.map((record, index) => (
+              {paginatedData.length > 0 ? (
+                paginatedData.map((record, index) => (
                   <tr key={index}>
                     <td>{record.id}</td>
                     <td>{record.employee}</td>
@@ -335,18 +363,43 @@ const Attendance = () => {
 
         <div className="pagination1">
           <div className="showing-info">
-            <span>Showing</span>
-            <select className="page-size-select1">
-              <option>05</option>
-              <option>10</option>
-              <option>15</option>
+            <span>
+              Showing {paginatedData.length} of {filteredAttendance.length}
+            </span>
+            <select
+              className="page-size-select1"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1); // reset page
+              }}
+            >
+              <option value={5}>05</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
             </select>
           </div>
 
           <div className="pagination-controls">
-            <button className="page-btn">Prev</button>
-            <button className="page-btn active">01</button>
-            <button className="page-btn">Next</button>
+            <button
+              className="page-btn"
+              disabled={currentPage === 1 || totalPages === 0}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              Prev
+            </button>
+
+            <button className="page-btn active">
+              {String(currentPage).padStart(2, "0")}
+            </button>
+
+            <button
+              className="page-btn"
+              disabled={currentPage >= totalPages || totalPages === 0}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

@@ -1,11 +1,13 @@
 
 .notification-top {
+  position: sticky;
+  top: 80px;
+  z-index: 999;
   background: #eeeeee;
   border-radius: 10px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   padding: 12px 16px;
   margin-bottom: 16px;
- 
 }
 /* NotificationBar.css */
 
