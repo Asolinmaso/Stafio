@@ -642,9 +642,6 @@ const EmployeeDashboard = () => {
 
           {/* Meeting / Punch Card */}
           <Row className="mb-4">
-            <div md={4}>
-              <NotificationTop />
-            </div>
             <Col md={12}>
               <div className="meeting-card d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
