@@ -347,108 +347,132 @@ export default function Myleave() {
             className="app-leave-modal-overlay"
             onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}
           >
-            <div className="apply-leave-modal">
-              <div className="app-leave-modal-header-blue">
+            <div className="admin-apply-leave-modal">
+              <div className="admin-apply-leave-modal-header-blue">
                 <h3>Apply Leave</h3>
                 <button
-                  className="apply-leave-close-btn"
+                  className="admin-apply-leave-close-btn"
                   onClick={() => setShowModal(false)}
                 >
-                  x
+                  ×
                 </button>
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className="app-leave-modal-body">
-                  <div className="apply-leave-form">
-                    <div className="form-left">
-                      <label>Employee ID:</label>
-                      <input
-                        type="text"
-                        name="employee_id"
-                        value={formData.employee_id}
-                        readOnly
-                      />
-
-                      <label>Leave Type:</label>
-                      <select
-                        name="leave_type"
-                        value={formData.leave_type}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select</option>
-                        <option value="1">Casual Leave</option>
-                        <option value="2">Sick Leave</option>
-                        <option value="3">Annual Leave</option>
-                      </select>
-
-                      <label>Select Date:</label>
-                      <div className="app-leave-date-row">
+                <div className="admin-apply-leave-modal-body">
+                  <div className="admin-apply-leave-form-container">
+                    <div className="admin-apply-leave-form-left">
+                      <div className="admin-apply-leave-form-row">
+                        <label>Employee ID:</label>
                         <input
-                          type="date"
-                          name="start_date"
-                          value={formData.start_date}
-                          onChange={handleChange}
+                          type="text"
+                          name="employee_id"
+                          value={formData.employee_id}
+                          readOnly
                         />
-                        <input
-                          type="date"
-                          name="end_date"
-                          value={formData.end_date}
-                          onChange={handleChange}
-                        />
-                        <select
-                          name="day_type"
-                          value={formData.day_type}
-                          onChange={handleChange}
-                        >
-                          <option value="Full Day">Full Day</option>
-                          <option value="Half Day (FN)">Half Day (FN)</option>
-                          <option value="Half Day (AN)">Half Day (AN)</option>
-                        </select>
                       </div>
 
-                      <label>Notify Others:</label>
-                      <div className="app-leave-notify-row">
+                      <div className="admin-apply-leave-form-row">
+                        <label>Leave Type:</label>
                         <select
-                          name="notify_to"
-                          value={formData.notify_to}
+                          name="leave_type"
+                          value={formData.leave_type}
                           onChange={handleChange}
                         >
                           <option value="">Select</option>
-                          <option>Team Lead</option>
-                          <option>HR</option>
+                          <option value="1">Casual Leave</option>
+                          <option value="2">Sick Leave</option>
+                          <option value="3">Annual Leave</option>
                         </select>
-                        <button type="button" className="apply-leave-upload-btn">
-                          <FaUpload /> Upload File
-                        </button>
                       </div>
 
-                      <label>Reason:</label>
-                      <textarea
-                        name="reason"
-                        value={formData.reason}
-                        onChange={handleChange}
-                        placeholder="ex: I am travelling to"
-                        maxLength={30}
-                      ></textarea>
+                      <div className="admin-apply-leave-form-row">
+                        <label>Date Of Leave:</label>
+                        <div className="admin-apply-leave-date-row">
+                          <div className="admin-apply-leave-date-item">
+                            <p>From</p>
+                            <input
+                              type="date"
+                              name="start_date"
+                              value={formData.start_date}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <div className="admin-apply-leave-date-item">
+                            <p>To</p>
+                            <input
+                              type="date"
+                              name="end_date"
+                              value={formData.end_date}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <div className="admin-apply-leave-date-item">
+                            <p>Session</p>
+                            <select
+                              name="day_type"
+                              value={formData.day_type}
+                              onChange={handleChange}
+                            >
+                              <option value="Full Day">Full Day</option>
+                              <option value="Half Day (FN)">Half Day (FN)</option>
+                              <option value="Half Day (AN)">Half Day (AN)</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="admin-apply-leave-form-row">
+                        <label>Notify Others:</label>
+                        <div className="admin-apply-leave-notify-row">
+                          <select
+                            name="notify_to"
+                            value={formData.notify_to}
+                            onChange={handleChange}
+                          >
+                            <option value="">Select</option>
+                            <option>Team Lead</option>
+                            <option>HR</option>
+                          </select>
+                          <button type="button" className="admin-apply-leave-upload-btn">
+                            <FaUpload /> Upload File
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="admin-apply-leave-form-row admin-apply-leave-reason-row">
+                        <label>Reason:</label>
+                        <div className="admin-apply-leave-reason-container">
+                          <textarea
+                            name="reason"
+                            value={formData.reason}
+                            onChange={handleChange}
+                            placeholder="ex: I am travelling to"
+                            maxLength={30}
+                          ></textarea>
+                          <span className="admin-apply-leave-char-counter">
+                            {formData.reason.length}/30
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Right illustration */}
-                    <div className="form-right">
+                    <div className="admin-apply-leave-form-right">
                       <img src={illustration} alt="Leave Illustration" />
                     </div>
                   </div>
                 </div>
 
                 {/* Footer actions */}
-                <div className="app-leave-modal-actions">
-                  <button type="submit" className="apply-leave-btn">
+                <div className="admin-apply-leave-modal-actions">
+                  <button type="submit" className="admin-apply-leave-btn">
                     Apply
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="app-leave-cancel-btn"
+                    className="admin-apply-leave-cancel-btn"
                   >
                     Cancel
                   </button>
