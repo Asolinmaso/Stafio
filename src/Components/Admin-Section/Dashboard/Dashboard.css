@@ -530,8 +530,9 @@
 @media (min-width:1401px) and (max-width:1550px){
 
 .dashboard-wrapper{
-  max-width:1500px;
-  margin:auto;
+ 	width: 100%;
+    max-width: 100%;
+    margin: 0;
 }
 
 .meeting-card{
