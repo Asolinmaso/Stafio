@@ -314,9 +314,9 @@ const LeaveApproval = () => {
                           onChange={(e) => setFilterLeaveType(e.target.value)}
                         >
                           <option value="All">All</option>
-                          <option value="Sick Leave">Sick</option>
-                          <option value="Casual Leave">Casual</option>
-                          <option value="Earned Leave">Earned</option>
+                          <option value="sick">Sick</option>
+                          <option value="casual">Casual</option>
+                          <option value="Annual">Annual</option>
                         </select>
                       </div>
 
@@ -493,6 +493,7 @@ const LeaveApproval = () => {
               className="approve-leave-modal"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Header */}
               <div className="approve-modal-header-blue">
                 <h3>Leave Approval</h3>
                 <button
@@ -503,6 +504,7 @@ const LeaveApproval = () => {
                 </button>
               </div>
 
+              {/* Body */}
               <div className="approve-form-modal-body">
                 <form className="approve-leave-form">
                   <div className="form-left">
@@ -573,42 +575,44 @@ const LeaveApproval = () => {
                       <label>Reason:</label>
                       <textarea value={selectedLeave.reason} readOnly />
                     </div>
-
-                    {/* ACTION BUTTONS – ONLY IF PENDING */}
-                    {selectedLeave.status === "Pending" && (
-                      <div className="action-approve-modal-actions">
-                        <button
-                          type="button"
-                          className="approve-apply-btn"
-                          onClick={() => {
-                            setActionType("Approval");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          type="button"
-                          className="approve-cancel-btn"
-                          onClick={() => {
-                            setActionType("Rejection");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
                   </div>
 
+                  {/* Right illustration */}
                   <div className="form-right">
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
                 </form>
               </div>
+
+              {/* Footer action buttons — only if Pending */}
+              {selectedLeave.status === "Pending" && (
+                <div className="la-modal-footer">
+                  <button
+                    type="button"
+                    className="modal-approve-btn"
+                    onClick={() => {
+                      setActionType("Approval");
+                      setShowReasonModal(true);
+                    }}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    className="modal-reject-btn"
+                    onClick={() => {
+                      setActionType("Rejection");
+                      setShowReasonModal(true);
+                    }}
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
+
 
         {showReasonModal && (
           <div className="reason-modal-overlay">

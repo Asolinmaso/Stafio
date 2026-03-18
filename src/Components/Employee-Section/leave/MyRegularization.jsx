@@ -24,6 +24,10 @@ export default function MyRegularization() {
 
   const [regularizationData, setRegularizationData] = useState([]);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     user_id: "",
@@ -44,7 +48,7 @@ export default function MyRegularization() {
         const userRole =
           localStorage.getItem("employee_role") ||
           localStorage.getItem("current_role");
-          
+
         if (!userId) return;
 
         const response = await apiClient.get("/api/myregularization", {
@@ -63,9 +67,21 @@ export default function MyRegularization() {
     fetchMyRegularizations();
   }, []);
 
-  const filteredAndSortedLeaves = regularizationData.filter((leave) =>
+  const filteredLeaves = regularizationData.filter((leave) =>
     filterStatus === "All" ? true : leave.status === filterStatus,
   );
+
+  // Pagination derived values
+  const totalPages = Math.max(1, Math.ceil(filteredLeaves.length / rowsPerPage));
+  const paginatedLeaves = filteredLeaves.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus, filterLeaveType, filterName]);
 
   const handleResetFilter = () => {
     setFilterName("");
@@ -116,7 +132,7 @@ export default function MyRegularization() {
     const userRole =
       localStorage.getItem("employee_role") ||
       localStorage.getItem("current_role");
-    
+
     try {
       if (isEdit) {
         // ✏️ EDIT
@@ -156,7 +172,7 @@ export default function MyRegularization() {
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Something went wrong. Please try again.",
+        "Something went wrong. Please try again.",
       );
     }
   };
@@ -336,21 +352,26 @@ export default function MyRegularization() {
               </tr>
             </thead>
             <tbody>
-              {filteredAndSortedLeaves.map((row, index) => (
+              {paginatedLeaves.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "32px", color: "#9ca3af" }}>
+                    No regularization records found.
+                  </td>
+                </tr>
+              ) : paginatedLeaves.map((row, index) => (
                 <tr key={row.id}>
-                  <td>{String(index + 1).padStart(2, "0")}</td>
+                  <td>{String((currentPage - 1) * rowsPerPage + index + 1).padStart(2, "0")}</td>
                   <td>{row.attendanceType}</td>
                   <td>{row.date}</td>
                   <td>{row.reason}</td>
                   <td>
                     <span
-                      className={`status-badge ${
-                        row.status === "Approved"
+                      className={`status-badge ${row.status === "Approved"
                           ? "approved"
                           : row.status === "Pending"
                             ? "pending"
                             : "rejected"
-                      }`}
+                        }`}
                     >
                       {row.status}
                     </span>
@@ -374,15 +395,35 @@ export default function MyRegularization() {
         {/* Pagination */}
         <div className="pagination">
           <span>Showing</span>
-          <select>
-            <option>07</option>
-            <option>10</option>
-            <option>15</option>
+          <select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            {[5, 7, 10, 15].map((n) => (
+              <option key={n} value={n}>{String(n).padStart(2, "0")}</option>
+            ))}
           </select>
           <div className="page-controls">
-            <button>Prev</button>
-            <button className="active">01</button>
-            <button>Next</button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              style={{ opacity: currentPage === 1 ? 0.4 : 1 }}
+            >
+              Prev
+            </button>
+            <button className="active">
+              {String(currentPage).padStart(2, "0")}
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              style={{ opacity: currentPage === totalPages ? 0.4 : 1 }}
+            >
+              Next
+            </button>
           </div>
         </div>
 
