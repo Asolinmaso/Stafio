@@ -39,22 +39,50 @@ const Attendance = () => {
   const [filterFromDate, setFilterFromDate] = useState("");
   const [filterToDate, setFilterToDate] = useState("");
 
+  // Applied From/To Dates
+  const [appliedFromDate, setAppliedFromDate] = useState("");
+  const [appliedToDate, setAppliedToDate] = useState("");
+
   const filterButtonRef = useRef(null);
   const navigate = useNavigate();
 
-  // ✅ Fetch attendance data
-  useEffect(() => {
-    const fetchAttendanceData = async () => {
-      try {
-        const response = await apiClient.get("/api/attendancelist");
-        setAttendanceData(response.data);
-      } catch (error) {
-        console.error("Error fetching attendance data:", error);
-      }
-    };
+  // ✅ Fetch attendance data with filters from backend
+  const fetchAttendanceData = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchTerm) params.append("name", searchTerm);
+      if (statusFilter && statusFilter !== "All") params.append("status", statusFilter);
+      if (sortOrder) params.append("order", sortOrder);
 
+      // Preference: 1. Specific From/To range from modal, 2. Header selectedDate, 3. Default "Last N Days"
+      if (appliedFromDate || appliedToDate) {
+        if (appliedFromDate) params.append("from_date", appliedFromDate);
+        if (appliedToDate) params.append("to_date", appliedToDate);
+      } else if (selectedDate) {
+        params.append("from_date", selectedDate);
+        params.append("to_date", selectedDate);
+      } else if (sortDays) {
+        params.append("days", sortDays);
+      }
+
+      const response = await apiClient.get(`/api/attendancelist?${params.toString()}`);
+      setAttendanceData(response.data);
+    } catch (error) {
+      console.error("Error fetching attendance data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchAttendanceData();
-  }, []);
+  }, [
+    searchTerm,
+    statusFilter,
+    selectedDate,
+    sortDays,
+    sortOrder,
+    appliedFromDate,
+    appliedToDate,
+  ]);
 
   // ✅ ONLY CHANGE: set today as default date (local time)
   // useEffect(() => {
@@ -94,6 +122,13 @@ const Attendance = () => {
   const handleApplyFilter = () => {
     setSearchTerm(filterName);
     setStatusFilter(filterStatus);
+    setAppliedFromDate(filterFromDate);
+    setAppliedToDate(filterToDate);
+
+    // If modal date range is applied, clear the header's specific date filter
+    if (filterFromDate || filterToDate) {
+      setSelectedDate("");
+    }
 
     const daysMap = {
       "Last 5 Days": 5,
@@ -115,6 +150,8 @@ const Attendance = () => {
 
     setSearchTerm("");
     setStatusFilter("All");
+    setAppliedFromDate("");
+    setAppliedToDate("");
     setSortDays(7);
     setSortOrder("newest");
 
@@ -126,80 +163,7 @@ const Attendance = () => {
     setSelectedDate(`${year}-${month}-${day}`);
   };
 
-  const filteredAttendance = attendanceData
-    // SEARCH BY EMPLOYEE NAME
-    .filter((record) =>
-      record.employee?.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-
-    // FILTER BY STATUS
-    .filter((record) =>
-      statusFilter === "All" ? true : record.status === statusFilter,
-    )
-
-    // FILTER BY FROM-TO DATE
-    .filter((record) => {
-      const recordDate = parseRecordDate(record.date);
-      if (!recordDate) return true;
-
-      const from = toDateObj(filterFromDate);
-      const to = toDateObj(filterToDate);
-
-      // If user didn't select from/to, skip that check
-      if (from && recordDate < from) return false;
-
-      // To date should include full day
-      if (to) {
-        const toEnd = new Date(to);
-        toEnd.setHours(23, 59, 59, 999);
-        if (recordDate > toEnd) return false;
-      }
-
-      return true;
-    })
-
-    // FILTER BY MAIN SELECTED DATE (Daily Date)
-    .filter((record) => {
-      if (!selectedDate) return true;
-      const recordDate = parseRecordDate(record.date);
-      const pickedDate = toDateObj(selectedDate);
-      if (!recordDate || !pickedDate) return true;
-
-      return (
-        recordDate.getDate() === pickedDate.getDate() &&
-        recordDate.getMonth() === pickedDate.getMonth() &&
-        recordDate.getFullYear() === pickedDate.getFullYear()
-      );
-    })
-
-    // FILTER BY LAST N DAYS (Skip if a specific date is picked in the header)
-    .filter((record) => {
-      if (selectedDate) return true;
-
-      const recordDate = parseRecordDate(record.date);
-      if (!recordDate) return true;
-
-      const today = new Date();
-      const daysDifference = Math.floor(
-        (today - recordDate) / (1000 * 60 * 60 * 24),
-      );
-
-      return daysDifference <= sortDays;
-    })
-
-    // SORT BY NEWEST / OLDEST
-    .sort((a, b) => {
-      const dateA = parseRecordDate(a.date);
-      const dateB = parseRecordDate(b.date);
-
-      if (!dateA || !dateB) return 0;
-
-      if (sortOrder === "newest") {
-        return dateB - dateA; // newest first
-      } else {
-        return dateA - dateB; // oldest first
-      }
-    });
+  const filteredAttendance = attendanceData; // Backend handles filtering now
 
   const totalPages = Math.ceil(filteredAttendance.length / pageSize);
 
@@ -216,8 +180,8 @@ const Attendance = () => {
     selectedDate,
     sortDays,
     sortOrder,
-    filterFromDate,
-    filterToDate,
+    appliedFromDate,
+    appliedToDate,
   ]);
 
   useEffect(() => {

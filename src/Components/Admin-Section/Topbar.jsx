@@ -741,6 +741,16 @@ const Topbar = () => {
     }
   }, []);
 
+  // Listen for event to open announcements popup
+  useEffect(() => {
+    const handleOpenAnnouncements = () => {
+      setShowPopup(true);
+      setShowAddForm(false);
+    };
+    window.addEventListener("openAnnouncements", handleOpenAnnouncements);
+    return () => window.removeEventListener("openAnnouncements", handleOpenAnnouncements);
+  }, []);
+
   const fetchProfileData = async () => {
     try {
       const userId =
