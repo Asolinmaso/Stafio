@@ -1173,6 +1173,11 @@
 	opacity: 0.7;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* media queries */
 
 @media (min-width: 993px) and (max-width: 1200px) {

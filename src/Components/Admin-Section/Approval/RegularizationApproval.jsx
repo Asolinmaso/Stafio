@@ -24,6 +24,8 @@ export default function RegularizationApproval() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showRejectedResultModal, setShowRejectedResultModal] = useState(false);
   const [modalReason, setModalReason] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const filterRef = useRef(null);
   const navigate = useNavigate();
@@ -40,6 +42,10 @@ export default function RegularizationApproval() {
     };
     fetchRegularizationApproval();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, attendanceType, sortOrder]);
 
   // Close filter popup on outside click
   useEffect(() => {
@@ -81,7 +87,8 @@ export default function RegularizationApproval() {
           { status: "Approved", reason: modalReason },
           { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
-        const currentUserName = localStorage.getItem("current_user_name") || "Admin"; // Fallback if name not in storage
+        const currentUserName =
+          localStorage.getItem("current_user_name") || "Admin"; // Fallback if name not in storage
         setData((prev) =>
           prev.map((item) =>
             item.id === selectedLeave.id
@@ -113,7 +120,8 @@ export default function RegularizationApproval() {
           { status: "Rejected", reason: modalReason },
           { headers: { "X-User-ID": userId, "X-User-Role": userRole } },
         );
-        const currentUserName = localStorage.getItem("current_user_name") || "Admin";
+        const currentUserName =
+          localStorage.getItem("current_user_name") || "Admin";
         setData((prev) =>
           prev.map((item) =>
             item.id === selectedLeave.id
@@ -160,6 +168,19 @@ export default function RegularizationApproval() {
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
 
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+
+  const currentLeaves = filteredAndSortedLeaves.slice(
+    indexOfFirstRow,
+    indexOfLastRow,
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredAndSortedLeaves.length / rowsPerPage),
+  );
+
   return (
     <div className="regularization-approval-layout">
       <div className="rightside-logo">
@@ -171,7 +192,7 @@ export default function RegularizationApproval() {
       <div className="regularization-approval-main">
         <Topbar />
 
-        <div className="regularization-container">
+        <div className="regularization-containerApproval">
           <div className="regularization-header">
             <div className="header-top">
               <h2>Regularization Approval</h2>
@@ -295,7 +316,7 @@ export default function RegularizationApproval() {
                 </tr>
               </thead>
               <tbody>
-                {filteredAndSortedLeaves.map((emp) => (
+                {currentLeaves.map((emp) => (
                   <tr key={emp.id}>
                     <td>
                       <div className="emp-info">
@@ -341,15 +362,42 @@ export default function RegularizationApproval() {
           {/* Pagination */}
           <div className="pagination">
             <div className="showing">
-              Showing{" "}
-              <select>
-                <option>07</option>
+              Showing {currentLeaves.length} of {filteredAndSortedLeaves.length}
+              <select
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                disabled={filteredAndSortedLeaves.length === 0}
+              >
+                <option value={5}>05</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
               </select>
             </div>
             <div className="page-btns">
-              <button className="prev">Prev</button>
-              <button className="page active">01</button>
-              <button className="next">Next</button>
+              <button
+                className="prev"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage <= 1}
+              >
+                Prev
+              </button>
+
+              <span className="page active">
+                {String(currentPage).padStart(2, "0")}
+              </span>
+
+              <button
+                className="next"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage >= totalPages}
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>
