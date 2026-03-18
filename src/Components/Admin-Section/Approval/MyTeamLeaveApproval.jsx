@@ -22,9 +22,14 @@ export default function MyTeamLeaveApproval() {
   const [filterStatus, setFilterStatus] = useState("All");
   const [sortOrder, setSortOrder] = useState("Newest");
 
-  // FILTER POPUP STATES
   const [showFilter, setShowFilter] = useState(false);
   const [tempStatus, setTempStatus] = useState("All");
+  const [filterLeaveType, setFilterLeaveType] = useState("All");
+  const [tempLeaveType, setTempLeaveType] = useState("All");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
   const navigate = useNavigate();
 
   const session = getCurrentSession();
@@ -87,16 +92,38 @@ export default function MyTeamLeaveApproval() {
 
   const filteredAndSortedLeaves = leaveData
     .filter((leave) =>
-      leave.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      leave.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .filter((leave) =>
       filterStatus === "All" ? true : leave.status === filterStatus,
     )
+    .filter((leave) =>
+      filterLeaveType === "All" ? true : leave.type === filterLeaveType,
+    )
     .sort((a, b) => {
-      const dateA = new Date(a.requestDate);
-      const dateB = new Date(b.requestDate);
+      const parseDate = (dateStr) => {
+        if (!dateStr) return new Date(0);
+        const parts = dateStr.split("-");
+        if (parts.length === 3)
+          return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        return new Date(dateStr);
+      };
+      const dateA = parseDate(a.request);
+      const dateB = parseDate(b.request);
       return sortOrder === "Newest" ? dateB - dateA : dateA - dateB;
     });
+
+  // Pagination computed values
+  const totalPages = Math.max(1, Math.ceil(filteredAndSortedLeaves.length / rowsPerPage));
+  const paginatedLeaves = filteredAndSortedLeaves.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  // Reset to page 1 whenever filters / sort / search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, filterLeaveType, sortOrder, rowsPerPage]);
 
   return (
     <div className="myteam-layout">
@@ -151,11 +178,14 @@ export default function MyTeamLeaveApproval() {
                     <div className="filter-row">
                       <div className="filter-field">
                         <label>Leave Type</label>
-                        <select>
-                          <option>All</option>
-                          <option>Casual</option>
-                          <option>Sick</option>
-                          <option>WFH</option>
+                        <select
+                          value={tempLeaveType}
+                          onChange={(e) => setTempLeaveType(e.target.value)}
+                        >
+                          <option value="All">All</option>
+                          <option value="sick">Sick</option>
+                          <option value="casual">Casual</option>
+                          <option value="Annual">Annual</option>
                         </select>
                       </div>
 
@@ -180,6 +210,8 @@ export default function MyTeamLeaveApproval() {
                           setSearchTerm("");
                           setTempStatus("All");
                           setFilterStatus("All");
+                          setTempLeaveType("All");
+                          setFilterLeaveType("All");
                           setShowFilter(false);
                         }}
                       >
@@ -190,6 +222,7 @@ export default function MyTeamLeaveApproval() {
                         className="apply-btn"
                         onClick={() => {
                           setFilterStatus(tempStatus);
+                          setFilterLeaveType(tempLeaveType);
                           setShowFilter(false);
                         }}
                       >
@@ -225,60 +258,93 @@ export default function MyTeamLeaveApproval() {
             </thead>
 
             <tbody>
-              {filteredAndSortedLeaves.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <div className="employee-info">
-                      <img src={item.image} alt="" className="emp-avatar" />
-                      <div>
-                        <p className="emp-name">{item.name}</p>
-                        <p className="emp-id">{item.empId}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    {item.type}
-                    <br />
-                    <span className="days">{item.days}</span>
-                  </td>
-                  <td>{item.date}</td>
-                  <td>{item.request}</td>
-                  <td>
-                    <span
-                      className={`status-badge ${getStatusClass(item.status)}`}
-                    >
-                      {item.status}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      className="view-btn"
-                      onClick={() => {
-                        setSelectedLeave(item);
-                        setShowModal(true);
-                      }}
-                    >
-                      View Details
-                    </button>
+              {paginatedLeaves.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "32px", color: "#9ca3af" }}>
+                    No leave records found.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paginatedLeaves.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="employee-info">
+                        <img src={item.image} alt="" className="emp-avatar" />
+                        <div>
+                          <p className="emp-name">{item.name}</p>
+                          <p className="emp-id">{item.empId}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {item.type}
+                      <br />
+                      <span className="days">{item.days}</span>
+                    </td>
+                    <td>{item.date}</td>
+                    <td>{item.request}</td>
+                    <td>
+                      <span className={`status-badge ${getStatusClass(item.status)}`}>
+                        {item.status}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className="view-btn"
+                        onClick={() => {
+                          setSelectedLeave(item);
+                          setShowModal(true);
+                        }}
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
 
           <div className="pagination">
+            {/* LEFT: Showing [N] rows selector */}
             <div className="showing">
               Showing{" "}
-              <select>
-                <option>07</option>
-                <option>10</option>
-                <option>20</option>
+              <select
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                {[7, 10, 15, 20].map((n) => (
+                  <option key={n} value={n}>
+                    {String(n).padStart(2, "0")}
+                  </option>
+                ))}
               </select>
             </div>
+
+            {/* RIGHT: Prev / page num / Next */}
             <div className="page-nav">
-              <button className="page-btn">Prev</button>
-              <button className="page-btn active">01</button>
-              <button className="page-btn">Next</button>
+              <button
+                className="page-btn"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                style={{ opacity: currentPage === 1 ? 0.4 : 1 }}
+              >
+                Prev
+              </button>
+              <button className="page-btn active">
+                {String(currentPage).padStart(2, "0")}
+              </button>
+              <button
+                className="page-btn"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                style={{ opacity: currentPage === totalPages ? 0.4 : 1 }}
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>

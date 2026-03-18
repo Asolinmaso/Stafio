@@ -4,7 +4,7 @@ import illustration from "../../../assets/Formsbro.png";
 import { FaUpload } from "react-icons/fa";
 import apiClient from "../../../utils/apiClient";
 
-const LeaveRequestForm = ({ onClose }) => {
+const LeaveRequestForm = ({ onClose, leaveBalance }) => {
   const [employeeId, setEmployeeId] = useState("");
   const [leaveTypes, setLeaveTypes] = useState([]);
 
@@ -57,7 +57,7 @@ const LeaveRequestForm = ({ onClose }) => {
       updatedData.num_days = calculateDays(
         name === "start_date" ? value : updatedData.start_date,
         name === "end_date" ? value : updatedData.end_date,
-        name === "day_type" ? value : updatedData.day_type
+        name === "day_type" ? value : updatedData.day_type,
       );
     }
 
@@ -70,6 +70,30 @@ const LeaveRequestForm = ({ onClose }) => {
     const userId = localStorage.getItem("current_user_id");
 
     const role = localStorage.getItem("current_role");
+
+    // ✅ FIND selected leave type balance
+    const selectedBalance = leaveBalance.find(
+      (b) => b.id === parseInt(formData.leave_type_id),
+    );
+
+    if (!selectedBalance) {
+      alert("Invalid leave type selected");
+      return;
+    }
+
+    // ✅ CHECK BALANCE
+    if (selectedBalance.remaining <= 0) {
+      alert(`No ${selectedBalance.name} balance available`);
+      return;
+    }
+
+    // ✅ CHECK REQUESTED DAYS
+    if (formData.num_days > selectedBalance.remaining) {
+      alert(
+        `Only ${selectedBalance.remaining} day(s) available for ${selectedBalance.name}`,
+      );
+      return;
+    }
 
     try {
       const res = await apiClient.post(
@@ -84,7 +108,7 @@ const LeaveRequestForm = ({ onClose }) => {
             "X-User-Role": role,
             "X-User-ID": userId,
           },
-        }
+        },
       );
 
       alert(res.data.message);
@@ -94,12 +118,14 @@ const LeaveRequestForm = ({ onClose }) => {
       alert(err?.response?.data?.message || "Error applying leave");
     }
   };
+  const selectedBalance = leaveBalance.find(
+    (b) => b.id === parseInt(formData.leave_type_id),
+  );
 
   return (
     <div className="apply-leave-wrapper">
       <form className="apply-leave-form-emp" onSubmit={handleSubmit}>
         <div className="form-left">
-
           <div className="form-row_pop">
             <label>Employee ID</label>
             <input type="text" value={employeeId} readOnly />
@@ -114,12 +140,26 @@ const LeaveRequestForm = ({ onClose }) => {
               required
             >
               <option value="">Select</option>
-              {leaveTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
+              {leaveTypes.map((type) => {
+                const balance = leaveBalance.find((b) => b.id === type.id);
+
+                return (
+                  <option
+                    key={type.id}
+                    value={type.id}
+                    disabled={balance && balance.remaining <= 0}
+                  >
+                    {type.name} {balance ? `(${balance.remaining} left)` : ""}
+                  </option>
+                );
+              })}
             </select>
+            {/* ✅ ADD THIS HERE (below dropdown) */}
+            {selectedBalance && selectedBalance.remaining <= 0 && (
+              <p className="error-text">
+                No balance available for {selectedBalance.name}
+              </p>
+            )}
           </div>
 
           <div className="form-row_pop align-top">
@@ -192,7 +232,6 @@ const LeaveRequestForm = ({ onClose }) => {
               required
             />
           </div>
-
         </div>
 
         <div className="form-right">
@@ -201,11 +240,19 @@ const LeaveRequestForm = ({ onClose }) => {
       </form>
 
       <div className="app-leave-modal-actions">
-        <button type="submit" className="apply-leave-btn" onClick={handleSubmit}>
+        <button
+          type="submit"
+          className="apply-leave-btn"
+          onClick={handleSubmit}
+        >
           Apply
         </button>
 
-        <button type="button" className="app-leave-cancel-btn" onClick={onClose}>
+        <button
+          type="button"
+          className="app-leave-cancel-btn"
+          onClick={onClose}
+        >
           Cancel
         </button>
       </div>

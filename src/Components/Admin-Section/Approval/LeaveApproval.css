@@ -35,7 +35,9 @@
 	flex-direction: column;
 	overflow-y: auto;
 	position: relative;
-	z-index: 1;
+	/* z-index removed intentionally — avoids creating an isolated stacking context
+	   so position:fixed children (modal overlay) compete in the global stack
+	   and correctly render above the sidebar (z-index: 1050) */
 	padding: 0 24px 24px 24px;
 }
 
@@ -527,110 +529,93 @@
 }
 
 /* ================================================
-   PAGINATION
+   PAGINATION — Harmonized with MyLeaves
    ================================================ */
 .pagination {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 12px 4px 8px 4px;
-	font-size: 13px;
-	color: #374151;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+  padding: 10px 0;
 }
 
-.la-showing {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 13px;
-	color: #374151;
+.showing {
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
 }
 
-.la-showing-pill {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	background: #12b3e6;
-	color: #fff;
-	padding: 3px 10px;
-	border-radius: 6px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	user-select: none;
-}
-
-/* Rows-per-page dropdown */
-.rows-dropdown {
-	position: absolute;
-	bottom: calc(100% + 6px);
-	left: 0;
-	background: #fff;
-	border: 1px solid #e2e8f0;
-	border-radius: 8px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-	overflow: hidden;
-	z-index: 200;
-	min-width: 70px;
-}
-
-.rows-option {
-	padding: 8px 16px;
-	font-size: 13px;
-	color: #374151;
-	cursor: pointer;
-	text-align: center;
-	transition: background 0.15s;
-}
-
-.rows-option:hover {
-	background: #f1f5f9;
-}
-
-.rows-option--active {
-	background: #e0f7fe;
-	color: #12b3e6;
-	font-weight: 600;
-}
-
-/* Right: Prev | 01 | Next */
-.la-pages {
-	display: flex;
-	align-items: center;
+.showing select {
+  padding: 6px 12px;
+  border: 1px solid #19bde8;
+  border-radius: 6px;
+  background: #19bde8;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 32px;
+  min-width: 60px;
+  text-align: center;
+  font-size: 14px;
 }
 
 .page-nav {
-	display: flex;
-	align-items: center;
-	gap: 6px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.page-nav button {
-	background: transparent;
-	border: none;
-	padding: 5px 10px;
-	border-radius: 6px;
-	font-size: 13px;
-	color: #374151;
-	cursor: pointer;
-	transition: background 0.15s;
-	font-weight: 500;
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.page-nav button:hover:not(:disabled) {
-	background: #e5e7eb;
+.page-btn.prev-next {
+  padding: 8px 20px;
+  min-width: 80px;
+  height: 40px;
 }
 
-.page-num {
-	background: #12b3e6;
-	color: #ffffff;
-	font-weight: 700;
-	font-size: 13px;
-	padding: 4px 12px;
-	border-radius: 6px;
-	display: inline-block;
-	min-width: 32px;
-	text-align: center;
+.page-btn.num-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.page-btn.active {
+  background: #19bde8;
+  color: #fff;
+  border-color: #19bde8;
+  font-weight: 600;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f9f9f9;
 }
 
 /* ================================================
@@ -643,23 +628,23 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 1000;
+	z-index: 9999;
 }
 
 .approve-leave-modal {
 	background: #fff;
-	border-radius: 12px;
-	width: 600px;
-	max-width: 65%;
+	border-radius: 16px;
+	width: 400px;
+	max-width: 90vw;
 	overflow: hidden;
-	box-shadow: 0 6px 28px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 	animation: fadeIn 0.3s ease;
 }
 
 .approve-modal-header-blue {
-	background: #19bde8;
+	background: #12b3e6;
 	color: #fff;
-	padding: 14px 20px;
+	padding: 16px 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -681,13 +666,13 @@
 }
 
 .approve-form-modal-body {
-	padding: 24px 28px;
+	padding: 24px;
 	position: relative;
 }
 
 .approve-leave-form {
 	display: flex;
-	gap: 0;
+	gap: 24px;
 	align-items: flex-start;
 }
 
@@ -695,23 +680,22 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
-	padding-right: 10px;
+	gap: 12px;
 }
 
 .form-row {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 12px;
 	flex-wrap: nowrap;
 	width: 100%;
 }
 
 .form-row label {
-	width: 130px;
+	width: 110px;
 	font-weight: 500;
-	font-size: 14px;
-	color: #333;
+	font-size: 13px;
+	color: #374151;
 	flex-shrink: 0;
 }
 
@@ -721,11 +705,11 @@
 
 .form-row input {
 	flex: 1;
-	height: 36px;
-	background: #f3f8ff;
+	height: 38px;
+	background: #fdfdfd;
 	border: 1px solid #d1d5db;
-	border-radius: 8px;
-	padding: 8px 12px;
+	border-radius: 10px;
+	padding: 9px 12px;
 	font-size: 13px;
 	outline: none;
 }
@@ -735,7 +719,7 @@
 	height: 80px;
 	background: #f3f8ff;
 	border: 1px solid #d1d5db;
-	border-radius: 8px;
+	border-radius: 10px;
 	padding: 10px;
 	font-size: 13px;
 	resize: none;
@@ -810,6 +794,47 @@
 	border-radius: 6px;
 	cursor: pointer;
 	font-size: 14px;
+}
+
+/* ── Modal Footer (Approve/Reject buttons row) ── */
+.la-modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	padding: 16px 28px;
+	border-top: 1px solid #e5e7eb;
+}
+
+.la-modal-footer .modal-approve-btn {
+	background: #19bde8;
+	color: #fff;
+	border: none;
+	padding: 10px 24px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	transition: 0.2s;
+}
+
+.la-modal-footer .modal-approve-btn:hover {
+	background: #15a5cc;
+}
+
+.la-modal-footer .modal-reject-btn {
+	background: #fff;
+	border: 1px solid #333;
+	color: #333;
+	padding: 10px 24px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	transition: 0.2s;
+}
+
+.la-modal-footer .modal-reject-btn:hover {
+	background: #f1f5f9;
 }
 
 .form-right {
@@ -1009,6 +1034,62 @@
 		flex: 1 1 140px;
 		padding: 12px 14px;
 	}
+
+	/* ── View Details Popup ── */
+	.approve-leave-modal {
+		width: 58%;
+		max-width: 58%;
+	}
+
+	.approve-form-modal-body {
+		padding: 14px 14px;
+	}
+
+	.approve-leave-form {
+		flex-direction: column;
+	}
+
+	.form-right {
+		display: none;
+	}
+
+	.form-left {
+		padding-right: 0;
+		width: 100%;
+	}
+
+	.form-row {
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: nowrap;
+	}
+
+	.form-row label {
+		width: 110px;
+		font-size: 12px;
+		flex-shrink: 0;
+	}
+
+	.form-row input {
+		height: 34px;
+		font-size: 12px;
+	}
+
+	.form-row textarea {
+		height: 70px;
+		font-size: 12px;
+	}
+
+	.date-row {
+		flex-wrap: nowrap;
+		gap: 6px;
+	}
+
+	.notify-row {
+		flex-wrap: nowrap;
+		gap: 6px;
+	}
 }
 
 /* ── 2. Standard & High-Res Laptops (1025px – 1550px) ── */
@@ -1060,6 +1141,73 @@
 		align-items: flex-end;
 		flex-shrink: 0;
 	}
+
+	/* ── View Details Popup ── */
+	.approve-leave-modal {
+		width: 65%;
+		max-width: 65%;
+	}
+
+	.approve-form-modal-body {
+		padding: 20px 22px;
+	}
+
+	.approve-leave-form {
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 0;
+	}
+
+	.form-left {
+		flex: 1;
+		padding-right: 10px;
+	}
+
+	.form-row {
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: nowrap;
+	}
+
+	.form-row label {
+		width: 120px;
+		font-size: 13px;
+		flex-shrink: 0;
+	}
+
+	.form-row input {
+		height: 34px;
+		font-size: 12px;
+	}
+
+	.form-row textarea {
+		height: 74px;
+		font-size: 12px;
+	}
+
+	.date-row {
+		flex-wrap: nowrap;
+		gap: 6px;
+	}
+
+	.notify-row {
+		flex-wrap: nowrap;
+		gap: 6px;
+	}
+
+	.form-right {
+		flex: 0 0 130px;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		align-self: flex-end;
+	}
+
+	.form-right img {
+		width: 115px;
+		height: 95px;
+	}
 }
 
 /* ── 3. Transition Range (1551px – 1800px) ── */
@@ -1075,6 +1223,72 @@
 	.summary-card-leave {
 		min-width: 210px;
 		height: 115px;
+	}
+
+	/* ── View Details Popup ── */
+	.approve-leave-modal {
+		width: 58%;
+		max-width: 58%;
+	}
+
+	.approve-form-modal-body {
+		padding: 22px 26px;
+	}
+
+	.approve-leave-form {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.form-left {
+		flex: 1;
+		padding-right: 10px;
+	}
+
+	.form-row {
+		flex-direction: row;
+		align-items: center;
+		gap: 14px;
+		flex-wrap: nowrap;
+	}
+
+	.form-row label {
+		width: 125px;
+		font-size: 13px;
+		flex-shrink: 0;
+	}
+
+	.form-row input {
+		height: 36px;
+		font-size: 13px;
+	}
+
+	.form-row textarea {
+		height: 78px;
+		font-size: 13px;
+	}
+
+	.date-row {
+		flex-wrap: nowrap;
+		gap: 8px;
+	}
+
+	.notify-row {
+		flex-wrap: nowrap;
+		gap: 8px;
+	}
+
+	.form-right {
+		flex: 0 0 155px;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		align-self: flex-end;
+	}
+
+	.form-right img {
+		width: 138px;
+		height: 110px;
 	}
 }
 
@@ -1104,8 +1318,70 @@
 		font-size: 15px;
 	}
 
+	/* ── View Details Popup ── */
 	.approve-leave-modal {
 		width: 700px;
+		max-width: 55%;
+	}
+
+	.approve-form-modal-body {
+		padding: 24px 28px;
+	}
+
+	.approve-leave-form {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.form-left {
+		flex: 1;
+		padding-right: 10px;
+	}
+
+	.form-row {
+		flex-direction: row;
+		align-items: center;
+		gap: 16px;
+		flex-wrap: nowrap;
+	}
+
+	.form-row label {
+		width: 130px;
+		font-size: 14px;
+		flex-shrink: 0;
+	}
+
+	.form-row input {
+		height: 36px;
+		font-size: 13px;
+	}
+
+	.form-row textarea {
+		height: 80px;
+		font-size: 13px;
+	}
+
+	.date-row {
+		flex-wrap: nowrap;
+		gap: 10px;
+	}
+
+	.notify-row {
+		flex-wrap: nowrap;
+		gap: 10px;
+	}
+
+	.form-right {
+		flex: 0 0 175px;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		align-self: flex-end;
+	}
+
+	.form-right img {
+		width: 150px;
+		height: 120px;
 	}
 
 	.pagination {

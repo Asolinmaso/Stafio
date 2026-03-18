@@ -1,6 +1,8 @@
 /* ====== Layout ====== */
 .layout {
   display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .regularization-container {
@@ -8,6 +10,7 @@
   padding: 0 25px 25px 25px;
   background: #eff5ff;
   min-height: 100vh;
+  overflow-y: auto;
 }
 
 /* .regularization-container .topbar{

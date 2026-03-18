@@ -146,6 +146,8 @@ const Topbar = () => {
       navigate("/my-leave");
     } else if (title.includes("regularization")) {
       navigate("/my-regularization");
+    } else if (title.includes("announcement") || title.includes("broadcast")) {
+      navigate("/employee-dashboard");
     } else if (title.includes("holiday")) {
       navigate("/my-holidays");
     } else if (title.includes("attendance")) {

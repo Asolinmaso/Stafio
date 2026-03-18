@@ -314,9 +314,9 @@ const LeaveApproval = () => {
                           onChange={(e) => setFilterLeaveType(e.target.value)}
                         >
                           <option value="All">All</option>
-                          <option value="Sick Leave">Sick</option>
-                          <option value="Casual Leave">Casual</option>
-                          <option value="Earned Leave">Earned</option>
+                          <option value="sick">Sick</option>
+                          <option value="casual">Casual</option>
+                          <option value="Annual">Annual</option>
                         </select>
                       </div>
 
@@ -397,7 +397,7 @@ const LeaveApproval = () => {
                     <div className="employee-info">
                       <div className="emp-avatar">
                         <img
-                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          src={leave.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(
                             leave.name,
                           )}&background=random`}
                           alt={leave.name}
@@ -439,57 +439,47 @@ const LeaveApproval = () => {
 
         {/* PAGINATION */}
         <div className="pagination">
-          {/* LEFT: Showing [N] dropdown */}
-          <div className="la-showing" ref={rowsDropdownRef} style={{ position: "relative" }}>
-            <span>Showing</span>
-            <span
-              className="la-showing-pill"
-              onClick={() => setShowRowsDropdown((p) => !p)}
-              style={{ cursor: "pointer", userSelect: "none" }}
+          <div className="showing">
+            Showing{" "}
+            <select
+              value={String(rowsPerPage).padStart(2, "0")}
+              onChange={(e) => {
+                setRowsPerPage(parseInt(e.target.value));
+                setCurrentPage(1);
+              }}
             >
-              {String(rowsPerPage).padStart(2, "0")} ▾
-            </span>
-            {/* Rows-per-page dropdown */}
-            {showRowsDropdown && (
-              <div className="rows-dropdown">
-                {[7, 10, 15, 20].map((n) => (
-                  <div
-                    key={n}
-                    className={`rows-option${rowsPerPage === n ? " rows-option--active" : ""}`}
-                    onClick={() => {
-                      setRowsPerPage(n);
-                      setCurrentPage(1);
-                      setShowRowsDropdown(false);
-                    }}
-                  >
-                    {String(n).padStart(2, "0")}
-                  </div>
-                ))}
-              </div>
-            )}
+              <option value="07">07</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
           </div>
-
-          {/* RIGHT: Prev / page / Next */}
-          <div className="la-pages">
-            <div className="page-nav">
+          <div className="page-nav">
+            <button
+              className="page-btn prev-next"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Prev
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
               <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                style={{ opacity: currentPage === 1 ? 0.4 : 1 }}
+                key={i + 1}
+                className={`page-btn num-btn ${
+                  currentPage === i + 1 ? "active" : ""
+                }`}
+                onClick={() => setCurrentPage(i + 1)}
               >
-                Prev
+                {String(i + 1).padStart(2, "0")}
               </button>
-              <span className="page-num">
-                {String(currentPage).padStart(2, "0")}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                style={{ opacity: currentPage === totalPages ? 0.4 : 1 }}
-              >
-                Next
-              </button>
-            </div>
+            ))}
+            <button
+              className="page-btn prev-next"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
           </div>
         </div>
 
@@ -503,6 +493,7 @@ const LeaveApproval = () => {
               className="approve-leave-modal"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Header */}
               <div className="approve-modal-header-blue">
                 <h3>Leave Approval</h3>
                 <button
@@ -513,6 +504,7 @@ const LeaveApproval = () => {
                 </button>
               </div>
 
+              {/* Body */}
               <div className="approve-form-modal-body">
                 <form className="approve-leave-form">
                   <div className="form-left">
@@ -583,42 +575,44 @@ const LeaveApproval = () => {
                       <label>Reason:</label>
                       <textarea value={selectedLeave.reason} readOnly />
                     </div>
-
-                    {/* ACTION BUTTONS – ONLY IF PENDING */}
-                    {selectedLeave.status === "Pending" && (
-                      <div className="action-approve-modal-actions">
-                        <button
-                          type="button"
-                          className="approve-apply-btn"
-                          onClick={() => {
-                            setActionType("Approval");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          type="button"
-                          className="approve-cancel-btn"
-                          onClick={() => {
-                            setActionType("Rejection");
-                            setShowReasonModal(true);
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
                   </div>
 
+                  {/* Right illustration */}
                   <div className="form-right">
                     <img src={illustration} alt="Leave Illustration" />
                   </div>
                 </form>
               </div>
+
+              {/* Footer action buttons — only if Pending */}
+              {selectedLeave.status === "Pending" && (
+                <div className="la-modal-footer">
+                  <button
+                    type="button"
+                    className="modal-approve-btn"
+                    onClick={() => {
+                      setActionType("Approval");
+                      setShowReasonModal(true);
+                    }}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    className="modal-reject-btn"
+                    onClick={() => {
+                      setActionType("Rejection");
+                      setShowReasonModal(true);
+                    }}
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
+
 
         {showReasonModal && (
           <div className="reason-modal-overlay">
