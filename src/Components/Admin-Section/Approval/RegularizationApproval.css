@@ -7,7 +7,7 @@
   background: #eff5ff;
 }
 
-.regularization-container {
+.regularization-containerApproval {
   background: #f3f7fd;
 }
 
@@ -29,7 +29,7 @@
 
 .header-bottom {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 14px;
 }
 
@@ -372,7 +372,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
+  margin-top: 16px !important;
   font-size: 14px;
   color: #374151;
   padding: 0 4px;
@@ -413,6 +413,18 @@
 .page-btns .active {
   background: #19bde8;
   color: #fff;
+}
+
+.page{
+  background: #12b3e6;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    min-width: 32px;
+    text-align: center;
 }
 
 /* =========================
