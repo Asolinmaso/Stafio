@@ -141,38 +141,93 @@
 
 /* ====== Pagination ====== */
 .pagination {
-  margin-top: 15px;
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.showing {
+  font-size: 15px;
+  color: #2d2e2e;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-weight: 500;
 }
 
-.pagination select {
-  padding: 4px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: #19bde8;
-  color: white;
+.showing select {
+  padding: 6px 14px !important;
+  padding-right: 32px !important;
+  border: 1px solid #19bde8 !important;
+  border-radius: 8px !important;
+  background-color: #19bde8 !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  outline: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 18px !important;
+  min-width: 80px !important;
+  text-align: left !important;
+  font-size: 15px !important;
+  font-family: inherit !important;
 }
 
-.page-controls {
-  margin-left: auto;
+.page-nav {
   display: flex;
-  gap: 6px;
+  gap: 12px;
+  align-items: center;
 }
 
-.page-controls button {
-  padding: 4px 10px;
-  border: 1px solid #ddd;
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dcdcdc;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
-.page-controls button.active {
+.page-btn.prev-next {
+  padding: 8px 20px;
+  min-width: 80px;
+  height: 40px;
+}
+
+.page-btn.num-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.page-btn.active {
   background: #19bde8;
   color: #fff;
-  border-color: #00bcd4;
+  border-color: #19bde8;
+  font-weight: 600;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f9f9f9;
 }
 
 /* ====== Overlay ====== */

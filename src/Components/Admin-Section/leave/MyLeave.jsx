@@ -28,6 +28,10 @@ export default function Myleave() {
   const [leaveBalance, setLeaveBalance] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   const navigate = useNavigate();
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(7);
   const [formData, setFormData] = useState({
     employee_id: "",
     leave_type: "",
@@ -85,6 +89,25 @@ export default function Myleave() {
   const filteredAndSortedLeaves = leaveData.filter((leave) =>
     filterStatus === "All" ? true : leave.status === filterStatus,
   );
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAndSortedLeaves.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+  // Ensure totalPages is at least 1 so "01" always shows
+  const totalPages = Math.max(1, Math.ceil(filteredAndSortedLeaves.length / itemsPerPage));
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus, filterName, filterLeaveType, searchTerm]);
 
   const handleResetFilter = () => {
     setFilterName("");
@@ -321,24 +344,80 @@ export default function Myleave() {
               </tr>
             </thead>
             <tbody>
-              {filteredAndSortedLeaves.map((leave, index) => (
-                <tr key={leave.id}>
-                  <td>{String(index + 1).padStart(2, "0")}</td>
-                  <td>{leave.type}</td>
-                  <td>{leave.date}</td>
-                  <td>{leave.reason}</td>
-                  <td>
-                    {leave.requestDate}
-                    <span className="status">{leave.status}</span>
-                  </td>
-                  <td className="action-icons">
-                    <FaEdit className="edit-icon" />
-                    <FaTimesCircle className="delete-icon" />
+              {currentItems.length > 0 ? (
+                currentItems.map((leave, index) => (
+                  <tr key={leave.id}>
+                    <td>
+                      {String(indexOfFirstItem + index + 1).padStart(2, "0")}
+                    </td>
+                    <td>{leave.type}</td>
+                    <td>{leave.date}</td>
+                    <td>{leave.reason}</td>
+                    <td>
+                      {leave.requestDate}
+                      <span className="status">{leave.status}</span>
+                    </td>
+                    <td className="action-icons">
+                      <FaEdit className="edit-icon" />
+                      <FaTimesCircle className="delete-icon" />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: "center", padding: "20px" }}>
+                    No leave requests found.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Section */}
+        <div className="pagination">
+          <div className="showing">
+            Showing{" "}
+            <select
+              value={String(itemsPerPage).padStart(2, "0")}
+              onChange={(e) => {
+                setItemsPerPage(parseInt(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              <option value="07">07</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <div className="page-nav">
+            <button
+              className="page-btn prev-next"
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+            >
+              Prev
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i + 1}
+                className={`page-btn num-btn ${currentPage === i + 1 ? "active" : ""}`}
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </button>
+            ))}
+            <button
+              className="page-btn prev-next"
+              onClick={() =>
+                handlePageChange(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              Next
+            </button>
+          </div>
         </div>
 
         {/* Modal via Portal — renders into document.body, works at ALL zoom levels */}

@@ -48,10 +48,8 @@ const NotificationBar = () => {
   const handleViewAll = () => {
     const role = localStorage.getItem("current_role");
     if (role === "admin") {
-      navigate("/admin-broadcast");
-      window.scrollTo(0, 0);
+      window.dispatchEvent(new Event("openAnnouncements"));
     }
-    // Add employee routing here if needed in future
   };
 
   if (!visible || !latestAnnouncement) return null;
