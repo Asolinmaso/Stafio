@@ -725,7 +725,11 @@ const Topbar = () => {
     fetchAnnouncements();
     const handleAnnouncementUpdated = () => fetchAnnouncements();
     window.addEventListener("announcementUpdated", handleAnnouncementUpdated);
-    const interval = setInterval(fetchAnnouncements, 5000);
+    // FIX 5: Poll every 60 seconds (was 5s) — announcements don't need
+    // real-time updates. Aggressive 5s polling was amplifying the 401 loop
+    // because each poll fired a new Axios request with its own _retry flag.
+    const interval = setInterval(fetchAnnouncements, 60000);
+
     return () => {
       clearInterval(interval);
       window.removeEventListener("announcementUpdated", handleAnnouncementUpdated);
