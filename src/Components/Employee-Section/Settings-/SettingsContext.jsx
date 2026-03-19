@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 
 export const SettingsContext = createContext();
 
@@ -8,26 +8,223 @@ export const SettingsProvider = ({ children }) => {
     localStorage.getItem("language") || "english",
   );
   const [font, setFont] = useState(localStorage.getItem("font") || "default");
+  const [dateFormat, setDateFormat] = useState(
+    localStorage.getItem("dateFormat") || "DD/MM/YYYY",
+  );
+  const [dateFormatEnabled, setDateFormatEnabled] = useState(
+    localStorage.getItem("dateFormatEnabled") === "true",
+  );
+
+  // ✅ Reactive date formatter — always in sync with current context state
+  const fmtDate = useCallback(
+    (dateStr) => {
+      if (!dateStr) return "";
+
+      // When toggle is OFF → return original string as-is
+      if (!dateFormatEnabled) return String(dateStr);
+
+      // Parse date — handle YYYY-MM-DD, DD Mon YYYY (e.g. "13 Mar 2026"), Date objects
+      let d;
+      if (dateStr instanceof Date) {
+        d = dateStr;
+      } else {
+        d = new Date(dateStr);
+        if (isNaN(d.getTime())) {
+          const months = {
+            jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+            jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+          };
+          const parts = String(dateStr).trim().split(/[\s\-\/]/);
+          if (parts.length === 3) {
+            const dv = parseInt(parts[0]);
+            const mv = months[parts[1]?.toLowerCase().slice(0, 3)];
+            const yv = parseInt(parts[2]);
+            if (!isNaN(dv) && mv !== undefined && !isNaN(yv)) {
+              d = new Date(yv, mv, dv);
+            }
+          }
+          if (!d || isNaN(d.getTime())) return String(dateStr);
+        }
+      }
+
+      const day   = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year  = d.getFullYear();
+
+      switch (dateFormat) {
+        case "MM/DD/YYYY": return `${month}/${day}/${year}`;
+        case "YYYY/MM/DD": return `${year}/${month}/${day}`;
+        case "YYYY-MM-DD": return `${year}-${month}-${day}`;
+        case "DD-MM-YYYY": return `${day}-${month}-${year}`;
+        default:           return `${day}/${month}/${year}`; // DD/MM/YYYY
+      }
+    },
+    [dateFormat, dateFormatEnabled],
+  );
 
   // Apply theme + font globally when changed
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
-    document.body.style.fontFamily =
+
+    const fontValue =
       font === "default"
-        ? "Montserrat, sans-serif"
+        ? "'Montserrat', sans-serif"
         : font === "arial"
           ? "Arial, sans-serif"
-          : "Roboto, sans-serif";
+          : "'Roboto', sans-serif";
 
-    // Save preferences
+    document.documentElement.style.setProperty("--app-font", fontValue);
+    document.body.style.fontFamily = fontValue;
+
     localStorage.setItem("theme", theme);
     localStorage.setItem("language", language);
     localStorage.setItem("font", font);
-  }, [theme, language, font]);
+    localStorage.setItem("dateFormat", dateFormat);
+    localStorage.setItem("dateFormatEnabled", String(dateFormatEnabled));
+  }, [theme, language, font, dateFormat, dateFormatEnabled]);
+
+  // ✅ Shared translations for core UI
+  const translations = {
+    english: {
+      dashboard: "Dashboard",
+      organization: "Organization",
+      approval: "Approval",
+      leave: "Leave",
+      reports: "Reports",
+      documentation: "Documentation",
+      attendance: "Attendance",
+      settings: "Settings",
+      logout: "Logout",
+      totalEmployees: "Total Employees",
+      employeeList: "Employee List",
+      myProfile: "My Profile",
+      leaveApproval: "Leave Approval",
+      regularizationApproval: "Regularization Approval",
+      leavePolicies: "Leave Policies",
+      myLeaves: "My Leaves",
+      myRegularization: "My Regularization",
+      myHoliday: "My Holiday",
+      myHolidays: "My Holidays",
+      attendanceReport: "Attendance Report",
+      leaveReport: "Leave Report",
+      profile: "Profile",
+      welcome: "Welcome",
+      onTime: "On Time",
+      onLeave: "On Leave",
+      lateArrival: "Late Arrival",
+      pendingApproval: "Pending Approval",
+      pendingApprovals: "Pending Approvals",
+      thisWeekHoliday: "This Week Holiday",
+      scheduledMeeting: "Scheduled Meeting",
+      joinMeeting: "Join the meet",
+      punchIn: "Punch In",
+      punchOut: "Punch Out",
+      totalHours: "Total Hours",
+      lunchBreak: "Lunch Break",
+      coffeeBreak: "Coffee Break",
+      endBreak: "End Break",
+      pendingLeaveRequests: "Pending Leave Requests",
+    },
+    hindi: {
+      dashboard: "डैशबोर्ड",
+      organization: "संगठन",
+      approval: "अनुमोदन",
+      leave: "अवकाश",
+      reports: "रिपोर्ट",
+      documentation: "प्रलेखन",
+      attendance: "उपस्थिति",
+      settings: "सेटिंग्स",
+      logout: "लॉगआउट",
+      totalEmployees: "कुल कर्मचारी",
+      employeeList: "कर्मचारी सूची",
+      myProfile: "मेरी प्रोफाइल",
+      leaveApproval: "अवकाश अनुमोदन",
+      regularizationApproval: "नियमितीकरण अनुमोदन",
+      leavePolicies: "अवकाश नीतियां",
+      myLeaves: "मेरी छुट्टियां",
+      myRegularization: "मेरा नियमितीकरण",
+      myHoliday: "मेरी छुट्टी",
+      myHolidays: "मेरी छुट्टियां",
+      attendanceReport: "उपस्थिति रिपोर्ट",
+      leaveReport: "अवकाश रिपोर्ट",
+      profile: "प्रोफ़ाइल",
+      welcome: "स्वागत है",
+      onTime: "समय पर",
+      onLeave: "छुट्टी पर",
+      lateArrival: "देर से आगमन",
+      pendingApproval: "लंबित अनुमोदन",
+      pendingApprovals: "लंबित अनुमोदन",
+      thisWeekHoliday: "इस सप्ताह की छुट्टी",
+      scheduledMeeting: "अनुसूचित बैठक",
+      joinMeeting: "बैठक में शामिल हों",
+      punchIn: "पंच इन",
+      punchOut: "पंच आउट",
+      totalHours: "कुल घंटे",
+      lunchBreak: "लंच ब्रेक",
+      coffeeBreak: "कॉफी ब्रेक",
+      endBreak: "ब्रेक समाप्त करें",
+      pendingLeaveRequests: "लंबित अवकाश अनुरोध",
+    },
+    tamil: {
+      dashboard: "டாஷ்போர்டு",
+      organization: "அமைப்பு",
+      approval: "அங்கீகாரம்",
+      leave: "விடுப்பு",
+      reports: "அறிக்கைகள்",
+      documentation: "ஆவணங்கள்",
+      attendance: "வருகை",
+      settings: "அமைப்புகள்",
+      logout: "வெளியேறு",
+      totalEmployees: "மொத்த ஊழியர்கள்",
+      employeeList: "பணியாளர் பட்டியல்",
+      myProfile: "எனது சுயவிவரம்",
+      leaveApproval: "விடுப்பு அங்கீகாரம்",
+      regularizationApproval: "ஒழுங்குமுறை அங்கீகாரம்",
+      leavePolicies: "விடுப்பு கொள்கைகள்",
+      myLeaves: "எனது விடுப்புகள்",
+      myRegularization: "எனது ஒழுங்குமுறை",
+      myHoliday: "எனது விடுமுறை",
+      myHolidays: "எனது விடுமுறைகள்",
+      attendanceReport: "வருகை அறிக்கை",
+      leaveReport: "விடுப்பு அறிக்கை",
+      profile: "சுயவிவரம்",
+      welcome: "வரவேற்கிறோம்",
+      onTime: "நேரத்திற்கு",
+      onLeave: "விடுப்பில்",
+      lateArrival: "தாமதமாக வருகை",
+      pendingApproval: "நிலுவையில் உள்ள அங்கீகாரம்",
+      pendingApprovals: "நிலுவையில் உள்ள அங்கீகாரங்கள்",
+      thisWeekHoliday: "இந்த வார விடுமுறை",
+      scheduledMeeting: "திட்டமிடப்பட்ட சந்திப்பு",
+      joinMeeting: "சந்திப்பில் இணையுங்கள்",
+      punchIn: "பன்ச் இன்",
+      punchOut: "பன்ச் அவுட்",
+      totalHours: "மொத்த நேரம்",
+      lunchBreak: "மதிய உணவு இடைவேளை",
+      coffeeBreak: "காபி இடைவேளை",
+      endBreak: "இடைவேளையை முடி",
+      pendingLeaveRequests: "நிலுவையில் உள்ள விடுப்பு விண்ணப்பங்கள்",
+    },
+  };
+
+  const t = useCallback(
+    (key) => {
+      return translations[language]?.[key] || translations.english?.[key] || key;
+    },
+    [language],
+  );
 
   return (
     <SettingsContext.Provider
-      value={{ theme, setTheme, language, setLanguage, font, setFont }}
+      value={{
+        theme, setTheme,
+        language, setLanguage,
+        font, setFont,
+        dateFormat, setDateFormat,
+        dateFormatEnabled, setDateFormatEnabled,
+        fmtDate,
+        t, // ✅ Export global translate function
+      }}
     >
       {children}
     </SettingsContext.Provider>

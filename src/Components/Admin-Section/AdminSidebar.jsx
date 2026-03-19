@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { SettingsContext } from "../Employee-Section/Settings-/SettingsContext";
 import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -18,6 +19,7 @@ import { useLocation } from "react-router-dom";
 import { logoutCurrentTab } from "../../utils/sessionManager";
 
 export const OrganizationMenu = () => {
+  const { t } = useContext(SettingsContext);
   const location = useLocation();
   const isOrganizationActive =
     location.pathname.startsWith("/employees-list") ||
@@ -54,7 +56,7 @@ export const OrganizationMenu = () => {
               isOrganizationActive ? "active" : ""
             }`}
           />
-          <div className="org">Organization</div>
+          <div className="org">{t("organization")}</div>
         </div>
         <div className="chev-container">
           {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
@@ -72,7 +74,7 @@ export const OrganizationMenu = () => {
                 : "submenu-link"
             }
           >
-            Employee List
+            {t("employeeList")}
           </NavLink>
           <NavLink
             to="/admin-profile"
@@ -80,7 +82,7 @@ export const OrganizationMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Profile
+            {t("myProfile")}
           </NavLink>
         </div>
       )}
@@ -89,6 +91,7 @@ export const OrganizationMenu = () => {
 };
 
 export const ApprovalMenu = () => {
+  const { t } = useContext(SettingsContext);
   const location = useLocation();
   const isApprovalsActive =
     location.pathname.startsWith("/leave-approval") ||
@@ -131,7 +134,7 @@ export const ApprovalMenu = () => {
             alt="Approval Icon"
             className={`me-2 sidebar-icon ${isApprovalsActive ? "active" : ""}`}
           />
-          <div className="approval">Approval</div>
+          <div className="approval">{t("approval")}</div>
         </div>
         <div className="chev-container">
           {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
@@ -149,7 +152,7 @@ export const ApprovalMenu = () => {
                 : "submenu-link"
             }
           >
-            Leave Approval
+            {t("leaveApproval")}
           </NavLink>
           <NavLink
             to="/regularization-approval"
@@ -159,7 +162,7 @@ export const ApprovalMenu = () => {
                 : "submenu-link"
             }
           >
-            Regularization Approval
+            {t("regularizationApproval")}
           </NavLink>
           <NavLink
             to="/leave-policies"
@@ -167,7 +170,7 @@ export const ApprovalMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            Leave Policies
+            {t("leavePolicies")}
           </NavLink>
         </div>
       )}
@@ -176,6 +179,7 @@ export const ApprovalMenu = () => {
 };
 
 export const LeaveMenu = () => {
+  const { t } = useContext(SettingsContext);
   const location = useLocation();
   const isLeavesActive =
     location.pathname.startsWith("/admin-my-leave") ||
@@ -214,7 +218,7 @@ export const LeaveMenu = () => {
             alt="Leave Icon"
             className={`me-2 sidebar-icon ${isLeavesActive ? "active" : ""}`}
           />
-          <div className="leave">Leave</div>
+          <div className="leave">{t("leave")}</div>
         </div>
         <div className="chev-container">
           {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
@@ -230,7 +234,7 @@ export const LeaveMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Leaves
+            {t("myLeaves")}
           </NavLink>
           <NavLink
             to="/admin-my-regularization"
@@ -238,7 +242,7 @@ export const LeaveMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Regularization
+            {t("myRegularization")}
           </NavLink>
           <NavLink
             to="/admin-my-holidays"
@@ -246,7 +250,7 @@ export const LeaveMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Holiday
+            {t("myHoliday")}
           </NavLink>
         </div>
       )}
@@ -254,6 +258,7 @@ export const LeaveMenu = () => {
   );
 };
 export const ReportMenu = () => {
+  const { t } = useContext(SettingsContext);
   const location = useLocation();
   const isReportsActive =
     location.pathname.startsWith("/admin-attendance-report") ||
@@ -287,7 +292,7 @@ export const ReportMenu = () => {
             alt="Report Icon"
             className={`me-2 sidebar-icon ${isReportsActive ? "active" : ""}`}
           />
-          <div className="report">Reports</div>
+          <div className="report">{t("reports")}</div>
         </div>
         <div className="chev-container">
           {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
@@ -303,7 +308,7 @@ export const ReportMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            Attendance Report
+            {t("attendanceReport")}
           </NavLink>
           <NavLink
             to="/leave-report"
@@ -311,7 +316,7 @@ export const ReportMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            Leave Report
+            {t("leaveReport")}
           </NavLink>
         </div>
       )}
@@ -320,6 +325,7 @@ export const ReportMenu = () => {
 };
 
 const AdminSidebar = () => {
+  const { t } = useContext(SettingsContext);
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
 
@@ -375,7 +381,7 @@ const AdminSidebar = () => {
               alt="Dashboard Logo"
               className={`me-2 sidebar-icon ${isDashboardActive ? "active" : ""}`}
             />
-            Dashboard
+            {t("dashboard")}
           </Nav.Link>
 
           {/* Leave Menu */}
@@ -403,7 +409,7 @@ const AdminSidebar = () => {
                 isDocumentationActive ? "active" : ""
               }`}
             />
-            Documentation
+            {t("documentation")}
           </Nav.Link>
           <Nav.Link
             as={NavLink}
@@ -417,7 +423,7 @@ const AdminSidebar = () => {
                 isAttendanceActive ? "active" : ""
               }`}
             />
-            Attendance
+            {t("attendance")}
           </Nav.Link>
           <Nav.Link
             as={NavLink}
@@ -429,7 +435,7 @@ const AdminSidebar = () => {
               alt="Settings"
               className={`me-2 sidebar-icon ${isSettingsActive ? "active" : ""}`}
             />
-            Settings
+            {t("settings")}
           </Nav.Link>
         </Nav>
 
@@ -441,7 +447,7 @@ const AdminSidebar = () => {
             className="me-2"
             style={{ width: "20px", height: "20px" }}
           />
-          Logout
+          {t("logout")}
         </div>
       </div>
     </div>

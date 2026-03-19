@@ -966,7 +966,7 @@ const Topbar = () => {
             onClick={togglePopup}
             style={{ cursor: "pointer" }}
           >
-            <FaBell size={20} color="#1f2937" />
+            <FaBell size={20} className="notification-bell" />
           </div>
 
           <div className="settings-icon">
@@ -994,7 +994,7 @@ const Topbar = () => {
             </div>
             <FaChevronDown
               size={14}
-              color="#666"
+              className="profile-chevron"
               style={{ marginLeft: "5px" }}
             />
           </div>
