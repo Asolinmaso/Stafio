@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { SettingsContext } from "./Settings-/SettingsContext";
 import { Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -16,6 +17,7 @@ import { useLocation } from "react-router-dom";
 
 // LeaveMenu
 export const LeaveMenu = () => {
+  const { t } = useContext(SettingsContext);
   const location = useLocation();
   const isLeavePageActive =
     location.pathname.startsWith("/my-leave") ||
@@ -49,7 +51,7 @@ export const LeaveMenu = () => {
             alt="Leave Icon"
             className={`me-2 sidebar-icon ${isLeavePageActive ? "active" : ""}`}
           />
-          <div className="leave">Leave</div>
+          <div className="leave">{t("leave")}</div>
         </div>
         <div className="chev-container">
           {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
@@ -65,7 +67,7 @@ export const LeaveMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Leaves
+            {t("myLeaves")}
           </NavLink>
           <NavLink
             to="/my-regularization"
@@ -73,7 +75,7 @@ export const LeaveMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Regularization
+            {t("myRegularization")}
           </NavLink>
           <NavLink
             to="/my-holidays"
@@ -81,7 +83,7 @@ export const LeaveMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            My Holidays
+            {t("myHolidays")}
           </NavLink>
         </div>
       )}
@@ -91,6 +93,7 @@ export const LeaveMenu = () => {
 
 // ReportsMenu — mirrors AdminSidebar's ReportMenu using Group5 icon
 export const ReportsMenu = () => {
+  const { t } = useContext(SettingsContext);
   const location = useLocation();
   const isReportsPageActive =
     location.pathname.startsWith("/employee-attendance-report") ||
@@ -123,7 +126,7 @@ export const ReportsMenu = () => {
             alt="Report Icon"
             className={`me-2 sidebar-icon ${isReportsPageActive ? "active" : ""}`}
           />
-          <div className="report">Reports</div>
+          <div className="report">{t("reports")}</div>
         </div>
         <div className="chev-container">
           {open ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
@@ -139,7 +142,7 @@ export const ReportsMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            Attendance Report
+            {t("attendanceReport")}
           </NavLink>
           <NavLink
             to="/employee-leave-report"
@@ -147,7 +150,7 @@ export const ReportsMenu = () => {
               `submenu-link ${isActive ? "active" : ""}`
             }
           >
-            Leave Report
+            {t("leaveReport")}
           </NavLink>
         </div>
       )}
@@ -156,6 +159,8 @@ export const ReportsMenu = () => {
 };
 
 const EmployeeSidebar = () => {
+  const { t } = useContext(SettingsContext);
+  const location = useLocation();
   const isEmployeeDashboardActive = location.pathname === "/employee-dashboard";
   const isAttendancesActive = location.pathname === "/employee-attendance";
   const isSettingsPageActive = location.pathname === "/settings";
@@ -199,7 +204,7 @@ const EmployeeSidebar = () => {
                 isEmployeeDashboardActive ? "active" : ""
               }`}
             />
-            Dashboard
+            {t("dashboard")}
           </Nav.Link>
 
           {/* Leave Menu */}
@@ -227,7 +232,7 @@ const EmployeeSidebar = () => {
                 isAttendancesActive ? "active" : ""
               }`}
             />
-            Attendance
+            {t("attendance")}
           </Nav.Link>
 
           <Nav.Link as={NavLink} to="/profile" className="sidebar-link">
@@ -237,7 +242,7 @@ const EmployeeSidebar = () => {
               className="me-2"
               style={{ width: "20px", height: "20px" }}
             />
-            Profile
+            {t("profile")}
           </Nav.Link>
 
           <Nav.Link as={NavLink} to="/settings" className="sidebar-link">
@@ -248,7 +253,7 @@ const EmployeeSidebar = () => {
                 isSettingsPageActive ? "active" : ""
               }`}
             />
-            Settings
+            {t("settings")}
           </Nav.Link>
         </Nav>
 
@@ -260,7 +265,7 @@ const EmployeeSidebar = () => {
             className="me-2"
             style={{ width: "20px", height: "20px" }}
           />
-          Logout
+          {t("logout")}
         </div>
       </div>
     </div>

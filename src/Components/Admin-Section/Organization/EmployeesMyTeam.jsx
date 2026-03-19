@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import "./EmployeesMyTeam.css";
 import { FaFilter, FaSearch } from "react-icons/fa";
 import group10 from "../../../assets/Group10.png";
 import { useLocation } from "react-router-dom";
-
 import apiClient from "../../../utils/apiClient";
+import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
 const Employee = () => {
   const [employees, setEmployees] = useState([]);
+  const { fmtDate } = useContext(SettingsContext);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
@@ -45,7 +46,7 @@ const Employee = () => {
           position: member.position || "Not Specified",
           department: member.department || "Not Assigned",
           DateOfJoining: member.joining_date
-            ? new Date(member.joining_date).toLocaleDateString("en-GB")
+            ? fmtDate(member.joining_date) || new Date(member.joining_date).toLocaleDateString("en-GB")
             : "-",
           status: member.status || "Active",
           image: `https://i.pravatar.cc/40?img=${(index % 70) + 1}`,

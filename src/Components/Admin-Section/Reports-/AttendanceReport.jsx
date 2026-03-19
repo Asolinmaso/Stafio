@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaFilter, FaCalendarAlt, FaDownload, FaSearch } from "react-icons/fa";
 import "./AttendanceReport.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
+import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
 export default function AttendanceReport() {
+  const { fmtDate } = useContext(SettingsContext);
   const [attendanceData, setAttendanceData] = useState([]);
   const [currentDate, setCurrentDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,13 +68,7 @@ export default function AttendanceReport() {
   /* DATE */
   useEffect(() => {
     const now = new Date();
-    setCurrentDate(
-      now.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }),
-    );
+    setCurrentDate(fmtDate(now) || now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }));
   }, []);
 
   const parseDate = (dateStr) => {
@@ -417,7 +413,7 @@ export default function AttendanceReport() {
                       <td>{r.employee}</td>
                       <td>{r.role || "—"}</td>
                       <td><span className={statusClass}>{r.status}</span></td>
-                      <td>{r.date}</td>
+                      <td>{fmtDate(r.date) || r.date}</td>
                       <td className={timeClass}>{r.checkIn}</td>
                       <td className={timeClass}>{r.checkOut}</td>
                       <td>{r.workHours}</td>

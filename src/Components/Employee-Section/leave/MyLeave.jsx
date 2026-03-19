@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { SettingsContext } from "../Settings-/SettingsContext";
 import "./MyLeave.css";
 import LeaveRequestForm from "../leave/ApplyLeave";
 import { FaCheckCircle, FaFilter, FaEdit, FaTimesCircle } from "react-icons/fa";
@@ -9,6 +10,7 @@ import { IoClose } from "react-icons/io5";
 import apiClient from "../../../utils/apiClient";
 
 export default function MyLeave() {
+	const { t } = useContext(SettingsContext);
 	const navigate = useNavigate();
 	const [leaveData, setLeaveData] = useState([]);
 	const [leaveBalance, setLeaveBalance] = useState([]);
@@ -105,7 +107,7 @@ export default function MyLeave() {
 				<Topbar />
 
 				{/* Page Title */}
-				<h2 className="page-title">My Leaves</h2>
+				<h2 className="page-title">{t("myLeaves")}</h2>
 
 				{/* Leave Summary Section */}
 				<div className="leave-header">
@@ -117,7 +119,7 @@ export default function MyLeave() {
 									<FaCheckCircle className="summary-icon" />
 									<p>
 										<strong>
-											{balance.remaining}/{balance.total} Day(s)
+											{balance.remaining}/{balance.total} {t("days")}
 										</strong>
 										<br />
 										{balance.name}
@@ -151,7 +153,7 @@ export default function MyLeave() {
 								className="btn-regularization"
 								onClick={() => navigate("/my-regularization")}
 							>
-								Regularization
+								{t("regularization")}
 							</button>
 						</div>
 						<div
@@ -163,7 +165,7 @@ export default function MyLeave() {
 								ref={filterButtonRef}
 								onClick={() => setShowFilterPopup(!showFilterPopup)}
 							>
-								<FaFilter /> Filter
+								<FaFilter /> {t("filter")}
 							</button>
 
 							{/* Filter Dropdown */}
@@ -171,7 +173,7 @@ export default function MyLeave() {
 								<div ref={filterRef} className="empl-app-filter-dropdown-box">
 									{/* Header */}
 									<div className="empl-app-filter-popup-header">
-										<h3>Filter</h3>
+										<h3>{t("filter")}</h3>
 										<button
 											className="empl-app-filter-popup-close"
 											onClick={() => setShowFilterPopup(false)}
@@ -183,10 +185,10 @@ export default function MyLeave() {
 									<div className="empl-app-filter-popup-body">
 										{/* Name Field */}
 										<div className="filter-field">
-											<label>Name</label>
+											<label>{t("name")}</label>
 											<input
 												type="text"
-												placeholder="Please enter name"
+												placeholder={t("enterName")}
 												value={filterName}
 												onChange={(e) => setFilterName(e.target.value)}
 											/>
@@ -194,27 +196,27 @@ export default function MyLeave() {
 										{/* Leave Type and Status Row */}
 										<div className="filter-row">
 											<div className="filter-field">
-												<label>Leave Type</label>
+												<label>{t("leaveType")}</label>
 												<select
 													value={filterLeaveType}
 													onChange={(e) => setFilterLeaveType(e.target.value)}
 												>
-													<option value="All">All</option>
-													<option value="Casual Leave">Casual Leave</option>
-													<option value="Sick Leave">Sick Leave</option>
-													<option value="Annual Leave">Annual Leave</option>
+													<option value="All">{t("all")}</option>
+													<option value="Casual Leave">{t("casualLeave")}</option>
+													<option value="Sick Leave">{t("sickLeave")}</option>
+													<option value="Annual Leave">{t("annualLeave")}</option>
 												</select>
 											</div>
 											<div className="filter-field">
-												<label>Status</label>
+												<label>{t("status")}</label>
 												<select
 													value={filterStatus}
 													onChange={(e) => setFilterStatus(e.target.value)}
 												>
-													<option value="All">All</option>
-													<option value="Pending">Pending</option>
-													<option value="Approved">Approved</option>
-													<option value="Rejected">Rejected</option>
+													<option value="All">{t("all")}</option>
+													<option value="Pending">{t("pending")}</option>
+													<option value="Approved">{t("approved")}</option>
+													<option value="Rejected">{t("rejected")}</option>
 												</select>
 											</div>
 										</div>
@@ -225,13 +227,13 @@ export default function MyLeave() {
 											className="filter-reset-btn"
 											onClick={handleResetFilter}
 										>
-											Reset
+											{t("reset")}
 										</button>
 										<button
 											className="filter-apply-btn"
 											onClick={handleApplyFilter}
 										>
-											Apply
+											{t("apply")}
 										</button>
 									</div>
 								</div>
