@@ -224,7 +224,7 @@ const AdminLogin = () => {
         {/* ---------- RIGHT SIDE ---------- */}
         <Col
           md={6}
-          className="d-flex align-items-center justify-content-left bg-white"
+          className="d-flex align-items-center justify-content-left login-right-side"
         >
           <div className="login-form-wrapper">
             <h5 className="mb-2">Welcome back! 👋</h5>

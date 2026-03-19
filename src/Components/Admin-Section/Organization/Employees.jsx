@@ -46,9 +46,12 @@ const Employee = () => {
 
   //new state
   const [allEmployees, setAllEmployees] = useState([]);
+  const [staffList, setStaffList] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(7);
 
@@ -57,6 +60,44 @@ const Employee = () => {
     setErrors({});
     setIsEditing(false);
     setEditingId(null);
+    setProfileImage(null);
+    setPreviewImage(null);
+  };
+
+  // Helper to generate the next Employee ID
+  const generateNextId = () => {
+    if (!allEmployees || allEmployees.length === 0) return "1001";
+    
+    const numericIds = allEmployees
+      .map(emp => parseInt(emp.empId))
+      .filter(id => !isNaN(id));
+      
+    if (numericIds.length === 0) return "1001";
+    
+    return (Math.max(...numericIds) + 1).toString();
+  };
+
+  const handleAddNewEmployee = () => {
+    resetForm();
+    const nextId = generateNextId();
+    setFormData(prev => ({
+      ...prev,
+      employeeId: nextId
+    }));
+    setIsEditing(false);
+    setShowModal(true);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) {
+        alert("Image should be below 4 MB");
+        return;
+      }
+      setProfileImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+    }
   };
 
   const navigate = useNavigate();
@@ -125,14 +166,22 @@ const Employee = () => {
 
     if (validateForm()) {
       try {
+        const payload = new FormData();
+        Object.keys(formData).forEach((key) => {
+          payload.append(key, formData[key] || "");
+        });
+        if (profileImage) {
+          payload.append("profileImage", profileImage);
+        }
+
         if (isEditing) {
           const response = await apiClient.put(
             `/api/employees/${editingId}`,
-            formData,
+            payload
           );
           alert(response.data.message);
         } else {
-          const response = await apiClient.post("/api/employees", formData);
+          const response = await apiClient.post("/api/employees", payload);
           alert(response.data.message);
         }
         setShowModal(false);
@@ -187,6 +236,7 @@ const Employee = () => {
     });
 
     setEditingId(selectedEmployee.profile.user_id || selectedEmployee.id); // Check which ID to use
+    setPreviewImage(selectedEmployee.profile.profile_image || null);
     setIsEditing(true);
     setShowProfileModal(false);
     setShowModal(true);
@@ -213,6 +263,8 @@ const Employee = () => {
     setSelectedEmployee(null);
   };
 
+
+
   // ✅ Fetch employees from backend
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -226,6 +278,19 @@ const Employee = () => {
     };
 
     fetchEmployees();
+  }, []);
+
+  // Fetch staff list for dropdowns
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const response = await apiClient.get("/api/staff_list");
+        setStaffList(response.data);
+      } catch (error) {
+        console.error("Error fetching staff list:", error);
+      }
+    };
+    fetchStaff();
   }, []);
 
   useEffect(() => {
@@ -358,10 +423,7 @@ const Employee = () => {
             <div className="header-right">
               <button
                 className="add-btn"
-                onClick={() => {
-                  resetForm();
-                  setShowModal(true);
-                }}
+                onClick={handleAddNewEmployee}
               >
                 + New Employee
               </button>
@@ -516,6 +578,10 @@ const Employee = () => {
                           src={emp.image}
                           alt={emp.name}
                           className="emp-img"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
+                          }}
                         />
                         <div>
                           <p
@@ -538,6 +604,7 @@ const Employee = () => {
                       >
                         View Details
                       </button>
+
                     </td>
                   </tr>
                 ))
@@ -611,14 +678,29 @@ const Employee = () => {
                     {/* Profile Upload Section */}
                     <div className="profile-upload-section">
                       <div className="profile-placeholder">
-                        <i className="profile-icon">
-                          <FaUserFriends size="2em" />{" "}
-                        </i>
+                        {previewImage ? (
+                          <img src={previewImage} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                        ) : (
+                          <i className="profile-icon">
+                            <FaUserFriends size="2em" />{" "}
+                          </i>
+                        )}
                       </div>
                       <div className="upload-info">
                         <h4>Upload Profile Image</h4>
                         <p>Image should be below 4 MB</p>
-                        <button type="button" className="new-empl-upload-btn1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          id="profileImageInput"
+                          onChange={handleImageChange}
+                        />
+                        <button 
+                          type="button" 
+                          className="new-empl-upload-btn1"
+                          onClick={() => document.getElementById("profileImageInput").click()}
+                        >
                           Upload
                         </button>
                       </div>
@@ -738,9 +820,11 @@ const Employee = () => {
                           onChange={handleChange}
                         >
                           <option value="">Select</option>
-                          <option value="John Doe">John Doe</option>
-                          <option value="Jane Smith">Jane Smith</option>
-                          <option value="Mike Johnson">Mike Johnson</option>
+                          {staffList.map((staff) => (
+                            <option key={staff.id} value={staff.name}>
+                              {staff.name}
+                            </option>
+                          ))}
                         </select>
                         {errors.supervisor && (
                           <p className="error-text">{errors.supervisor}</p>
@@ -757,9 +841,13 @@ const Employee = () => {
                           onChange={handleChange}
                         >
                           <option value="">Select</option>
-                          <option value="Sarah Wilson">Sarah Wilson</option>
-                          <option value="David Brown">David Brown</option>
-                          <option value="Lisa Taylor">Lisa Taylor</option>
+                          {staffList
+                            .filter((staff) => staff.role === "admin")
+                            .map((staff) => (
+                              <option key={staff.id} value={staff.name}>
+                                {staff.name}
+                              </option>
+                            ))}
                         </select>
                         {errors.hrManager && (
                           <p className="error-text">{errors.hrManager}</p>

@@ -14,6 +14,7 @@ export default function AttendanceReport() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
   const [sortDays, setSortDays] = useState(9999);
+  const [sortOrder, setSortOrder] = useState("newest");
 
   /* PAGINATION STATES */
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,7 +114,18 @@ export default function AttendanceReport() {
         rd.getMonth() === picked.getMonth() &&
         rd.getFullYear() === picked.getFullYear()
       );
-    });
+    })
+    // ✅ ADD THIS PART
+  .sort((a, b) => {
+    const dateA = parseDate(a.date);
+    const dateB = parseDate(b.date);
+
+    if (!dateA || !dateB) return 0;
+
+    return sortOrder === "newest"
+      ? dateB - dateA   // Newest first
+      : dateA - dateB;  // Oldest first
+  });
 
   /* Reset to page 1 whenever filters change */
   useEffect(() => {
@@ -324,13 +336,13 @@ export default function AttendanceReport() {
 
           {/* SORT */}
           <select
-            className="att-report-sort "
-            value={sortDays}
-            onChange={(e) => setSortDays(Number(e.target.value))}
-          >
-            <option value="Newest">Sort By : Newest</option>
-            <option value="Oldest">Sort By : Oldest</option>
-          </select>
+  className="att-report-sort"
+  value={sortOrder}
+  onChange={(e) => setSortOrder(e.target.value)}
+>
+  <option value="newest">Sort By : Newest</option>
+  <option value="oldest">Sort By : Oldest</option>
+</select>
         </div>
 
         {/* TABLE */}

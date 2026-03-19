@@ -125,8 +125,106 @@
 	gap: 7px;
 	background: transparent;
 	border: 1px solid #cececeff !important;
-	border-radius: 12px;
+	border-radius: 10px;
+	padding: 8px 14px;
+	transition: 0.2s;
 }
+
+/* ====== Filter Dropdown Box ====== */
+.empl-app-filter-dropdown-box {
+  position: absolute;
+  top: calc(100% + 8px); /* below button with gap */
+  right: 0;
+  background: #fff;
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  z-index: 999;
+  border: 1px solid #e2e8f0;
+  padding: 16px; /* 🔥 add inner spacing */
+}
+
+.empl-app-filter-popup-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.empl-app-filter-popup-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.empl-app-filter-popup-close {
+  position: absolute;
+  right: 0px;
+  top: -5px;
+  width: 25px;
+  height: 35px;
+  border: none;
+  background: none ;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+.empl-app-filter-popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empl-app-filter-popup-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 14px;
+  margin-top: 10px;
+  border-top: 1px solid #eee; 
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  height: 42px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  padding: 0 12px;
+  font-size: 14px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+  border-color: #0ec8de;
+  box-shadow: 0px 0px 0px 3px rgba(14, 200, 222, 0.12);
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+
 
 /* Table */
 .leave-table table {

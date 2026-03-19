@@ -45,10 +45,10 @@ const ALERT_BEFORE_MINUTES = 10;
 const formatTime = (date) =>
 	date instanceof Date
 		? date.toLocaleTimeString([], {
-				hour: "2-digit",
-				minute: "2-digit",
-				second: "2-digit",
-			})
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+		})
 		: date;
 
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
@@ -678,9 +678,6 @@ const Dashboard = () => {
 
 					{/* Notification + Meeting/Punch Card */}
 					<Row className="mb-4">
-						<div md={4}>
-							<NotificationTop />
-						</div>
 						<Col md={12}>
 							<div className="meeting-card d-flex justify-content-between align-items-center">
 								{/* Left group */}

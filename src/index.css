@@ -381,6 +381,10 @@ body[data-theme='dark'] .announcement-popup,
 body[data-theme='dark'] .announcement-item,
 body[data-theme='dark'] .announce-calendar-box,
 body[data-theme='dark'] .dropdown-menu-custom,
+body[data-theme='dark'] .empl-app-filter-dropdown-box,
+body[data-theme='dark'] .filter-dropdown-box,
+body[data-theme='dark'] .empl-app-filter-popup-footer,
+body[data-theme='dark'] .filter-popup-footer,
 body[data-theme='dark'] .break-dropdown {
     background-color: #1a1f2e !important;
     background: #1a1f2e !important;
@@ -440,10 +444,21 @@ body[data-theme='dark'] .notif-header,
 body[data-theme='dark'] .notif-body,
 body[data-theme='dark'] .notif-footer,
 body[data-theme='dark'] .notification-top,
-body[data-theme='dark'] .search-results-dropdown {
-    background-color: #1a1f2e !important;
-    background: #1a1f2e !important;
+body[data-theme='dark'] .search-results-dropdown,
+body[data-theme='dark'] .logout-icon,
+body[data-theme='dark'] .admin-login-container,
+body[data-theme='dark'] .employee-login-container,
+body[data-theme='dark'] .login-left,
+body[data-theme='dark'] .login-right-side,
+body[data-theme='dark'] .login-form-wrapper {
+    background-color: #0f172a !important;
+    background: #0f172a !important;
     border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .login-left {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    border-right: 1px solid #1e293b !important;
 }
 
 
@@ -953,11 +968,44 @@ body[data-theme='dark'] .announcement-message,
 body[data-theme='dark'] .react-btn,
 body[data-theme='dark'] .action-btn,
 body[data-theme='dark'] .add-new-link,
+body[data-theme='dark'] .empl-app-filter-popup-header h3,
+body[data-theme='dark'] .filter-popup-header h3,
+body[data-theme='dark'] .filter-field label,
+body[data-theme='dark'] .filter-reset-btn,
 body[data-theme='dark'] .close-icon,
 body[data-theme='dark'] .logout-icon,
+body[data-theme='dark'] .login-heading,
+body[data-theme='dark'] .login-subheading,
+body[data-theme='dark'] .login-description,
+body[data-theme='dark'] .login-form-wrapper h3,
+body[data-theme='dark'] .remember-me-checkbox label,
+body[data-theme='dark'] .forgot-password-link,
+body[data-theme='dark'] .signup-text,
 body[data-theme='dark'] strong {
     color: #ffffff !important;
     fill: #ffffff !important;
+}
+
+body[data-theme='dark'] .login-form-wrapper h5 {
+    color: #38bdf8 !important;
+}
+
+body[data-theme='dark'] .filter-field input,
+body[data-theme='dark'] .filter-field select,
+body[data-theme='dark'] .filter-reset-btn,
+body[data-theme='dark'] .email-input {
+    background-color: #2a3142 !important;
+    border-color: #3f4e6b !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .custom-google-btn {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+body[data-theme='dark'] .custom-google-btn span {
+    color: #38bdf8 !important;
 }
 
 /* Sub-labels or strictly secondary text can be slate */
@@ -1107,8 +1155,10 @@ body[data-theme='dark'] .summary-icon {
 }
 
 body[data-theme='dark'] input[type="date"],
-body[data-theme='dark'] input[type="time"] {
+body[data-theme='dark'] input[type="time"],
+body[data-theme='dark'] input[type="checkbox"] {
     color-scheme: dark !important;
+    accent-color: #19bde8 !important;
 }
 
 body[data-theme='dark'] .btn-cancel,
