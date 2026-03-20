@@ -52,9 +52,19 @@ export default function MyLeave() {
 		fetchLeaveData();
 	}, []);
 
-	const filteredAndSortedLeaves = leaveData.filter((leave) =>
-		filterStatus === "All" ? true : leave.status === filterStatus,
-	);
+	const filteredAndSortedLeaves = leaveData.filter((leave) => {
+		const matchesStatus =
+			filterStatus === "All" ||
+			leave.status?.toLowerCase() === filterStatus.toLowerCase();
+
+		// 👇 Extract leave type from date
+		const leaveTypeFromDate = leave.date?.split("/")[1]?.trim();
+
+		const matchesLeaveType =
+			filterLeaveType === "All" || leaveTypeFromDate === filterLeaveType;
+
+		return matchesStatus && matchesLeaveType;
+	});
 
 	const handleResetFilter = () => {
 		setFilterName("");
@@ -201,10 +211,9 @@ export default function MyLeave() {
 													value={filterLeaveType}
 													onChange={(e) => setFilterLeaveType(e.target.value)}
 												>
-													<option value="All">{t("all")}</option>
-													<option value="Casual Leave">{t("casualLeave")}</option>
-													<option value="Sick Leave">{t("sickLeave")}</option>
-													<option value="Annual Leave">{t("annualLeave")}</option>
+													<option value="All">All</option>
+													<option value="Full Day">Full Day</option>
+													<option value="Half Day">Half Day</option>
 												</select>
 											</div>
 											<div className="filter-field">
@@ -342,8 +351,9 @@ export default function MyLeave() {
 							</div>
 
 							<div className="apply-modal-body">
-								<LeaveRequestForm onClose={() => setShowApplyModal(false)}
-								  leaveBalance={leaveBalance}
+								<LeaveRequestForm
+									onClose={() => setShowApplyModal(false)}
+									leaveBalance={leaveBalance}
 								/>
 							</div>
 						</div>
