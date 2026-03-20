@@ -49,6 +49,8 @@ const NotificationBar = () => {
     const role = localStorage.getItem("current_role");
     if (role === "admin") {
       window.dispatchEvent(new Event("openAnnouncements"));
+    } else {
+      window.dispatchEvent(new Event("openNotifications"));
     }
   };
 

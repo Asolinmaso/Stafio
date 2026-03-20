@@ -180,7 +180,17 @@ const Topbar = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    const handleOpenNotifications = () => {
+      setShowNotifications(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("openNotifications", handleOpenNotifications);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("openNotifications", handleOpenNotifications);
+    };
   }, []);
 
   const profile = profileData?.profile || {};

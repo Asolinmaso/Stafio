@@ -36,6 +36,18 @@ export default function Settings() {
   const [profileImage, setProfileImage] = useState(profileimg);
   const profileInputRef = useRef(null);
 
+  // Auto-show success message when general settings change
+  const initialRef = useRef(true);
+  useEffect(() => {
+    if (initialRef.current) {
+      initialRef.current = false;
+      return;
+    }
+    setSaveMessage("General settings updated successfully!");
+    const timer = setTimeout(() => setSaveMessage(""), 3000);
+    return () => clearTimeout(timer);
+  }, [language, theme, font, dateFormat]);
+
   const handleProfileImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
