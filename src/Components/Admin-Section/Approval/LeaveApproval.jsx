@@ -465,9 +465,8 @@ const LeaveApproval = () => {
             {[...Array(totalPages)].map((_, i) => (
               <button
                 key={i + 1}
-                className={`page-btn num-btn ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
+                className={`page-btn num-btn ${currentPage === i + 1 ? "active" : ""
+                  }`}
                 onClick={() => setCurrentPage(i + 1)}
               >
                 {String(i + 1).padStart(2, "0")}

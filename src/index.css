@@ -176,7 +176,7 @@ body {
 
 /* Global Dark Theme Overrides */
 body[data-theme='dark'] {
-    background-color: #0b0f1a !important;
+    background-color: #0a1118 !important; /* Deeper dark background */
     color: #ffffff;
 }
 
@@ -212,7 +212,7 @@ body[data-theme='dark'] .attendance-main,
 body[data-theme='dark'] .attendance-section,
 body[data-theme='dark'] .admin-settings-main,
 body[data-theme='dark'] .settings-page {
-    background-color: #0b0f1a !important;
+    background-color: #0d141f !important; /* Slightly lighter for main area */
     color: #ffffff !important;
 }
 
@@ -244,8 +244,8 @@ body[data-theme='dark'] .settings-tabs {
 body[data-theme='dark'] .sidebar,
 body[data-theme='dark'] .admin-sidebar,
 body[data-theme='dark'] .employee-sidebar {
-    background-color: #111827 !important;
-    border-right-color: #2d334a !important;
+    background-color: #0c1e35 !important; /* Matches screenshot sidebar */
+    border-right-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 body[data-theme='dark'] .topbar,
@@ -253,10 +253,10 @@ body[data-theme='dark'] .admin-settings-main .topbar,
 body[data-theme='dark'] .attendance-main .topbar,
 body[data-theme='dark'] .employee-main .topbar,
 body[data-theme='dark'] .main-content .topbar {
-    background-color: #1a1f2e !important;
-    background: #1a1f2e !important;
-    /* Force gradient override if any */
-    border-bottom: 1px solid #2d334a !important;
+    background-color: #0d141f !important;
+    background: #0d141f !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
     color: #ffffff !important;
 }
 
@@ -309,6 +309,10 @@ body[data-theme='dark'] .leave-table th,
 body[data-theme='dark'] .leave-table td,
 body[data-theme='dark'] .approve-leave-modal,
 body[data-theme='dark'] .approve-form-modal-body,
+body[data-theme='dark'] .approve-modal-header-blue,
+body[data-theme='dark'] .la-modal-footer,
+body[data-theme='dark'] .reason-modal,
+body[data-theme='dark'] .success-modal,
 body[data-theme='dark'] .myteam-layout,
 body[data-theme='dark'] .myteam-main,
 body[data-theme='dark'] .myteam-page,
@@ -377,6 +381,8 @@ body[data-theme='dark'] .summary-card,
 body[data-theme='dark'] .attendance-card,
 body[data-theme='dark'] .leave-notif-banner,
 body[data-theme='dark'] .leave-notif-close,
+body[data-theme='dark'] .admin-notif-banner,
+body[data-theme='dark'] .admin-notif-close,
 body[data-theme='dark'] .announcement-popup,
 body[data-theme='dark'] .announcement-item,
 body[data-theme='dark'] .announce-calendar-box,
@@ -389,6 +395,7 @@ body[data-theme='dark'] .break-dropdown {
     background-color: #1a1f2e !important;
     background: #1a1f2e !important;
     border-color: #2d334a !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 
@@ -768,7 +775,8 @@ body[data-theme='dark'] .dept-modal-header,
 body[data-theme='dark'] .break-modal-header,
 body[data-theme='dark'] .popup-header,
 body[data-theme='dark'] .profile-modal-header,
-body[data-theme='dark'] .tp-footer {
+body[data-theme='dark'] .tp-footer,
+body[data-theme='dark'] .la-modal-footer {
     border-color: #2d334a !important;
     background-color: #1a1f2e !important;
 }
@@ -902,7 +910,14 @@ body[data-theme='dark'] .summary-card h6,
 body[data-theme='dark'] .summary-top h2,
 body[data-theme='dark'] .card-title,
 body[data-theme='dark'] .leave-notif-text,
+body[data-theme='dark'] .admin-notif-text,
 body[data-theme='dark'] .dropdown-title,
+body[data-theme='dark'] .form-row label,
+body[data-theme='dark'] .date-item p,
+body[data-theme='dark'] .reason-modal h3,
+body[data-theme='dark'] .reason-modal small,
+body[data-theme='dark'] .success-modal h2,
+body[data-theme='dark'] .success-modal p,
 body[data-theme='dark'] .break-item strong,
 body[data-theme='dark'] .info-item,
 body[data-theme='dark'] .info-item span,
@@ -952,6 +967,7 @@ body[data-theme='dark'] .profile-chevron,
 body[data-theme='dark'] .topbar-bell-icon,
 body[data-theme='dark'] .notif-bell-icon,
 body[data-theme='dark'] .leave-notif-close,
+body[data-theme='dark'] .admin-notif-close,
 body[data-theme='dark'] .profile-chevron,
 body[data-theme='dark'] .summary-card svg,
 body[data-theme='dark'] .profile-name,
@@ -1099,6 +1115,13 @@ body[data-theme='dark'] .form-row_pop select,
 body[data-theme='dark'] .form-row_pop textarea,
 body[data-theme='dark'] .apply-leave-upload-btn,
 body[data-theme='dark'] .app-leave-cancel-btn,
+body[data-theme='dark'] .form-row input,
+body[data-theme='dark'] .form-row textarea,
+body[data-theme='dark'] .date-item input,
+body[data-theme='dark'] .document-input,
+body[data-theme='dark'] .modal-reject-btn,
+body[data-theme='dark'] .reason-modal textarea,
+body[data-theme='dark'] .reason-cancel-btn,
 body[data-theme='dark'] .ear__input,
 body[data-theme='dark'] .ear__sort-sel,
 body[data-theme='dark'] .ear__filter-box,
@@ -1130,9 +1153,10 @@ body[data-theme='dark'] .att-date-input,
 body[data-theme='dark'] .att-filter-input,
 body[data-theme='dark'] .att-filter-select,
 body[data-theme='dark'] .att-showing-pill,
-body[data-theme='dark'] .rows-dropdown-popup {
-    background-color: #0f172a !important;
-    border-color: #2d334a !important;
+body[data-theme='dark'] .rows-dropdown-popup,
+body[data-theme='dark'] .form-controler {
+    background-color: #1a233a !important; /* Lighter navy for inputs */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
 }
 
@@ -1271,17 +1295,23 @@ body[data-theme='dark'] .summary-card .summary-action {
 
 /* Sidebar Detailed Theming */
 body[data-theme='dark'] .sidebar-link {
-    color: #ffffff !important;
-    border-top-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-top-color: rgba(255, 255, 255, 0.05) !important;
+    margin: 4px 12px !important; /* Spacing for capsule look */
+    border-radius: 12px !important;
+    padding: 12px 18px !important;
+    border-top: none !important; /* Remove separators if capsule look */
 }
 
 body[data-theme='dark'] .sidebar-link:hover {
-    background-color: rgba(25, 189, 232, 0.15) !important;
+    background-color: rgba(25, 189, 232, 0.1) !important;
+    color: #ffffff !important;
 }
 
 body[data-theme='dark'] .sidebar-link.active {
     background-color: #19bde8 !important;
     color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(25, 189, 232, 0.3) !important;
 }
 
 body[data-theme='dark'] .submenu {

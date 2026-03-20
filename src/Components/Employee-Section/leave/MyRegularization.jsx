@@ -367,10 +367,10 @@ export default function MyRegularization() {
                   <td>
                     <span
                       className={`status-badge ${row.status === "Approved"
-                          ? "approved"
-                          : row.status === "Pending"
-                            ? "pending"
-                            : "rejected"
+                        ? "approved"
+                        : row.status === "Pending"
+                          ? "pending"
+                          : "rejected"
                         }`}
                     >
                       {row.status}

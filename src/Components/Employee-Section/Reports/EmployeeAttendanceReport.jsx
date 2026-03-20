@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useMemo, useContext } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
 import axios from "axios";
 import "./EmployeeAttendanceReport.css";
-import { SettingsContext } from "../Settings-/SettingsContext";
 
 const EmployeeAttendanceReport = () => {
   const navigate = useNavigate();
-  const { fmtDate } = useContext(SettingsContext);
 
   const [allData, setAllData] = useState([]);
   const [stats, setStats] = useState({
@@ -62,7 +60,7 @@ const EmployeeAttendanceReport = () => {
       "Work Hours",
     ];
     const rows = filteredData.map((r) => [
-      fmtDate(r.date) || r.date,
+      formatDate(r.date),
       r.checkIn || "-",
       r.checkOut || "-",
       r.status || "-",
@@ -88,7 +86,15 @@ const EmployeeAttendanceReport = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Uses context fmtDate for reactive formatting
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   const resetPage = () => setCurrentPage(1);
 
@@ -369,7 +375,11 @@ const EmployeeAttendanceReport = () => {
                 </svg>
                 <span className="ear__dp-label">
                   {filterDate
-                    ? fmtDate(filterDate) || new Date(filterDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                    ? new Date(filterDate).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
                     : "Select date"}
                 </span>
                 <svg
@@ -444,7 +454,7 @@ const EmployeeAttendanceReport = () => {
                   ) : (
                     paginatedData.map((r, i) => (
                       <tr key={i} className="ear__tbody-tr">
-                        <td>{fmtDate(r.date) || r.date}</td>
+                        <td>{formatDate(r.date)}</td>
                         <td className={timeClass(r.status)}>{r.checkIn}</td>
                         <td className={timeClass(r.status)}>{r.checkOut}</td>
                         <td>

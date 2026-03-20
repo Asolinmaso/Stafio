@@ -23,7 +23,7 @@ export default function MyRegularization() {
   const filterButtonRef = useRef(null);
 
   const [regularizationData, setRegularizationData] = useState([]);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(7);
@@ -73,7 +73,7 @@ export default function MyRegularization() {
     indexOfFirstItem,
     indexOfLastItem,
   );
-  
+
   // Ensure totalPages is at least 1 so "01" always shows
   const totalPages = Math.max(1, Math.ceil(filteredAndSortedLeaves.length / itemsPerPage));
 
@@ -171,7 +171,7 @@ export default function MyRegularization() {
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Something went wrong. Please try again.",
+        "Something went wrong. Please try again.",
       );
     }
   };
@@ -360,13 +360,12 @@ export default function MyRegularization() {
                     <td>{row.reason}</td>
                     <td>
                       <span
-                        className={`status-badge ${
-                          row.status === "Approved"
+                        className={`status-badge ${row.status === "Approved"
                             ? "approved"
                             : row.status === "Pending"
                               ? "pending"
                               : "rejected"
-                        }`}
+                          }`}
                       >
                         {row.status}
                       </span>
@@ -422,9 +421,8 @@ export default function MyRegularization() {
             {[...Array(totalPages)].map((_, i) => (
               <button
                 key={i + 1}
-                className={`page-btn num-btn ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
+                className={`page-btn num-btn ${currentPage === i + 1 ? "active" : ""
+                  }`}
                 onClick={() => handlePageChange(i + 1)}
               >
                 {String(i + 1).padStart(2, "0")}
