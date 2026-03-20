@@ -13,10 +13,13 @@ import { BsUpload } from "react-icons/bs";
 const API_BASE = "http://127.0.0.1:5001";
 
 export default function Settings() {
-  const { theme, setTheme, language, setLanguage, font, setFont } =
-    useContext(SettingsContext);
+  const {
+    theme, setTheme,
+    language, setLanguage,
+    font, setFont,
+    dateFormat, setDateFormat
+  } = useContext(SettingsContext);
   const [activeTab, setActiveTab] = useState("general");
-  const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
   const [errors, setErrors] = useState({});
 
   const [basicForm, setBasicForm] = useState({
@@ -328,6 +331,11 @@ export default function Settings() {
                   >
                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                     <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="DD MMM YYYY">DD MMM YYYY</option>
+                    <option value="MMM DD YYYY">MMM DD YYYY</option>
+                    <option value="MMM-DD-YYYY">MMM-DD-YYYY</option>
+                    <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+
                   </select>
                 </div>
               </div>

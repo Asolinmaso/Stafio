@@ -308,25 +308,24 @@
 
 .button-row {
   display: flex;
-  gap: 24px;
+  gap: 20px;
+  margin-top: 15px;
 }
 
-.btn-punch-out {
+.btn-punch-out,
+.btn-start-break {
   padding: 10px 38px;
   background: white;
   border: none;
   border-radius: 12px;
   font-weight: 550;
   cursor: pointer;
-}
-
-.btn-start-break {
-  background: white;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 25px;
-  font-weight: 550;
-  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
 }
 
 .btn-punch-out:hover,
@@ -400,4 +399,94 @@
 
 .leave-notif-close:hover {
   opacity: 0.6;
+}
+
+.break-items-list {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Premium Scrollbar */
+.break-items-list::-webkit-scrollbar {
+  width: 5px;
+}
+.break-items-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.break-items-list::-webkit-scrollbar-thumb {
+  background: #a5f3ff;
+  border-radius: 10px;
+}
+.break-items-list::-webkit-scrollbar-thumb:hover {
+  background: #19bde8;
+}
+
+.break-relative-container {
+  position: relative;
+  display: flex;
+}
+
+.break-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background: white;
+  width: 280px;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1100;
+  color: #333;
+}
+
+.dropdown-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #19bde8;
+}
+
+body[data-theme='dark'] .break-dropdown {
+  background-color: #1a1f2e !important;
+  color: #fff !important;
+  border: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .break-item:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+body[data-theme='dark'] .break-item strong,
+body[data-theme='dark'] .break-item span {
+  color: #fff !important;
+}
+
+body[data-theme='dark'] .meeting-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0c1e35 100%) !important;
+  border: 1px solid rgba(25, 189, 232, 0.2) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+body[data-theme='dark'] .meeting-card h2 {
+  color: #19bde8 !important;
+  text-shadow: 0 0 15px rgba(25, 189, 232, 0.3);
+}
+
+body[data-theme='dark'] .meeting-card p,
+body[data-theme='dark'] .meeting-card span {
+  color: #a5f3ff !important;
+}
+
+body[data-theme='dark'] .punch-info-box {
+  background: rgba(25, 189, 232, 0.05) !important;
+  border-color: rgba(25, 189, 232, 0.2) !important;
+}
+
+body[data-theme='dark'] .active-break {
+  background-color: rgba(25, 189, 232, 0.1) !important;
+  border-left: 3px solid #19bde8 !important;
+}
+
+body[data-theme='dark'] .info-item strong {
+  color: #19bde8 !important;
 }

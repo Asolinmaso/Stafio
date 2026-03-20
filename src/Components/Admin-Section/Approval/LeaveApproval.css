@@ -853,24 +853,24 @@
 	display: block;
 }
 
-/* Reason modal */
+/* Reason modal - Perfectly centered layout to match latest design */
 .reason-modal-overlay,
 .success-modal-overlay {
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.25);
+	background: rgba(0, 0, 0, 0.4);
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 1100;
+	z-index: 10001; 
 }
 
 .reason-modal {
-	width: 460px;
-	background: #eef1f5;
-	border-radius: 10px;
-	padding: 40px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	width: 440px;
+	background: #eff6ff;
+	border-radius: 12px;
+	padding: 35px 30px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 	position: relative;
 	text-align: center;
 	animation: fadeIn 0.2s ease;
@@ -879,114 +879,108 @@
 .reason-close-btn,
 .success-close-btn {
 	position: absolute;
-	top: 12px;
-	right: 14px;
+	top: 14px;
+	right: 16px;
 	background: none;
 	border: none;
-	font-size: 26px;
+	font-size: 20px; /* Small and thin as per image */
 	cursor: pointer;
-	color: #666;
+	color: #64748b;
+	line-height: 1;
+	transition: color 0.2s;
 }
 
 .reason-close-btn:hover,
 .success-close-btn:hover {
-	color: #000;
+	color: #1e293b;
 }
 
 .reason-modal h3 {
-	font-size: 20px;
+	font-size: 22px;
 	font-weight: 600;
-	color: #333;
-	margin-bottom: 16px;
+	color: #1e293b;
+	margin-bottom: 20px;
 }
 
 .reason-modal textarea {
 	width: 100%;
-	height: 100px;
-	border: 1px solid #dcdcdc;
+	height: 120px;
+	border: 1px solid #d1d5db;
 	border-radius: 6px;
-	padding: 10px;
-	font-size: 13px;
+	padding: 15px;
+	font-size: 14px;
 	resize: none;
 	outline: none;
-	background: transparent;
-}
-
-.reason-modal textarea:focus {
-	border-color: #12b3e6;
+	background: #ffffff;
+	margin-bottom: 8px;
 }
 
 .reason-modal small {
 	display: block;
 	font-size: 12px;
-	color: #777;
-	text-align: left;
-	margin-top: 4px;
+	color: #94a3b8;
+	text-align: center; /* Centered helper text */
+	margin-bottom: 24px;
 	font-style: italic;
 }
 
 .reason-modal-actions {
 	display: flex;
-	justify-content: center;
-	gap: 14px;
-	margin-top: 18px;
+	justify-content: center; /* Centered buttons */
+	align-items: center;
+	gap: 12px;
 }
 
 .reason-apply-btn {
-	background: #29a3d6;
-	color: #fff;
-	border: none;
-	padding: 8px 20px;
-	border-radius: 6px;
-	font-size: 14px;
+	background: #19bde8 !important;
+	color: #ffffff !important;
+	border: none !important;
+	padding: 9px 28px !important;
+	border-radius: 6px !important;
+	font-size: 14px !important;
+	font-weight: 600 !important;
 	cursor: pointer;
-}
-
-.reason-apply-btn:hover {
-	background: #1f8bb5;
 }
 
 .reason-cancel-btn {
-	background: #dcdcdc;
-	border: none;
-	padding: 8px 20px;
-	border-radius: 6px;
-	font-size: 14px;
+	background: #ffffff !important;
+	border: 1px solid #000000 !important;
+	color: #000000 !important;
+	padding: 9px 28px !important;
+	border-radius: 6px !important;
+	font-size: 14px !important;
+	font-weight: 600 !important;
 	cursor: pointer;
 }
 
-.reason-cancel-btn:hover {
-	background: #c5c5c5;
-}
-
-/* Success modal */
+/* Success modal - Fully centered */
 .success-modal {
-	width: 400px;
-	background: #eef1f5;
-	border-radius: 10px;
+	width: 420px;
+	background: #eff6ff;
+	border-radius: 12px;
 	padding: 40px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 	position: relative;
 	text-align: center;
 	animation: fadeIn 0.2s ease;
 }
 
 .tick-icon {
-	width: 60px;
-	height: 60px;
-	margin-bottom: 12px;
+	width: 65px;
+	height: 65px;
+	margin-bottom: 25px;
 }
 
 .success-modal h2 {
-	font-size: 18px;
+	font-size: 22px;
 	font-weight: 600;
-	color: #333;
+	color: #1e293b;
+	margin-bottom: 10px;
 }
 
 .success-modal p {
-	font-size: 13px;
-	color: #555;
-	margin-top: 6px;
+	font-size: 14px;
+	color: #475569;
 }
 
 @keyframes fadeIn {
@@ -1388,3 +1382,6 @@
 		padding: 20px 4px 12px 4px;
 	}
 }
+
+/* ── Reason Modal Overlay (above Leave Details modal at z-index 9999) ─────── */
+/* Duplicate cleanup handled above */

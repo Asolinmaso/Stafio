@@ -9,10 +9,10 @@ export const SettingsProvider = ({ children }) => {
   );
   const [font, setFont] = useState(localStorage.getItem("font") || "default");
   const [dateFormat, setDateFormat] = useState(
-    localStorage.getItem("dateFormat") || "DD/MM/YYYY",
+    localStorage.getItem("dateFormat") || "DD MMM YYYY",
   );
   const [dateFormatEnabled, setDateFormatEnabled] = useState(
-    localStorage.getItem("dateFormatEnabled") === "true",
+    localStorage.getItem("dateFormatEnabled") !== "false", // Default to true if not explicitly false
   );
 
   // ✅ Reactive date formatter — always in sync with current context state
@@ -48,15 +48,20 @@ export const SettingsProvider = ({ children }) => {
       }
 
       const day   = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const monthNum = String(d.getMonth() + 1).padStart(2, "0");
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthName = monthNames[d.getMonth()];
       const year  = d.getFullYear();
 
       switch (dateFormat) {
-        case "MM/DD/YYYY": return `${month}/${day}/${year}`;
-        case "YYYY/MM/DD": return `${year}/${month}/${day}`;
-        case "YYYY-MM-DD": return `${year}-${month}-${day}`;
-        case "DD-MM-YYYY": return `${day}-${month}-${year}`;
-        default:           return `${day}/${month}/${year}`; // DD/MM/YYYY
+        case "MM/DD/YYYY": return `${monthNum}/${day}/${year}`;
+        case "YYYY/MM/DD": return `${year}/${monthNum}/${day}`;
+        case "YYYY-MM-DD": return `${year}-${monthNum}-${day}`;
+        case "DD-MM-YYYY": return `${day}-${monthNum}-${year}`;
+        case "DD MMM YYYY": return `${day} ${monthName} ${year}`;
+        case "MMM DD YYYY": return `${monthName} ${day} ${year}`;
+        case "MMM-DD-YYYY": return `${monthName}-${day}-${year}`;
+        default:           return `${day}/${monthNum}/${year}`; // DD/MM/YYYY
       }
     },
     [dateFormat, dateFormatEnabled],

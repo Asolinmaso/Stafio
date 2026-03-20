@@ -343,7 +343,7 @@ export default function MyLeave() {
 
 							<div className="apply-modal-body">
 								<LeaveRequestForm onClose={() => setShowApplyModal(false)}
-								  leaveBalance={leaveBalance}
+									leaveBalance={leaveBalance}
 								/>
 							</div>
 						</div>

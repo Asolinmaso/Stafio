@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useContext, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
+import { SettingsContext } from "../Settings-/SettingsContext";
 import { useNavigate } from "react-router-dom";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
@@ -8,7 +9,6 @@ import axios from "axios";
 import { FaCheck } from "react-icons/fa";
 import apiClient from "../../../utils/apiClient";
 import "bootstrap-icons/font/bootstrap-icons.css"; // ✅ Needed for the filter icon
-import { SettingsContext } from "../Settings-/SettingsContext";
 
 const Attendance = () => {
   const navigate = useNavigate();
@@ -54,7 +54,14 @@ const Attendance = () => {
     fetchData();
   }, []);
 
-  // Uses context fmtDate for reactive formatting
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    return fmtDate(dateStr) || new Date(dateStr).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   const resetPage = () => setCurrentPage(1);
 
@@ -528,7 +535,7 @@ const Attendance = () => {
                           {r.status}
                         </span>
                       </td>
-                      <td>{fmtDate(r.date) || r.date}</td>
+                      <td>{formatDate(r.date)}</td>
                       <td className={timeClass(r.status)}>{r.checkIn}</td>
                       <td className={timeClass(r.status)}>{r.checkOut}</td>
                       <td

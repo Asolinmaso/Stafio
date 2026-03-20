@@ -690,10 +690,9 @@ const LeaveApproval = () => {
                 ×
               </button>
               <img className="tick-icon" src={tick} alt="tick-icon" />
-              <h2>Success</h2>
+              <h2>{actionType === "Approval" ? "Success" : "Rejected"}</h2>
               <p>
-                Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
-                Successfully
+                Leave Approval {actionType === "Approval" ? "Successfully" : "Rejected"}
               </p>
             </div>
           </div>

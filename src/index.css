@@ -244,8 +244,9 @@ body[data-theme='dark'] .settings-tabs {
 body[data-theme='dark'] .sidebar,
 body[data-theme='dark'] .admin-sidebar,
 body[data-theme='dark'] .employee-sidebar {
-    background-color: #111827 !important;
-    border-right-color: #2d334a !important;
+    background-color: #0c1e35 !important;
+    /* Matches screenshot sidebar */
+    border-right-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 body[data-theme='dark'] .topbar,
@@ -446,20 +447,9 @@ body[data-theme='dark'] .notif-footer,
 body[data-theme='dark'] .notification-top,
 body[data-theme='dark'] .search-results-dropdown,
 body[data-theme='dark'] .logout-icon,
-body[data-theme='dark'] .admin-login-container,
-body[data-theme='dark'] .employee-login-container,
-body[data-theme='dark'] .login-left,
-body[data-theme='dark'] .login-right-side,
-body[data-theme='dark'] .login-form-wrapper {
-    background-color: #0f172a !important;
-    background: #0f172a !important;
-    border-color: #2d334a !important;
-}
+/* Removed dark mode overrides for login to force light theme */
 
-body[data-theme='dark'] .login-left {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
-    border-right: 1px solid #1e293b !important;
-}
+/* Removed dark mode overrides for login-left */
 
 
 body[data-theme='dark'] .notif-item:hover,
@@ -937,7 +927,8 @@ body[data-theme='dark'] .elr__chart-card {
 }
 
 body[data-theme='dark'] .pdf-icon {
-    background-color: #431407 !important; /* Muted Red for PDF */
+    background-color: #431407 !important;
+    /* Muted Red for PDF */
     color: #f87171 !important;
 }
 
@@ -1266,22 +1257,25 @@ body[data-theme='dark'] .summary-action-icon svg {
 }
 
 body[data-theme='dark'] .summary-card .summary-action {
-    color: #ffffff !important; /* Keep the label text white */
+    color: #ffffff !important;
+    /* Keep the label text white */
 }
 
 /* Sidebar Detailed Theming */
 body[data-theme='dark'] .sidebar-link {
-    color: #ffffff !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     border-top-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body[data-theme='dark'] .sidebar-link:hover {
-    background-color: rgba(25, 189, 232, 0.15) !important;
+    background-color: rgba(25, 189, 232, 0.1) !important;
+    color: #ffffff !important;
 }
 
 body[data-theme='dark'] .sidebar-link.active {
     background-color: #19bde8 !important;
     color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(25, 189, 232, 0.3) !important;
 }
 
 body[data-theme='dark'] .submenu {
@@ -1376,4 +1370,425 @@ body[data-theme='dark'] .ra-status.pending {
     background-color: rgba(245, 158, 11, 0.2) !important;
     color: #fbbf24 !important;
     border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+/* ── Admin Notification Banner — Dark Mode ──────────────────────────────── */
+body[data-theme='dark'] .admin-notif-banner {
+    background-color: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .admin-notif-text {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .admin-notif-close {
+    background-color: transparent !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .admin-notif-close:hover {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .admin-notif-count,
+body[data-theme='dark'] .admin-notif-link {
+    color: #19bde8 !important;
+}
+
+/* ── Leave Approval & MyTeam Leave Approval — Dark Mode ─────────────────── */
+
+/* Main modal containers */
+body[data-theme='dark'] .apply-leave-modal,
+body[data-theme='dark'] .approve-leave-modal,
+body[data-theme='dark'] .reason-modal,
+body[data-theme='dark'] .success-modal {
+    background-color: #1a1f2e !important;
+    color: #e5e7eb !important;
+}
+
+/* Modal body */
+body[data-theme='dark'] .modal-body,
+body[data-theme='dark'] .approve-form-modal-body {
+    background-color: #1a1f2e !important;
+}
+
+/* Modal footer */
+body[data-theme='dark'] .modal-footer,
+body[data-theme='dark'] .la-modal-footer,
+body[data-theme='dark'] .action-approve-modal-actions,
+body[data-theme='dark'] .modal-actions {
+    background-color: #1a1f2e !important;
+    border-top-color: #2d334a !important;
+}
+
+/* All inputs / selects / textareas inside modals */
+body[data-theme='dark'] .apply-leave-modal input,
+body[data-theme='dark'] .apply-leave-modal select,
+body[data-theme='dark'] .apply-leave-modal textarea,
+body[data-theme='dark'] .approve-leave-modal input,
+body[data-theme='dark'] .approve-leave-modal select,
+body[data-theme='dark'] .approve-leave-modal textarea,
+body[data-theme='dark'] .reason-modal textarea,
+body[data-theme='dark'] .reason-container textarea,
+body[data-theme='dark'] .document-box {
+    background-color: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #e5e7eb !important;
+}
+
+/* Labels & "From/To" date sub-labels */
+body[data-theme='dark'] .apply-leave-modal label,
+body[data-theme='dark'] .apply-leave-modal .form-left label,
+body[data-theme='dark'] .approve-leave-modal label,
+body[data-theme='dark'] .approve-leave-modal .form-row label,
+body[data-theme='dark'] .reason-modal h3,
+body[data-theme='dark'] .date-item p {
+    color: #cbd5e1 !important;
+}
+
+/* Char counter & reason-modal helper text */
+body[data-theme='dark'] .char-counter,
+body[data-theme='dark'] .reason-modal small {
+    color: #64748b !important;
+}
+
+/* Document upload box text */
+body[data-theme='dark'] .document-box {
+    color: #94a3b8 !important;
+}
+
+/* Reject / Close / Cancel buttons */
+body[data-theme='dark'] .modal-reject-btn,
+body[data-theme='dark'] .modal-close-footer-btn,
+body[data-theme='dark'] .approve-cancel-btn,
+body[data-theme='dark'] .cancel-btn {
+    background-color: #0f172a !important;
+    border-color: #4b5563 !important;
+    color: #e5e7eb !important;
+}
+
+body[data-theme='dark'] .modal-reject-btn:hover,
+body[data-theme='dark'] .modal-close-footer-btn:hover,
+body[data-theme='dark'] .approve-cancel-btn:hover,
+body[data-theme='dark'] .cancel-btn:hover {
+    background-color: #1e293b !important;
+}
+
+/* close-btn inside reason / success modals (dark text in light mode) */
+body[data-theme='dark'] .reason-modal .close-btn,
+body[data-theme='dark'] .success-modal .close-btn {
+    color: #cbd5e1 !important;
+}
+
+/* Success modal text */
+body[data-theme='dark'] .success-modal p {
+    color: #cbd5e1 !important;
+}
+
+/* Toggle tabs — All / My Team */
+body[data-theme='dark'] .toggle-tab-container {
+    background-color: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .toggle-tab-btn {
+    background-color: #1a1f2e !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .toggle-tab-btn.active {
+    background-color: #12b3e6 !important;
+    color: #ffffff !important;
+}
+
+/* Summary cards on leave approval page */
+body[data-theme='dark'] .summary-card-leave {
+    background-color: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .card-text-block strong {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .sub-text {
+    color: #64748b !important;
+}
+
+/* MyTeam table header */
+body[data-theme='dark'] .myteam-table th {
+    background-color: #1a1f2e !important;
+    color: #ffffff !important;
+    border-bottom-color: #2d334a !important;
+}
+
+/* ── LeaveApproval — reason & success modal overlays dark mode ──── */
+body[data-theme='dark'] .reason-modal-overlay,
+body[data-theme='dark'] .success-modal-overlay {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+body[data-theme='dark'] .reason-modal {
+    background-color: #1a1f2e !important;
+    color: #e5e7eb !important;
+}
+
+body[data-theme='dark'] .reason-modal h3 {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .reason-modal textarea {
+    background-color: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #e5e7eb !important;
+}
+
+body[data-theme='dark'] .reason-modal small {
+    color: #64748b !important;
+}
+
+body[data-theme='dark'] .reason-close-btn,
+body[data-theme='dark'] .success-close-btn {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .reason-cancel-btn {
+    background-color: #0f172a !important;
+    border-color: #4b5563 !important;
+    color: #e5e7eb !important;
+}
+
+body[data-theme='dark'] .reason-cancel-btn:hover {
+    background-color: #1e293b !important;
+}
+
+/* ==========================================================================
+   FORCE LIGHT THEME FOR AUTH PAGES (LOGIN / REGISTER)
+   ========================================================================== */
+/* Force full body background for auth pages in dark mode */
+body[data-theme='dark']:has(.admin-login-container),
+body[data-theme='dark']:has(.admin-register-container),
+body[data-theme='dark']:has(.employee-login-container),
+body[data-theme='dark']:has(.employee-register-container) {
+    background-color: #ffffff !important;
+}
+
+body[data-theme='dark'] .admin-login-container,
+body[data-theme='dark'] .admin-register-container,
+body[data-theme='dark'] .employee-login-container,
+body[data-theme='dark'] .employee-register-container {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    min-height: 100vh;
+}
+
+body[data-theme='dark'] .admin-login-container .login-left,
+body[data-theme='dark'] .admin-register-container .register-left,
+body[data-theme='dark'] .employee-login-container .login-left,
+body[data-theme='dark'] .employee-register-container .register-left {
+    background: #eaf9fd !important;
+}
+
+body[data-theme='dark'] .admin-login-container .login-form-wrapper,
+body[data-theme='dark'] .admin-register-container .register-form-wrapper,
+body[data-theme='dark'] .employee-login-container .login-form-wrapper,
+body[data-theme='dark'] .employee-register-container .register-form-wrapper {
+    background: #ffffff !important;
+}
+
+body[data-theme='dark'] .admin-login-container h5,
+body[data-theme='dark'] .admin-register-container h5,
+body[data-theme='dark'] .employee-login-container h5,
+body[data-theme='dark'] .employee-register-container h5 {
+    color: #19bde8 !important; 
+    font-weight: 600 !important;
+}
+
+body[data-theme='dark'] .admin-login-container .email-input,
+body[data-theme='dark'] .admin-register-container .form-control,
+body[data-theme='dark'] .employee-login-container .email-input,
+body[data-theme='dark'] .employee-register-container .form-control {
+    background-color: #f5f6f8 !important;
+    color: #333333 !important;
+    border: 1px solid #b8c2cc !important; 
+}
+
+body[data-theme='dark'] .admin-login-container h2,
+body[data-theme='dark'] .admin-login-container h3,
+body[data-theme='dark'] .admin-login-container h4,
+body[data-theme='dark'] .admin-login-container p,
+body[data-theme='dark'] .admin-login-container label,
+body[data-theme='dark'] .admin-register-container h2,
+body[data-theme='dark'] .admin-register-container h3,
+body[data-theme='dark'] .admin-register-container h4,
+body[data-theme='dark'] .admin-register-container p,
+body[data-theme='dark'] .admin-register-container label,
+body[data-theme='dark'] .employee-login-container h2,
+body[data-theme='dark'] .employee-login-container h3,
+body[data-theme='dark'] .employee-login-container h4,
+body[data-theme='dark'] .employee-login-container p,
+body[data-theme='dark'] .employee-login-container label,
+body[data-theme='dark'] .employee-register-container h2,
+body[data-theme='dark'] .employee-register-container h3,
+body[data-theme='dark'] .employee-register-container h4,
+body[data-theme='dark'] .employee-register-container p,
+body[data-theme='dark'] .employee-register-container label {
+    color: #000000 !important;
+}
+
+body[data-theme='dark'] .admin-login-container .login-heading,
+body[data-theme='dark'] .admin-login-container .login-subheading,
+body[data-theme='dark'] .admin-register-container .register-heading,
+body[data-theme='dark'] .admin-register-container .register-subheading {
+     color: #030303 !important;
+}
+
+body[data-theme='dark'] .custom-google-btn,
+body[data-theme='dark'] .google-btn {
+    background-color: #e7faff !important;
+    border: 1px solid #d9f4ff !important;
+}
+
+body[data-theme='dark'] .custom-google-btn span,
+body[data-theme='dark'] .google-btn span {
+    color: #008eb2 !important; /* Darker blue for better contrast */
+}
+
+body[data-theme='dark'] .email-input::placeholder,
+body[data-theme='dark'] .form-control::placeholder {
+    color: #9ca3af !important;
+}
+
+body[data-theme='dark'] .login-link,
+body[data-theme='dark'] .signup-page,
+body[data-theme='dark'] .signup-page span,
+body[data-theme='dark'] .forgot-password-link,
+body[data-theme='dark'] .signup-text,
+body[data-theme='dark'] .signup-text span {
+    color: #19bde8 !important;
+    font-weight: 600 !important;
+}
+
+body[data-theme='dark'] .signup-text {
+    color: #333333 !important;
+}
+
+body[data-theme='dark'] .remember-me-checkbox label {
+    color: #333333 !important;
+}
+
+body[data-theme='dark'] .admin-login-container .form-check-input,
+body[data-theme='dark'] .admin-register-container .form-check-input,
+body[data-theme='dark'] .employee-login-container .form-check-input,
+body[data-theme='dark'] .employee-register-container .form-check-input {
+    background-color: #ffffff !important;
+    border: 1px solid #ced4da !important;
+    accent-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .terms-checkbox {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 3px !important;
+    cursor: pointer !important;
+    position: relative !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin-top: -2px !important;
+}
+
+body[data-theme='dark'] .terms-checkbox:checked {
+    background-color: #19bde8 !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .terms-checkbox:checked::after {
+    content: '' !important;
+    position: absolute !important;
+    left: 5px !important;
+    top: 2px !important;
+    width: 4px !important;
+    height: 8px !important;
+    border: solid white !important;
+    border-width: 0 2px 2px 0 !important;
+    transform: rotate(45deg) !important;
+}
+
+body[data-theme='dark'] .admin-login-container .form-check-input:checked,
+body[data-theme='dark'] .admin-register-container .form-check-input:checked,
+body[data-theme='dark'] .employee-login-container .form-check-input:checked,
+body[data-theme='dark'] .employee-register-container .form-check-input:checked {
+    background-color: #19bde8 !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .signup-text span:not(.signup-page),
+body[data-theme='dark'] .terms-label {
+    color: #333333 !important;
+    font-weight: 400 !important;
+}
+
+body[data-theme='dark'] .terms-link {
+    color: #19bde8 !important;
+    font-weight: 600 !important;
+}
+
+/* Force password 'eye' icon visibility */
+body[data-theme='dark'] .admin-login-container span[style*="position: absolute"],
+body[data-theme='dark'] .admin-register-container span[style*="position: absolute"],
+body[data-theme='dark'] .employee-login-container span[style*="position: absolute"],
+body[data-theme='dark'] .employee-register-container span[style*="position: absolute"] {
+    color: #666666 !important;
+}
+
+/* Force light theme for Forgot Password Popup with high specificity */
+.forgot-password-modal.modal .modal-content,
+body[data-theme='dark'] .forgot-password-modal.modal .modal-content {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+.forgot-password-modal.modal .modal-body {
+    background-color: #ffffff !important;
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal .forgot-password-title {
+    color: #0c1e35 !important; /* Even darker navy as requested */
+    font-size: 50px !important;
+    font-weight: 300 !important;
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal .forgot-password-desc {
+    color: #64748b !important;
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal .forgot-password-label {
+    color: #0c1e35 !important;
+    font-weight: 600 !important;
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal .forgot-password-input {
+    background-color: #ffffff !important;
+    color: #0c1e35 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal .forgot-password-input::placeholder {
+    color: #4b5563 !important; /* Darker placeholder as per image */
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal .forgot-password-btn {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+body[data-theme='dark'] .forgot-password-modal.modal span[style*="position: absolute"] {
+    color: #666666 !important;
 }
