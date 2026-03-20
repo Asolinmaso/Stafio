@@ -401,3 +401,94 @@
 		font-size: 18px;
 	}
 }
+
+/* ================================================
+   Dark Theme Support for My Leave (Employee)
+   ================================================ */
+body[data-theme='dark'] .myleave-container1 {
+    background-color: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .page-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .emp-summary-card {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+body[data-theme='dark'] .emp-summary-card strong,
+body[data-theme='dark'] .emp-summary-card .h5 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .emp-summary-card p {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .btn-filter,
+body[data-theme='dark'] .btn-regularization {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .leave-table table {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .leave-table th {
+    background: #0f172a !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .leave-table td {
+    color: #e2e8f0 !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .page-controls button {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .page-controls button.active {
+    background: #19bde8 !important;
+    color: #ffffff !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .apply-modal,
+body[data-theme='dark'] .empl-app-filter-dropdown-box {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .apply-modal-header {
+    background: #12acd3 !important;
+}
+
+body[data-theme='dark'] .filter-field label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .filter-field input,
+body[data-theme='dark'] .filter-field select {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .empl-app-filter-popup-header h3 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .empl-app-filter-popup-footer {
+    border-top-color: #2d334a !important;
+}

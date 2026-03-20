@@ -10,7 +10,7 @@ import { IoClose } from "react-icons/io5";
 import apiClient from "../../../utils/apiClient";
 
 export default function MyLeave() {
-	const { t } = useContext(SettingsContext);
+	const { t, fmtDate } = useContext(SettingsContext);
 	const navigate = useNavigate();
 	const [leaveData, setLeaveData] = useState([]);
 	const [leaveBalance, setLeaveBalance] = useState([]);
@@ -264,12 +264,13 @@ export default function MyLeave() {
 											{String(indexOfFirstRow + index + 1).padStart(2, "0")}
 										</td>
 										<td>{leave.type}</td>
-										<td>{leave.date}</td>
+										<td>{fmtDate(leave.date)}</td>
 										<td>{leave.reason}</td>
 										<td>
-											{leave.requestDate}
+											{fmtDate(leave.requestDate)}
 											<span className="status">{leave.status}</span>
 										</td>
+
 										<td className="action-icons">
 											<FaEdit className="edit-icon" />
 											<FaTimesCircle className="delete-icon" />

@@ -257,7 +257,7 @@ input:checked + .slider:before {
 }
 
 [data-theme="dark"] {
-	--bg-color: #c7c7c7;
+	--bg-color: #1a1f2e;
 	--text-color: #ffffff;
 }
 

@@ -93,11 +93,11 @@ export default function RegularizationApproval() {
           prev.map((item) =>
             item.id === selectedLeave.id
               ? {
-                  ...item,
-                  status: "Approved",
-                  approvedBy: item.approvedBy || currentUserName,
-                  approvalReason: modalReason,
-                }
+                ...item,
+                status: "Approved",
+                approvedBy: item.approvedBy || currentUserName,
+                approvalReason: modalReason,
+              }
               : item,
           ),
         );
@@ -126,11 +126,11 @@ export default function RegularizationApproval() {
           prev.map((item) =>
             item.id === selectedLeave.id
               ? {
-                  ...item,
-                  status: "Rejected",
-                  approvedBy: item.approvedBy || currentUserName,
-                  rejectionReason: modalReason,
-                }
+                ...item,
+                status: "Rejected",
+                approvedBy: item.approvedBy || currentUserName,
+                rejectionReason: modalReason,
+              }
               : item,
           ),
         );
@@ -333,13 +333,12 @@ export default function RegularizationApproval() {
                       <div className="request-status">
                         <span>{emp.requestDate}</span>
                         <p
-                          className={`status-badge ${
-                            emp.status === "Pending"
+                          className={`status-badge ${emp.status === "Pending"
                               ? "pending"
                               : emp.status === "Rejected"
                                 ? "rejected"
                                 : "approved"
-                          }`}
+                            }`}
                         >
                           {emp.status}
                         </p>
@@ -485,8 +484,8 @@ export default function RegularizationApproval() {
             <div className="ra-modal-footer">
               <span className="ra-watermark"></span>
               {selectedLeave &&
-              selectedLeave.status &&
-              selectedLeave.status.toLowerCase() === "pending" ? (
+                selectedLeave.status &&
+                selectedLeave.status.toLowerCase() === "pending" ? (
                 <div className="ra-footer-btns">
                   <button
                     className="ra-approve-pill-btn"

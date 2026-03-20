@@ -67,13 +67,13 @@ const Employee = () => {
   // Helper to generate the next Employee ID
   const generateNextId = () => {
     if (!allEmployees || allEmployees.length === 0) return "1001";
-    
+
     const numericIds = allEmployees
       .map(emp => parseInt(emp.empId))
       .filter(id => !isNaN(id));
-      
+
     if (numericIds.length === 0) return "1001";
-    
+
     return (Math.max(...numericIds) + 1).toString();
   };
 
@@ -696,8 +696,8 @@ const Employee = () => {
                           id="profileImageInput"
                           onChange={handleImageChange}
                         />
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           className="new-empl-upload-btn1"
                           onClick={() => document.getElementById("profileImageInput").click()}
                         >

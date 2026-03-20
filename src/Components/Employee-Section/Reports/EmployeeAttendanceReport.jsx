@@ -8,6 +8,7 @@ import "./EmployeeAttendanceReport.css";
 
 const EmployeeAttendanceReport = () => {
   const navigate = useNavigate();
+
   const { fmtDate } = useContext(SettingsContext);
 
   const [allData, setAllData] = useState([]);
@@ -90,12 +91,9 @@ const EmployeeAttendanceReport = () => {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
-    return fmtDate(dateStr) || new Date(dateStr).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return fmtDate(dateStr);
   };
+
 
   const resetPage = () => setCurrentPage(1);
 
@@ -376,11 +374,7 @@ const EmployeeAttendanceReport = () => {
                 </svg>
                 <span className="ear__dp-label">
                   {filterDate
-                    ? new Date(filterDate).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })
+                    ? fmtDate(filterDate)
                     : "Select date"}
                 </span>
                 <svg

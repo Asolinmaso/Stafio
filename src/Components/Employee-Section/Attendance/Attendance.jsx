@@ -56,12 +56,9 @@ const Attendance = () => {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
-    return fmtDate(dateStr) || new Date(dateStr).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    return fmtDate(dateStr);
   };
+
 
   const resetPage = () => setCurrentPage(1);
 
@@ -150,85 +147,41 @@ const Attendance = () => {
 
         {/* ── Summary Cards ── */}
         <div className="att__cards">
-          {/* Card 1 — black circle */}
+          {/* Card 1 — Worked Days */}
           <div className="att__card">
-            <svg
-              className="att__card-svg"
-              viewBox="0 0 36 36"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="18" cy="18" r="16" stroke="#1a1a2e" strokeWidth="2" />
-              <polyline
-                points="11,18 16,23 25,13"
-                stroke="#4ade80"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg className="att__card-svg" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="12" className="att__card-icon-circle att__card-icon-circle--blue" strokeWidth="1.8" />
+              <polyline points="8,14 12,18 20,10" className="att__card-icon-path" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div className="att__card-num">{stats.working_days}</div>
             <div className="att__card-lbl">Worked Days</div>
           </div>
 
-          {/* Card 2 — red circle */}
+          {/* Card 2 — Total Leaves */}
           <div className="att__card">
-            <svg
-              className="att__card-svg"
-              viewBox="0 0 36 36"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="18" cy="18" r="16" stroke="#dc3545" strokeWidth="2" />
-              <polyline
-                points="11,18 16,23 25,13"
-                stroke="#4ade80"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg className="att__card-svg" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="12" className="att__card-icon-circle att__card-icon-circle--red" strokeWidth="1.8" />
+              <polyline points="8,14 12,18 20,10" className="att__card-icon-path" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div className="att__card-num">{stats.total_leaves}</div>
             <div className="att__card-lbl">Total Leaves</div>
           </div>
 
-          {/* Card 3 — yellow/gold circle */}
+          {/* Card 3 — Late Login */}
           <div className="att__card">
-            <svg
-              className="att__card-svg"
-              viewBox="0 0 36 36"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="18" cy="18" r="16" stroke="#e8a800" strokeWidth="2" />
-              <polyline
-                points="11,18 16,23 25,13"
-                stroke="#4ade80"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg className="att__card-svg" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="12" className="att__card-icon-circle att__card-icon-circle--yellow" strokeWidth="1.8" />
+              <polyline points="8,14 12,18 20,10" className="att__card-icon-path" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div className="att__card-num">{stats.late_logins}</div>
             <div className="att__card-lbl">Late Login</div>
           </div>
 
-          {/* Card 4 — green circle */}
+          {/* Card 4 — On Time Login */}
           <div className="att__card">
-            <svg
-              className="att__card-svg"
-              viewBox="0 0 36 36"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="18" cy="18" r="16" stroke="#28a745" strokeWidth="2" />
-              <polyline
-                points="11,18 16,23 25,13"
-                stroke="#4ade80"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg className="att__card-svg" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="12" className="att__card-icon-circle att__card-icon-circle--green" strokeWidth="1.8" />
+              <polyline points="8,14 12,18 20,10" className="att__card-icon-path" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div className="att__card-num">{stats.on_time_logins}</div>
             <div className="att__card-lbl">On Time Login</div>

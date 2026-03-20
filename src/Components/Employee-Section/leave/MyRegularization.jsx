@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { SettingsContext } from "../Settings-/SettingsContext";
+
 import "./MyRegularization.css";
 import { FaEdit, FaTimesCircle, FaFilter, FaUpload } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
@@ -10,7 +12,9 @@ import group10 from "../../../assets/Group10.png";
 import apiClient from "../../../utils/apiClient";
 
 export default function MyRegularization() {
+  const { fmtDate } = useContext(SettingsContext);
   const [showModal, setShowModal] = useState(false);
+
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -362,7 +366,7 @@ export default function MyRegularization() {
                 <tr key={row.id}>
                   <td>{String((currentPage - 1) * rowsPerPage + index + 1).padStart(2, "0")}</td>
                   <td>{row.attendanceType}</td>
-                  <td>{row.date}</td>
+                  <td>{fmtDate(row.date)}</td>
                   <td>{row.reason}</td>
                   <td>
                     <span

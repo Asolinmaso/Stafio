@@ -25,13 +25,13 @@
   flex-grow: 1;
   height: 100vh;
   overflow-y: auto;
-  background: #eff5ff !important;
+  background: #eff5ff;
   margin: 0px;
 }
 
 .container-wrapper {
   font-family: 'Montserrat', sans-serif;
-  background-color: #eff5ff !important;
+  background-color: #eff5ff;
 }
 
 .username h1 {
@@ -399,6 +399,28 @@
 
 .leave-notif-close:hover {
   opacity: 0.6;
+}
+
+/* Dark theme overrides for Employee Leave Notification Banner */
+body[data-theme='dark'] .leave-notif-banner {
+  background: rgba(25, 189, 232, 0.08) !important;
+  border: 1px solid rgba(25, 189, 232, 0.25) !important;
+}
+
+body[data-theme='dark'] .leave-notif-text,
+body[data-theme='dark'] .leave-notif-status-approved,
+body[data-theme='dark'] .leave-notif-status-rejected {
+  color: #c8e6f5 !important;
+}
+
+body[data-theme='dark'] .leave-notif-close {
+  background: transparent !important;
+  color: #a5f3ff !important;
+}
+
+body[data-theme='dark'] .leave-notif-close:hover {
+  color: #ffffff !important;
+  opacity: 0.8;
 }
 
 .break-items-list {

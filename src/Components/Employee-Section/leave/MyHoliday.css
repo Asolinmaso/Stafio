@@ -535,3 +535,131 @@
   opacity: 0.4;
   cursor: default;
 }
+
+/* ================================================
+   Dark Theme Support for My Holiday (Employee)
+   ================================================ */
+body[data-theme='dark'] .myholiday-container {
+    background-color: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .page-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .view-toggle {
+    background: #1a1f2e !important;
+}
+
+body[data-theme='dark'] .toggle-btn {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .toggle-btn.active {
+    background: #2d334a !important;
+    color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .wall-calendar-card {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .wall-cal-headers {
+    background: #0f172a !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .wall-cal-header-cell {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .wall-day-cell {
+    border-right-color: #2d334a !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .wall-day-cell:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body[data-theme='dark'] .wall-day-empty {
+    background: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .wall-day-number {
+    color: #e2e8f0 !important;
+}
+
+body[data-theme='dark'] .wall-sunday {
+    background: rgba(229, 57, 53, 0.05) !important;
+}
+
+body[data-theme='dark'] .wall-holiday-national {
+    background: linear-gradient(135deg, rgba(103, 58, 183, 0.2) 0%, rgba(103, 58, 183, 0.1) 100%) !important;
+}
+
+body[data-theme='dark'] .wall-holiday-name {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .wall-cal-legend {
+    background: #1a1f2e !important;
+    border-top-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .legend-item {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .upcoming-holidays-list {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .upcoming-holidays-list h3 {
+    color: #ffffff !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .upcoming-card {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .card-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .holiday-table-container {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .holiday-table th {
+    background: #0f172a !important;
+    color: #94a3b8 !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .holiday-table td {
+    color: #e2e8f0 !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .holiday-table tr:hover td {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body[data-theme='dark'] .page-btn,
+body[data-theme='dark'] .page-number {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .page-number.active {
+    background: #19bde8 !important;
+    color: #ffffff !important;
+    border-color: #19bde8 !important;
+}

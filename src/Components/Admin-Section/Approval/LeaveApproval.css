@@ -1385,3 +1385,109 @@
 
 /* ── Reason Modal Overlay (above Leave Details modal at z-index 9999) ─────── */
 /* Duplicate cleanup handled above */
+/* Dark Theme support for Leave Approval */
+body[data-theme='dark'] .leave-approval-layout,
+body[data-theme='dark'] .leave-approval-main {
+    background: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .summary-card-leave {
+    background: #1a1f2e !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+body[data-theme='dark'] .summary-card-leave strong {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .leave-table {
+    background: #1a1f2e !important;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+body[data-theme='dark'] .leave-table th {
+    background: #1a1f2e !important;
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .leave-table tbody tr {
+    background: transparent !important;
+    border-bottom: 1px dashed #2d334a !important;
+}
+
+body[data-theme='dark'] .leave-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body[data-theme='dark'] .emp-name {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .right-tab-btn {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .right-tab-btn--active {
+    background: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .right-search-input-new,
+body[data-theme='dark'] .right-btn-filter-new,
+body[data-theme='dark'] .right-sort-select-new {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .page-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .approve-leave-modal,
+body[data-theme='dark'] .reason-modal,
+body[data-theme='dark'] .success-modal {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    color: #ffffff !important;
+}
+
+/* Pagination Dark Mode */
+body[data-theme='dark'] .showing {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .showing select {
+    background-color: #1a1f2e !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .page-btn {
+    background-color: #111827 !important;
+    border-color: #2d334a !important;
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .page-btn.active {
+    background-color: #12b3e6 !important;
+    border-color: #12b3e6 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .page-btn:hover:not(:disabled) {
+    background-color: #1a1f2e !important;
+    border-color: #12b3e6 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .page-btn:disabled {
+    background-color: #111827 !important;
+    color: #475569 !important;
+    border-color: #1f2937 !important;
+    opacity: 0.5;
+}

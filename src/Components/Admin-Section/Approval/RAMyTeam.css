@@ -667,3 +667,116 @@
     right: 280px;
   }
 }
+
+/* ================================================
+   Dark Theme Support for RA My Team Page
+   ================================================ */
+body[data-theme='dark'] .ra-page {
+    background: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .ra-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-tabs {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-tab {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .ra-tab:first-child {
+    border-right-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-tab.active {
+    background: #12b3e6 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-search,
+body[data-theme='dark'] .ra-filter-btn,
+body[data-theme='dark'] .ra-sort,
+body[data-theme='dark'] .ra-view-btn {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-table-card {
+    background: #1a1f2e !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+body[data-theme='dark'] .ra-table thead th {
+    background: #1a1f2e !important;
+    color: #e2e8f0 !important;
+    border-bottom: 2px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-table tbody td {
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-emp-name {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-status.pending {
+    background-color: rgba(245, 177, 0, 0.2) !important;
+    color: #fbbf24 !important;
+    border-color: rgba(245, 177, 0, 0.4) !important;
+}
+
+body[data-theme='dark'] .ra-status.approved {
+    background-color: rgba(24, 169, 87, 0.2) !important;
+    color: #4ade80 !important;
+    border-color: rgba(24, 169, 87, 0.4) !important;
+}
+
+body[data-theme='dark'] .ra-status.rejected {
+    background-color: rgba(229, 57, 53, 0.2) !important;
+    color: #f87171 !important;
+    border-color: rgba(229, 57, 53, 0.4) !important;
+}
+
+body[data-theme='dark'] .ra-page-btn,
+body[data-theme='dark'] .ra-page-number {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-page-number.active {
+    background: #12b3e6 !important;
+    color: #ffffff !important;
+    border-color: #12b3e6 !important;
+}
+
+body[data-theme='dark'] .ra-filter-card {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5) !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-filter-field label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .ra-filter-field input,
+body[data-theme='dark'] .ra-filter-field select {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-reset-btn {
+    background: #2d334a !important;
+    color: #cbd5e1 !important;
+}
+

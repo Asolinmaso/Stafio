@@ -817,3 +817,161 @@
     width: 760px;
   }
 }
+
+/* ================================================
+   Dark Theme Support for My Team Page
+   ================================================ */
+body[data-theme='dark'] .myteam-layout,
+body[data-theme='dark'] .myteam-page {
+    background: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .myteam-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .toggle-tab-container {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .toggle-tab-btn {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .toggle-tab-btn.active {
+    background: #12b3e6 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .right-btn-filter-new,
+body[data-theme='dark'] .right-sort-select {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .filter-dropdown {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+body[data-theme='dark'] .filter-heading {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .filter-field label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .filter-field input,
+body[data-theme='dark'] .filter-field select {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .reset-btn {
+    background: #2d334a !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .myteam-table {
+    background: #1a1f2e !important;
+}
+
+body[data-theme='dark'] .myteam-table th {
+    background: #1a1f2e !important;
+    color: #e2e8f0 !important;
+    border-bottom: 2px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .myteam-table td {
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .myteam-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body[data-theme='dark'] .emp-name {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .emp-id {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .status-approved {
+    background-color: rgba(22, 163, 74, 0.2) !important;
+    color: #4ade80 !important;
+    border-color: rgba(22, 163, 74, 0.4) !important;
+}
+
+body[data-theme='dark'] .status-pending {
+    background-color: rgba(202, 138, 4, 0.2) !important;
+    color: #fbbf24 !important;
+    border-color: rgba(202, 138, 4, 0.4) !important;
+}
+
+body[data-theme='dark'] .status-rejected {
+    background-color: rgba(220, 38, 38, 0.2) !important;
+    color: #f87171 !important;
+    border-color: rgba(220, 38, 38, 0.4) !important;
+}
+
+body[data-theme='dark'] .view-btn {
+    background: #19bde8 !important;
+    border-color: #19bde8 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .page-btn {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .page-btn.active {
+    background: #19bde8 !important;
+    color: #ffffff !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .showing {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .apply-leave-modal,
+body[data-theme='dark'] .reason-modal,
+body[data-theme='dark'] .success-modal {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .modal-header-blue {
+    background: #12acd3 !important;
+}
+
+body[data-theme='dark'] .form-left label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .form-left input,
+body[data-theme='dark'] .form-left textarea,
+body[data-theme='dark'] .date-item input,
+body[data-theme='dark'] .document-box {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .modal-reject-btn {
+    background: #1a1f2e !important;
+    border-color: #cbd5e1 !important;
+    color: #cbd5e1 !important;
+}
