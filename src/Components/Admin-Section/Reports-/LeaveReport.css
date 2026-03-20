@@ -104,7 +104,39 @@
 	color: #6b7280;
 	line-height: 1.2;
 }
-
 .attendance-graph {
 	margin-left: 30px;
 }
+
+/* ================================================
+   Dark Theme Support for Leave Report
+   ================================================ */
+body[data-theme='dark'] .leave-report-layout {
+    background-color: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .leave-report-header h2 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .leave-report-dropdown {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .leave-summary-card {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+body[data-theme='dark'] .leave-days {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .leave-type {
+    color: #94a3b8 !important;
+}
+
+

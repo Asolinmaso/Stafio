@@ -1,22 +1,21 @@
 import React, { createContext, useState, useEffect, useCallback, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import apiClient from "../../../utils/apiClient";
 
 export const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
-  // Use sessionStorage to ensure theme persists across reloads but resets on fresh login/logout
-  const [theme, setTheme] = useState(
-    sessionStorage.getItem("theme") || localStorage.getItem("theme") || "light"
-  );
+  const location = useLocation();
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [language, setLanguage] = useState(
     localStorage.getItem("language") || "english",
   );
   const [font, setFont] = useState(localStorage.getItem("font") || "default");
   const [dateFormat, setDateFormat] = useState(
-    localStorage.getItem("dateFormat") || "DD/MM/YYYY",
+    localStorage.getItem("dateFormat") || "DD MMM YYYY",
   );
   const [dateFormatEnabled, setDateFormatEnabled] = useState(
-    localStorage.getItem("dateFormatEnabled") === "true",
+    localStorage.getItem("dateFormatEnabled") !== "false", // Default to true if not explicitly false
   );
 
   const isFirstMount = useRef(true);
@@ -32,8 +31,8 @@ export const SettingsProvider = ({ children }) => {
 
       // Logic: Only apply Admin Default if there is no session-specific choice already active
       if (!sessionStorage.getItem("theme")) {
-        const adminDefaultTheme = userRole === "admin" 
-          ? (globalData.admin_theme || "dark") 
+        const adminDefaultTheme = userRole === "admin"
+          ? (globalData.admin_theme || "dark")
           : (globalData.user_theme || "light");
         setTheme(adminDefaultTheme);
       }
@@ -45,7 +44,7 @@ export const SettingsProvider = ({ children }) => {
       if (!sessionStorage.getItem("font")) {
         setFont(globalData.system_font || "default");
       }
-      
+
       setDateFormat(globalData.date_format || "DD/MM/YYYY");
       setIsInitialLoad(false);
     } catch (err) {
@@ -110,31 +109,47 @@ export const SettingsProvider = ({ children }) => {
         }
       }
 
-      const day   = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const year  = d.getFullYear();
+      const day = String(d.getDate()).padStart(2, "0");
+      const monthNum = String(d.getMonth() + 1).padStart(2, "0");
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthName = monthNames[d.getMonth()];
+      const year = d.getFullYear();
 
       switch (dateFormat) {
-        case "MM/DD/YYYY": return `${month}/${day}/${year}`;
-        case "YYYY/MM/DD": return `${year}/${month}/${day}`;
-        case "YYYY-MM-DD": return `${year}-${month}-${day}`;
-        case "DD-MM-YYYY": return `${day}-${month}-${year}`;
-        default:           return `${day}/${month}/${year}`; // DD/MM/YYYY
+        case "MM/DD/YYYY": return `${monthNum}/${day}/${year}`;
+        case "YYYY/MM/DD": return `${year}/${monthNum}/${day}`;
+        case "YYYY-MM-DD": return `${year}-${monthNum}-${day}`;
+        case "DD-MM-YYYY": return `${day}-${monthNum}-${year}`;
+        case "DD MMM YYYY": return `${day} ${monthName} ${year}`;
+        case "MMM DD YYYY": return `${monthName} ${day} ${year}`;
+        case "MMM-DD-YYYY": return `${monthName}-${day}-${year}`;
+        default: return `${day}/${monthNum}/${year}`; // DD/MM/YYYY
       }
     },
     [dateFormat, dateFormatEnabled],
   );
 
-  // Apply theme + font globally when changed
-  useEffect(() => {
-    document.body.setAttribute("data-theme", theme);
+  const applyTheme = () => {
+    const p = (location.pathname || window.location.pathname || "/").toLowerCase();
+    const isLightOnlyPage =
+      p === "/" ||
+      p === "" ||
+      p.includes("login") ||
+      p.includes("register");
 
-    const fontValue =
-      font === "default"
-        ? "'Montserrat', sans-serif"
-        : font === "arial"
-          ? "Arial, sans-serif"
-          : "'Roboto', sans-serif";
+    const effectiveTheme = isLightOnlyPage ? "light" : (theme || "light");
+    document.body.setAttribute("data-theme", effectiveTheme);
+  };
+
+  // Immediate theme application using layout effect to avoid flashes
+  useEffect(() => {
+    applyTheme();
+
+    const fontValue = font === "default"
+      ? "'Montserrat', sans-serif"
+      : font === "arial"
+        ? "Arial, sans-serif"
+        : "'Roboto', sans-serif";
 
     document.documentElement.style.setProperty("--app-font", fontValue);
     document.body.style.fontFamily = fontValue;
@@ -144,7 +159,8 @@ export const SettingsProvider = ({ children }) => {
     localStorage.setItem("font", font);
     localStorage.setItem("dateFormat", dateFormat);
     localStorage.setItem("dateFormatEnabled", String(dateFormatEnabled));
-  }, [theme, language, font, dateFormat, dateFormatEnabled]);
+  }, [theme, language, font, dateFormat, dateFormatEnabled, location.pathname]);
+
 
   // Shared translations for context-level use
   const translations = {

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { SettingsContext } from "../Settings-/SettingsContext";
+
 import "./MyRegularization.css";
 import { FaEdit, FaTimesCircle, FaFilter, FaUpload } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
@@ -10,7 +12,9 @@ import group10 from "../../../assets/Group10.png";
 import apiClient from "../../../utils/apiClient";
 
 export default function MyRegularization() {
+	const { fmtDate } = useContext(SettingsContext);
 	const [showModal, setShowModal] = useState(false);
+
 	const [showFilterPopup, setShowFilterPopup] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
 
@@ -185,7 +189,7 @@ export default function MyRegularization() {
 		} catch (error) {
 			alert(
 				error.response?.data?.message ||
-					"Something went wrong. Please try again.",
+				"Something went wrong. Please try again.",
 			);
 		}
 	};
@@ -391,13 +395,12 @@ export default function MyRegularization() {
 										<td>{row.reason}</td>
 										<td>
 											<span
-												className={`status-badge ${
-													row.status === "Approved"
+												className={`status-badge ${row.status === "Approved"
 														? "approved"
 														: row.status === "Pending"
 															? "pending"
 															: "rejected"
-												}`}
+													}`}
 											>
 												{row.status}
 											</span>

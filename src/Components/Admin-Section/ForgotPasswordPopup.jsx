@@ -101,31 +101,32 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
   return (
     <>
       {/* STEP 1: ENTER EMAIL */}
-      <Modal show={show && step === 1} onHide={handleCloseAll} centered>
+      <Modal show={show && step === 1} onHide={handleCloseAll} centered className="forgot-password-modal">
         <Modal.Body className="p-4">
-          <h3 className="mb-3">Forgot Password</h3>
-          <p>Enter your email to receive OTP.</p>
+          <h3 className="mb-3 forgot-password-title">Forgot password</h3>
+          <p className="forgot-password-desc">Enter your email for the verification proccess,we will send 4 digits code to your email.</p>
 
           {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
 
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
+          <Form.Group className="mb-4">
+            <Form.Label className="forgot-password-label">E mail</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Enter email address"
+              className="forgot-password-input"
+              placeholder="enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
 
-          <Button className="w-100" onClick={handleSendOtp}>
-            SEND OTP
+          <Button className="w-100 forgot-password-btn" onClick={handleSendOtp}>
+            CONTINUE
           </Button>
         </Modal.Body>
       </Modal>
 
       {/* STEP 2: ENTER OTP */}
-      <Modal show={show && step === 2} onHide={handleCloseAll} centered>
+      <Modal show={show && step === 2} onHide={handleCloseAll} centered className="forgot-password-modal">
         <Modal.Body className="p-4">
           <h4 className="mb-3">Verify OTP</h4>
 
@@ -148,7 +149,7 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
       </Modal>
 
       {/* STEP 3: RESET PASSWORD */}
-      <Modal show={show && step === 3} onHide={handleCloseAll} centered>
+      <Modal show={show && step === 3} onHide={handleCloseAll} centered className="forgot-password-modal">
         <Modal.Body className="p-4">
           <h4 className="mb-3">Reset Password</h4>
 
@@ -205,7 +206,7 @@ const ForgotPasswordPopup = ({ show, onClose }) => {
       </Modal>
 
       {/* STEP 4: SUCCESS */}
-      <Modal show={show && step === 4} onHide={handleCloseAll} centered>
+      <Modal show={show && step === 4} onHide={handleCloseAll} centered className="forgot-password-modal">
         <Modal.Body className="p-4 text-center">
           <h4>Password Updated</h4>
           <p>Your password has been successfully updated.</p>

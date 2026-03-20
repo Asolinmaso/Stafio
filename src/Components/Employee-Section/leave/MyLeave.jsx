@@ -10,7 +10,7 @@ import { IoClose } from "react-icons/io5";
 import apiClient from "../../../utils/apiClient";
 
 export default function MyLeave() {
-  const { t } = useContext(SettingsContext);
+  const { t, fmtDate } = useContext(SettingsContext);
   const navigate = useNavigate();
   const [leaveData, setLeaveData] = useState([]);
   const [leaveBalance, setLeaveBalance] = useState([]);
