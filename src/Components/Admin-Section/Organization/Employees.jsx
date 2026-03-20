@@ -279,8 +279,7 @@ const Employee = () => {
       switch (sortBy) {
         case "name":
           return a.name.localeCompare(b.name);
-        case "department":
-          return a.department.localeCompare(b.department);
+        
         case "status":
           return a.status.localeCompare(b.status);
         case "newest":
@@ -474,7 +473,6 @@ const Employee = () => {
                   <option value="newest">Sort By : Newest</option>
                   <option value="oldest">Sort By : Oldest</option>
                   <option value="name">Sort By : Name</option>
-                  <option value="department">Sort By : Department</option>
                   <option value="status">Sort By : Status</option>
                 </select>
               </div>
