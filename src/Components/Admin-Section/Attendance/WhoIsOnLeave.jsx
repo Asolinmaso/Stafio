@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaFilter, FaCalendarAlt } from "react-icons/fa";
 import apiClient from "../../../utils/apiClient";
+import { formatDate } from "../../../utils/dateFormat";
 import "./WhoIsOnLeave.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
@@ -8,31 +9,42 @@ import { useNavigate } from "react-router-dom";
 import group10 from "../../../assets/Group10.png";
 
 const WhoIsOnLeave = () => {
-  const [currentDate, setCurrentDate] = useState("");
   const [currentTime, setCurrentTime] = useState("");
   const [leaveList, setLeaveList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   // ✅ Calendar state
   const [selectedDate, setSelectedDate] = useState("");
 
-  // ✅ IMPORTANT: date input ref
+  // ✅ Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
+  // ✅ Date input ref
   const dateRef = useRef(null);
 
   // ✅ Filter popup state
   const [showFilter, setShowFilter] = useState(false);
 
-  // ✅ Filter input states
+  // ✅ Filter input states (inside popup — uncommitted)
   const [filterSearch, setFilterSearch] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterDuration, setFilterDuration] = useState("");
   const [filterFromDate, setFilterFromDate] = useState("");
   const [filterToDate, setFilterToDate] = useState("");
 
+  // ✅ Applied filter states (committed after Apply is clicked)
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [appliedType, setAppliedType] = useState("");
+  const [appliedDuration, setAppliedDuration] = useState("");
+  const [appliedFromDate, setAppliedFromDate] = useState("");
+  const [appliedToDate, setAppliedToDate] = useState("");
+
   const filterRef = useRef(null);
   const navigate = useNavigate();
 
-  // ✅ Live Date
+  // ✅ Fetch leave data from backend
   useEffect(() => {
     const fetchLeaveData = async () => {
       try {
@@ -48,7 +60,8 @@ const WhoIsOnLeave = () => {
     };
     fetchLeaveData();
   }, []);
-  // ✅ ONLY CHANGE: set today as default date (local time)
+
+  // ✅ Set today as default date
   useEffect(() => {
     const now = new Date();
     const year = now.getFullYear();
@@ -57,7 +70,7 @@ const WhoIsOnLeave = () => {
     setSelectedDate(`${year}-${month}-${day}`);
   }, []);
 
-  // ✅ ONLY CHANGE: format date like "07 Feb 2026"
+  // ✅ Format date like "07 Feb 2026"
   const formatDisplayDate = (dateStr) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -68,31 +81,40 @@ const WhoIsOnLeave = () => {
     });
   };
 
-  // Update time every second
+  // ✅ Parse any date string to comparable Date object
+  // Handles: "YYYY-MM-DD", "DD Mon YYYY" (e.g. "13 Mar 2026")
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
+    // Try direct parse (works for YYYY-MM-DD)
+    let d = new Date(dateStr);
+    if (!isNaN(d.getTime())) return d;
+    // Try DD Mon YYYY
+    const parts = dateStr.trim().split(" ");
+    if (parts.length === 3) {
+      d = new Date(`${parts[1]} ${parts[0]} ${parts[2]}`);
+      if (!isNaN(d.getTime())) return d;
+    }
+    return null;
+  };
+
+  // ✅ Update time every second
   useEffect(() => {
     const updateDate = () => {
       const now = new Date();
-      const date = now.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
-      setCurrentTime(now.toLocaleTimeString()); // Adding time update as well
+      setCurrentTime(now.toLocaleTimeString());
     };
-
     updateDate();
     const timer = setInterval(updateDate, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // ✅ Outside click close
+  // ✅ Close filter on outside click
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
         setShowFilter(false);
       }
     };
-
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
@@ -103,12 +125,109 @@ const WhoIsOnLeave = () => {
     setFilterDuration("");
     setFilterFromDate("");
     setFilterToDate("");
+    setAppliedSearch("");
+    setAppliedType("");
+    setAppliedDuration("");
+    setAppliedFromDate("");
+    setAppliedToDate("");
     setShowFilter(false);
+    setCurrentPage(1);
   };
 
   const handleApplyFilters = () => {
+    setAppliedSearch(filterSearch);
+    setAppliedType(filterType);
+    setAppliedDuration(filterDuration);
+    setAppliedFromDate(filterFromDate);
+    setAppliedToDate(filterToDate);
+    setCurrentPage(1);
     setShowFilter(false);
   };
+
+  // ✅ Full filtering logic — applies all committed filters
+  const filteredList = leaveList.filter((item) => {
+    // Quick search (live, not committed)
+    if (
+      searchTerm &&
+      !item.employee?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+      return false;
+
+    // Applied search (from filter popup)
+    if (
+      appliedSearch &&
+      !item.employee?.toLowerCase().includes(appliedSearch.toLowerCase())
+    )
+      return false;
+
+    // Applied leave type — backend sends "casual"/"sick"/"earned"
+    // Dropdown values are "casual"/"sick"/"earned" (match exact)
+    if (appliedType) {
+      const itemType = item.type?.toLowerCase() ?? "";
+      const filterT = appliedType.toLowerCase();
+      // Match either "casual" in "casual leave" OR directly
+      if (!itemType.includes(filterT) && !filterT.includes(itemType))
+        return false;
+    }
+
+    // Applied duration (e.g. "0.5 Days", "1 Day", "2 Days")
+    if (appliedDuration) {
+      const daysVal = parseFloat(item.days);
+      const durVal = parseFloat(appliedDuration);
+      if (!isNaN(daysVal) && !isNaN(durVal)) {
+        if (daysVal !== durVal) return false;
+      }
+    }
+
+    // Applied from/to date range (inclusive overlap)
+    if (appliedFromDate || appliedToDate) {
+      const itemFrom = parseDate(item.from);
+      const itemTo = parseDate(item.to);
+      if (appliedFromDate) {
+        const filterFrom = parseDate(appliedFromDate);
+        if (filterFrom && itemTo && itemTo < filterFrom) return false;
+      }
+      if (appliedToDate) {
+        const filterTo = parseDate(appliedToDate);
+        if (filterTo && itemFrom && itemFrom > filterTo) return false;
+      }
+    } else if (selectedDate) {
+      // Calendar date: show leaves overlapping the selected date
+      // i.e. item.from <= selectedDate <= item.to
+      const selD = parseDate(selectedDate);
+      const itemFrom = parseDate(item.from);
+      const itemTo = parseDate(item.to);
+      if (selD && itemFrom && itemTo) {
+        // Normalise to midnight for fair day-level comparison
+        selD.setHours(0, 0, 0, 0);
+        itemFrom.setHours(0, 0, 0, 0);
+        itemTo.setHours(0, 0, 0, 0);
+        if (selD < itemFrom || selD > itemTo) return false;
+      }
+    }
+
+    return true;
+  });
+
+  // ✅ Pagination calculations
+  const totalPages = Math.ceil(filteredList.length / pageSize);
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  // ✅ Reset to page 1 when any filter/search/pageSize changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [appliedSearch, appliedType, appliedDuration, appliedFromDate, appliedToDate, searchTerm, selectedDate, pageSize]);
+
+  // ✅ Guard against stale page
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [totalPages]);
 
   return (
     <div className="who-is-on-leave-layout">
@@ -164,9 +283,12 @@ const WhoIsOnLeave = () => {
                         onChange={(e) => setFilterType(e.target.value)}
                       >
                         <option value="">All</option>
-                        <option value="Casual Leave">Casual Leave</option>
-                        <option value="Sick Leave">Sick Leave</option>
-                        <option value="Earned Leave">Earned Leave</option>
+                        <option value="casual">Casual Leave</option>
+                        <option value="sick">Sick Leave</option>
+                        <option value="earned">Earned Leave</option>
+                        <option value="half day">Half Day</option>
+                        <option value="maternity">Maternity Leave</option>
+                        <option value="paternity">Paternity Leave</option>
                       </select>
                     </div>
 
@@ -177,9 +299,14 @@ const WhoIsOnLeave = () => {
                         onChange={(e) => setFilterDuration(e.target.value)}
                       >
                         <option value="">All</option>
-                        <option value="1 Day">1 Day</option>
-                        <option value="2 Days">2 Days</option>
-                        <option value="3 Days">3 Days</option>
+                        <option value="0.5">0.5 Day</option>
+                        <option value="1">1 Day</option>
+                        <option value="2">2 Days</option>
+                        <option value="3">3 Days</option>
+                        <option value="4">4 Days</option>
+                        <option value="5">5 Days</option>
+                        <option value="6">6 Days</option>
+                        <option value="7">7 Days</option>
                       </select>
                     </div>
                   </div>
@@ -234,9 +361,11 @@ const WhoIsOnLeave = () => {
                 type="text"
                 placeholder="🔍 Quick Search..."
                 className="whoisleave-search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
 
-              {/* ✅ NATIVE DATE PICKER OVERLAY (MATCHES ATTENDANCE) */}
+              {/* ✅ NATIVE DATE PICKER OVERLAY */}
               <div
                 className="whoisleave-date-picker"
                 style={{ position: "relative" }}
@@ -249,7 +378,7 @@ const WhoIsOnLeave = () => {
                     marginLeft: "8px",
                   }}
                 >
-                  {formatDisplayDate(selectedDate)}
+                  {formatDate(selectedDate) || formatDisplayDate(selectedDate)}
                 </span>
                 <input
                   ref={dateRef}
@@ -276,6 +405,7 @@ const WhoIsOnLeave = () => {
                   title="Select Date"
                 />
               </div>
+
               <button
                 className="whoisleave-view-btn"
                 onClick={() => navigate("/attendance")}
@@ -297,16 +427,30 @@ const WhoIsOnLeave = () => {
               </tr>
             </thead>
             <tbody>
-              {leaveList.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.id}</td>
-                  <td>{item.employee}</td>
-                  <td>{item.type}</td>
-                  <td>{item.from}</td>
-                  <td>{item.to}</td>
-                  <td className="whoisleave-days">{item.days}</td>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: "center" }}>
+                    Loading...
+                  </td>
                 </tr>
-              ))}
+              ) : paginatedList.length > 0 ? (
+                paginatedList.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.id}</td>
+                    <td>{item.employee}</td>
+                    <td>{item.type}</td>
+                    <td>{formatDate(item.from) || item.from}</td>
+                    <td>{formatDate(item.to) || item.to}</td>
+                    <td className="whoisleave-days">{item.days}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: "center" }}>
+                    No records found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -314,18 +458,41 @@ const WhoIsOnLeave = () => {
         {/* ===== Pagination ===== */}
         <div className="whoisleave-pagination">
           <div className="whoisleave-showing">
-            <span>Showing</span>
-            <select className="whoisleave-page-select">
-              <option>05</option>
-              <option>10</option>
-              <option>15</option>
+            <span>
+              Showing {paginatedList.length} of {filteredList.length}
+            </span>
+            <select
+              className="whoisleave-page-select"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              <option value={5}>05</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
             </select>
           </div>
 
           <div className="whoisleave-page-controls">
-            <button className="whoisleave-page-btn">Prev</button>
-            <button className="whoisleave-page-btn active">01</button>
-            <button className="whoisleave-page-btn">Next</button>
+            <button
+              className="whoisleave-page-btn"
+              disabled={currentPage === 1 || totalPages === 0}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              Prev
+            </button>
+            <button className="whoisleave-page-btn active">
+              {String(currentPage).padStart(2, "0")}
+            </button>
+            <button
+              className="whoisleave-page-btn"
+              disabled={currentPage >= totalPages || totalPages === 0}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

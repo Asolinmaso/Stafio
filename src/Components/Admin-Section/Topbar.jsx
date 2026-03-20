@@ -725,7 +725,11 @@ const Topbar = () => {
     fetchAnnouncements();
     const handleAnnouncementUpdated = () => fetchAnnouncements();
     window.addEventListener("announcementUpdated", handleAnnouncementUpdated);
-    const interval = setInterval(fetchAnnouncements, 5000);
+    // FIX 5: Poll every 60 seconds (was 5s) — announcements don't need
+    // real-time updates. Aggressive 5s polling was amplifying the 401 loop
+    // because each poll fired a new Axios request with its own _retry flag.
+    const interval = setInterval(fetchAnnouncements, 60000);
+
     return () => {
       clearInterval(interval);
       window.removeEventListener("announcementUpdated", handleAnnouncementUpdated);
@@ -966,7 +970,7 @@ const Topbar = () => {
             onClick={togglePopup}
             style={{ cursor: "pointer" }}
           >
-            <FaBell size={20} color="#1f2937" />
+            <FaBell size={20} className="notification-bell" />
           </div>
 
           <div className="settings-icon">
@@ -994,7 +998,7 @@ const Topbar = () => {
             </div>
             <FaChevronDown
               size={14}
-              color="#666"
+              className="profile-chevron"
               style={{ marginLeft: "5px" }}
             />
           </div>

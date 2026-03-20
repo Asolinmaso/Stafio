@@ -118,11 +118,9 @@ const translations = {
 };
 
 export default function AdminSettings() {
-	const { theme, setTheme, language, setLanguage, font, setFont } =
+	const { theme, setTheme, language, setLanguage, font, setFont, dateFormat, setDateFormat, dateFormatEnabled, setDateFormatEnabled } =
 		useContext(SettingsContext);
 	const [activeTab, setActiveTab] = useState("department");
-
-	const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -332,6 +330,7 @@ export default function AdminSettings() {
 		theme,
 		font,
 		dateFormat,
+		dateFormatEnabled,
 		allowSignup,
 		userTheme,
 		allowManagerEdit,
@@ -589,8 +588,8 @@ export default function AdminSettings() {
 		const sm = parseInt(pickerStartMin);
 		const eh = parseInt(pickerEndHour);
 		const em = parseInt(pickerEndMin);
-		const startStr = `${sh}:${sm.toString().padStart(2,"0")} ${pickerStartAMPM}`;
-		const endStr = `${eh}:${em.toString().padStart(2,"0")} ${pickerEndAMPM}`;
+		const startStr = `${sh}:${sm.toString().padStart(2, "0")} ${pickerStartAMPM}`;
+		const endStr = `${eh}:${em.toString().padStart(2, "0")} ${pickerEndAMPM}`;
 		const newVal = `${startStr} - ${endStr}`;
 		if (activePicker === "lunch") {
 			setLunchBreak(newVal);
@@ -868,14 +867,14 @@ export default function AdminSettings() {
 										</label>
 										<div className="theme-input-box0">
 											<span className="setting-muted-text">
-												{theme === "light" ? "Light Theme" : "Dark Theme"}
+												{theme === "dark" ? "Dark Theme" : "Light Theme"}
 											</span>
 											<label className="switch">
 												<input
 													type="checkbox"
-													checked={theme === "light"}
+													checked={theme === "dark"}
 													onChange={() =>
-														setTheme(theme === "light" ? "dark" : "light")
+														setTheme(theme === "dark" ? "light" : "dark")
 													}
 												/>
 												<span className="slider round"></span>
@@ -921,7 +920,11 @@ export default function AdminSettings() {
 											<label>
 												{t("dateFormat")}
 												<label className="switch">
-													<input type="checkbox" />
+													<input
+														type="checkbox"
+														checked={dateFormatEnabled}
+														onChange={(e) => setDateFormatEnabled(e.target.checked)}
+													/>
 													<span className="slider round"></span>
 												</label>
 											</label>

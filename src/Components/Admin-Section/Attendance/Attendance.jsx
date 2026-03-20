@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { FaFilter, FaCalendarAlt, FaTimes } from "react-icons/fa";
 import "./Attendance.css";
 import AdminSidebar from "../AdminSidebar";
@@ -6,8 +6,10 @@ import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
+import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
 const Attendance = () => {
+  const { fmtDate } = useContext(SettingsContext);
   const [attendanceData, setAttendanceData] = useState([]);
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
@@ -242,7 +244,7 @@ const Attendance = () => {
 
               <div className="date-picker">
                 <FaCalendarAlt />
-                <span>{selectedDate ? formatDisplayDate(selectedDate) : "Select Date"}</span>
+                <span>{selectedDate ? fmtDate(selectedDate) : "Select Date"}</span>
 
                 <input
                   ref={dateInputRef}
@@ -308,7 +310,7 @@ const Attendance = () => {
                         {record.status}
                       </span>
                     </td>
-                    <td>{record.date}</td>
+                    <td>{fmtDate(record.date) || record.date}</td>
                     <td className="time-cell">{record.checkIn}</td>
                     <td className="time-cell">{record.checkOut}</td>
                     <td>{record.workHours}</td>

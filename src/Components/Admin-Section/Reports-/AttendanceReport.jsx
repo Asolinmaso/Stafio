@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaFilter, FaCalendarAlt, FaDownload, FaSearch } from "react-icons/fa";
 import "./AttendanceReport.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import apiClient from "../../../utils/apiClient";
 import group10 from "../../../assets/Group10.png";
+import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
 export default function AttendanceReport() {
+  const { fmtDate } = useContext(SettingsContext);
   const [attendanceData, setAttendanceData] = useState([]);
   const [currentDate, setCurrentDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
   const [sortDays, setSortDays] = useState(9999);
+  const [sortOrder, setSortOrder] = useState("newest");
 
   /* PAGINATION STATES */
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,13 +68,7 @@ export default function AttendanceReport() {
   /* DATE */
   useEffect(() => {
     const now = new Date();
-    setCurrentDate(
-      now.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }),
-    );
+    setCurrentDate(fmtDate(now) || now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }));
   }, []);
 
   const parseDate = (dateStr) => {
@@ -117,7 +114,18 @@ export default function AttendanceReport() {
         rd.getMonth() === picked.getMonth() &&
         rd.getFullYear() === picked.getFullYear()
       );
-    });
+    })
+    // ✅ ADD THIS PART
+  .sort((a, b) => {
+    const dateA = parseDate(a.date);
+    const dateB = parseDate(b.date);
+
+    if (!dateA || !dateB) return 0;
+
+    return sortOrder === "newest"
+      ? dateB - dateA   // Newest first
+      : dateA - dateB;  // Oldest first
+  });
 
   /* Reset to page 1 whenever filters change */
   useEffect(() => {
@@ -328,13 +336,13 @@ export default function AttendanceReport() {
 
           {/* SORT */}
           <select
-            className="att-report-sort "
-            value={sortDays}
-            onChange={(e) => setSortDays(Number(e.target.value))}
-          >
-            <option value="Newest">Sort By : Newest</option>
-            <option value="Oldest">Sort By : Oldest</option>
-          </select>
+  className="att-report-sort"
+  value={sortOrder}
+  onChange={(e) => setSortOrder(e.target.value)}
+>
+  <option value="newest">Sort By : Newest</option>
+  <option value="oldest">Sort By : Oldest</option>
+</select>
         </div>
 
         {/* TABLE */}
@@ -405,7 +413,7 @@ export default function AttendanceReport() {
                       <td>{r.employee}</td>
                       <td>{r.role || "—"}</td>
                       <td><span className={statusClass}>{r.status}</span></td>
-                      <td>{r.date}</td>
+                      <td>{fmtDate(r.date) || r.date}</td>
                       <td className={timeClass}>{r.checkIn}</td>
                       <td className={timeClass}>{r.checkOut}</td>
                       <td>{r.workHours}</td>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { BsPeople } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
@@ -29,6 +29,7 @@ import apiClient from "../../../utils/apiClient";
 import axios from "axios";
 import "./EmployeeDashboard.css";
 import EmployeeAttendanceCard from "./EmployeeAttendanceCard";
+import { SettingsContext } from "../Settings-/SettingsContext";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const BASE_URL = "http://127.0.0.1:5001";
@@ -73,6 +74,7 @@ const toMinutes = (time) => {
 // ─── Component ──────────────────────────────────────────────────────────────
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
+  const { fmtDate } = useContext(SettingsContext);
 
   // ── Auth / session ────────────────────────────────────────────────────
   const [username, setUsername] = useState("");
@@ -308,7 +310,7 @@ const EmployeeDashboard = () => {
         }),
       );
       setCurrentDate(
-        now.toLocaleDateString("en-GB", {
+        fmtDate(now) || now.toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "short",
           year: "numeric",

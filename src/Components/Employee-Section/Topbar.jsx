@@ -248,7 +248,7 @@ const Topbar = () => {
             style={{ cursor: "pointer", position: "relative" }}
             onClick={() => setShowNotifications(!showNotifications)}
           >
-            <FaBell size={20} color="#1f2937" />
+            <FaBell size={20} className="topbar-bell-icon" />
             {unreadCount > 0 && (
               <span className="notification-badge">{unreadCount}</span>
             )}
@@ -321,7 +321,7 @@ const Topbar = () => {
             </div>
             <div className="profile-role">{role || "Employee"}</div>
           </div>
-          <FaChevronDown size={14} color="#666" style={{ marginLeft: "5px" }} />
+          <FaChevronDown size={14} className="profile-chevron" style={{ marginLeft: "5px" }} />
         </div>
       </div>
 

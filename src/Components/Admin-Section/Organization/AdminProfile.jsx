@@ -1734,16 +1734,12 @@ const AdminProfile = () => {
                         className="doc-item mb-3 d-flex flex-row align-items-center p-3"
                         key={idx}
                         style={{
-                          background: "#F6F9FC",
-                          border: "1px solid #E2E8F0",
                           borderRadius: "12px",
                         }}
                       >
                         <span
                           className="pdf-icon me-3"
                           style={{
-                            background: "#FFE4E6",
-                            color: "#E11D48",
                             borderRadius: "8px",
                             padding: "8px 12px",
                             fontWeight: "bold",
@@ -1757,7 +1753,6 @@ const AdminProfile = () => {
                             className="mb-0 text-truncate"
                             style={{
                               fontSize: "15px",
-                              color: "#1E293B",
                               fontWeight: "600",
                             }}
                           >
@@ -1765,7 +1760,7 @@ const AdminProfile = () => {
                           </h6>
                           <div className="d-flex align-items-center mt-1">
                             <span
-                              style={{ fontSize: "13px", color: "#94A3B8" }}
+                              style={{ fontSize: "13px" }}
                             >
                               {doc.size || "94"} KB of {doc.size || "94"} KB
                               &nbsp;•&nbsp;
@@ -1805,6 +1800,7 @@ const AdminProfile = () => {
                   </Col>
                   <Col md={5}>
                     <div
+                      className="upload-box"
                       onDragOver={(e) => {
                         e.preventDefault();
                         setIsDragOver(true);
@@ -1834,7 +1830,6 @@ const AdminProfile = () => {
                           ? "2px dashed #19BDE8"
                           : "2px dashed #CBD5E1",
                         borderRadius: "20px",
-                        background: isDragOver ? "#EFF9FF" : "#ffffff",
                         transition: "all 0.2s ease",
                         padding: "40px 30px",
                         display: "flex",
@@ -1853,7 +1848,6 @@ const AdminProfile = () => {
                       </div>
                       <p
                         style={{
-                          color: "#1E293B",
                           fontWeight: "700",
                           fontSize: "17px",
                           margin: "0 0 8px 0",
@@ -1865,7 +1859,6 @@ const AdminProfile = () => {
                       <p
                         style={{
                           fontSize: "12px",
-                          color: "#94A3B8",
                           margin: "0 0 24px 0",
                         }}
                       >

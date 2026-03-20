@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { BsPeople } from "react-icons/bs";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import AttendanceCard from "./AttendanceCard";
 import { getCurrentSession } from "../../../utils/sessionManager";
+import { SettingsContext } from "../../Employee-Section/Settings-/SettingsContext";
 
 const BREAK_SCHEDULES = [
 	{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
@@ -44,10 +45,10 @@ const ALERT_BEFORE_MINUTES = 10;
 const formatTime = (date) =>
 	date instanceof Date
 		? date.toLocaleTimeString([], {
-				hour: "2-digit",
-				minute: "2-digit",
-				second: "2-digit",
-			})
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+		})
 		: date;
 
 /** Returns "HH:MM:SS" string for (now - punchInDate) minus totalBreakMs */
@@ -75,6 +76,9 @@ const toMinutes = (time) => {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 const Dashboard = () => {
+	const { t, fmtDate } = useContext(SettingsContext);
+	const navigate = useNavigate();
+
 	// ── Auth / session ────────────────────────────────────────────────────
 	const [username, setUsername] = useState("");
 	const [role, setRole] = useState("");
@@ -124,8 +128,8 @@ const Dashboard = () => {
 	const [coffeeBreakStr, setCoffeeBreakStr] = useState("4:00 PM - 4:15 PM");
 	const [customBreaks, setCustomBreaks] = useState([]);
 	const [breakSchedules, setBreakSchedules] = useState([
-		{ id: "lunch", label: "Lunch Break", start: "13:00", end: "14:00" },
-		{ id: "coffee", label: "Coffee Break", start: "16:00", end: "16:15" },
+		{ id: "lunch", label: t("Lunch Break"), start: "13:00", end: "14:00" },
+		{ id: "coffee", label: t("Coffee Break"), start: "16:00", end: "16:15" },
 	]);
 
 	// ── Meeting ───────────────────────────────────────────────────────────
@@ -139,8 +143,6 @@ const Dashboard = () => {
 		weeks: [],
 		days: [],
 	});
-
-	const navigate = useNavigate();
 
 	// ── Axios helper ──────────────────────────────────────────────────────
 	const apiHeaders = () => ({
@@ -313,7 +315,7 @@ const Dashboard = () => {
 				}),
 			);
 			setCurrentDate(
-				now.toLocaleDateString("en-GB", {
+				fmtDate(now) || now.toLocaleDateString("en-GB", {
 					day: "2-digit",
 					month: "short",
 					year: "numeric",
@@ -640,7 +642,7 @@ const Dashboard = () => {
 					{/* Welcome */}
 					<Row className="mb-4 align-items-center">
 						<div className="username">
-							<h1>Welcome, {username || "User"}!</h1>
+							<h1>{t("welcome")}, {username || "User"}!</h1>
 						</div>
 
 						{/* ── Admin Notification Banner ── */}
@@ -654,14 +656,14 @@ const Dashboard = () => {
 									>
 										{String(pendingApprovalsCount).padStart(2, "0")}
 									</span>{" "}
-									Pending Approvals &amp;{" "}
+									{t("pendingApprovals")} &amp;{" "}
 									<span
 										className="admin-notif-count admin-notif-link"
 										onClick={() => navigate("/leave-approval")}
 									>
 										{String(pendingLeavesCount).padStart(2, "0")}
 									</span>{" "}
-									Leave Requests
+									{t("pendingLeaveRequests")}
 								</span>
 								<button
 									className="admin-notif-close"
@@ -676,9 +678,6 @@ const Dashboard = () => {
 
 					{/* Notification + Meeting/Punch Card */}
 					<Row className="mb-4">
-						<div md={4}>
-							<NotificationTop />
-						</div>
 						<Col md={12}>
 							<div className="meeting-card d-flex justify-content-between align-items-center">
 								{/* Left group */}
@@ -733,7 +732,7 @@ const Dashboard = () => {
 													onClick={handlePunchIn}
 													disabled={punchLoading}
 												>
-													{punchLoading ? "Punching In…" : "Punch In"}
+													{punchLoading ? t("punchIn") + "..." : t("punchIn")}
 												</button>
 											</>
 										) : (
@@ -755,7 +754,7 @@ const Dashboard = () => {
 														</strong>
 													</div>
 													<div className="info-item">
-														<span>Total Hours :</span>{" "}
+														<span>{t("totalHours")} :</span>{" "}
 														<strong>{totalHours}</strong>
 													</div>
 												</div>
@@ -778,7 +777,7 @@ const Dashboard = () => {
 														onClick={handlePunchOut}
 														disabled={punchLoading}
 													>
-														{punchLoading ? "Please wait…" : "Punch Out"}
+														{punchLoading ? "..." : t("punchOut")}
 													</button>
 
 													{isBreak ? (
@@ -895,7 +894,7 @@ const Dashboard = () => {
 												<BsPeople />
 											</div>
 										</div>
-										<h6>Total Employees</h6>
+										<h6>{t("totalEmployees")}</h6>
 										<div className="summary-action">
 											<div className="summary-action-icon">
 												<BsPlusCircle />
@@ -916,7 +915,7 @@ const Dashboard = () => {
 												<IoTimeOutline />
 											</div>
 										</div>
-										<h6>On Time</h6>
+										<h6>{t("onTime")}</h6>
 										<div className="summary-action">
 											<div className="summary-action-icon">
 												<BsEye />
@@ -937,7 +936,7 @@ const Dashboard = () => {
 												<MdOutlineAccessTime />
 											</div>
 										</div>
-										<h6>On Leave</h6>
+										<h6>{t("onLeave")}</h6>
 										<div className="summary-action">
 											<div className="summary-action-icon">
 												<BsPencilSquare />
@@ -958,7 +957,7 @@ const Dashboard = () => {
 												<MdOutlineLogout />
 											</div>
 										</div>
-										<h6>Late Arrival</h6>
+										<h6>{t("lateArrival")}</h6>
 										<div className="summary-action">
 											<div className="summary-action-icon">
 												<BsCalendarCheck />
@@ -979,7 +978,7 @@ const Dashboard = () => {
 												<FaCalendarAlt />
 											</div>
 										</div>
-										<h6>Pending Approval</h6>
+										<h6>{t("pendingApproval")}</h6>
 										<div className="summary-action">
 											<div className="summary-action-icon">
 												<BsEnvelope />
@@ -996,7 +995,7 @@ const Dashboard = () => {
 												<TbCalendarTime />
 											</div>
 										</div>
-										<h6>This Week Hoilday</h6>
+										<h6>{t("thisWeekHoliday")}</h6>
 										<div className="summary-action">
 											<div className="summary-action-icon">
 												<BsFlag />
