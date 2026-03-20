@@ -4,7 +4,7 @@ import illustration from "../../../assets/Formsbro.png";
 import { FaUpload } from "react-icons/fa";
 import apiClient from "../../../utils/apiClient";
 
-const LeaveRequestForm = ({ onClose, leaveBalance }) => {
+const LeaveRequestForm = ({ onClose, leaveBalance, editData }) => {
   const [employeeId, setEmployeeId] = useState("");
   const [leaveTypes, setLeaveTypes] = useState([]);
 
@@ -17,6 +17,20 @@ const LeaveRequestForm = ({ onClose, leaveBalance }) => {
     day_type: "full_day",
     num_days: 0,
   });
+
+  useEffect(() => {
+    if (editData) {
+      setFormData({
+        leave_type_id: editData.leave_type_id || "",
+        start_date: editData.start_date || "",
+        end_date: editData.end_date || "",
+        reason: editData.reason || "",
+        notify_to: editData.notify_to || "",
+        day_type: editData.day_type || "full_day",
+        num_days: editData.num_days || 0,
+      });
+    }
+  }, [editData]);
 
   useEffect(() => {
     const userId = localStorage.getItem("current_user_id");
@@ -96,20 +110,41 @@ const LeaveRequestForm = ({ onClose, leaveBalance }) => {
     }
 
     try {
-      const res = await apiClient.post(
-        "/leave_requests",
-        {
-          ...formData,
-          user_id: userId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-User-Role": role,
-            "X-User-ID": userId,
+      let res;
+
+      if (editData) {
+        // ✅ UPDATE existing leave
+        res = await apiClient.put(
+          `/leave_requests/${editData.id}`,
+          {
+            ...formData,
+            user_id: userId,
           },
-        },
-      );
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-User-Role": role,
+              "X-User-ID": userId,
+            },
+          },
+        );
+      } else {
+        // ✅ CREATE new leave
+        res = await apiClient.post(
+          "/leave_requests",
+          {
+            ...formData,
+            user_id: userId,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-User-Role": role,
+              "X-User-ID": userId,
+            },
+          },
+        );
+      }
 
       alert(res.data.message);
       window.dispatchEvent(new Event("leaveRequestUpdated"));
@@ -245,7 +280,7 @@ const LeaveRequestForm = ({ onClose, leaveBalance }) => {
           className="apply-leave-btn"
           onClick={handleSubmit}
         >
-          Apply
+          {editData ? "Update Leave" : "Apply"}
         </button>
 
         <button
