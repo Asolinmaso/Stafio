@@ -873,9 +873,10 @@ export default function AdminSettings() {
 												<input
 													type="checkbox"
 													checked={theme === "dark"}
-													onChange={() =>
-														setTheme(theme === "dark" ? "light" : "dark")
-													}
+													onChange={() => {
+														const nextTheme = theme === "dark" ? "light" : "dark";
+														setTheme(nextTheme);
+													}}
 												/>
 												<span className="slider round"></span>
 											</label>
@@ -964,19 +965,6 @@ export default function AdminSettings() {
 
 									<div className="form-group-custom"></div>
 								</div>
-
-								{saveMessage && (
-									<div
-										className="save-message"
-										style={{
-											marginTop: "20px",
-											color: "green",
-											fontWeight: "bold",
-										}}
-									>
-										{saveMessage}
-									</div>
-								)}
 							</div>
 						)}
 
