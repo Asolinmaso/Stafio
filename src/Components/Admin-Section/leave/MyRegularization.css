@@ -658,3 +658,106 @@
 .filter-apply-btn:hover {
   background: #1d4ed8;
 }
+
+/* ================================================
+   Dark Theme Support for My Regularization (Admin)
+   ================================================ */
+body[data-theme='dark'] .regularization-container {
+    background-color: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .page-title {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .btn-my-leaves,
+body[data-theme='dark'] .right-butn-filters {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .regularization-table table {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .regularization-table th {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .regularization-table td {
+    color: #e2e8f0 !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .status-badge.approved,
+body[data-theme='dark'] .status-badge.pending {
+    background: #1a1f2e !important;
+}
+
+body[data-theme='dark'] .showing {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .page-btn {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .page-btn.active {
+    background: #19bde8 !important;
+    color: #ffffff !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .regularization-modal-exact,
+body[data-theme='dark'] .filter-dropdown-box {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .regularization-header-exact {
+    background: #12acd3 !important;
+}
+
+body[data-theme='dark'] .regularization-body-exact {
+    background: #1a1f2e !important;
+}
+
+body[data-theme='dark'] .form-row-exact label,
+body[data-theme='dark'] .filter-field label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .form-row-exact input,
+body[data-theme='dark'] .form-row-exact select,
+body[data-theme='dark'] .date-input-wrapper-exact input,
+body[data-theme='dark'] .textarea-wrapper-exact textarea,
+body[data-theme='dark'] .filter-field input,
+body[data-theme='dark'] .filter-field select {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .regularization-footer-exact,
+body[data-theme='dark'] .filter-popup-footer {
+    background: #1a1f2e !important;
+    border-top: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .regularization-cancel-exact,
+body[data-theme='dark'] .filter-reset-btn {
+    background: #1a1f2e !important;
+    border-color: #cbd5e1 !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .filter-popup-header h3 {
+    color: #ffffff !important;
+}

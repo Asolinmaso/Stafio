@@ -313,34 +313,20 @@ const EmployeeRegister = () => {
                   </div>
                 </InputGroup>
               </Form.Group>
-              <Form.Group className="mb-3 d-flex align-items-center">
-                <Form.Check
+              <div className="terms-container">
+                <input
                   type="checkbox"
-                  id="termsCheck"
+                  id="terms"
+                  className="terms-checkbox"
                   checked={agree}
                   onChange={(e) => setAgree(e.target.checked)}
                   required
-                  style={{
-                    width: "18px",
-                    height: "18px",
-
-                    cursor: "pointer",
-                    marginRight: "10px",
-                    accentColor: "#19bde8", // 🔵 Makes tick color BLUE
-                  }}
                 />
-
-                <label htmlFor="termsCheck" style={{ margin: 0 }}>
+                <label htmlFor="terms" className="terms-label">
                   I agree to all the{" "}
-                  <span style={{ color: "#19bde8", cursor: "pointer" }}>
-                    Terms
-                  </span>{" "}
-                  &{" "}
-                  <span style={{ color: "#19bde8", cursor: "pointer" }}>
-                    Conditions
-                  </span>
+                  <span className="terms-link">Terms & Conditions</span>
                 </label>
-              </Form.Group>
+              </div>
 
               <Button variant="primary" type="submit" className="register-btn">
                 Sign Up

@@ -466,3 +466,96 @@
 .whoisleave-page-btn:hover:not(.active) {
   background: #f9fafb;
 }
+
+/* ================================================
+   Dark Theme Support for Who Is On Leave
+   ================================================ */
+body[data-theme='dark'] .who-is-on-leave-layout {
+    background: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .whoisleave-header h2 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .whoisleave-filter-btn,
+body[data-theme='dark'] .whoisleave-search,
+body[data-theme='dark'] .whoisleave-date-picker {
+    background: #1a1f2e !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .whoisleave-section {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .whoisleave-section-header h3 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .whoisleave-table thead {
+    background: #0f172a !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .whoisleave-table th {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .whoisleave-table td {
+    color: #e2e8f0 !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .whoisleave-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body[data-theme='dark'] .whoisleave-days {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .whoisleave-showing {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .whoisleave-page-btn {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .whoisleave-page-btn.active {
+    background: #19bde8 !important;
+    color: #ffffff !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .whoisleave-filter-popup {
+    background: #1a1f2e !important;
+    border-color: #2d334a !important;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+body[data-theme='dark'] .filter-popup-header h3 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .filter-group label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .filter-group input,
+body[data-theme='dark'] .filter-group select,
+body[data-theme='dark'] .date-input-wrapper input {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .filter-clear {
+    background: #2d334a !important;
+    color: #cbd5e1 !important;
+}

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap");
+
 * {
 	/* modified */
 	margin-top: 0px !important;
@@ -151,13 +152,14 @@
 } */
 
 .btn-punch {
-	padding: 8px 16px !important;
-	width: 100%;
+	padding: 10px 38px !important;
+	width: 270px !important;
 	background: #19bde8;
 	color: #fff;
 	border: none;
-	border-radius: 8px;
+	border-radius: 12px;
 	cursor: pointer;
+	font-weight: 550;
 }
 
 .btn-punch:hover {
@@ -328,6 +330,26 @@
 	opacity: 0.6;
 }
 
+/* Dark theme overrides for Admin Notification Banner */
+body[data-theme='dark'] .admin-notif-banner {
+	background: rgba(25, 189, 232, 0.08) !important;
+	border: 1px solid rgba(25, 189, 232, 0.25) !important;
+}
+
+body[data-theme='dark'] .admin-notif-text {
+	color: #c8e6f5 !important;
+}
+
+body[data-theme='dark'] .admin-notif-close {
+	background: transparent !important;
+	color: #a5f3ff !important;
+}
+
+body[data-theme='dark'] .admin-notif-close:hover {
+	color: #ffffff !important;
+	opacity: 0.8;
+}
+
 /* ================= 1400px ================= */
 /* @media (max-width: 1400px) {
 	.dashboard-wrapper {
@@ -458,99 +480,214 @@
 
 @media (min-width: 993px) and (max-width: 1200px) {
 
-.meeting-card{
-  width:100%;
-  height:auto;
-  padding:20px;
-}
+	.meeting-card {
+		width: 100%;
+		height: auto;
+		padding: 20px;
+	}
 
-.vector-img{
-  margin-bottom:120px;
-}
+	.vector-img {
+		margin-bottom: 120px;
+	}
 
-.maleteam{
-  width:320px !important;
-  height:250px;
-  margin-right:-80px !important;
-}
+	.maleteam {
+		width: 320px !important;
+		height: 250px;
+		margin-right: -80px !important;
+	}
 
-.clock{
-  margin-right:10px !important;
-}
+	.clock {
+		margin-right: 10px !important;
+	}
 
-.meeting-box{
-  width:240px !important;
-}
+	.meeting-box {
+		width: 240px !important;
+	}
 
-.punch-info-box{
-  width:300px;
-}
+	.punch-info-box {
+		width: 300px;
+	}
 
-.info-item{
-  width:300px;
-}
+	.info-item {
+		width: 300px;
+	}
 
-.summary-card{
-  padding:18px;
-}
+	.summary-card {
+		padding: 18px;
+	}
 
-.notice .summary-card{
-  margin-left:0;
-}
-
-}
-
-@media (min-width:1201px) and (max-width:1400px){
-
-.dashboard-wrapper{
-  max-width:1400px;
-  margin:auto;
-}
-
-.meeting-card{
-  width:100% !important;
-  height:300px;
-}
-
-.maleteam{
-  width:380px !important;
-  height:300px;
-}
-
-.summary-card{
-  padding:20px;
-}
-
-.username h1{
-  font-size:2rem;
-}
+	.notice .summary-card {
+		margin-left: 0;
+	}
 
 }
 
-@media (min-width:1401px) and (max-width:1550px){
+@media (min-width:1201px) and (max-width:1400px) {
 
-.dashboard-wrapper{
- 	width: 100%;
-    max-width: 100%;
-    margin: 0;
+	.dashboard-wrapper {
+		max-width: 1400px;
+		margin: auto;
+	}
+
+	.meeting-card {
+		width: 100% !important;
+		height: 300px;
+	}
+
+	.maleteam {
+		width: 380px !important;
+		height: 300px;
+	}
+
+	.summary-card {
+		padding: 20px;
+	}
+
+	.username h1 {
+		font-size: 2rem;
+	}
+
 }
 
-.meeting-card{
-  width:100% !important;
-  height:300px;
+@media (min-width:1401px) and (max-width:1550px) {
+
+	.dashboard-wrapper {
+		width: 100%;
+		max-width: 100%;
+		margin: 0;
+	}
+
+	.meeting-card {
+		width: 100% !important;
+		height: 300px;
+	}
+
+	.maleteam {
+		width: 420px !important;
+		height: 320px;
+	}
+
+	.summary-card {
+		padding: 22px;
+	}
+
+	.username h1 {
+		font-size: 2.1rem;
+	}
+
 }
 
-.maleteam{
-  width:420px !important;
-  height:320px;
+.break-relative-container {
+	position: relative;
+	display: inline-block;
+	width: 35%;
+	vertical-align: middle;
 }
 
-.summary-card{
-  padding:22px;
+.break-btn-st-en {
+	width: 100% !important;
 }
 
-.username h1{
-  font-size:2.1rem;
+.break-items-list {
+	max-height: 250px;
+	overflow-y: auto;
+	padding-right: 8px;
 }
 
+/* Premium Scrollbar */
+.break-items-list::-webkit-scrollbar {
+	width: 5px;
+}
+.break-items-list::-webkit-scrollbar-track {
+	background: transparent;
+}
+.break-items-list::-webkit-scrollbar-thumb {
+	background: #a5f3ff;
+	border-radius: 10px;
+}
+.break-items-list::-webkit-scrollbar-thumb:hover {
+	background: #19bde8;
+}
+
+.break-dropdown {
+	position: absolute;
+	top: calc(100% + 5px);
+	left: 0;
+	background: #fff;
+	width: 280px;
+	border-radius: 12px;
+	padding: 15px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+	z-index: 1100;
+	color: #333;
+}
+
+.dropdown-title {
+	font-weight: 600;
+	margin-bottom: 12px;
+	color: #19bde8;
+}
+
+/* Dark Mode support for Break dropdown */
+body[data-theme="dark"] .break-dropdown {
+	background-color: #1a1f2e !important;
+	color: #fff !important;
+	border: 1px solid #2d334a !important;
+}
+
+body[data-theme="dark"] .break-item:hover {
+	background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+body[data-theme="dark"] .break-item strong,
+body[data-theme="dark"] .break-item span {
+	color: #fff !important;
+}
+
+body[data-theme='dark'] .active-break {
+	background-color: rgba(25, 189, 232, 0.1) !important;
+	border-left: 3px solid #19bde8 !important;
+}
+
+/* Dark mode specific for Admin Meeting Card */
+body[data-theme='dark'] .meeting-card {
+	background: linear-gradient(135deg, #1e293b 0%, #0c1e35 100%) !important;
+	border: 1px solid rgba(25, 189, 232, 0.2) !important;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+	border-radius: 15px !important;
+}
+
+body[data-theme='dark'] .meeting-card h2 {
+	color: #19bde8 !important;
+	text-shadow: 0 0 15px rgba(25, 189, 232, 0.3);
+}
+
+body[data-theme='dark'] .meeting-card p,
+body[data-theme='dark'] .meeting-card span {
+	color: #a5f3ff !important;
+}
+
+body[data-theme='dark'] .punch-info-box {
+	background: rgba(25, 189, 232, 0.05) !important;
+	border-color: rgba(25, 189, 232, 0.2) !important;
+	border: 1px solid rgba(25, 189, 232, 0.2) !important;
+	border-radius: 10px !important;
+}
+
+body[data-theme='dark'] .info-item strong {
+	color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .btn-punch-out1,
+body[data-theme='dark'] .btn-punch,
+body[data-theme='dark'] .break-btn-st-en {
+	background-color: #ffffff !important;
+	color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .btn-punch-out1:hover,
+body[data-theme='dark'] .btn-punch:hover,
+body[data-theme='dark'] .break-btn-st-en:hover {
+	background-color: #f3f3f3 !important;
+	color: #12acd3 !important;
 }

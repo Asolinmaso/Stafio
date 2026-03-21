@@ -828,3 +828,104 @@
     font-size: 15px;
   }
 }
+/* Dark Theme support for Regularization Approval */
+body[data-theme='dark'] .regularization-approval-layout,
+body[data-theme='dark'] .regularization-approval-main {
+    background: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .table-container {
+    background: #1a1f2e !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body[data-theme='dark'] .regularization-table th {
+    color: #94a3b8 !important;
+    background: #1a1f2e !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .regularization-table td {
+    color: #e2e8f0 !important;
+    border-bottom-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .emp-name {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .tab-btn {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .right-search-input,
+body[data-theme='dark'] .right-btn-filter,
+body[data-theme='dark'] .sort-select {
+    background: #1a1f2e !important;
+    border-color: #3f4e6b !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .filter-popup {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+}
+
+body[data-theme='dark'] .filter-popup label {
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .regularization-approval-layout,
+body[data-theme='dark'] .regularization-approval-main {
+    background-color: #0b0f1a !important;
+}
+
+body[data-theme='dark'] .table-container {
+    background-color: #1a1f2e !important;
+    border-color: #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-modal-content,
+body[data-theme='dark'] .ra-small-modal,
+body[data-theme='dark'] .ra-result-modal {
+    background: #1a1f2e !important;
+    border: 1px solid #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-modal-header {
+    background: #12acd3 !important;
+}
+
+body[data-theme='dark'] .ra-form-group label {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .ra-form-group input,
+body[data-theme='dark'] .ra-select,
+body[data-theme='dark'] .ra-date-input-wrapper input,
+body[data-theme='dark'] .ra-reason-wrapper textarea,
+body[data-theme='dark'] .ra-small-body textarea,
+body[data-theme='dark'] .filter-popup input,
+body[data-theme='dark'] .filter-popup select {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .ra-modal-footer,
+body[data-theme='dark'] .ra-small-footer {
+    background: #1a1f2e !important;
+    border-top: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .ra-reject-pill-btn,
+body[data-theme='dark'] .ra-cancel-btn {
+    background: #1a1f2e !important;
+    border-color: #cbd5e1 !important;
+    color: #cbd5e1 !important;
+}
+

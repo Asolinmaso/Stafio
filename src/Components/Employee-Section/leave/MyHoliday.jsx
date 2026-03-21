@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { SettingsContext } from "../Settings-/SettingsContext";
+
 import "./MyHoliday.css";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
@@ -28,7 +30,9 @@ const MONTH_NAMES = [
 ];
 
 const MyHoliday = () => {
+  const { fmtDate } = useContext(SettingsContext);
   const [holidayData, setHolidayData] = useState([]);
+
   const [view, setView] = useState("calendar");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(7);
@@ -256,7 +260,7 @@ const MyHoliday = () => {
                       key={holiday.id}
                       className={`upcoming-card ${holiday.type?.toLowerCase()}`}
                     >
-                      <div className="card-date">{holiday.date}</div>
+                      <div className="card-date">{fmtDate(holiday.date)}</div>
                       <div className="card-title">{holiday.title}</div>
                       <div
                         className={`card-type-badge ${holiday.type?.toLowerCase()}`}
@@ -287,7 +291,7 @@ const MyHoliday = () => {
                       <td>
                         {String(indexOfFirstRow + index + 1).padStart(2, "0")}
                       </td>
-                      <td>{holiday.date}</td>
+                      <td>{fmtDate(holiday.date)}</td>
                       <td>{holiday.title}</td>
                       <td>
                         <span

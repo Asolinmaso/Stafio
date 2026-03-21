@@ -440,7 +440,7 @@ const LeaveApproval = () => {
         {/* PAGINATION */}
         <div className="pagination">
           <div className="showing">
-            Showing{" "}
+            Showing
             <select
               value={String(rowsPerPage).padStart(2, "0")}
               onChange={(e) => {
@@ -462,17 +462,9 @@ const LeaveApproval = () => {
             >
               Prev
             </button>
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i + 1}
-                className={`page-btn num-btn ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </button>
-            ))}
+            <button className="page-btn num-btn active">
+              {String(currentPage).padStart(2, "0")}
+            </button>
             <button
               className="page-btn prev-next"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
@@ -690,10 +682,9 @@ const LeaveApproval = () => {
                 ×
               </button>
               <img className="tick-icon" src={tick} alt="tick-icon" />
-              <h2>Success</h2>
+              <h2>{actionType === "Approval" ? "Success" : "Rejected"}</h2>
               <p>
-                Leave {actionType === "Approval" ? "Approved" : "Rejected"}{" "}
-                Successfully
+                Leave Approval {actionType === "Approval" ? "Successfully" : "Rejected"}
               </p>
             </div>
           </div>
