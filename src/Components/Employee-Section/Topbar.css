@@ -67,6 +67,26 @@
   background-color: #eceff2 !important;
 }
 
+/* Dark mode specific for Topbar search bar */
+body[data-theme='dark'] .form-controler {
+  background-color: #2d334a !important;
+  color: #ffffff !important;
+  border: 1px solid #3f4e6b !important;
+}
+
+body[data-theme='dark'] .form-controler::placeholder {
+  color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .form-controler:focus {
+  background-color: #374151 !important;
+  border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .search-icon {
+  color: #94a3b8 !important;
+}
+
 .topbar-right {
   display: flex;
   align-items: center;

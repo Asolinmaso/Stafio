@@ -780,69 +780,73 @@ const Dashboard = () => {
 														{punchLoading ? "..." : t("punchOut")}
 													</button>
 
-													{isBreak ? (
-														<button
-															className="break-btn-st-en"
-															onClick={handleEndBreak}
-															disabled={punchLoading}
-														>
-															End Break
-														</button>
-													) : (
-														<button
-															className="break-btn-st-en"
-															onClick={() =>
-																setShowBreakDropdown((prev) => !prev)
-															}
-															disabled={punchLoading}
-														>
-															Start Break ▼
-														</button>
-													)}
-												</div>
+													<div className="break-relative-container">
+														{isBreak ? (
+															<button
+																className="break-btn-st-en"
+																onClick={handleEndBreak}
+																disabled={punchLoading}
+															>
+																End Break
+															</button>
+														) : (
+															<button
+																className="break-btn-st-en"
+																onClick={() =>
+																	setShowBreakDropdown((prev) => !prev)
+																}
+																disabled={punchLoading}
+															>
+																Start Break ▼
+															</button>
+														)}
 
-												{showBreakDropdown && !isBreak && (
-													<div
-														className="break-dropdown"
-														ref={breakDropdownRef}
-													>
-														<p className="dropdown-title">Scheduled Breaks</p>
+														{showBreakDropdown && !isBreak && (
+															<div
+																className="break-dropdown"
+																ref={breakDropdownRef}
+															>
+																<p className="dropdown-title">Scheduled Breaks</p>
 
-														{breakSchedules.map((b) => {
-															const nowMin = getCurrentTimeInMinutes();
-															const isCurrent =
-																nowMin >= toMinutes(b.start) &&
-																nowMin <= toMinutes(b.end);
-															return (
-																<div
-																	key={b.id}
-																	className={`break-item ${isCurrent ? "active-break" : ""}`}
-																	onClick={() => handleStartBreak(b)}
-																>
-																	<strong>{b.label}</strong>
-																	<span>
-																		{b.range ||
-																			(b.id === "lunch"
-																				? lunchBreakStr
-																				: coffeeBreakStr)}
-																	</span>
+																<div className="break-items-list">
+																	{breakSchedules.map((b) => {
+																		const nowMin = getCurrentTimeInMinutes();
+																		const isCurrent =
+																			nowMin >= toMinutes(b.start) &&
+																			nowMin <= toMinutes(b.end);
+																		return (
+																			<div
+																				key={b.id}
+																				className={`break-item ${isCurrent ? "active-break" : ""}`}
+																				onClick={() => handleStartBreak(b)}
+																			>
+																				<strong>{b.label}</strong>
+																				<span>
+																					{b.range ||
+																						(b.id === "lunch"
+																							? lunchBreakStr
+																							: coffeeBreakStr)}
+																				</span>
+																			</div>
+																		);
+																	})}
+
+																	<div
+																		className="break-item custom-break"
+																		onClick={() =>
+																			handleStartBreak({
+																				id: "custom",
+																				label: "Custom Break",
+																			})
+																		}
+																	>
+																		➕ Custom Break
+																	</div>
 																</div>
-															);
-														})}
-
-														<div
-															className="break-item custom-break"
-															onClick={() =>
-																handleStartBreak({
-																	id: "custom",
-																	label: "Custom Break",
-																})
-															}
-														>
-															➕ Custom Break
-														</div>
+															</div>
+														)}
 													</div>
-												)}
+												</div>
 
 												{showAlert && (
 													<div style={alertStyle}>

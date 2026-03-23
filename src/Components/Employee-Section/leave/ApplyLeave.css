@@ -368,3 +368,39 @@ width:100%;
 }
 
 }
+
+/* ================================================
+   Dark Theme Support for Apply Leave (Employee)
+   ================================================ */
+body[data-theme='dark'] .form-row_pop label,
+body[data-theme='dark'] .date-label-row {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .form-row_pop input,
+body[data-theme='dark'] .form-row_pop select,
+body[data-theme='dark'] .form-row_pop textarea,
+body[data-theme='dark'] .app-leave-date-row input,
+body[data-theme='dark'] .app-leave-date-row select,
+body[data-theme='dark'] .app-leave-notify-row select,
+body[data-theme='dark'] .apply-leave-upload-btn {
+    background: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .form-left input[readonly] {
+    background: #1a1f2e !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-theme='dark'] .app-leave-modal-actions {
+    background: #1a1f2e !important;
+    border-top: 1px solid #2d334a !important;
+}
+
+body[data-theme='dark'] .app-leave-cancel-btn {
+    background: #1a1f2e !important;
+    border-color: #cbd5e1 !important;
+    color: #cbd5e1 !important;
+}
