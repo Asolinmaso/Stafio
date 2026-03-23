@@ -6,12 +6,11 @@
 
 /* ── Page wrapper ── */
 .elr__page {
-  background: #eff5ff;
-  min-height: 100vh;
   flex: 1;
-  padding: 24px 28px;
+  padding: 0 25px 25px 25px !important;
   font-family: 'Montserrat', sans-serif;
   animation: elr__fadein 0.4s ease;
+  overflow-y: auto !important;
 }
 
 @keyframes elr__fadein {
@@ -24,7 +23,7 @@
   font-weight: 700;
   color: #1a1a2e;
   margin: 8px 0 20px;
-  margin-top: 25px !important;
+  margin-top: 15px !important;
 }
 
 .elr__loading {

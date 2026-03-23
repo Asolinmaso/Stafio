@@ -6,13 +6,11 @@
 
 /* ── Page wrapper ── */
 .att__page {
-  background: #eff5ff;
-  height: 100vh;
-  overflow-y: auto;
   flex: 1;
-  padding: 24px 28px;
+  padding: 0 25px 25px 25px !important;
   font-family: 'Montserrat', sans-serif;
   animation: att__fadein 0.4s ease;
+  overflow-y: auto !important;
 }
 
 @keyframes att__fadein {
@@ -25,7 +23,7 @@
   font-weight: 700;
   color: #1a1a2e;
   margin: 8px 0 20px;
-  margin-top: 25px !important;
+  margin-top: 15px !important;
 }
 
 /* ── Summary Cards ── */
@@ -481,7 +479,7 @@ body[data-theme='dark'] .att__card-icon-circle--yellow {
    =========================================== */
 
 body[data-theme='dark'] .att__page {
-  background: #0a1118 !important;
+  background: #0b0f1a !important;
   color: #ffffff;
 }
 

@@ -12,7 +12,6 @@ import {
 } from "react-icons/fa";
 import { MdEvent } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
-import profileimg from "../../assets/profileimg.png";
 import profileimg2 from "../../assets/profileimg2.png";
 import stafiologoimg from "../../assets/stafiologoimg.png";
 import "./Topbar.css";
@@ -988,7 +987,7 @@ const Topbar = () => {
             style={{ cursor: "pointer" }}
           >
             <img
-              src={profileData?.profile?.profileImage || profileimg}
+              src={profileData?.profile?.profileImage || stafiologoimg}
               alt="User"
               className="topbar-avatar"
             />

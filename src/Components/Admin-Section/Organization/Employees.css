@@ -427,7 +427,7 @@
 	grid-template-columns: 280px 1fr;
 }
 
-.profile-left {
+.profile-body .profile-left {
 	padding: 20px;
 	border-right: 1px solid #eee;
 	text-align: center;

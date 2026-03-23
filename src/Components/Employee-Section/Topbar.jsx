@@ -9,7 +9,6 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FiEdit } from "react-icons/fi";
-import profileimg2 from "../../assets/profileimg2.png";
 import stafiologoimg from "../../assets/stafiologoimg.png";
 import axios from "axios";
 import "./Topbar.css";
@@ -321,7 +320,7 @@ const Topbar = () => {
           ref={popupRef}
         >
           <img
-            src={profile.profileImage || profileimg2}
+            src={profile.profileImage || stafiologoimg}
             alt="User"
             className="topbar-avatar"
           />
