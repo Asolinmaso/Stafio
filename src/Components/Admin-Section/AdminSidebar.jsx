@@ -397,7 +397,7 @@ const AdminSidebar = () => {
           <NavLink to="/admin-attendance-report" className="sidebar-leave-link">
             <ReportMenu />
           </NavLink>
-          <Nav.Link
+          {/* <Nav.Link
             as={NavLink}
             to="/performance"
             className={`sidebar-link ${isDocumentationActive ? "active" : ""}`}
@@ -410,7 +410,7 @@ const AdminSidebar = () => {
               }`}
             />
             {t("documentation")}
-          </Nav.Link>
+          </Nav.Link> */}
           <Nav.Link
             as={NavLink}
             to="/attendance"
