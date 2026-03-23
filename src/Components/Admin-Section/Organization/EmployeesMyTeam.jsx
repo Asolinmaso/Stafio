@@ -44,14 +44,14 @@ const Employee = () => {
           id: member.id,
           name: member.name,
           email: member.email,
-          empId: String(member.id).padStart(6, "0"),
+          empId: member.empId || String(member.id).padStart(6, "0"),
           position: member.position || "Not Specified",
           department: member.department || "Not Assigned",
           DateOfJoining: member.joining_date
             ? fmtDate(member.joining_date) || new Date(member.joining_date).toLocaleDateString("en-GB")
             : "-",
           status: member.status || "Active",
-          image: `https://i.pravatar.cc/40?img=${(index % 70) + 1}`,
+          image: member.image,
         }));
 
 				setEmployees(teamData);
@@ -297,6 +297,10 @@ const Employee = () => {
 													src={emp.image}
 													alt={emp.name}
 													className="emp-img"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
+                          }}
 												/>
 												<div>
 													<p className="emp-name">{emp.name}</p>
