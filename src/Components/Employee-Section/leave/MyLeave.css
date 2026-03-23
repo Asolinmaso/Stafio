@@ -6,19 +6,20 @@
 	/* prevents double scroll */
 }
 
-.myleave-container1 {
+.myleave-container {
 	flex: 1;
-	padding: 10px !important;
+	padding: 0 25px 25px 25px !important;
 	height: 100vh;
 	overflow-y: auto;
 	/* enables vertical scroll */
 }
 
+/* Page Title */
 .page-title {
 	font-size: 25px;
 	font-weight: 600;
 	margin-bottom: 20px;
-	margin-top: 40px;
+	margin-top: 15px !important;
 	color: black;
 }
 
@@ -407,7 +408,7 @@
 /* ================================================
    Dark Theme Support for My Leave (Employee)
    ================================================ */
-body[data-theme='dark'] .myleave-container1 {
+body[data-theme='dark'] .myleave-container {
 	background-color: #0b0f1a !important;
 }
 

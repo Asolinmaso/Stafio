@@ -1,5 +1,5 @@
 import React from "react";
-import profileimg from "../../../assets/profileimg.png"; // Profile image
+import stafiologoimg from "../../../assets/stafiologoimg.png"; // Profile image
 import arrow3 from "../../../assets/arrow3.png"; // Paper plane arrow
 import Rectangle6 from "../../../assets/Rectangle6.png"; // Human illustration
 import "./ProfileBanner.css";
@@ -32,7 +32,7 @@ const ProfileBanner = ({ profileData }) => {
           {/* Profile Image */}
           <div className="profile-image-wrapper">
             <img
-              src={profileImage || profileimg}
+              src={profileImage || stafiologoimg}
               alt="Profile"
               className="profile-image"
             />

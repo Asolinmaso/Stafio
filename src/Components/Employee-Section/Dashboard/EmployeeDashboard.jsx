@@ -413,6 +413,7 @@ const EmployeeDashboard = () => {
         if (res.data.notification) {
           setLeaveNotification(res.data.notification);
           setShowLeaveNotif(true);
+          console.log(res.data.notification);
         }
       } catch (err) {
         console.error("Leave notification fetch error:", err);
