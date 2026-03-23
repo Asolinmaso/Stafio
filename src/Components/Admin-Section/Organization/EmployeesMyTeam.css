@@ -1,3 +1,6 @@
+/* ============================================================
+   EMPLOYEE PAGE SHELL
+   ============================================================ */
 .employee-page {
 	display: flex;
 	height: 100vh;
@@ -15,11 +18,13 @@
 	overflow-x: hidden;
 }
 
+/* ============================================================
+   HEADER / FILTERS / TABLE / PAGINATION
+   ============================================================ */
 .employee-content {
 	padding: 20px 30px;
 	background: #eff5ff;
 
-	/* HEADER LAYOUT */
 	.employee-header {
 		display: flex;
 		justify-content: space-between;
@@ -35,16 +40,10 @@
 		margin-bottom: 15px;
 	}
 
-	/* LEFT SIDE */
 	.header-left {
 		display: flex;
 		flex-direction: column;
 		gap: 15px;
-	}
-
-	.employee-tabs {
-		display: flex;
-		gap: 10px;
 	}
 
 	.emplt-top-buttons {
@@ -53,46 +52,37 @@
 
 	.emplt-btn-apply {
 		background: #31bfebff !important;
-		color: #ffffffff;
+		color: #fff;
 		border: none;
 		padding: 10px 18px !important;
-		border-radius: 15px 0px 0px 15px;
+		border-radius: 15px 0 0 15px;
 		font-weight: 500;
 		cursor: pointer;
 	}
 
 	.emplt-btn-regularization {
 		background: #fff;
-		color: #000000;
+		color: #000;
 		border: 1px solid #ddd;
 		padding: 10px 18px !important;
-		border-radius: 0px 15px 15px 0px;
+		border-radius: 0 15px 15px 0;
 		cursor: pointer;
 	}
 
 	.search-containerr1 {
-		/* new */
 		position: relative;
-		/* Parent must be relative */
 		display: flex;
 		align-items: center;
-		/* margin-left: 10px !important; */
 	}
 
 	.search-iconn1 {
-		/* new */
 		position: absolute;
-		/* Icon sits on top of input */
 		left: -5px !important;
-		/* Spacing from the left edge */
 		color: #888;
 	}
 
-	/* SEARCH */
 	.search-inputt1 {
-		/* modified */
 		padding-left: 40px !important;
-		/* Space for the icon */
 		padding-top: 6px !important;
 		padding-bottom: 6px !important;
 		padding-right: 60px !important;
@@ -106,7 +96,6 @@
 		background: none;
 	}
 
-	/* RIGHT SIDE */
 	.header-right1 {
 		display: flex;
 		flex-direction: column;
@@ -116,23 +105,6 @@
 		margin-top: 40px !important;
 	}
 
-	.add-btn {
-		background: #19bde8;
-		color: #fff;
-		border: none;
-		padding: 10px 18px;
-		border-radius: 15px;
-		font-weight: 600;
-		cursor: pointer;
-		transition: background 0.3s;
-		margin-top: 50px;
-	}
-
-	.add-btn:hover {
-		background: #149dc2;
-	}
-
-	/* FILTER + SORT */
 	.filter-sort {
 		display: flex;
 		flex-direction: row;
@@ -162,131 +134,113 @@
 		border-radius: 16px;
 		font-size: 15px;
 		cursor: pointer;
-		margin-top: 0px;
 		background: transparent;
-	}
-
-	/* TABLE */
-	.employee-table {
-		width: 100%;
-		border-collapse: collapse;
-		background: white;
-		border-radius: 5px;
-		margin-top: 25px;
-		overflow: hidden;
-	}
-
-	.employee-table th,
-	.employee-table td {
-		padding: 14px 20px;
-		text-align: left;
-		border-bottom: 1px solid #eaeaea;
-	}
-
-	.employee-table th {
-		background: #ecedf0ff;
-		font-weight: 600;
-		color: #333;
-	}
-
-	.emp-info {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.emp-img {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-	}
-
-	.emp-name {
-		font-weight: 600;
-		margin: 0;
-	}
-
-	.emp-email {
-		font-size: 13px;
-		color: gray;
-		margin: 0;
-	}
-
-	.view-btn {
-		border: 1px solid #ccc;
-		background: white;
-		padding: 6px 14px;
-		border-radius: 8px;
-		cursor: pointer;
-		font-weight: 500;
-	}
-
-	.view-btn:hover {
-		background: #f1f1f1;
-	}
-
-	/* PAGINATION */
-	.pagination {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-top: 18px;
-		margin-bottom: 20px;
-	}
-
-	.showing select {
-		border: 1px solid #ccc;
-		border-radius: 6px;
-		padding: 4px 6px;
-	}
-
-	.page-nav {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.page-nav button {
-		background: white;
-		border: 1px solid #ccc;
-		padding: 4px 10px;
-		border-radius: 6px;
-		cursor: pointer;
-	}
-
-	.page-num {
-		background: #19bde8;
-		color: white;
-		border-radius: 6px;
-		padding: 4px 10px;
-		font-weight: 500;
-	}
-
-	/* RESPONSIVE */
-	@media (max-width: 768px) {
-		.employee-header {
-			flex-direction: column;
-			align-items: flex-start;
-		}
-
-		.header-right {
-			align-items: flex-start;
-			width: 100%;
-		}
-
-		.search-input {
-			width: 100%;
-		}
 	}
 }
 
-/* ============================================================================ */
-/* HIGH-FIDELITY PROFILE POPUP STYLES */
-/* ============================================================================ */
+/* TABLE */
+.employee-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: white;
+	border-radius: 5px;
+	margin-top: 25px;
+	overflow: hidden;
+}
+
+.employee-table th,
+.employee-table td {
+	padding: 14px 20px;
+	text-align: left;
+	border-bottom: 1px solid #eaeaea;
+}
+
+.employee-table th {
+	background: #ecedf0ff;
+	font-weight: 600;
+	color: #333;
+}
+
+.emp-info {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.emp-img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+}
+
+.emp-name {
+	font-weight: 600;
+	margin: 0;
+}
+
+.emp-email {
+	font-size: 13px;
+	color: gray;
+	margin: 0;
+}
+
+.view-btn {
+	border: 1px solid #ccc;
+	background: white;
+	padding: 6px 14px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 500;
+}
+
+.view-btn:hover {
+	background: #f1f1f1;
+}
+
+/* PAGINATION */
+.pagination {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 18px;
+	margin-bottom: 20px;
+}
+
+.showing select {
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	padding: 4px 6px;
+}
+
+.page-nav {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.page-nav button {
+	background: white;
+	border: 1px solid #ccc;
+	padding: 4px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.page-num {
+	background: #19bde8;
+	color: white;
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-weight: 500;
+}
+
+/* ============================================================
+   PROFILE MODAL — OVERLAY & CONTAINER
+   ============================================================ */
 .profile-overlay-fixed {
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.4);
+	background: rgba(0, 0, 0, 0.35);
 	backdrop-filter: blur(2px);
 	display: flex;
 	justify-content: center;
@@ -295,47 +249,241 @@
 }
 
 .profile-modal-container {
-	width: 70%;
+	width: 75%;
 	max-width: 1000px;
 	background: #fff;
-	border-radius: 20px;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+	border-radius: 16px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 	display: flex;
 	flex-direction: column;
-	height: auto;
-	max-height: 95vh;
-	position: relative;
+	max-height: 92vh;
 	overflow: hidden;
-	padding: 20px 35px;
+	padding: 16px 28px 24px;
 }
 
 .profile-modal-header {
 	display: flex;
 	justify-content: flex-end;
-	padding: 5px 0;
-	margin-bottom: 0;
+	margin-bottom: 2px;
+}
+
+.modal-close-times {
+	background: none;
+	border: none;
+	font-size: 30px;
+	color: #b0bec5;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.profile-modal-scrollable {
+	overflow-y: auto;
+	padding-right: 2px;
+}
+
+/* ============================================================
+   AVATAR / NAME / STATUS ROW  (mirrors Topbar popup)
+   ============================================================ */
+.popup-photo-row {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.popup-avatar {
+	width: 72px;
+	height: 72px;
+	border-radius: 50%;
+	object-fit: cover;
+	margin-bottom: 8px;
+}
+
+.popup-name {
+	font-size: 16px;
+	font-weight: 600;
+	color: #1a1a1a;
+	margin: 0 0 4px;
+}
+
+.popup-status {
+	font-size: 13px;
+	color: #4caf50;
+	margin: 0;
+}
+
+.status-dot {
+	font-size: 10px;
+	margin-right: 4px;
+}
+
+/* ============================================================
+   DETAILS-GRID  — 3-col by default, 2-col variant
+   Mirrors the .details-grid from Topbar.css
+   ============================================================ */
+.details-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0 20px;
+	border-top: 1px solid #f0f0f0;
+	padding-top: 18px;
+	margin-bottom: 4px;
+}
+
+/* 2-column variant for Bank + Documents row */
+.details-grid.details-grid-2col {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+/* ============================================================
+   SECTION TITLE  (h6 inside each column)
+   ============================================================ */
+.dg-section-title {
+	font-size: 13px;
+	font-weight: 700;
+	color: #64b5f6; /* same blue as Topbar popup h6 */
+	margin: 0 0 12px;
+	letter-spacing: 0;
+}
+
+/* ============================================================
+   LABEL + VALUE pairs  — exactly like Topbar ProfilePopup
+   <strong> = label    <p> = value
+   ============================================================ */
+.dg-label {
+	font-size: 12px;
+	color: #94a3b8; /* muted grey label */
+	font-weight: 500;
+	margin: 0 0 2px;
+}
+
+.dg-value {
+	font-size: 13px;
+	font-weight: 700; /* bold black value */
+	color: #1a1a1a;
+	margin: 0 0 10px;
+	line-height: 1.5;
+	word-break: break-word;
+}
+
+/* Longer text (job description etc.) */
+.dg-value.dg-description {
+	font-weight: 500;
+	font-size: 12px;
+	color: #334155;
+	line-height: 1.5;
+}
+
+/* Each document row */
+.doc-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	background: #eef4ff;
+	border-radius: 8px;
+	margin-bottom: 8px;
+	font-size: 13px;
+	color: #1a1a1a;
+}
+
+/* "No documents uploaded" empty state */
+.doc-item.doc-empty {
+	color: #94a3b8;
+	background: #f8f9fb;
+	border: 1px dashed #dde3ec;
+	justify-content: center;
+	font-size: 13px;
+}
+
+.doc-pdf-badge {
+	background: #ffe5e5;
+	color: #e74c3c;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.doc-filename {
+	font-weight: 500;
+	font-size: 13px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+	.details-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 600px) {
+	.details-grid,
+	.details-grid.details-grid-2col {
+		grid-template-columns: 1fr;
+	}
+
+	.profile-modal-container {
+		width: 95%;
+		padding: 12px 14px 20px;
+	}
+}
+
+/* ============================================================
+   PROFILE TOP LAYOUT
+   Left  = original image card (fixed width)
+   Right = 3-col details-grid (fills remaining space)
+   ============================================================ */
+.profile-top-layout {
+	display: grid;
+	grid-template-columns: 230px 1fr;
+	gap: 24px;
+	align-items: start;
+	margin-bottom: 4px;
+}
+
+/* Right side fills the 3 detail columns */
+.profile-right-details {
+	width: 90%;
+}
+
+/* details-grid variant with no top border (used inside top layout) */
+.details-grid.details-grid-no-border {
+	border-top: none;
+	padding-top: 0;
+}
+
+/* ── Original image card styles (kept here for reference) ── */
+.profile-image-col {
+	display: flex;
+	flex-direction: column;
 }
 
 .profile-title-row {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	margin-bottom: 15px;
-	height: 40px;
+	gap: 10px;
+	margin-bottom: 12px;
 }
 
 .profile-title-text {
-	font-size: 32px;
-	font-weight: 600;
+	font-size: 26px;
+	font-weight: 700;
 	color: #1a1a1a;
 	margin: 0;
 }
 
 .header-icon-box {
 	background: #19bde8;
-	width: 32px;
-	height: 32px;
-	border-radius: 8px;
+	width: 28px;
+	height: 28px;
+	border-radius: 7px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -346,7 +494,7 @@
 	background: none;
 	border: none;
 	color: #fff;
-	font-size: 16px;
+	font-size: 13px;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -355,93 +503,37 @@
 .active-tag-box {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	margin-left: 5px;
+	gap: 6px;
 }
 
 .active-dot {
-	width: 14px;
-	height: 14px;
+	width: 12px;
+	height: 12px;
 	background: #5eead4;
 	border-radius: 50%;
-	border: 4px solid #ccfbf1;
+	border: 3px solid #ccfbf1;
 }
 
 .active-text {
 	color: #94a3b8;
-	font-size: 15px;
-	font-weight: 400;
-}
-
-.modal-close-times {
-	background: none;
-	border: none;
-	font-size: 36px;
-	color: #cbd5e1;
-	cursor: pointer;
-	padding: 0;
-	line-height: 1;
-}
-
-.profile-modal-scrollable {
-	overflow-y: auto;
-	padding-right: 0;
-	margin-top: 0;
-}
-
-.profile-top-grid {
-	display: grid;
-	grid-template-columns: 260px repeat(3, minmax(0, 1fr));
-	gap: 0 35px;
-	margin-bottom: 30px;
-	align-items: flex-start;
-}
-
-.profile-middle-grid {
-	display: grid;
-	grid-template-columns: 260px repeat(3, minmax(0, 1fr));
-	gap: 0 35px;
-	margin-bottom: 30px;
-}
-
-.profile-bottom-grid {
-	display: grid;
-	grid-template-columns: 260px repeat(3, minmax(0, 1fr));
-	gap: 0 35px;
-	margin-bottom: 20px;
-}
-
-/* Ensure empty first column in middle/bottom grids */
-.profile-middle-grid > .details-col:first-child,
-.profile-bottom-grid > .details-col:first-child {
-	grid-column: 2;
-}
-
-.details-col-span-2 {
-	grid-column: span 2;
-}
-
-/* Image styling - PRECISE REPLICATION */
-.profile-image-col {
-	display: flex;
-	flex-direction: column;
+	font-size: 13px;
 }
 
 .profile-image-card-box {
 	position: relative;
-	width: 260px;
-	height: 260px;
+	width: 210px;
+	height: 210px;
 	background: #d9e0e3;
 	border-radius: 12px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
 }
 
 .profile-circular-mask {
-	width: 215px;
-	height: 215px;
+	width: 170px;
+	height: 170px;
 	border-radius: 50%;
 	overflow: hidden;
 	background: #fff;
@@ -458,172 +550,58 @@
 
 .profile-name-id-pill {
 	position: absolute;
-	bottom: -22px;
+	bottom: -18px;
 	left: 50%;
 	transform: translateX(-50%);
 	background: #fff;
 	color: #1a1a1a;
-	padding: 10px 22px;
+	padding: 8px 16px;
 	border-radius: 50px;
-	font-size: 15px;
+	font-size: 12px;
 	font-weight: 600;
 	white-space: nowrap;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-	border: none;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	z-index: 10;
 }
 
-/* Info Styling */
-.section-title {
-	color: #64b5f6;
-	font-size: 18px;
-	font-weight: 500;
-	margin-bottom: 15px;
-	/* Synchronized with profile-title-row */
-	letter-spacing: 0px;
-	height: 40px;
-	/* Synchronized with profile-title-row */
-	display: flex;
-	align-items: center;
+.details-grid-no-border {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
 }
 
-.info-item {
-	margin-bottom: 14px;
-	/* Reduced from 18px */
-	border: none !important;
-	background: none !important;
-	padding: 0 !important;
-	text-align: left !important;
-	box-shadow: none !important;
+/* Force positions */
+.col-personal-1 {
+	grid-column: 1;
 }
 
-.info-item label {
-	color: #94a3b8;
-	font-size: 14px;
-	font-weight: 500;
-	display: block;
-	margin-bottom: 4px;
-	/* Reduced from 6px */
-	text-align: left !important;
+.col-personal-2 {
+	grid-column: 2;
 }
 
-.info-item p {
-	color: #1a1a1a;
-	font-size: 17px;
-	font-weight: 700;
-	margin: 0;
-	line-height: 1.3;
-	text-align: left !important;
+.col-education {
+	grid-column: 3; /* ✅ always 3rd column */
 }
 
-.description-text {
-	font-size: 15px !important;
-	font-weight: 500 !important;
-	line-height: 1.5 !important;
-	color: #334155 !important;
+/* overflow */
+.profile-modal-container {
+	width: 90%;
+	max-width: 1200px;
+	overflow: hidden;
 }
 
-.link-text {
-	color: #1a1a1a !important;
-	text-decoration: none;
+/* Prevent horizontal scroll */
+.profile-modal-container {
+	width: 90%;
+	max-width: 1200px;
+	overflow: hidden;
 }
-
-/* Documents List */
-.documents-list {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.document-card {
-	background: #e8f1ff;
-	/* Lighter blue from mockup */
-	border-radius: 16px;
-	padding: 14px 22px;
-	display: flex;
-	align-items: center;
-	gap: 15px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-}
-
-.doc-icon-box {
-	background: #fff;
-	width: 54px;
-	height: 54px;
-	border-radius: 12px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-}
-
-.doc-info-text {
-	flex: 1;
-}
-
-.doc-name-main {
-	display: block;
-	font-weight: 700;
-	font-size: 15px;
-	color: #1a1a1a;
-	margin-bottom: 2px;
-}
-
-.doc-status-row {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	font-size: 13px;
-	color: #94a3b8;
-	font-weight: 400;
-}
-
-.doc-status-pill {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.doc-checkmark-circle {
-	background: #10b981;
-	color: #fff;
-	width: 18px;
-	height: 18px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 10px;
-}
-
-.doc-completed-text {
-	color: #64748b;
-	font-weight: 500;
-}
-
-.doc-actions-right {
-	display: flex;
-	gap: 18px;
-	margin-left: 15px;
-}
-
-.doc-action-btn {
-	background: none;
-	border: none;
-	font-size: 24px;
-	cursor: pointer;
-	color: #1a1a1a;
-	display: flex;
-	align-items: center;
-	padding: 4px;
-	transition: opacity 0.2s;
-}
-
-.doc-action-btn:hover {
-	opacity: 0.7;
-}
-
-button:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
+@media (max-width: 860px) {
+	.profile-top-layout {
+		grid-template-columns: 1fr;
+	}
+	.profile-image-card-box {
+		width: 160px;
+		height: 160px;
+	}
 }
