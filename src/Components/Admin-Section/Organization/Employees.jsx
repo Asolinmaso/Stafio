@@ -66,13 +66,13 @@ const Employee = () => {
 
   // Helper to generate the next Employee ID
   const generateNextId = () => {
-    if (!allEmployees || allEmployees.length === 0) return "1001";
+    if (!allEmployees || allEmployees.length === 0) return "1";
 
     const numericIds = allEmployees
       .map(emp => parseInt(emp.empId))
       .filter(id => !isNaN(id));
 
-    if (numericIds.length === 0) return "1001";
+    if (numericIds.length === 0) return "1";
 
     return (Math.max(...numericIds) + 1).toString();
   };
@@ -200,6 +200,7 @@ const Employee = () => {
     // Helper to format date from backend (DD/MM/YYYY) to HTML date input (YYYY-MM-DD)
     const formatDate = (dateStr) => {
       if (!dateStr || dateStr === "Not Set" || dateStr === "N/A") return "";
+      if (dateStr.includes("-")) return dateStr;
       const parts = dateStr.split("/");
       if (parts.length === 3) {
         return `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -235,7 +236,7 @@ const Employee = () => {
       status: selectedEmployee.profile.status || "Active",
     });
 
-    setEditingId(selectedEmployee.profile.user_id || selectedEmployee.id); // Check which ID to use
+    setEditingId(selectedEmployee.profile.id);
     setPreviewImage(selectedEmployee.profile.profile_image || null);
     setIsEditing(true);
     setShowProfileModal(false);
@@ -344,7 +345,7 @@ const Employee = () => {
       switch (sortBy) {
         case "name":
           return a.name.localeCompare(b.name);
-        
+
         case "status":
           return a.status.localeCompare(b.status);
         case "newest":
@@ -659,7 +660,7 @@ const Employee = () => {
               {" "}
               {/* classname changed/modified */}
               <div className="empl-modal-header-blue">
-                <h3>Add New Employee</h3>
+                <h3>{isEditing ? "Edit Employee" : "Add New Employee"}</h3>
                 <button
                   className="empl-close-btn"
                   onClick={() => {
@@ -679,9 +680,11 @@ const Employee = () => {
                         {previewImage ? (
                           <img src={previewImage} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                         ) : (
-                          <i className="profile-icon">
-                            <FaUserFriends size="2em" />{" "}
-                          </i>
+                          <img
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(formData.firstName + ' ' + formData.lastName)}&background=random`}
+                            alt="Avatar Placeholder"
+                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                          />
                         )}
                       </div>
                       <div className="upload-info">
@@ -962,7 +965,7 @@ const Employee = () => {
                         <img
                           src={
                             selectedEmployee.profile.profileImage ||
-                            "https://randomuser.me/api/portraits/women/44.jpg"
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedEmployee.profile.name)}&background=random`
                           }
                           alt={selectedEmployee.profile.name}
                           className="profile-large-img-circle"
