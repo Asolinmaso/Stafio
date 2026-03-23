@@ -6,6 +6,7 @@ export const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
   const location = useLocation();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [language, setLanguage] = useState(
     localStorage.getItem("language") || "english",
