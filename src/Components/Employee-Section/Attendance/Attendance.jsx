@@ -136,10 +136,8 @@ const Attendance = () => {
         : "att__time-blue";
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <div className="sidebar" style={{ flexShrink: 0, width: "255px", overflow: "hidden" }}>
-        <EmployeeSidebar />
-      </div>
+    <div className="layout">
+      <EmployeeSidebar />
 
       <div className="att__page">
         <Topbar />

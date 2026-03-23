@@ -174,7 +174,7 @@ export default function MyLeave() {
       <EmployeeSidebar />
 
       {/* Main Content Area */}
-      <div className="myleave-container1">
+      <div className="myleave-container">
         <Topbar />
 
         {/* Page Title */}

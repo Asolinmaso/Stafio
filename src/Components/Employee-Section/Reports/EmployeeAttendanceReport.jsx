@@ -179,10 +179,8 @@ const EmployeeAttendanceReport = () => {
   ];
 
   return (
-    <div style={{ display: "flex" }}>
-      <div className="sidebar">
-        <EmployeeSidebar />
-      </div>
+    <div className="layout">
+      <EmployeeSidebar />
 
       <div className="ear__page">
         <Topbar />

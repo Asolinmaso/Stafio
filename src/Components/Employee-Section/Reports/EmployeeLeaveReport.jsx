@@ -93,10 +93,8 @@ const EmployeeLeaveReport = () => {
   const currentViewLabel = VIEW_TYPES.find(v => v.key === viewType)?.label || "Month";
 
   return (
-    <div style={{ display: "flex" }}>
-      <div className="sidebar">
-        <EmployeeSidebar />
-      </div>
+    <div className="layout">
+      <EmployeeSidebar />
 
       <div className="elr__page">
         <Topbar />

@@ -116,6 +116,9 @@
 .leave-report-main,
 .ra-main,
 .who-is-on-leave-main,
+.ear__page,
+.elr__page,
+.att__page,
 .regularization-container {
     padding: 0 25px 25px 25px !important;
     flex: 1 !important;
@@ -137,6 +140,9 @@
 .leave-report-main .topbar,
 .ra-main .topbar,
 .who-is-on-leave-main .topbar,
+.ear__page .topbar,
+.elr__page .topbar,
+.att__page .topbar,
 .regularization-container .topbar {
     position: sticky !important;
     top: 15px !important;
@@ -154,6 +160,12 @@
     justify-content: space-between !important;
     border-bottom: none !important;
 }
+
+/* Dashboard Specific Background Optimization - Light Theme Only */
+body:not([data-theme='dark']) .dashboard-wrapper .main-content {
+    background-color: #eff5ff !important;
+}
+
 
 
 
@@ -346,7 +358,6 @@ body[data-theme='dark'] .leave-policies-modal,
 body[data-theme='dark'] .leave-policies-modal-body,
 body[data-theme='dark'] .layout,
 body[data-theme='dark'] .myleave-container,
-body[data-theme='dark'] .myleave-container1,
 body[data-theme='dark'] .emp-summary-card,
 body[data-theme='dark'] .apply-modal,
 body[data-theme='dark'] .apply-modal-body,
