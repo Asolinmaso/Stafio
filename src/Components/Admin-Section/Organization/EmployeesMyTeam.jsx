@@ -161,7 +161,7 @@ const Employee = () => {
 			});
 			console.log("FULL API DATA:", response.data);
 
-			setSelectedEmployee(response.data);
+			setSelectedEmployee({ ...response.data, listImage: emp.image });
 			setShowProfileModal(true);
 			setIsEditing(false); // ✅ reset
 			setShowModal(false); // ✅ ensure edit modal closed
@@ -199,7 +199,7 @@ const Employee = () => {
 				console.log(response.data);
 				const teamData = response.data.map((member, index) => ({
 					...member,
-					empId: String(member.id).padStart(6, "0"),
+					empId: member.empId || String(member.id).padStart(6, "0"),
 					DateOfJoining: member.joining_date
 						? fmtDate(member.joining_date) ||
 							new Date(member.joining_date).toLocaleDateString("en-GB")
@@ -539,7 +539,9 @@ const Employee = () => {
 											<div className="profile-circular-mask">
 												<img
 													src={
-														selectedEmployee.image ||
+														profile.profile_image ||
+														profile.profileImage ||
+														selectedEmployee.listImage ||
 														"https://randomuser.me/api/portraits/women/44.jpg"
 													}
 													alt={selectedEmployee.name}
@@ -548,7 +550,7 @@ const Employee = () => {
 											</div>
 											<div className="profile-name-id-pill">
 												{selectedEmployee.name}&nbsp;(ID&nbsp;
-												{selectedEmployee.empId})
+												{profile.empId || selectedEmployee.empId})
 											</div>
 										</div>
 									</div>
