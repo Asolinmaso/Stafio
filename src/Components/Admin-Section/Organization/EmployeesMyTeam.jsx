@@ -161,7 +161,7 @@ const Employee = () => {
 			});
 			console.log("FULL API DATA:", response.data);
 
-			setSelectedEmployee({ ...response.data, listImage: emp.image });
+			setSelectedEmployee(response.data);
 			setShowProfileModal(true);
 			setIsEditing(false); // ✅ reset
 			setShowModal(false); // ✅ ensure edit modal closed
@@ -202,7 +202,7 @@ const Employee = () => {
 					empId: member.empId || String(member.id).padStart(6, "0"),
 					DateOfJoining: member.joining_date
 						? fmtDate(member.joining_date) ||
-							new Date(member.joining_date).toLocaleDateString("en-GB")
+						new Date(member.joining_date).toLocaleDateString("en-GB")
 						: "-",
 					status: member.status || "Active",
 					image: member.image,
@@ -233,8 +233,8 @@ const Employee = () => {
 
 	const baseEmployees = highlightName
 		? employees.filter((emp) =>
-				emp.name.toLowerCase().includes(highlightName.toLowerCase()),
-			)
+			emp.name.toLowerCase().includes(highlightName.toLowerCase()),
+		)
 		: employees;
 
 	const searchedEmployees = baseEmployees.filter((emp) =>
@@ -541,7 +541,6 @@ const Employee = () => {
 													src={
 														profile.profile_image ||
 														profile.profileImage ||
-														selectedEmployee.listImage ||
 														"https://randomuser.me/api/portraits/women/44.jpg"
 													}
 													alt={selectedEmployee.name}
