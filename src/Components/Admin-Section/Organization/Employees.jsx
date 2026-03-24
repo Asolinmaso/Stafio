@@ -12,7 +12,7 @@ import {
   FaEdit,
   FaPlusCircle,
 } from "react-icons/fa";
-import { FiShare2, FiDownload } from "react-icons/fi";
+
 
 const Employee = () => {
   const [showModal, setShowModal] = useState(false);
@@ -929,148 +929,235 @@ const Employee = () => {
         )}
 
         {/* ---------- High-Fidelity Profile Detail Modal ---------- (View details) */}
-        {showProfileModal && selectedEmployee && (
-          <div className="profile-overlay-fixed">
-            <div className="profile-modal-container">
-              {/* HEADER PART */}
-              <div className="profile-modal-header">
-                <button
-                  className="modal-close-times"
-                  onClick={closeProfileModal}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="profile-modal-scrollable">
-                {/* TOP GRID: Image + Details */}
-                <div className="profile-top-grid">
-                  <div className="profile-image-col">
-                    <div className="profile-title-row">
-                      <h2 className="profile-title-text">Profile</h2>
-                      <div
-                        className="header-icon-box"
-                        onClick={handleEditClick}
-                      >
-                        <button className="edit-icon-btn">
-                          <FaEdit />
-                        </button>
-                      </div>
-                      <div className="active-tag-box">
-                        <span className="active-dot"></span>
-                        <span className="active-text">Active</span>
-                      </div>
-                    </div>
-                    <div className="profile-image-card-box">
-                      <div className="profile-circular-mask">
-                        <img
-                          src={
-                            selectedEmployee.profile.profileImage ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedEmployee.profile.name)}&background=random`
-                          }
-                          alt={selectedEmployee.profile.name}
-                          className="profile-large-img-circle"
-                        />
-                      </div>
-                      <div className="profile-name-id-pill">
-                        {selectedEmployee.profile.name}(ID{" "}
-                        {selectedEmployee.profile.empId})
-                      </div>
-                    </div>
-                  </div>
-                  <div className="details-col">
-                    <h5 className="section-title">Personal Details</h5>
-                    <div className="info-item">
-                      <label>Position</label>
-                      <p>{selectedEmployee.profile.position || "Not Set"}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Employment Type</label>
-                      <p>{selectedEmployee.profile.empType || "Not Set"}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Department</label>
-                      <p>{selectedEmployee.profile.department || "Not Set"}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Joining Date</label>
-                      <p>{selectedEmployee.profile.joiningDate || "Not Set"}</p>
-                    </div>
-                  </div>
+        {showProfileModal && selectedEmployee && (() => {
+          const profile = selectedEmployee.profile || {};
+          const education = selectedEmployee.education || {};
+          const address = selectedEmployee.address || {};
+          const contact = selectedEmployee.contact || {};
+          const experience = selectedEmployee.experience || {};
+          const bank = selectedEmployee.bank || {};
+
+          return (
+            <div className="profile-overlay-fixed" onClick={closeProfileModal}>
+              <div className="profile-modal-container" onClick={(e) => e.stopPropagation()}>
+                <div className="profile-modal-header">
+                  <button className="modal-close-times" onClick={closeProfileModal}>×</button>
                 </div>
-                <div className="profile-details-full-grid">
-                  <div className="details-section-box">
-                    <h5 className="section-title">Contact & Other Info</h5>
-                    <div className="full-grid-2col">
-                      <div className="info-item">
-                        <label>Email</label>
-                        <p>{selectedEmployee.profile.email || "N/A"}</p>
+
+                <div className="profile-modal-scrollable">
+                  {/* ROW 1: Profile + Employment + Personal + Educational */}
+                  <div className="profile-grid-row">
+                    {/* Column 1: Profile Image & Basic Info */}
+                    <div className="profile-image-section">
+                      <div className="profile-header-inline">
+                        <h3 className="profile-main-title">Profile</h3>
+                        <div className="profile-edit-badge" onClick={handleEditClick}>
+                          <FaEdit size={14} />
+                        </div>
+                        <div className="profile-status-badge">
+                          <span className="status-dot"></span>
+                          <span className="status-label">Active</span>
+                        </div>
                       </div>
-                      <div className="info-item">
-                        <label>Phone</label>
-                        <p>{selectedEmployee.profile.phone || "N/A"}</p>
+
+                      <div className="profile-card-container">
+                        <div className="profile-image-box">
+                          <div className="profile-circular-mask">
+                            <img
+                              src={profile.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || "User")}&background=random`}
+                              alt={profile.name}
+                              className="profile-modal-img"
+                            />
+                          </div>
+                        </div>
+                        <div className="profile-name-tag">
+                          {profile.name || "Santhana Lakshmi"} (ID {profile.empId || "112345"})
+                        </div>
                       </div>
-                      <div className="info-item">
-                        <label>Reports To</label>
-                        <p>{selectedEmployee.profile.supervisor || "N/A"}</p>
+                    </div>
+
+                    {/* Column 2: Employment Details */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Employment Details</h5>
+                      <div className="field-group">
+                        <label className="field-label">Position</label>
+                        <p className="field-value">{profile.position || "HR Manager Head"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>HR Manager</label>
-                        <p>{selectedEmployee.profile.hrManager || "N/A"}</p>
+                      <div className="field-group">
+                        <label className="field-label">Employment Type</label>
+                        <p className="field-value">{profile.empType || "Full Time"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>Gender</label>
-                        <p>{selectedEmployee.profile.gender || "N/A"}</p>
+                      <div className="field-group">
+                        <label className="field-label">Primary Supervisor</label>
+                        <p className="field-value">{profile.supervisor || "Catherine"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>Marital Status</label>
-                        <p>{selectedEmployee.profile.maritalStatus || "N/A"}</p>
+                      <div className="field-group">
+                        <label className="field-label">Department</label>
+                        <p className="field-value">{profile.department || "All"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>Date of Birth</label>
-                        <p>{selectedEmployee.profile.dob || "N/A"}</p>
+                      <div className="field-group">
+                        <label className="field-label">HR Manager</label>
+                        <p className="field-value">{profile.hrManager || "Santhana Lakshmi"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>Blood Group</label>
-                        <p>{selectedEmployee.profile.bloodGroup || "N/A"}</p>
+                    </div>
+
+                    {/* Column 3: Personal Details Part 2 */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Personal Details</h5>
+                      <div className="field-group">
+                        <label className="field-label">Gender</label>
+                        <p className="field-value">{profile.gender || "Female"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Date of Birth</label>
+                        <p className="field-value">{profile.dob || "22/07/1993"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Blood Group</label>
+                        <p className="field-value">{profile.bloodGroup || "A+"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Marital Status</label>
+                        <p className="field-value">{profile.maritalStatus || "Married"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Portfolio Link</label>
+                        <p className="field-value">
+                          <a href={education.portfolio || "#"} className="field-value" style={{ color: 'inherit', textDecoration: 'none' }}>
+                            {education.portfolio || "http://www.behance"}
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Column 4: Educational Qualification */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Educational Qualification</h5>
+                      <div className="field-group">
+                        <label className="field-label">Name Of the Institution</label>
+                        <p className="field-value">{education.institution || "CEMP Punnapra"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Start & Enddate</label>
+                        <p className="field-value">
+                          {education.eduStartDate && education.eduEndDate ? `${education.eduStartDate}-${education.eduEndDate}` : "22/07/2012-22/07/2016"}
+                        </p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Course</label>
+                        <p className="field-value">{education.qualification || "Btech"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Specialization</label>
+                        <p className="field-value">{education.specialization || "CSE"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Skills</label>
+                        <p className="field-value">
+                          {Array.isArray(education.skills) ? education.skills.join(", ") : (education.skills || "Figma, Adobe XD, Photoshop")}
+                        </p>
                       </div>
                     </div>
                   </div>
-                  <div className="details-section-box">
-                    <h5 className="section-title">
-                      Educational & Professional
-                    </h5>
-                    <div className="full-grid-2col">
-                      <div className="info-item">
-                        <label>Institution</label>
-                        <p>{selectedEmployee.education.institution || "N/A"}</p>
+
+                  {/* ROW 2: Address + Contact + Previous Experience */}
+                  <div className="profile-grid-row middle">
+                    {/* Column 1: Address */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Address</h5>
+                      <div className="field-group">
+                        <label className="field-label">Address Line</label>
+                        <p className="field-value">{address.line1 || "Kattasseri House"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>Qualification</label>
-                        <p>
-                          {selectedEmployee.education.qualification || "N/A"}
+                      <div className="field-group">
+                        <label className="field-label">City</label>
+                        <p className="field-value">{address.city || "Alappuzha"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">State</label>
+                        <p className="field-value">{address.state || "Kerala"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Country</label>
+                        <p className="field-value">{address.country || "India"}</p>
+                      </div>
+                    </div>
+
+                    {/* Column 2: Contact Details */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Contact Details</h5>
+                      <div className="field-group">
+                        <label className="field-label">Phone Number</label>
+                        <p className="field-value">{profile.phone || "9895195971"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Emergency Contact</label>
+                        <p className="field-value">{contact.emergency || "9895195971"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Relationship</label>
+                        <p className="field-value">{contact.relationship || "Husband"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Email</label>
+                        <p className="field-value">{profile.email || "aiswarya@gmail.com"}</p>
+                      </div>
+                    </div>
+
+                    {/* Column 3: Previous Experience */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Previous Experience</h5>
+                      <div className="field-group">
+                        <label className="field-label">Name Of the Company</label>
+                        <p className="field-value">{experience.company || "Azym Technology"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Start & Enddate</label>
+                        <p className="field-value">
+                          {experience.startDate && experience.endDate ? `${experience.startDate}-${experience.endDate}` : "22/07/2018-22/07/2022"}
                         </p>
                       </div>
-                      <div className="info-item">
-                        <label>Specialization</label>
-                        <p>
-                          {selectedEmployee.education.specialization || "N/A"}
-                        </p>
+                      <div className="field-group">
+                        <label className="field-label">Job Title</label>
+                        <p className="field-value">{experience.role || "UIUX Designer"}</p>
                       </div>
-                      <div className="info-item">
-                        <label>Skills</label>
-                        <p>
-                          {Array.isArray(selectedEmployee.education.skills)
-                            ? selectedEmployee.education.skills.join(", ")
-                            : selectedEmployee.education.skills || "N/A"}
+                      <div className="field-group">
+                        <label className="field-label">Job Description</label>
+                        <p className="field-value prev-exp-desc">
+                          {experience.description || "Conduct user research, interviews, and usability testing to gather insights."}
                         </p>
                       </div>
                     </div>
+
+                    {/* Column 4: Bank Details */}
+                    <div className="profile-section-col">
+                      <h5 className="profile-section-title">Bank Details</h5>
+                      <div className="field-group">
+                        <label className="field-label">Bank Name</label>
+                        <p className="field-value">{bank.name || "SBI"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Branch</label>
+                        <p className="field-value">{bank.branch || "Alappuzha"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">Account Number</label>
+                        <p className="field-value">{bank.account || "12345678910"}</p>
+                      </div>
+                      <div className="field-group">
+                        <label className="field-label">IFSC Code</label>
+                        <p className="field-value">{bank.ifsc || "IFSC12345"}</p>
+                      </div>
+                    </div>
                   </div>
+
+
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
+
       </div>
     </div>
   );
