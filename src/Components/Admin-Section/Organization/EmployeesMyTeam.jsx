@@ -161,7 +161,7 @@ const Employee = () => {
 			});
 			console.log("FULL API DATA:", response.data);
 
-			setSelectedEmployee(response.data);
+			setSelectedEmployee({ ...response.data, listImage: emp.image });
 			setShowProfileModal(true);
 			setIsEditing(false); // ✅ reset
 			setShowModal(false); // ✅ ensure edit modal closed
@@ -199,10 +199,10 @@ const Employee = () => {
 				console.log(response.data);
 				const teamData = response.data.map((member, index) => ({
 					...member,
-					empId: String(member.id).padStart(6, "0"),
+					empId: member.empId || String(member.id).padStart(6, "0"),
 					DateOfJoining: member.joining_date
 						? fmtDate(member.joining_date) ||
-							new Date(member.joining_date).toLocaleDateString("en-GB")
+						new Date(member.joining_date).toLocaleDateString("en-GB")
 						: "-",
 					status: member.status || "Active",
 					image: member.image,
@@ -233,8 +233,8 @@ const Employee = () => {
 
 	const baseEmployees = highlightName
 		? employees.filter((emp) =>
-				emp.name.toLowerCase().includes(highlightName.toLowerCase()),
-			)
+			emp.name.toLowerCase().includes(highlightName.toLowerCase()),
+		)
 		: employees;
 
 	const searchedEmployees = baseEmployees.filter((emp) =>
@@ -491,263 +491,216 @@ const Employee = () => {
 
 				{showProfileModal && selectedEmployee && (
 					<div className="profile-overlay-fixed" onClick={closeProfileModal}>
-						<div
-							className="profile-modal-container"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{/* Close */}
+						<div className="mt-profile-modal-container" onClick={(e) => e.stopPropagation()}>
 							<div className="profile-modal-header">
-								<button
-									className="modal-close-times"
-									onClick={closeProfileModal}
-								>
-									×
-								</button>
+								<button className="modal-close-times" onClick={closeProfileModal}>×</button>
 							</div>
 
 							<div className="profile-modal-scrollable">
-								{/* ══════════════════════════════════════════════════════
-							    TOP ROW
-							    Left  → original image card with title / edit / active
-							    Right → 3-col details-grid (Personal ×2 + Education)
-							    ══════════════════════════════════════════════════════ */}
-								<div className="profile-top-layout">
-									{/* ── ORIGINAL IMAGE SECTION (your exact markup) ── */}
-									<div className="profile-image-col">
-										{/* "Profile" title + edit icon + Active badge */}
-										<div className="profile-title-row">
-											<h2 className="profile-title-text">Profile</h2>
-											<div className="header-icon-box">
-												<button
-													className="edit-icon-btn"
-													onClick={(e) => {
-														e.stopPropagation(); // ✅ VERY IMPORTANT
-														handleEditClick();
-													}}
-												>
-													<FaEdit />
-												</button>
+								{/* ROW 1: Profile Image + Employment + Personal + Educational */}
+								<div className="mt-profile-grid-row">
+									{/* Column 1: Profile Image */}
+									<div className="mt-profile-image-section">
+										<div className="mt-profile-header-inline">
+											<h3 className="mt-profile-main-title">Profile</h3>
+											<div className="mt-profile-edit-badge" onClick={(e) => { e.stopPropagation(); handleEditClick(); }}>
+												<FaEdit size={14} />
 											</div>
-											<div className="active-tag-box">
-												<span className="active-dot"></span>
-												<span className="active-text">Active</span>
+											<div className="mt-profile-status-badge">
+												<span className="mt-status-dot"></span>
+												<span className="mt-status-label">Active</span>
 											</div>
 										</div>
-
-										{/* Grey card + circular image + floating name pill */}
-										<div className="profile-image-card-box">
-											<div className="profile-circular-mask">
-												<img
-													src={
-														selectedEmployee.image ||
-														"https://randomuser.me/api/portraits/women/44.jpg"
-													}
-													alt={selectedEmployee.name}
-													className="profile-large-img-circle"
-												/>
-											</div>
-											<div className="profile-name-id-pill">
-												{selectedEmployee.name}&nbsp;(ID&nbsp;
-												{selectedEmployee.empId})
-											</div>
-										</div>
-									</div>
-									{/* END original image section */}
-
-									{/* ── 3-col details for top row ── */}
-									<div className="profile-right-details">
-										<div className="details-grid details-grid-no-border">
-											{/* Personal Details — col 1 */}
-											<div className="col-personal-1">
-												<h6 className="dg-section-title">Personal Details</h6>
-
-												<p className="dg-label">Position:</p>
-												<p className="dg-value">{profile.position || "—"}</p>
-
-												<p className="dg-label">Employment Type:</p>
-												<p className="dg-value">{profile.empType || "—"}</p>
-
-												<p className="dg-label">Primary Supervisor</p>
-												<p className="dg-value">{profile.supervisor || "—"}</p>
-
-												<p className="dg-label">Department:</p>
-												<p className="dg-value">{profile.department || "—"}</p>
-
-												<p className="dg-label">HR Manager</p>
-												<p className="dg-value">{profile.hrManager || "—"}</p>
-											</div>
-
-											{/* Personal Details — col 2 */}
-											<div className="col-personal-2">
-												<h6 className="dg-section-title">Personal Details</h6>
-
-												<p className="dg-label">Gender:</p>
-												<p className="dg-value">{profile.gender || "—"}</p>
-
-												<p className="dg-label">Date of Birth:</p>
-												<p className="dg-value">{profile.dob || "—"}</p>
-
-												<p className="dg-label">Blood Group:</p>
-												<p className="dg-value">{profile.bloodGroup || "—"}</p>
-
-												<p className="dg-label">Marital Status:</p>
-												<p className="dg-value">
-													{profile.maritalStatus || "—"}
-												</p>
-
-												<p className="dg-label">Portfolio:</p>
-												<p className="dg-value">{education.portfolio || "—"}</p>
-											</div>
-
-											{/* Educational Qualification — col 3 */}
-											<div className="col-education">
-												<h6 className="dg-section-title">
-													Educational Qualification
-												</h6>
-
-												<p className="dg-label">Institution:</p>
-												<p className="dg-value">
-													{education.institution || "—"}
-												</p>
-
-												<p className="dg-label">Start &amp; End Date:</p>
-												<p className="dg-value">
-													{education.eduStartDate && education.eduEndDate
-														? `${education.eduStartDate} & ${education.eduEndDate}`
-														: "—"}
-												</p>
-
-												<p className="dg-label">Course:</p>
-												<p className="dg-value">
-													{education.qualification || "—"}
-												</p>
-
-												<p className="dg-label">Specialization:</p>
-												<p className="dg-value">
-													{education.specialization || "—"}
-												</p>
-
-												<p className="dg-label">Skills:</p>
-												<p className="dg-value">
-													{Array.isArray(education.skills)
-														? education.skills.join(", ")
-														: education.skills || "—"}
-												</p>
-											</div>
-										</div>
-									</div>
-								</div>
-								{/* END top row */}
-
-								{/* ══════════════════════════════════════════════════════
-							    ROW 2 — Address | Contact Details | Previous Experience
-							    ══════════════════════════════════════════════════════ */}
-								<div className="details-grid">
-									{/* Address */}
-									<div>
-										<h6 className="dg-section-title">Address</h6>
-
-										<p className="dg-label">Address Line:</p>
-										<p className="dg-value">{address.line1 || "—"}</p>
-
-										<p className="dg-label">City:</p>
-										<p className="dg-value">{address.city || "—"}</p>
-
-										<p className="dg-label">State:</p>
-										<p className="dg-value">{address.state || "—"}</p>
-
-										<p className="dg-label">Country:</p>
-										<p className="dg-value">{address.country || "—"}</p>
-									</div>
-
-									{/* Contact Details */}
-									<div>
-										<h6 className="dg-section-title">Contact Details</h6>
-
-										<p className="dg-label">Phone Number:</p>
-										<p className="dg-value">{profile.phone || "—"}</p>
-
-										<p className="dg-label">Email:</p>
-										<p className="dg-value">{profile.email || "—"}</p>
-
-										<p className="dg-label">Emergency Contact:</p>
-										<p className="dg-value">{contact.emergency || "—"}</p>
-
-										<p className="dg-label">Relationship:</p>
-										<p className="dg-value">{contact.relationship || "—"}</p>
-									</div>
-
-									{/* Previous Experience */}
-									<div>
-										<h6 className="dg-section-title">Previous Experience</h6>
-
-										<p className="dg-label">Name of the Company:</p>
-										<p className="dg-value">{experience.company || "—"}</p>
-
-										<p className="dg-label">Start &amp; End Date:</p>
-										<p className="dg-value">
-											{experience.startDate && experience.endDate
-												? `${experience.startDate} – ${experience.endDate}`
-												: "—"}
-										</p>
-
-										<p className="dg-label">Job Title:</p>
-										<p className="dg-value">{experience.role || "—"}</p>
-
-										<p className="dg-label">Job Description:</p>
-										<p className="dg-value dg-description">
-											{experience.description || "—"}
-										</p>
-									</div>
-								</div>
-								{/* END ROW 2 */}
-
-								{/* ══════════════════════════════════════════════════════
-							    ROW 3 — Bank Details | Submitted Documents
-							    ══════════════════════════════════════════════════════ */}
-								<div className="details-grid details-grid-2col">
-									{/* Bank Details */}
-									<div>
-										<h6 className="dg-section-title">Bank Details</h6>
-
-										<p className="dg-label">Bank Name:</p>
-										<p className="dg-value">{bank.name || "—"}</p>
-
-										<p className="dg-label">Branch:</p>
-										<p className="dg-value">{bank.branch || "—"}</p>
-
-										<p className="dg-label">Account Number:</p>
-										<p className="dg-value">{bank.account || "—"}</p>
-
-										<p className="dg-label">IFSC Code:</p>
-										<p className="dg-value">{bank.ifsc || "—"}</p>
-									</div>
-
-									{/* Submitted Documents */}
-									<div className="submitted-docs">
-										<h6 className="dg-section-title">Submitted Documents</h6>
-										{documents.length > 0 ? (
-											documents.map((doc, idx) => (
-												<div className="doc-item" key={idx}>
-													<span className="doc-pdf-badge">PDF</span>
-													<span className="doc-filename">{doc.fileName}</span>
+										<div className="mt-profile-card-container">
+											<div className="mt-profile-image-box">
+												<div className="mt-profile-circular-mask">
+													<img
+														src={profile.profile_image || profile.profileImage || selectedEmployee.listImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || selectedEmployee.name || "User")}&background=random`}
+														alt={selectedEmployee.name}
+														className="mt-profile-modal-img"
+													/>
 												</div>
-											))
-										) : (
-											<div className="doc-item doc-empty">
-												No documents uploaded
 											</div>
-										)}
+											<div className="mt-profile-name-tag">
+												{selectedEmployee.name}&nbsp;(ID&nbsp;{profile.empId || selectedEmployee.empId})
+											</div>
+										</div>
+									</div>
+
+									{/* Column 2: Employment Details */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Employment Details</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Position</label>
+											<p className="mt-field-value">{profile.position || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Employment Type</label>
+											<p className="mt-field-value">{profile.empType || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Primary Supervisor</label>
+											<p className="mt-field-value">{profile.supervisor || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Department</label>
+											<p className="mt-field-value">{profile.department || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">HR Manager</label>
+											<p className="mt-field-value">{profile.hrManager || "—"}</p>
+										</div>
+									</div>
+
+									{/* Column 3: Personal Details */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Personal Details</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Gender</label>
+											<p className="mt-field-value">{profile.gender || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Date of Birth</label>
+											<p className="mt-field-value">{profile.dob || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Blood Group</label>
+											<p className="mt-field-value">{profile.bloodGroup || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Marital Status</label>
+											<p className="mt-field-value">{profile.maritalStatus || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Portfolio Link</label>
+											<p className="mt-field-value">
+												<a href={education.portfolio || "#"} style={{ color: 'inherit', textDecoration: 'none' }}>
+													{education.portfolio || "—"}
+												</a>
+											</p>
+										</div>
+									</div>
+
+									{/* Column 4: Educational Qualification */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Educational Qualification</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Name Of the Institution</label>
+											<p className="mt-field-value">{education.institution || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Start &amp; Enddate</label>
+											<p className="mt-field-value">
+												{education.eduStartDate && education.eduEndDate ? `${education.eduStartDate}-${education.eduEndDate}` : "—"}
+											</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Course</label>
+											<p className="mt-field-value">{education.qualification || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Specialization</label>
+											<p className="mt-field-value">{education.specialization || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Skills</label>
+											<p className="mt-field-value">{Array.isArray(education.skills) ? education.skills.join(", ") : (education.skills || "—")}</p>
+										</div>
 									</div>
 								</div>
-								{/* END ROW 3 */}
+
+								{/* ROW 2: Address + Contact + Experience + Bank */}
+								<div className="mt-profile-grid-row mt-middle">
+									{/* Column 1: Address */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Address</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Address Line</label>
+											<p className="mt-field-value">{address.line1 || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">City</label>
+											<p className="mt-field-value">{address.city || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">State</label>
+											<p className="mt-field-value">{address.state || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Country</label>
+											<p className="mt-field-value">{address.country || "—"}</p>
+										</div>
+									</div>
+
+									{/* Column 2: Contact Details */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Contact Details</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Phone Number</label>
+											<p className="mt-field-value">{profile.phone || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Emergency Contact</label>
+											<p className="mt-field-value">{contact.emergency || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Relationship</label>
+											<p className="mt-field-value">{contact.relationship || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Email</label>
+											<p className="mt-field-value">{profile.email || "—"}</p>
+										</div>
+									</div>
+
+									{/* Column 3: Previous Experience */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Previous Experience</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Name Of the Company</label>
+											<p className="mt-field-value">{experience.company || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Start &amp; Enddate</label>
+											<p className="mt-field-value">
+												{experience.startDate && experience.endDate ? `${experience.startDate}-${experience.endDate}` : "—"}
+											</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Job Title</label>
+											<p className="mt-field-value">{experience.role || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Job Description</label>
+											<p className="mt-field-value mt-prev-exp-desc">{experience.description || "—"}</p>
+										</div>
+									</div>
+
+									{/* Column 4: Bank Details */}
+									<div className="mt-profile-section-col">
+										<h5 className="mt-profile-section-title">Bank Details</h5>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Bank Name</label>
+											<p className="mt-field-value">{bank.name || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Branch</label>
+											<p className="mt-field-value">{bank.branch || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">Account Number</label>
+											<p className="mt-field-value">{bank.account || "—"}</p>
+										</div>
+										<div className="mt-field-group">
+											<label className="mt-field-label">IFSC Code</label>
+											<p className="mt-field-value">{bank.ifsc || "—"}</p>
+										</div>
+									</div>
+								</div>
 							</div>
-							{/* END profile-modal-scrollable */}
 						</div>
-						{/* END profile-modal-container */}
 					</div>
 				)}
-
 				{/* --------- Add / Edit Employee Modal --------- */}
 				{showModal && (
 					<div className="modal-overlay1">
