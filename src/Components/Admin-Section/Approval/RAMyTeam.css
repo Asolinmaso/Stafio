@@ -42,8 +42,8 @@
   font-size: 30px;
   font-weight: 600;
   color: #1f2b3d;
-  margin-top: 38px !important;
-  margin-bottom: 18px;
+  margin-bottom: -30px !important;
+  padding: 10px;
 }
 
 /* Tabs + controls row */
@@ -72,14 +72,14 @@
 
 /* Base button */
 .ra-tab {
-  border: none;
+  border: 1px solid #c5c5c5 ;
   background: transparent;
-  padding: 12px 10px;
-  width: 95px;
-  font-size: 16px;
+  padding: 10px 26px ;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   color: #111827;
+  line-height: 1.4;
 }
 
 /* Left button */
@@ -97,8 +97,12 @@
 /* Active button */
 .ra-tab.active {
   background: #12b3e6;
+  border: 1px solid #19bde8 ;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 10px 20px !important;
 }
 
 /* IMPORTANT:
@@ -779,4 +783,4 @@ body[data-theme='dark'] .ra-reset-btn {
     background: #2d334a !important;
     color: #cbd5e1 !important;
 }
-
+

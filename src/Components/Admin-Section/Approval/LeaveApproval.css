@@ -43,10 +43,10 @@
 
 /* ── Title ── */
 .page-title {
-	font-size: 28px !important;
-	font-weight: 700 !important;
+	font-size: 32px !important;
+	font-weight: 500 !important;
 	color: #111827 !important;
-	margin: 22px 0 18px 0 !important;
+	margin: 26px 10px 18px 0 !important;
 }
 
 /* ================================================
@@ -165,7 +165,7 @@
 }
 
 .right-tab-btn {
-	padding: 9px 26px;
+	padding: 10px 26px;
 	font-size: 13px;
 	font-weight: 500;
 	color: #374151;
@@ -197,7 +197,7 @@
 	background: #12b3e6 !important;
 	color: #ffffff !important;
 	border-color: #12b3e6 !important;
-	font-weight: 600;
+	font-weight: 500;
 }
 
 /* Search + Filter + Sort row */
@@ -1384,7 +1384,8 @@
 }
 
 /* ── Reason Modal Overlay (above Leave Details modal at z-index 9999) ─────── */
-/* Duplicate cleanup handled above */
+/* Duplicate cleanup handled above */
+
 /* Dark Theme support for Leave Approval */
 body[data-theme='dark'] .leave-approval-layout,
 body[data-theme='dark'] .leave-approval-main {
