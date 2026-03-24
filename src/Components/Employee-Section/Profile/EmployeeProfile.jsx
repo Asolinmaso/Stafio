@@ -383,14 +383,17 @@ const EmployeeProfile = () => {
 
 		// Prepare data for backend (nested under "profile" section)
 		const dataToSave = {
-			gender: profile.gender,
-			dob: profile.dob,
-			marital_status: profile.maritalStatus,
-			nationality: profile.nationality,
-			blood_group: profile.bloodGroup,
-			address: profile.address,
-			emergency_contact: profile.emergencyContactNumber,
-			emergency_relationship: profile.relationship,
+			profile: {
+				gender: profile.gender,
+				dob: profile.dob,
+				maritalStatus: profile.maritalStatus,
+				nationality: profile.nationality,
+				bloodGroup: profile.bloodGroup,
+				address: profile.address,
+				emergencyContactNumber: profile.emergencyContactNumber,
+				relationship: profile.relationship,
+				profileImage: profile.profileImage, // Include image if updated
+			},
 		};
 
 		const result = await saveProfileToBackend(dataToSave);
@@ -424,14 +427,16 @@ const EmployeeProfile = () => {
 
 		// Prepare data for backend with DB column names
 		const dataToSave = {
-			institution: education.institution,
-			edu_location: education.location,
-			edu_start_date: education.startDate,
-			edu_end_date: education.endDate,
-			qualification: education.qualification,
-			specialization: education.specialization,
-			skills: JSON.stringify(education.skills),
-			portfolio: education.portfolio,
+			education: {
+				institution: education.institution,
+				location: education.location,
+				startDate: education.startDate,
+				endDate: education.endDate,
+				qualification: education.qualification,
+				specialization: education.specialization,
+				skills: education.skills, // Backend handles list or string
+				portfolio: education.portfolio,
+			},
 		};
 
 		const result = await saveProfileToBackend(dataToSave);
@@ -472,12 +477,14 @@ const EmployeeProfile = () => {
 
 		// Prepare data for backend with DB column names
 		const dataToSave = {
-			prev_company: experience.company,
-			prev_job_title: experience.jobTitle,
-			exp_start_date: experience.startDate,
-			exp_end_date: experience.endDate,
-			responsibilities: experience.responsibilities,
-			total_experience_years: parseFloat(experience.totalYears) || 0,
+			experience: {
+				company: experience.company,
+				jobTitle: experience.jobTitle,
+				startDate: experience.startDate,
+				endDate: experience.endDate,
+				responsibilities: experience.responsibilities,
+				totalYears: parseFloat(experience.totalYears) || 0,
+			},
 		};
 
 		const result = await saveProfileToBackend(dataToSave);
@@ -500,12 +507,14 @@ const EmployeeProfile = () => {
 
 		// Prepare data for backend with DB column names
 		const dataToSave = {
-			bank_name: bank.bankName,
-			bank_branch: bank.branch,
-			account_number: bank.accountNumber,
-			ifsc_code: bank.ifsc,
-			aadhaar_number: bank.aadhaar,
-			pan_number: bank.pan,
+			bank: {
+				bankName: bank.bankName,
+				branch: bank.branch,
+				accountNumber: bank.accountNumber,
+				ifsc: bank.ifsc,
+				aadhaar: bank.aadhaar,
+				pan: bank.pan,
+			},
 		};
 
 		const result = await saveProfileToBackend(dataToSave);

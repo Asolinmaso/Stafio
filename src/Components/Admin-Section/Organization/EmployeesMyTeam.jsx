@@ -179,8 +179,6 @@ const Employee = () => {
 	// ─── Destructure API data ────────────────────────────────────
 	const profile = selectedEmployee?.profile || {};
 	const education = selectedEmployee?.education || {};
-	const address = selectedEmployee?.address || {};
-	const contact = selectedEmployee?.contact || {};
 	const experience = selectedEmployee?.experience || {};
 	const bank = selectedEmployee?.bank || {};
 	const documents = selectedEmployee?.documents || [];
@@ -615,20 +613,8 @@ const Employee = () => {
 									<div className="mt-profile-section-col">
 										<h5 className="mt-profile-section-title">Address</h5>
 										<div className="mt-field-group">
-											<label className="mt-field-label">Address Line</label>
-											<p className="mt-field-value">{address.line1 || "—"}</p>
-										</div>
-										<div className="mt-field-group">
-											<label className="mt-field-label">City</label>
-											<p className="mt-field-value">{address.city || "—"}</p>
-										</div>
-										<div className="mt-field-group">
-											<label className="mt-field-label">State</label>
-											<p className="mt-field-value">{address.state || "—"}</p>
-										</div>
-										<div className="mt-field-group">
-											<label className="mt-field-label">Country</label>
-											<p className="mt-field-value">{address.country || "—"}</p>
+											<label className="mt-field-label">Full Address</label>
+											<p className="mt-field-value">{profile.address || "—"}</p>
 										</div>
 									</div>
 
@@ -641,11 +627,11 @@ const Employee = () => {
 										</div>
 										<div className="mt-field-group">
 											<label className="mt-field-label">Emergency Contact</label>
-											<p className="mt-field-value">{contact.emergency || "—"}</p>
+											<p className="mt-field-value">{profile.emergencyContactNumber || "—"}</p>
 										</div>
 										<div className="mt-field-group">
 											<label className="mt-field-label">Relationship</label>
-											<p className="mt-field-value">{contact.relationship || "—"}</p>
+											<p className="mt-field-value">{profile.relationship || "—"}</p>
 										</div>
 										<div className="mt-field-group">
 											<label className="mt-field-label">Email</label>
