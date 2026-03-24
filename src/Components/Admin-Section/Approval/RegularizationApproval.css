@@ -21,10 +21,11 @@
 }
 
 .header-top h2 {
-  font-size: 26px;
+  font-size: 26px !important;
   color: #1a1a1a;
-  margin-bottom: 18px !important;
-  font-weight: 700;
+  margin-bottom: 20px !important;
+  padding: 15px 15px;
+  font-weight: 600;
 }
 
 .header-bottom {
@@ -36,14 +37,14 @@
 .left-tabs {
   display: flex;
   gap: 0;
-  width: fit-content;
+  width: 100%;
 }
 
 .tab-btn {
   background: #fff !important;
   color: #333 !important;
   border: 1px solid #c5c5c5 !important;
-  padding: 10px 32px !important;
+  padding: 6px 26px !important;
   border-radius: 10px 0 0 10px !important;
   cursor: pointer;
   font-size: 14px;
@@ -55,11 +56,11 @@
   background: #19bde8 !important;
   color: #fff !important;
   border: 1px solid #19bde8 !important;
-  padding: 10px 32px !important;
+  padding: 6px 20px !important;
   border-radius: 0 10px 10px 0 !important;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.4;
 }
 
