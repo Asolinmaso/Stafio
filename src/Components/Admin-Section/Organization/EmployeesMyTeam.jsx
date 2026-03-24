@@ -29,23 +29,19 @@ const Employee = () => {
 		position: "all",
 		status: "all",
 	});
-
 	const [showProfileModal, setShowProfileModal] = useState(false);
+
 	const location = useLocation();
 	const highlightName = location.state?.highlightName || "";
 	const navigate = useNavigate();
 
-	//handleChange
+	// ─── handleChange ────────────────────────────────────────────
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	//handleImageChange
+	// ─── handleImageChange ───────────────────────────────────────
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
 		if (file) {
@@ -58,13 +54,12 @@ const Employee = () => {
 		}
 	};
 
-	//handleEditClick
+	// ─── handleEditClick (original logic, unchanged) ─────────────
 	const handleEditClick = () => {
 		if (!selectedEmployee) return;
 
 		const profile = selectedEmployee.profile || {};
 		const education = selectedEmployee.education || {};
-
 
 		const formatDate = (dateStr) => {
 			if (!dateStr || dateStr === "Not Set" || dateStr === "N/A") return "";
@@ -108,13 +103,12 @@ const Employee = () => {
 
 		setEditingId(profile.id);
 		setPreviewImage(profile.profile_image || null);
-
 		setIsEditing(true);
 		setShowProfileModal(false);
 		setShowModal(true);
 	};
 
-	//handleSubmit for both add and edit
+	// ─── handleSubmit (original logic, unchanged) ────────────────
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -134,7 +128,7 @@ const Employee = () => {
 			}
 
 			if (isEditing) {
-				await apiClient.put(`/admin_profile/${editingId}`, payload, {
+				await apiClient.put(`/admin_profile/${editingId}`, formData, {
 					headers: {
 						"X-User-Role": localStorage.getItem("current_role"),
 						"X-User-ID": localStorage.getItem("current_user_id"),
@@ -142,10 +136,9 @@ const Employee = () => {
 				});
 				alert("Employee updated successfully ✅");
 			} else {
-				await apiClient.post("/api/add_employee", payload);
+				await apiClient.post("/api/add_employee", formData);
 				alert("Employee added successfully ✅");
 			}
-
 			setShowModal(false);
 			setIsEditing(false);
 			setProfileImage(null);
@@ -157,7 +150,7 @@ const Employee = () => {
 		}
 	};
 
-	//handleViewDetails
+	// ─── handleViewDetails ───────────────────────────────────────
 	const handleViewDetails = async (emp) => {
 		try {
 			const response = await apiClient.get(`/admin_profile/${emp.id}`, {
@@ -170,6 +163,8 @@ const Employee = () => {
 
 			setSelectedEmployee(response.data);
 			setShowProfileModal(true);
+			setIsEditing(false); // ✅ reset
+			setShowModal(false); // ✅ ensure edit modal closed
 		} catch (error) {
 			console.error("Error fetching full profile:", error);
 			alert("Could not load employee details.");
@@ -181,7 +176,16 @@ const Employee = () => {
 		setSelectedEmployee(null);
 	};
 
-	// Fetch team members from API
+	// ─── Destructure API data ────────────────────────────────────
+	const profile = selectedEmployee?.profile || {};
+	const education = selectedEmployee?.education || {};
+	const address = selectedEmployee?.address || {};
+	const contact = selectedEmployee?.contact || {};
+	const experience = selectedEmployee?.experience || {};
+	const bank = selectedEmployee?.bank || {};
+	const documents = selectedEmployee?.documents || [];
+
+	// ─── Fetch team ──────────────────────────────────────────────
 	useEffect(() => {
 		const fetchTeam = async () => {
 			try {
@@ -192,22 +196,17 @@ const Employee = () => {
 						"X-User-ID": localStorage.getItem("current_user_id"),
 					},
 				});
-
 				console.log(response.data);
-				const teamData = response.data.map((member) => ({
-					id: member.id,
-					name: member.name,
-					email: member.email,
-					empId: member.empId || String(member.id).padStart(6, "0"),
-					position: member.position || "Not Specified",
-					department: member.department || "Not Assigned",
+				const teamData = response.data.map((member, index) => ({
+					...member,
+					empId: String(member.id).padStart(6, "0"),
 					DateOfJoining: member.joining_date
-						? fmtDate(member.joining_date) || new Date(member.joining_date).toLocaleDateString("en-GB")
+						? fmtDate(member.joining_date) ||
+							new Date(member.joining_date).toLocaleDateString("en-GB")
 						: "-",
 					status: member.status || "Active",
 					image: member.image,
 				}));
-
 				setEmployees(teamData);
 			} catch (error) {
 				console.error("Error fetching team:", error);
@@ -216,7 +215,6 @@ const Employee = () => {
 				setLoading(false);
 			}
 		};
-
 		fetchTeam();
 	}, []);
 
@@ -235,8 +233,8 @@ const Employee = () => {
 
 	const baseEmployees = highlightName
 		? employees.filter((emp) =>
-			emp.name.toLowerCase().includes(highlightName.toLowerCase()),
-		)
+				emp.name.toLowerCase().includes(highlightName.toLowerCase()),
+			)
 		: employees;
 
 	const searchedEmployees = baseEmployees.filter((emp) =>
@@ -270,18 +268,24 @@ const Employee = () => {
 		}
 	});
 
+	// ─────────────────────────────────────────────────────────────
+	// RENDER
+	// ─────────────────────────────────────────────────────────────
 	return (
 		<div className="employee-page">
 			<div className="rightside-logo">
 				<img src={group10} alt="logo" className="rightside-logos" />
 			</div>
+
 			<AdminSidebar />
+
 			<div className="employee-main">
 				<Topbar />
+
+				{/* ── Page header / filters ── */}
 				<div className="employee-content">
 					<div className="employee-header">
-
-						{/* LEFT SIDE */}
+						{/* LEFT */}
 						<div className="header-left">
 							<h2>My Team</h2>
 
@@ -309,11 +313,9 @@ const Employee = () => {
 							</div>
 						</div>
 
-						{/* RIGHT SIDE */}
+						{/* RIGHT */}
 						<div className="header-right1">
 							<div className="filter-sort">
-
-								{/* FILTER BUTTON */}
 								<div className="filter-wrapper">
 									<button
 										className="right-butn-filterr"
@@ -322,12 +324,10 @@ const Employee = () => {
 										<FaFilter /> Filter
 									</button>
 
-									{/* DROPDOWN PANEL */}
 									{showFilters && (
 										<div className="filter-dropdown">
 											<h4>Filter</h4>
 
-											{/* NAME */}
 											<div className="filter-field">
 												<label>Name</label>
 												<input
@@ -338,30 +338,36 @@ const Employee = () => {
 												/>
 											</div>
 
-											{/* DEPARTMENT + POSITION */}
 											<div className="filter-row">
 												<div className="filter-field">
 													<label>Department</label>
 													<select
 														value={filters.department}
 														onChange={(e) =>
-															setFilters({ ...filters, department: e.target.value })
+															setFilters({
+																...filters,
+																department: e.target.value,
+															})
 														}
 													>
 														<option value="all">Select</option>
-														<option value="Human Resource">Human Resource</option>
+														<option value="Human Resource">
+															Human Resource
+														</option>
 														<option value="Development">Development</option>
 														<option value="Design">Design</option>
 														<option value="Sales">Sales</option>
 													</select>
 												</div>
-
 												<div className="filter-field">
 													<label>Position</label>
 													<select
 														value={filters.position}
 														onChange={(e) =>
-															setFilters({ ...filters, position: e.target.value })
+															setFilters({
+																...filters,
+																position: e.target.value,
+															})
 														}
 													>
 														<option value="all">Select</option>
@@ -373,7 +379,6 @@ const Employee = () => {
 												</div>
 											</div>
 
-											{/* ACTIONS */}
 											<div className="filter-actions">
 												<button
 													className="reset-btn"
@@ -415,7 +420,7 @@ const Employee = () => {
 						</div>
 					</div>
 
-					{/* TABLE */}
+					{/* ── Table ── */}
 					{loading ? (
 						<div className="text-center py-4">
 							<p>Loading team members...</p>
@@ -441,10 +446,6 @@ const Employee = () => {
 													src={emp.image}
 													alt={emp.name}
 													className="emp-img"
-													onError={(e) => {
-														e.target.onerror = null;
-														e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
-													}}
 												/>
 												<div>
 													<p className="emp-name">{emp.name}</p>
@@ -470,6 +471,7 @@ const Employee = () => {
 						</table>
 					)}
 
+					{/* ── Pagination ── */}
 					<div className="pagination">
 						<div className="showing">
 							Showing{" "}
@@ -485,418 +487,547 @@ const Employee = () => {
 							<button>Next</button>
 						</div>
 					</div>
+				</div>
 
-					{/* --------- Profile Detail Modal (View Details) --------- */}
-					{showProfileModal && selectedEmployee && (
-						<div className="profile-overlay-fixed" onClick={closeProfileModal}>
-							<div
-								className="profile-modal-container"
-								onClick={(e) => e.stopPropagation()}
-							>
-								<div className="profile-modal-header">
-									<button className="modal-close-times" onClick={closeProfileModal}>
-										×
-									</button>
-								</div>
-								<div className="profile-modal-scrollable">
-									<div className="profile-top-grid">
-										<div className="profile-image-col">
-											<div className="profile-title-row">
-												<h2 className="profile-title-text">Profile</h2>
-												<div className="header-icon-box">
-													<button
-														className="edit-icon-btn"
-														onClick={handleEditClick}
-													>
-														<FaEdit />
-													</button>
-												</div>
-												<div className="active-tag-box">
-													<span className="active-dot"></span>
-													<span className="active-text">Active</span>
-												</div>
-											</div>
-											<div className="profile-image-card-box">
-												<div className="profile-circular-mask">
-													<img
-														src={
-															selectedEmployee.profile?.profileImage ||
-															`https://ui-avatars.com/api/?name=${encodeURIComponent(selectedEmployee.profile?.name)}&background=random`
-														}
-														alt={selectedEmployee.profile?.name}
-														className="profile-large-img-circle"
-													/>
-												</div>
-												<div className="profile-name-id-pill">
-													{selectedEmployee.profile?.name} (ID {selectedEmployee.profile?.empId})
-												</div>
-											</div>
-										</div>
-										<div className="details-col">
-											<h5 className="section-title">Personal Details</h5>
-											<div className="info-item">
-												<label>Position</label>
-												<p>{selectedEmployee.profile?.position || "Not Set"}</p>
-											</div>
-											<div className="info-item">
-												<label>Employment Type</label>
-												<p>{selectedEmployee.profile?.empType || "Not Set"}</p>
-											</div>
-											<div className="info-item">
-												<label>Department</label>
-												<p>{selectedEmployee.profile?.department || "Not Set"}</p>
-											</div>
-											<div className="info-item">
-												<label>Joining Date</label>
-												<p>{selectedEmployee.profile?.joiningDate || "Not Set"}</p>
-											</div>
-										</div>
-									</div>
-									<div className="profile-details-full-grid">
-										<div className="details-section-box">
-											<h5 className="section-title">Contact & Other Info</h5>
-											<div className="full-grid-2col">
-												<div className="info-item">
-													<label>Email</label>
-													<p>{selectedEmployee.profile?.email || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Phone</label>
-													<p>{selectedEmployee.profile?.phone || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Reports To</label>
-													<p>{selectedEmployee.profile?.supervisor || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>HR Manager</label>
-													<p>{selectedEmployee.profile?.hrManager || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Gender</label>
-													<p>{selectedEmployee.profile?.gender || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Marital Status</label>
-													<p>{selectedEmployee.profile?.maritalStatus || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Date of Birth</label>
-													<p>{selectedEmployee.profile?.dob || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Blood Group</label>
-													<p>{selectedEmployee.profile?.bloodGroup || "N/A"}</p>
-												</div>
-											</div>
-										</div>
-										<div className="details-section-box">
-											<h5 className="section-title">Educational & Professional</h5>
-											<div className="full-grid-2col">
-												<div className="info-item">
-													<label>Institution</label>
-													<p>{selectedEmployee.education?.institution || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Qualification</label>
-													<p>{selectedEmployee.education?.qualification || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Specialization</label>
-													<p>{selectedEmployee.education?.specialization || "N/A"}</p>
-												</div>
-												<div className="info-item">
-													<label>Skills</label>
-													<p>
-														{Array.isArray(selectedEmployee.education?.skills)
-															? selectedEmployee.education?.skills.join(", ")
-															: selectedEmployee.education?.skills || "N/A"}
-													</p>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
+				{showProfileModal && selectedEmployee && (
+					<div className="profile-overlay-fixed" onClick={closeProfileModal}>
+						<div
+							className="profile-modal-container"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{/* Close */}
+							<div className="profile-modal-header">
+								<button
+									className="modal-close-times"
+									onClick={closeProfileModal}
+								>
+									×
+								</button>
 							</div>
-						</div>
-					)}
 
-					{/* --------- Add / Edit Employee Modal --------- */}
-					{showModal && (
-						<div className="modal-overlay1">
-							<div className="add-employee-modal1">
-								<div className="empl-modal-header-blue">
-									<h3>{isEditing ? "Edit Employee" : "Add Employee"}</h3>
-									<button
-										className="empl-close-btn"
-										onClick={() => setShowModal(false)}
-									>
-										×
-									</button>
+							<div className="profile-modal-scrollable">
+								{/* ══════════════════════════════════════════════════════
+							    TOP ROW
+							    Left  → original image card with title / edit / active
+							    Right → 3-col details-grid (Personal ×2 + Education)
+							    ══════════════════════════════════════════════════════ */}
+								<div className="profile-top-layout">
+									{/* ── ORIGINAL IMAGE SECTION (your exact markup) ── */}
+									<div className="profile-image-col">
+										{/* "Profile" title + edit icon + Active badge */}
+										<div className="profile-title-row">
+											<h2 className="profile-title-text">Profile</h2>
+											<div className="header-icon-box">
+												<button
+													className="edit-icon-btn"
+													onClick={(e) => {
+														e.stopPropagation(); // ✅ VERY IMPORTANT
+														handleEditClick();
+													}}
+												>
+													<FaEdit />
+												</button>
+											</div>
+											<div className="active-tag-box">
+												<span className="active-dot"></span>
+												<span className="active-text">Active</span>
+											</div>
+										</div>
+
+										{/* Grey card + circular image + floating name pill */}
+										<div className="profile-image-card-box">
+											<div className="profile-circular-mask">
+												<img
+													src={
+														selectedEmployee.image ||
+														"https://randomuser.me/api/portraits/women/44.jpg"
+													}
+													alt={selectedEmployee.name}
+													className="profile-large-img-circle"
+												/>
+											</div>
+											<div className="profile-name-id-pill">
+												{selectedEmployee.name}&nbsp;(ID&nbsp;
+												{selectedEmployee.empId})
+											</div>
+										</div>
+									</div>
+									{/* END original image section */}
+
+									{/* ── 3-col details for top row ── */}
+									<div className="profile-right-details">
+										<div className="details-grid details-grid-no-border">
+											{/* Personal Details — col 1 */}
+											<div className="col-personal-1">
+												<h6 className="dg-section-title">Personal Details</h6>
+
+												<p className="dg-label">Position:</p>
+												<p className="dg-value">{profile.position || "—"}</p>
+
+												<p className="dg-label">Employment Type:</p>
+												<p className="dg-value">{profile.empType || "—"}</p>
+
+												<p className="dg-label">Primary Supervisor</p>
+												<p className="dg-value">{profile.supervisor || "—"}</p>
+
+												<p className="dg-label">Department:</p>
+												<p className="dg-value">{profile.department || "—"}</p>
+
+												<p className="dg-label">HR Manager</p>
+												<p className="dg-value">{profile.hrManager || "—"}</p>
+											</div>
+
+											{/* Personal Details — col 2 */}
+											<div className="col-personal-2">
+												<h6 className="dg-section-title">Personal Details</h6>
+
+												<p className="dg-label">Gender:</p>
+												<p className="dg-value">{profile.gender || "—"}</p>
+
+												<p className="dg-label">Date of Birth:</p>
+												<p className="dg-value">{profile.dob || "—"}</p>
+
+												<p className="dg-label">Blood Group:</p>
+												<p className="dg-value">{profile.bloodGroup || "—"}</p>
+
+												<p className="dg-label">Marital Status:</p>
+												<p className="dg-value">
+													{profile.maritalStatus || "—"}
+												</p>
+
+												<p className="dg-label">Portfolio:</p>
+												<p className="dg-value">{education.portfolio || "—"}</p>
+											</div>
+
+											{/* Educational Qualification — col 3 */}
+											<div className="col-education">
+												<h6 className="dg-section-title">
+													Educational Qualification
+												</h6>
+
+												<p className="dg-label">Institution:</p>
+												<p className="dg-value">
+													{education.institution || "—"}
+												</p>
+
+												<p className="dg-label">Start &amp; End Date:</p>
+												<p className="dg-value">
+													{education.eduStartDate && education.eduEndDate
+														? `${education.eduStartDate} & ${education.eduEndDate}`
+														: "—"}
+												</p>
+
+												<p className="dg-label">Course:</p>
+												<p className="dg-value">
+													{education.qualification || "—"}
+												</p>
+
+												<p className="dg-label">Specialization:</p>
+												<p className="dg-value">
+													{education.specialization || "—"}
+												</p>
+
+												<p className="dg-label">Skills:</p>
+												<p className="dg-value">
+													{Array.isArray(education.skills)
+														? education.skills.join(", ")
+														: education.skills || "—"}
+												</p>
+											</div>
+										</div>
+									</div>
 								</div>
+								{/* END top row */}
 
-								<div className="empl-modal-body">
-									<form className="add-employee-form" onSubmit={handleSubmit}>
-										<div className="empl-form-left">
-											{/* Profile Upload Section */}
-											<div className="profile-upload-section">
-												<div className="profile-placeholder">
-													{previewImage ? (
-														<img
-															src={previewImage}
-															alt="Profile Preview"
-															style={{
-																width: "100%",
-																height: "100%",
-																borderRadius: "50%",
-																objectFit: "cover",
-															}}
-														/>
-													) : (
-														<img
-															src={`https://ui-avatars.com/api/?name=${encodeURIComponent(formData.firstName + ' ' + formData.lastName)}&background=random`}
-															alt="Avatar Placeholder"
-															style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-														/>
-													)}
+								{/* ══════════════════════════════════════════════════════
+							    ROW 2 — Address | Contact Details | Previous Experience
+							    ══════════════════════════════════════════════════════ */}
+								<div className="details-grid">
+									{/* Address */}
+									<div>
+										<h6 className="dg-section-title">Address</h6>
+
+										<p className="dg-label">Address Line:</p>
+										<p className="dg-value">{address.line1 || "—"}</p>
+
+										<p className="dg-label">City:</p>
+										<p className="dg-value">{address.city || "—"}</p>
+
+										<p className="dg-label">State:</p>
+										<p className="dg-value">{address.state || "—"}</p>
+
+										<p className="dg-label">Country:</p>
+										<p className="dg-value">{address.country || "—"}</p>
+									</div>
+
+									{/* Contact Details */}
+									<div>
+										<h6 className="dg-section-title">Contact Details</h6>
+
+										<p className="dg-label">Phone Number:</p>
+										<p className="dg-value">{profile.phone || "—"}</p>
+
+										<p className="dg-label">Email:</p>
+										<p className="dg-value">{profile.email || "—"}</p>
+
+										<p className="dg-label">Emergency Contact:</p>
+										<p className="dg-value">{contact.emergency || "—"}</p>
+
+										<p className="dg-label">Relationship:</p>
+										<p className="dg-value">{contact.relationship || "—"}</p>
+									</div>
+
+									{/* Previous Experience */}
+									<div>
+										<h6 className="dg-section-title">Previous Experience</h6>
+
+										<p className="dg-label">Name of the Company:</p>
+										<p className="dg-value">{experience.company || "—"}</p>
+
+										<p className="dg-label">Start &amp; End Date:</p>
+										<p className="dg-value">
+											{experience.startDate && experience.endDate
+												? `${experience.startDate} – ${experience.endDate}`
+												: "—"}
+										</p>
+
+										<p className="dg-label">Job Title:</p>
+										<p className="dg-value">{experience.role || "—"}</p>
+
+										<p className="dg-label">Job Description:</p>
+										<p className="dg-value dg-description">
+											{experience.description || "—"}
+										</p>
+									</div>
+								</div>
+								{/* END ROW 2 */}
+
+								{/* ══════════════════════════════════════════════════════
+							    ROW 3 — Bank Details | Submitted Documents
+							    ══════════════════════════════════════════════════════ */}
+								<div className="details-grid details-grid-2col">
+									{/* Bank Details */}
+									<div>
+										<h6 className="dg-section-title">Bank Details</h6>
+
+										<p className="dg-label">Bank Name:</p>
+										<p className="dg-value">{bank.name || "—"}</p>
+
+										<p className="dg-label">Branch:</p>
+										<p className="dg-value">{bank.branch || "—"}</p>
+
+										<p className="dg-label">Account Number:</p>
+										<p className="dg-value">{bank.account || "—"}</p>
+
+										<p className="dg-label">IFSC Code:</p>
+										<p className="dg-value">{bank.ifsc || "—"}</p>
+									</div>
+
+									{/* Submitted Documents */}
+									<div className="submitted-docs">
+										<h6 className="dg-section-title">Submitted Documents</h6>
+										{documents.length > 0 ? (
+											documents.map((doc, idx) => (
+												<div className="doc-item" key={idx}>
+													<span className="doc-pdf-badge">PDF</span>
+													<span className="doc-filename">{doc.fileName}</span>
 												</div>
-												<div className="upload-info">
-													<h4>Upload Profile Image</h4>
-													<p>Image should be below 4 MB</p>
-													<input
-														type="file"
-														accept="image/*"
-														style={{ display: "none" }}
-														id="profileImageInput"
-														onChange={handleImageChange}
+											))
+										) : (
+											<div className="doc-item doc-empty">
+												No documents uploaded
+											</div>
+										)}
+									</div>
+								</div>
+								{/* END ROW 3 */}
+							</div>
+							{/* END profile-modal-scrollable */}
+						</div>
+						{/* END profile-modal-container */}
+					</div>
+				)}
+
+				{/* --------- Add / Edit Employee Modal --------- */}
+				{showModal && (
+					<div className="modal-overlay1">
+						<div className="add-employee-modal1">
+							<div className="empl-modal-header-blue">
+								<h3>{isEditing ? "Edit Employee" : "Add Employee"}</h3>
+								<button
+									className="empl-close-btn"
+									onClick={() => setShowModal(false)}
+								>
+									×
+								</button>
+							</div>
+
+							<div className="empl-modal-body">
+								<form className="add-employee-form" onSubmit={handleSubmit}>
+									<div className="empl-form-left">
+										{/* ── Profile image upload ── */}
+										<div className="profile-upload-section">
+											<div className="profile-placeholder">
+												{previewImage ? (
+													<img
+														src={previewImage}
+														alt="Profile Preview"
+														style={{
+															width: "100%",
+															height: "100%",
+															borderRadius: "50%",
+															objectFit: "cover",
+														}}
 													/>
-													<button
-														type="button"
-														className="new-empl-upload-btn1"
-														onClick={() =>
-															document.getElementById("profileImageInput").click()
-														}
-													>
-														Upload
-													</button>
-												</div>
+												) : (
+													<i className="profile-icon">
+														<FaUserFriends size="2em" />
+													</i>
+												)}
 											</div>
 
-											{/* Form Rows */}
-											<div className="form-row1">
-												<div className="empl-form-group">
-													<label>First Name</label>
-													<input
-														type="text"
-														name="firstName"
-														placeholder="Please enter name"
-														value={formData.firstName}
-														onChange={handleChange}
-													/>
-													{errors.firstName && (
-														<p className="error-text">{errors.firstName}</p>
-													)}
-												</div>
-												<div className="empl-form-group">
-													<label>Last Name</label>
-													<input
-														type="text"
-														name="lastName"
-														placeholder="Please enter name"
-														value={formData.lastName}
-														onChange={handleChange}
-													/>
-													{errors.lastName && (
-														<p className="error-text">{errors.lastName}</p>
-													)}
-												</div>
-											</div>
+											<div className="upload-info">
+												<h4>Upload Profile Image</h4>
+												<p>Image should be below 4 MB</p>
 
-											<div className="form-row1">
-												<div className="empl-form-group">
-													<label>Employee ID</label>
-													<input
-														type="text"
-														name="employeeId"
-														placeholder="Please enter employee ID"
-														value={formData.employeeId}
-														onChange={handleChange}
-													/>
-													{errors.employeeId && (
-														<p className="error-text">{errors.employeeId}</p>
-													)}
-												</div>
-												<div className="empl-form-group">
-													<label>Joining Date</label>
-													<input
-														type="date"
-														name="joiningDate"
-														placeholder="dd/mm/yyyy"
-														value={formData.joiningDate}
-														onChange={handleChange}
-													/>
-													{errors.joiningDate && (
-														<p className="error-text">{errors.joiningDate}</p>
-													)}
-												</div>
-											</div>
+												<input
+													type="file"
+													accept="image/*"
+													style={{ display: "none" }}
+													id="profileImageInput"
+													onChange={handleImageChange}
+												/>
 
-											<div className="form-row1">
-												<div className="empl-form-group">
-													<label>Email</label>
-													<input
-														type="email"
-														name="email"
-														placeholder="Please enter email"
-														value={formData.email}
-														onChange={handleChange}
-													/>
-													{errors.email && (
-														<p className="error-text">{errors.email}</p>
-													)}
-												</div>
-												<div className="empl-form-group">
-													<label>Phone Number</label>
-													<input
-														type="tel"
-														name="phone"
-														placeholder="Please enter phone number"
-														value={formData.phone}
-														onChange={handleChange}
-													/>
-													{errors.phone && (
-														<p className="error-text">{errors.phone}</p>
-													)}
-												</div>
+												<button
+													type="button"
+													className="new-empl-upload-btn1"
+													onClick={() =>
+														document.getElementById("profileImageInput").click()
+													}
+												>
+													Upload
+												</button>
 											</div>
+										</div>
 
-											<div className="form-row1">
-												<div className="empl-form-group">
-													<label>Employment Type</label>
-													<select
-														name="employmentType"
-														value={formData.employmentType}
-														onChange={handleChange}
-													>
-														<option value="">Select</option>
-														<option value="Full Time">Full Time</option>
-														<option value="Part Time">Part Time</option>
-														<option value="Contract">Contract</option>
-														<option value="Intern">Intern</option>
-													</select>
-													{errors.employmentType && (
-														<p className="error-text">{errors.employmentType}</p>
-													)}
-												</div>
-												<div className="empl-form-group">
-													<label>Primary Supervisor</label>
-													<select
-														name="supervisor"
-														value={formData.supervisor}
-														onChange={handleChange}
-													>
-														<option value="">Select</option>
-														{staffList.map((staff) => (
+										{/* Form Rows */}
+										<div className="form-row1">
+											<div className="empl-form-group">
+												<label>First Name</label>
+												<input
+													type="text"
+													name="firstName"
+													placeholder="Please enter name"
+													value={formData.firstName}
+													onChange={handleChange}
+												/>
+												{errors.firstName && (
+													<p className="error-text">{errors.firstName}</p>
+												)}
+											</div>
+											<div className="empl-form-group">
+												<label>Last Name</label>
+												<input
+													type="text"
+													name="lastName"
+													placeholder="Please enter name"
+													value={formData.lastName}
+													onChange={handleChange}
+												/>
+												{errors.lastName && (
+													<p className="error-text">{errors.lastName}</p>
+												)}
+											</div>
+										</div>
+
+										<div className="form-row1">
+											<div className="empl-form-group">
+												<label>Employee ID</label>
+												<input
+													type="text"
+													name="employeeId"
+													placeholder="Please enter employee ID"
+													value={formData.employeeId}
+													onChange={handleChange}
+												/>
+												{errors.employeeId && (
+													<p className="error-text">{errors.employeeId}</p>
+												)}
+											</div>
+											<div className="empl-form-group">
+												<label>Joining Date</label>
+												<input
+													type="date"
+													name="joiningDate"
+													placeholder="dd/mm/yyyy"
+													value={formData.joiningDate}
+													onChange={handleChange}
+												/>
+												{errors.joiningDate && (
+													<p className="error-text">{errors.joiningDate}</p>
+												)}
+											</div>
+										</div>
+
+										<div className="form-row1">
+											<div className="empl-form-group">
+												<label>Email</label>
+												<input
+													type="email"
+													name="email"
+													placeholder="Please enter email"
+													value={formData.email}
+													onChange={handleChange}
+												/>
+												{errors.email && (
+													<p className="error-text">{errors.email}</p>
+												)}
+											</div>
+											<div className="empl-form-group">
+												<label>Phone Number</label>
+												<input
+													type="tel"
+													name="phone"
+													placeholder="Please enter phone number"
+													value={formData.phone}
+													onChange={handleChange}
+												/>
+												{errors.phone && (
+													<p className="error-text">{errors.phone}</p>
+												)}
+											</div>
+										</div>
+
+										<div className="form-row1">
+											<div className="empl-form-group">
+												<label>Employment Type</label>
+												<select
+													name="employmentType"
+													value={formData.employmentType}
+													onChange={handleChange}
+												>
+													<option value="">Select</option>
+													<option value="Full Time">Full Time</option>
+													<option value="Part Time">Part Time</option>
+													<option value="Contract">Contract</option>
+													<option value="Intern">Intern</option>
+												</select>
+												{errors.employmentType && (
+													<p className="error-text">{errors.employmentType}</p>
+												)}
+											</div>
+											<div className="empl-form-group">
+												<label>Primary Supervisor</label>
+												<select
+													name="supervisor"
+													value={formData.supervisor}
+													onChange={handleChange}
+												>
+													<option value="">Select</option>
+													{staffList.map((staff) => (
+														<option key={staff.id} value={staff.name}>
+															{staff.name}
+														</option>
+													))}
+												</select>
+												{errors.supervisor && (
+													<p className="error-text">{errors.supervisor}</p>
+												)}
+											</div>
+										</div>
+
+										<div className="form-row1">
+											<div className="empl-form-group">
+												<label>HR Manager</label>
+												<select
+													name="hrManager"
+													value={formData.hrManager}
+													onChange={handleChange}
+												>
+													<option value="">Select</option>
+													{staffList
+														.filter((staff) => staff.role === "admin")
+														.map((staff) => (
 															<option key={staff.id} value={staff.name}>
 																{staff.name}
 															</option>
 														))}
-													</select>
-													{errors.supervisor && (
-														<p className="error-text">{errors.supervisor}</p>
-													)}
-												</div>
+												</select>
+												{errors.hrManager && (
+													<p className="error-text">{errors.hrManager}</p>
+												)}
 											</div>
-
-											<div className="form-row1">
-												<div className="empl-form-group">
-													<label>HR Manager</label>
-													<select
-														name="hrManager"
-														value={formData.hrManager}
-														onChange={handleChange}
-													>
-														<option value="">Select</option>
-														{staffList
-															.filter((staff) => staff.role === "admin")
-															.map((staff) => (
-																<option key={staff.id} value={staff.name}>
-																	{staff.name}
-																</option>
-															))}
-													</select>
-													{errors.hrManager && (
-														<p className="error-text">{errors.hrManager}</p>
-													)}
-												</div>
-												<div className="empl-form-group">
-													<label>Department</label>
-													<select
-														name="department"
-														value={formData.department}
-														onChange={handleChange}
-													>
-														<option value="">Select</option>
-														<option value="Engineering">Engineering</option>
-														<option value="Marketing">Marketing</option>
-														<option value="Sales">Sales</option>
-														<option value="HR">HR</option>
-														<option value="Finance">Finance</option>
-													</select>
-													{errors.department && (
-														<p className="error-text">{errors.department}</p>
-													)}
-												</div>
-											</div>
-
-											<div className="form-row1">
-												<div className="empl-form-group">
-													<label>Designation</label>
-													<select
-														name="designation"
-														value={formData.designation}
-														onChange={handleChange}
-													>
-														<option value="">Select</option>
-														<option value="Software Engineer">Software Engineer</option>
-														<option value="Senior Engineer">Senior Engineer</option>
-														<option value="Team Lead">Team Lead</option>
-														<option value="Manager">Manager</option>
-													</select>
-													{errors.designation && (
-														<p className="error-text">{errors.designation}</p>
-													)}
-												</div>
-												<div className="empl-form-group">
-													<label>Status</label>
-													<select>
-														<option>Active</option>
-														<option>Inactive</option>
-														<option>Pending</option>
-													</select>
-												</div>
-											</div>
-
-											{/* Modal Actions */}
-											<div className="modal-actions01">
-												<button type="submit" className="save-btn">
-													{isEditing ? "Update" : "Save"}
-												</button>
-												<button
-													type="button"
-													className="action-cancel-btn"
-													onClick={() => setShowModal(false)}
+											<div className="empl-form-group">
+												<label>Department</label>
+												<select
+													name="department"
+													value={formData.department}
+													onChange={handleChange}
 												>
-													Cancel
-												</button>
+													<option value="">Select</option>
+													<option value="Engineering">Engineering</option>
+													<option value="Marketing">Marketing</option>
+													<option value="Sales">Sales</option>
+													<option value="HR">HR</option>
+													<option value="Finance">Finance</option>
+												</select>
+												{errors.department && (
+													<p className="error-text">{errors.department}</p>
+												)}
 											</div>
 										</div>
-									</form>
-								</div>
+
+										<div className="form-row1">
+											<div className="empl-form-group">
+												<label>Designation</label>
+												<select
+													name="designation"
+													value={formData.designation}
+													onChange={handleChange}
+												>
+													<option value="">Select</option>
+													<option value="Software Engineer">
+														Software Engineer
+													</option>
+													<option value="Senior Engineer">
+														Senior Engineer
+													</option>
+													<option value="Team Lead">Team Lead</option>
+													<option value="Manager">Manager</option>
+												</select>
+												{errors.designation && (
+													<p className="error-text">{errors.designation}</p>
+												)}
+											</div>
+											<div className="empl-form-group">
+												<label>Status</label>
+												<select>
+													<option>Active</option>
+													<option>Inactive</option>
+													<option>Pending</option>
+												</select>
+											</div>
+										</div>
+
+										{/* Modal Actions */}
+										<div className="modal-actions01">
+											<button type="submit" className="save-btn">
+												{isEditing ? "Update" : "Save"}
+											</button>
+											<button
+												type="button"
+												className="action-cancel-btn"
+												onClick={() => setShowModal(false)}
+											>
+												Cancel
+											</button>
+										</div>
+									</div>
+								</form>
 							</div>
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);
