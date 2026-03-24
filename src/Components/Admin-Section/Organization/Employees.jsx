@@ -964,14 +964,14 @@ const Employee = () => {
                         <div className="profile-image-box">
                           <div className="profile-circular-mask">
                             <img
-                              src={profile.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || "User")}&background=random`}
+                              src={profile.profile_image || profile.profileImage || selectedEmployee.listImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || selectedEmployee.name || "User")}&background=random`}
                               alt={profile.name}
                               className="profile-modal-img"
                             />
                           </div>
                         </div>
                         <div className="profile-name-tag">
-                          {profile.name || "Santhana Lakshmi"} (ID {profile.empId || "112345"})
+                          {profile.name || selectedEmployee.name} (ID {profile.empId || selectedEmployee.empId})
                         </div>
                       </div>
                     </div>
@@ -981,23 +981,23 @@ const Employee = () => {
                       <h5 className="profile-section-title">Employment Details</h5>
                       <div className="field-group">
                         <label className="field-label">Position</label>
-                        <p className="field-value">{profile.position || "HR Manager Head"}</p>
+                        <p className="field-value">{profile.position || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Employment Type</label>
-                        <p className="field-value">{profile.empType || "Full Time"}</p>
+                        <p className="field-value">{profile.empType || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Primary Supervisor</label>
-                        <p className="field-value">{profile.supervisor || "Catherine"}</p>
+                        <p className="field-value">{profile.supervisor || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Department</label>
-                        <p className="field-value">{profile.department || "All"}</p>
+                        <p className="field-value">{profile.department || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">HR Manager</label>
-                        <p className="field-value">{profile.hrManager || "Santhana Lakshmi"}</p>
+                        <p className="field-value">{profile.hrManager || "—"}</p>
                       </div>
                     </div>
 
@@ -1006,25 +1006,25 @@ const Employee = () => {
                       <h5 className="profile-section-title">Personal Details</h5>
                       <div className="field-group">
                         <label className="field-label">Gender</label>
-                        <p className="field-value">{profile.gender || "Female"}</p>
+                        <p className="field-value">{profile.gender || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Date of Birth</label>
-                        <p className="field-value">{profile.dob || "22/07/1993"}</p>
+                        <p className="field-value">{profile.dob || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Blood Group</label>
-                        <p className="field-value">{profile.bloodGroup || "A+"}</p>
+                        <p className="field-value">{profile.bloodGroup || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Marital Status</label>
-                        <p className="field-value">{profile.maritalStatus || "Married"}</p>
+                        <p className="field-value">{profile.maritalStatus || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Portfolio Link</label>
                         <p className="field-value">
                           <a href={education.portfolio || "#"} className="field-value" style={{ color: 'inherit', textDecoration: 'none' }}>
-                            {education.portfolio || "http://www.behance"}
+                            {education.portfolio || "—"}
                           </a>
                         </p>
                       </div>
@@ -1035,26 +1035,26 @@ const Employee = () => {
                       <h5 className="profile-section-title">Educational Qualification</h5>
                       <div className="field-group">
                         <label className="field-label">Name Of the Institution</label>
-                        <p className="field-value">{education.institution || "CEMP Punnapra"}</p>
+                        <p className="field-value">{education.institution || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Start & Enddate</label>
                         <p className="field-value">
-                          {education.eduStartDate && education.eduEndDate ? `${education.eduStartDate}-${education.eduEndDate}` : "22/07/2012-22/07/2016"}
+                          {education.eduStartDate && education.eduEndDate ? `${education.eduStartDate}-${education.eduEndDate}` : "—"}
                         </p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Course</label>
-                        <p className="field-value">{education.qualification || "Btech"}</p>
+                        <p className="field-value">{education.qualification || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Specialization</label>
-                        <p className="field-value">{education.specialization || "CSE"}</p>
+                        <p className="field-value">{education.specialization || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Skills</label>
                         <p className="field-value">
-                          {Array.isArray(education.skills) ? education.skills.join(", ") : (education.skills || "Figma, Adobe XD, Photoshop")}
+                          {Array.isArray(education.skills) ? education.skills.join(", ") : (education.skills || "—")}
                         </p>
                       </div>
                     </div>
@@ -1067,19 +1067,19 @@ const Employee = () => {
                       <h5 className="profile-section-title">Address</h5>
                       <div className="field-group">
                         <label className="field-label">Address Line</label>
-                        <p className="field-value">{address.line1 || "Kattasseri House"}</p>
+                        <p className="field-value">{address.line1 || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">City</label>
-                        <p className="field-value">{address.city || "Alappuzha"}</p>
+                        <p className="field-value">{address.city || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">State</label>
-                        <p className="field-value">{address.state || "Kerala"}</p>
+                        <p className="field-value">{address.state || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Country</label>
-                        <p className="field-value">{address.country || "India"}</p>
+                        <p className="field-value">{address.country || "—"}</p>
                       </div>
                     </div>
 
@@ -1088,19 +1088,19 @@ const Employee = () => {
                       <h5 className="profile-section-title">Contact Details</h5>
                       <div className="field-group">
                         <label className="field-label">Phone Number</label>
-                        <p className="field-value">{profile.phone || "9895195971"}</p>
+                        <p className="field-value">{profile.phone || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Emergency Contact</label>
-                        <p className="field-value">{contact.emergency || "9895195971"}</p>
+                        <p className="field-value">{contact.emergency || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Relationship</label>
-                        <p className="field-value">{contact.relationship || "Husband"}</p>
+                        <p className="field-value">{contact.relationship || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Email</label>
-                        <p className="field-value">{profile.email || "aiswarya@gmail.com"}</p>
+                        <p className="field-value">{profile.email || "—"}</p>
                       </div>
                     </div>
 
@@ -1109,22 +1109,22 @@ const Employee = () => {
                       <h5 className="profile-section-title">Previous Experience</h5>
                       <div className="field-group">
                         <label className="field-label">Name Of the Company</label>
-                        <p className="field-value">{experience.company || "Azym Technology"}</p>
+                        <p className="field-value">{experience.company || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Start & Enddate</label>
                         <p className="field-value">
-                          {experience.startDate && experience.endDate ? `${experience.startDate}-${experience.endDate}` : "22/07/2018-22/07/2022"}
+                          {experience.startDate && experience.endDate ? `${experience.startDate}-${experience.endDate}` : "—"}
                         </p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Job Title</label>
-                        <p className="field-value">{experience.role || "UIUX Designer"}</p>
+                        <p className="field-value">{experience.role || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Job Description</label>
                         <p className="field-value prev-exp-desc">
-                          {experience.description || "Conduct user research, interviews, and usability testing to gather insights."}
+                          {experience.description || "—"}
                         </p>
                       </div>
                     </div>
@@ -1134,19 +1134,19 @@ const Employee = () => {
                       <h5 className="profile-section-title">Bank Details</h5>
                       <div className="field-group">
                         <label className="field-label">Bank Name</label>
-                        <p className="field-value">{bank.name || "SBI"}</p>
+                        <p className="field-value">{bank.name || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Branch</label>
-                        <p className="field-value">{bank.branch || "Alappuzha"}</p>
+                        <p className="field-value">{bank.branch || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">Account Number</label>
-                        <p className="field-value">{bank.account || "12345678910"}</p>
+                        <p className="field-value">{bank.account || "—"}</p>
                       </div>
                       <div className="field-group">
                         <label className="field-label">IFSC Code</label>
-                        <p className="field-value">{bank.ifsc || "IFSC12345"}</p>
+                        <p className="field-value">{bank.ifsc || "—"}</p>
                       </div>
                     </div>
                   </div>
