@@ -607,6 +607,73 @@
 	}
 }
 
+/* 🌙 Dark Theme Overrides for Add Announcement Form */
+body[data-theme='dark'] .add-announcement-overlay {
+	background: rgba(0, 0, 0, 0.8) !important;
+	backdrop-filter: blur(4px);
+}
+
+body[data-theme='dark'] .add-form-container {
+	background: #0d1117 !important;
+	border: 1px solid rgba(25, 189, 232, 0.2);
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+body[data-theme='dark'] .form-header h5 {
+	color: #000 !important; /* Keep header text dark on cyan bg */
+}
+
+body[data-theme='dark'] .add-form-container .close-icon {
+	color: #ccc;
+}
+
+body[data-theme='dark'] .announcement-form input,
+body[data-theme='dark'] .announcement-form select,
+body[data-theme='dark'] .announcement-form textarea {
+	background: #161b22 !important;
+	border: 1px solid #30363d !important;
+	color: #c9d1d9 !important;
+}
+
+body[data-theme='dark'] .announcement-form input:focus,
+body[data-theme='dark'] .announcement-form select:focus,
+body[data-theme='dark'] .announcement-form textarea:focus {
+	border-color: #19bde8 !important;
+	box-shadow: 0 0 0 2px rgba(25, 189, 232, 0.1) !important;
+}
+
+body[data-theme='dark'] .announcement-form label {
+	color: #a5f3ff !important;
+	font-weight: 600;
+}
+
+body[data-theme='dark'] .form-grid h6 {
+	color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .form-buttons .btn-outline-secondary {
+	background: transparent !important;
+	border-color: #30363d !important;
+	color: #c9d1d9 !important;
+}
+
+body[data-theme='dark'] .form-buttons .btn-outline-secondary:hover {
+	background: rgba(255, 255, 255, 0.05) !important;
+}
+
+body[data-theme='dark'] .announcement-form input::placeholder,
+body[data-theme='dark'] .announcement-form textarea::placeholder {
+	color: #484f58 !important;
+}
+
+/* Custom styles for type="date" and "time" icons in dark mode */
+body[data-theme='dark'] .announcement-form input[type="date"]::-webkit-calendar-picker-indicator,
+body[data-theme='dark'] .announcement-form input[type="time"]::-webkit-calendar-picker-indicator {
+	filter: invert(0.8) sepia(100%) saturate(10000%) hue-rotate(180deg);
+	cursor: pointer;
+}
+
+
 .announcement-list {
 	list-style: none;
 	padding: 0;

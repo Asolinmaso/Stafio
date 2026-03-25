@@ -146,7 +146,7 @@
 
 .clock {
   margin-top: -200px;
-  margin-left: -30px;
+  margin-left: -40px;
   margin-right: -30px;
 }
 
@@ -433,13 +433,16 @@ body[data-theme='dark'] .leave-notif-close:hover {
 .break-items-list::-webkit-scrollbar {
   width: 5px;
 }
+
 .break-items-list::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .break-items-list::-webkit-scrollbar-thumb {
   background: #a5f3ff;
   border-radius: 10px;
 }
+
 .break-items-list::-webkit-scrollbar-thumb:hover {
   background: #19bde8;
 }
@@ -500,7 +503,6 @@ body[data-theme='dark'] .meeting-card span {
 }
 
 body[data-theme='dark'] .punch-info-box {
-  background: rgba(25, 189, 232, 0.05) !important;
   border-color: rgba(25, 189, 232, 0.2) !important;
 }
 

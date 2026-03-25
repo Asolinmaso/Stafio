@@ -58,7 +58,7 @@
 .admin-page-container {
     display: flex !important;
     height: 100vh !important;
-    width: 100vw !important;
+    width: 100% !important;
     overflow: hidden !important;
     background-color: #eff5ff;
 }
@@ -86,6 +86,7 @@
     flex: 1 !important;
     height: 100vh !important;
     overflow-y: auto !important;
+    overflow-x: hidden !important;
     display: flex !important;
     flex-direction: column !important;
     padding-top: 0 !important;
@@ -1023,7 +1024,7 @@ body[data-theme='dark'] .recharts-cartesian-grid line {
 /* Form Elements */
 body[data-theme='dark'] input,
 body[data-theme='dark'] select,
-body[data-theme='dark'] textarea,
+body[data-theme='dark'] option,
 body[data-theme='dark'] .form-control,
 body[data-theme='dark'] .custom-select-wrapper select,
 body[data-theme='dark'] .theme-input-box,
@@ -1033,6 +1034,8 @@ body[data-theme='dark'] .search-input0,
 body[data-theme='dark'] .sort-select1,
 body[data-theme='dark'] .filter-field input,
 body[data-theme='dark'] .filter-field select,
+body[data-theme='dark'] .empl-form-group input,
+body[data-theme='dark'] .empl-form-group select,
 body[data-theme='dark'] .page-size-select1,
 body[data-theme='dark'] .right-search-input-new,
 body[data-theme='dark'] .right-btn-filter-new,
@@ -1122,6 +1125,12 @@ body[data-theme='dark'] .att-showing-pill,
 body[data-theme='dark'] .rows-dropdown-popup {
     background-color: #0f172a !important;
     border-color: #2d334a !important;
+    color: #ffffff !important;
+    color-scheme: dark !important;
+}
+
+body[data-theme='dark'] select option {
+    background-color: #0f172a !important;
     color: #ffffff !important;
 }
 
@@ -1366,4 +1375,37 @@ body[data-theme='dark'] .ra-status.pending {
     background-color: rgba(245, 158, 11, 0.2) !important;
     color: #fbbf24 !important;
     border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+/* ====================== SKILL PILLS — DARK MODE ====================== */
+body[data-theme='dark'] .skill-pill {
+    background-color: #1e3a4a !important;
+    background: #1e3a4a !important;
+    color: #a8ecff !important;
+    border-color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .skill-remove {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .skill-remove:hover {
+    color: #f87171 !important;
+}
+
+body[data-theme='dark'] .skill-input {
+    background-color: #0f172a !important;
+    border-color: #2d334a !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .skill-add-btn {
+    background-color: #1a1f2e !important;
+    border-color: #19bde8 !important;
+    color: #19bde8 !important;
+}
+
+body[data-theme='dark'] .skill-add-btn:hover {
+    background-color: #19bde8 !important;
+    color: #ffffff !important;
 }

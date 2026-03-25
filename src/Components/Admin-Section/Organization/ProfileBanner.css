@@ -231,3 +231,36 @@
   padding-left: 70px;
   margin-top: 20px;
 }
+
+/* DARK MODE OVERRIDES */
+body[data-theme='dark'] .profile-banner-wrapper {
+    background: transparent !important;
+}
+
+body[data-theme='dark'] .my-profile-title h1 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .profile-info-card {
+    background: #1e293b !important;
+    border-radius: 0 0 10px 10px !important;
+}
+
+body[data-theme='dark'] .profile-info-grid {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .profile-name {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .profile-id,
+body[data-theme='dark'] .profile-role,
+body[data-theme='dark'] .profile-location {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .profile-center div,
+body[data-theme='dark'] .profile-right div {
+    color: #f8fafc !important;
+}
