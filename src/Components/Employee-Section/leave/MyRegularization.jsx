@@ -207,7 +207,7 @@ export default function MyRegularization() {
 			date: row.date.split("/")[0].split("-").reverse().join("-"),
 			session_type: row.date.split("/")[1] || "Full Day",
 			attendance_type: row.attendanceType,
-			reason: row.reason,
+			reason: row.reason || "",
 		});
 
 		setShowModal(true);
@@ -543,7 +543,7 @@ export default function MyRegularization() {
 														setFormData({ ...formData, reason: e.target.value })
 													}
 												></textarea>
-												<span className="char-count-exact">30/30</span>
+												<span className="char-count-exact">{(formData.reason || "").length}/30</span>
 											</div>
 										</div>
 									</div>
