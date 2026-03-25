@@ -1679,53 +1679,20 @@ const EmployeeProfile = () => {
 											<div
 												className="doc-item mb-3 d-flex flex-row align-items-center p-3"
 												key={idx}
-												style={{
-													background: "#F6F9FC",
-													border: "1px solid #E2E8F0",
-													borderRadius: "12px",
-												}}
 											>
-												<span
-													className="pdf-icon me-3"
-													style={{
-														background: "#FFE4E6",
-														color: "#E11D48",
-														borderRadius: "8px",
-														padding: "8px 12px",
-														fontWeight: "bold",
-														flexShrink: 0,
-													}}
-												>
+												<span className="pdf-icon me-3">
 													PDF
 												</span>
 												<div className="flex-grow-1 overflow-hidden">
-													<h6
-														className="mb-0 text-truncate"
-														style={{
-															fontSize: "15px",
-															color: "#1E293B",
-															fontWeight: "600",
-														}}
-													>
+													<h6 className="mb-0 text-truncate doc-title">
 														{doc.fileName || doc.name}
 													</h6>
 													<div className="d-flex align-items-center mt-1">
-														<span
-															style={{ fontSize: "13px", color: "#94A3B8" }}
-														>
+														<span className="doc-size-text">
 															{doc.size || "94"} KB of {doc.size || "94"} KB
 															&nbsp;•&nbsp;
 														</span>
-														<span
-															className="ms-1"
-															style={{
-																fontSize: "13px",
-																color: "#10B981",
-																fontWeight: "600",
-																display: "flex",
-																alignItems: "center",
-															}}
-														>
+														<span className="ms-1 status-completed-text">
 															<i className="bi bi-check-circle-fill me-1"></i>{" "}
 															Completed
 														</span>
@@ -1733,16 +1700,9 @@ const EmployeeProfile = () => {
 												</div>
 												<Button
 													variant="ghost"
-													className="p-1 px-2 ms-2"
+													className="p-1 px-2 ms-2 doc-delete-btn"
 													onClick={() => handleDocDelete(idx)}
 													disabled={!isEditingDocs}
-													style={{
-														border: "none",
-														background: "transparent",
-														fontSize: "1.2rem",
-														cursor: "pointer",
-														color: "#94A3B8",
-													}}
 												>
 													<i className="bi bi-trash3"></i>
 												</Button>
@@ -1775,21 +1735,7 @@ const EmployeeProfile = () => {
 													setDocuments((prev) => [...prev, ...newDocs]);
 												}
 											}}
-											style={{
-												border: isDragOver
-													? "2px dashed #19BDE8"
-													: "2px dashed #CBD5E1",
-												borderRadius: "20px",
-												background: isDragOver ? "#EFF9FF" : "#ffffff",
-												transition: "all 0.2s ease",
-												padding: "40px 30px",
-												display: "flex",
-												flexDirection: "column",
-												alignItems: "center",
-												textAlign: "center",
-												minHeight: "280px",
-												justifyContent: "center",
-											}}
+											className={`upload-box ${isDragOver ? "drag-over" : ""}`}
 										>
 											<div style={{ marginBottom: "16px" }}>
 												<i
@@ -1797,24 +1743,10 @@ const EmployeeProfile = () => {
 													style={{ fontSize: "3.5rem", color: "#19BDE8" }}
 												></i>
 											</div>
-											<p
-												style={{
-													color: "#1E293B",
-													fontWeight: "700",
-													fontSize: "17px",
-													margin: "0 0 8px 0",
-													lineHeight: "1.4",
-												}}
-											>
+											<p className="upload-title">
 												Choose a file or drag &amp; drop it here
 											</p>
-											<p
-												style={{
-													fontSize: "12px",
-													color: "#94A3B8",
-													margin: "0 0 24px 0",
-												}}
-											>
+											<p className="upload-hint">
 												JPEG, PNG, PDG, and MP4 formats, up to 50MB
 											</p>
 											<input
@@ -1839,21 +1771,7 @@ const EmployeeProfile = () => {
 											/>
 											<label
 												htmlFor="employee-file-upload"
-												style={{
-													display: "block",
-													width: "100%",
-													background: "#19BDE8",
-													border: "none",
-													borderRadius: "12px",
-													color: "white",
-													fontWeight: "600",
-													padding: "12px 20px",
-													cursor: "pointer",
-													fontSize: "16px",
-													userSelect: "none",
-													textAlign: "center",
-													whiteSpace: "nowrap",
-												}}
+												className="browse-file-label"
 											>
 												Browse File
 											</label>

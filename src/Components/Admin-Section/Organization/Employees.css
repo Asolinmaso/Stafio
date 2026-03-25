@@ -1398,3 +1398,78 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+/* ============================================================================ */
+/* DARK MODE OVERRIDES */
+/* ============================================================================ */
+
+body[data-theme='dark'] .add-employee-modal1 {
+    background: #111827 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .empl-modal-body {
+    background: #111827 !important;
+}
+
+body[data-theme='dark'] .add-employee-form {
+    background: #111827 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .empl-form-group label {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .profile-upload-section {
+    background-color: #1f2937 !important;
+    border-bottom: 1px solid #374151 !important;
+}
+
+body[data-theme='dark'] .upload-info h4 {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .upload-info p {
+    color: #9ca3af !important;
+}
+
+body[data-theme='dark'] .empl-form-group input,
+body[data-theme='dark'] .empl-form-group select {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .empl-form-group select option {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .action-cancel-btn {
+    background: #1f2937 !important;
+    color: #ffffff !important;
+    border-color: #374151 !important;
+}
+
+body[data-theme='dark'] .profile-placeholder {
+    background: linear-gradient(135deg, #1f2937, #111827) !important;
+}
+
+body[data-theme='dark'] .employee-table,
+body[data-theme='dark'] .employee-table thead th,
+body[data-theme='dark'] .employee-table tbody td {
+    background-color: #111827 !important;
+    border-color: #1f2937 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .view-btn {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+    border-color: #374151 !important;
+}
+
+body[data-theme='dark'] .view-btn:hover {
+    background-color: #374151 !important;
+}

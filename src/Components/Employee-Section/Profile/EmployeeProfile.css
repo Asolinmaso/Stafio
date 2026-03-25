@@ -714,16 +714,46 @@ input[type="radio"] {
   border-radius: 10px !important;
   box-shadow: 0 1px 3px rgba(25, 189, 232, 0.06);
   border: 1px solid #e2eaf0 !important;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem;
 }
 
 .pdf-icon {
-  background: #fff3f1;
-  color: #fd776b;
-  border-radius: 5px;
-  padding: 4px 11px;
-  font-weight: 700;
-  font-size: 0.93rem;
-  margin-right: 10px;
+  background: #FFE4E6;
+  color: #E11D48;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.doc-title {
+  font-size: 15px;
+  color: #1E293B;
+  font-weight: 600;
+}
+
+.doc-size-text {
+  font-size: 13px;
+  color: #94A3B8;
+}
+
+.status-completed-text {
+  font-size: 13px;
+  color: #10B981;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.doc-delete-btn {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #94A3B8;
 }
 
 .status-completed,
@@ -734,30 +764,54 @@ input[type="radio"] {
 }
 
 .upload-box {
-  border-style: dashed;
-  border-color: rgb(209, 204, 204);
-  background: #f7fafd;
-  border-radius: 25px;
-  padding: 33px 16px;
+  border: 2px dashed #CBD5E1;
+  border-radius: 20px;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  padding: 40px 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* new */
-  height: 300px;
-  margin-right: 250px;
+  text-align: center;
+  min-height: 280px;
+  justify-content: center;
   width: 320px;
-
+  margin-right: 250px;
 }
 
-.upload-cloud-icon {
-  font-size: 2.5rem;
-  color: #19bde8;
+.upload-box.drag-over {
+  border-color: #19BDE8;
+  background: #EFF9FF;
+}
+
+.upload-title {
+  color: #1E293B;
+  font-weight: 700;
+  font-size: 17px;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
 }
 
 .upload-hint {
   font-size: 0.95rem;
   color: #848f9c;
-  margin-bottom: 4px;
+  margin-bottom: 24px;
+}
+
+.browse-file-label {
+  display: block;
+  width: 100%;
+  background: #19BDE8;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  text-align: center;
+  white-space: nowrap;
 }
 
 @media (max-width: 991px) {
@@ -784,3 +838,78 @@ input[type="radio"] {
   border: none !important;
   box-shadow: none !important;
 }
+
+/* DARK MODE OVERRIDES FOR DOCUMENTS TAB */
+body[data-theme='dark'] .doc-item {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body[data-theme='dark'] .pdf-icon {
+  background: rgba(225, 29, 72, 0.2) !important;
+  color: #fb7185 !important;
+}
+
+body[data-theme='dark'] .doc-title {
+  color: #f8fafc !important;
+}
+
+body[data-theme='dark'] .doc-size-text {
+  color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .status-completed-text {
+  color: #34d399 !important;
+}
+
+body[data-theme='dark'] .upload-box {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+body[data-theme='dark'] .upload-box.drag-over {
+  border-color: #19BDE8 !important;
+  background: rgba(25, 189, 232, 0.1) !important;
+}
+
+body[data-theme='dark'] .upload-title {
+  color: #f8fafc !important;
+}
+
+body[data-theme='dark'] .upload-hint {
+  color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .browse-file-label {
+  background: #19BDE8 !important;
+}
+
+body[data-theme='dark'] .skill-pill {
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #334155 !important;
+}
+
+body[data-theme='dark'] .skill-remove {
+    color: #94a3b8 !important;
+}
+
+body[data-theme='dark'] .form-label {
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .option-box {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+body[data-theme='dark'] .update-info-header-box {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body[data-theme='dark'] .tab-section-title.personal-info {
+    color: #ffffff !important;
+}
+

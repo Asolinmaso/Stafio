@@ -36,17 +36,12 @@ export default function Settings() {
   const [profileImage, setProfileImage] = useState(profileimg);
   const profileInputRef = useRef(null);
 
-  // Auto-show success message when general settings change
-  const initialRef = useRef(true);
-  useEffect(() => {
-    if (initialRef.current) {
-      initialRef.current = false;
-      return;
-    }
+  // Function to show "General settings updated" message
+  const showGeneralSuccess = () => {
     setSaveMessage("General settings updated successfully!");
     const timer = setTimeout(() => setSaveMessage(""), 3000);
     return () => clearTimeout(timer);
-  }, [language, theme, font, dateFormat]);
+  };
 
   const handleProfileImageUpload = (e) => {
     const file = e.target.files[0];
@@ -296,7 +291,10 @@ export default function Settings() {
                   <label>{t.systemLanguage}</label>
                   <select
                     value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
+                    onChange={(e) => {
+                      setLanguage(e.target.value);
+                      showGeneralSuccess();
+                    }}
                   >
                     <option value="english">English</option>
                     <option value="hindi">Hindi</option>
@@ -314,9 +312,10 @@ export default function Settings() {
                       <input
                         type="checkbox"
                         checked={theme === "dark"}
-                        onChange={() =>
-                          setTheme(theme === "light" ? "dark" : "light")
-                        }
+                        onChange={() => {
+                          setTheme(theme === "light" ? "dark" : "light");
+                          showGeneralSuccess();
+                        }}
                       />
                       <span className="slider round"></span>
                     </label>
@@ -327,7 +326,10 @@ export default function Settings() {
                   <label>{t.systemFont}</label>
                   <select
                     value={font}
-                    onChange={(e) => setFont(e.target.value)}
+                    onChange={(e) => {
+                      setFont(e.target.value);
+                      showGeneralSuccess();
+                    }}
                   >
                     <option value="default">Default - Montserrat</option>
                     <option value="arial">Arial</option>
@@ -339,7 +341,10 @@ export default function Settings() {
                   <label>{t.dateFormat}</label>
                   <select
                     value={dateFormat}
-                    onChange={(e) => setDateFormat(e.target.value)}
+                    onChange={(e) => {
+                      setDateFormat(e.target.value);
+                      showGeneralSuccess();
+                    }}
                   >
                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                     <option value="MM/DD/YYYY">MM/DD/YYYY</option>
