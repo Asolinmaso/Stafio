@@ -1061,9 +1061,8 @@ const AdminProfile = () => {
                         name="dob"
                         value={profile.dob}
                         onChange={handleProfileChange}
-                        className={`form-input ${
-                          personalErrors.dob ? "input-error" : ""
-                        }`}
+                        className={`form-input ${personalErrors.dob ? "input-error" : ""
+                          }`}
                         disabled={!isEditingPersonal}
                       />
                       <span className="input-calendar-icon">
@@ -1081,9 +1080,8 @@ const AdminProfile = () => {
                       name="nationality"
                       value={profile.nationality}
                       onChange={handleProfileChange}
-                      className={`form-select ${
-                        personalErrors.nationality ? "input-error" : ""
-                      }`}
+                      className={`form-select ${personalErrors.nationality ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1106,9 +1104,8 @@ const AdminProfile = () => {
                       name="bloodGroup"
                       value={profile.bloodGroup}
                       onChange={handleProfileChange}
-                      className={`form-input ${
-                        personalErrors.bloodGroup ? "input-error" : ""
-                      }`}
+                      className={`form-input ${personalErrors.bloodGroup ? "input-error" : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     >
                       <option value="" disabled>
@@ -1140,11 +1137,10 @@ const AdminProfile = () => {
                       value={profile.emergencyContactNumber}
                       onChange={handleProfileChange}
                       placeholder="Contact Number"
-                      className={`form-input ${
-                        personalErrors.emergencyContactNumber
-                          ? "input-error"
-                          : ""
-                      }`}
+                      className={`form-input ${personalErrors.emergencyContactNumber
+                        ? "input-error"
+                        : ""
+                        }`}
                       disabled={!isEditingPersonal}
                     />
                     {personalErrors.emergencyContactNumber && (
@@ -1801,7 +1797,7 @@ const AdminProfile = () => {
                         Choose a file or drag &amp; drop it here
                       </p>
                       <p className="upload-hint">
-                        JPEG, PNG, PDG, and MP4 formats, up to 50MB
+                        JPEG, PNG, PDF, and MP4 formats, up to 50MB
                       </p>
                       <input
                         id="admin-file-upload"

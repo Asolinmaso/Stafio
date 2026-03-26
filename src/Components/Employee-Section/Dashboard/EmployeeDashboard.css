@@ -465,6 +465,14 @@ body[data-theme='dark'] .leave-notif-close:hover {
   color: #333;
 }
 
+.break-item strong {
+  color: #333 !important;
+}
+
+.break-item span {
+  color: #666 !important;
+}
+
 .dropdown-title {
   font-weight: 600;
   margin-bottom: 12px;
