@@ -286,6 +286,14 @@
 	background: #f5f5f5;
 }
 
+.break-item strong {
+	color: #333 !important;
+}
+
+.break-item span {
+	color: #666 !important;
+}
+
 .active-break {
 	background: #e6f7ff;
 	border-left: 4px solid #1890ff;

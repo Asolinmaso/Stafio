@@ -16,7 +16,8 @@ import {
   BsEnvelope,
   BsFlag,
 } from "react-icons/bs";
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronRight, FaAngleDown } from "react-icons/fa";
+
 import { useNavigate } from "react-router-dom";
 import EmployeeSidebar from "../EmployeeSidebar";
 import Topbar from "../Topbar";
@@ -759,7 +760,8 @@ const EmployeeDashboard = () => {
                                 }
                                 disabled={punchLoading}
                               >
-                                Start Break <span style={{ fontSize: '10px', marginLeft: '6px' }}>▼</span>
+                                Start Break <FaAngleDown style={{ marginLeft: "8px", fontSize: "14px" }} />
+
                               </button>
                             )}
 

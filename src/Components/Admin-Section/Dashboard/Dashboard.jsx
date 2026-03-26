@@ -23,7 +23,8 @@ import gradientimg from "../../../assets/gradientimg.png";
 import clock from "../../../assets/clock.gif";
 import group10 from "../../../assets/Group10.png";
 import profileimg from "../../../assets/profileimg.png";
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronRight, FaAngleDown } from "react-icons/fa";
+
 import apiClient from "../../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
@@ -797,7 +798,8 @@ const Dashboard = () => {
 																}
 																disabled={punchLoading}
 															>
-																Start Break ▼
+																Start Break <FaAngleDown style={{ marginLeft: "8px", fontSize: "14px" }} />
+
 															</button>
 														)}
 
