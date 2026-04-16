@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./MyRegularization.css";
 import { FaEdit, FaTimesCircle, FaFilter, FaUpload } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import illustration from "../../../assets/timemgnt.png";
+import illustration from "../../../assets/Timemgnt.png";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
 import { useNavigate } from "react-router-dom";
