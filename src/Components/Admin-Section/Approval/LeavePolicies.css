@@ -36,19 +36,43 @@
 }
 
 .leave-policies-add-btn {
-  background: #19bde8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #24b8e1;
   border: none;
   color: #fff;
-  font-weight: 500;
-  padding: 12px 18px;
+  font-weight: 600;
+  width: 190px;
+  height: 50px;
   border-radius: 14px;
-  font-size: 14px;
+  font-size: 18px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.3s;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.add-btn-icon-circle {
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plus-symbol {
+  color: #24b8e1;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .leave-policies-add-btn:hover {
-  background: #0da5d3;
+  background: #1da9d0;
 }
 
 /* ===== Table Section ===== */
@@ -56,9 +80,10 @@
   width: 100%;
   border-collapse: collapse;
   background: #fff;
-  border: 1px solid #000;
-  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .leave-policies-table th,
@@ -88,7 +113,12 @@
 .leave-policies-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 15px;
+}
+
+.text-center {
+  text-align: center !important;
 }
 
 .leave-policies-edit-btn,
@@ -137,9 +167,9 @@
 
 /* ===== Modal Header ===== */
 .leave-policies-modal-header {
-  background: #19bde8;
+  background: #24b8e1;
   color: #fff;
-  padding: 7px 18px;
+  padding: 12px 18px;
   /* modified */
   display: flex;
   justify-content: space-between;
@@ -398,8 +428,10 @@
   }
 
   .leave-policies-add-btn {
-    padding: 14px 24px;
-    font-size: 15px;
+    width: 190px; /* Locked to design spec */
+    height: 50px;
+    padding: 0;
+    font-size: 16px;
   }
 
   .leave-policies-table th,
@@ -423,69 +455,69 @@
    Dark Theme Support for Leave Policies
    ================================================ */
 body[data-theme='dark'] .leave-policies-layout {
-    background-color: #0b0f1a !important;
+  background-color: #0b0f1a !important;
 }
 
 body[data-theme='dark'] .leave-policies-title {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body[data-theme='dark'] .leave-policies-table {
-    background: #1a1f2e !important;
-    border-color: #2d334a !important;
+  background: #1a1f2e !important;
+  border-color: #2d334a !important;
 }
 
 body[data-theme='dark'] .leave-policies-table th {
-    background: #1a1f2e !important;
-    color: #e2e8f0 !important;
-    border-bottom: 2px solid #2d334a !important;
+  background: #1a1f2e !important;
+  color: #e2e8f0 !important;
+  border-bottom: 2px solid #2d334a !important;
 }
 
 body[data-theme='dark'] .leave-policies-table td {
-    color: #e2e8f0 !important;
-    border-bottom: 1px solid #2d334a !important;
+  color: #e2e8f0 !important;
+  border-bottom: 1px solid #2d334a !important;
 }
 
 body[data-theme='dark'] .leave-policies-table tr:hover {
-    background: rgba(255, 255, 255, 0.03) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
 }
 
 body[data-theme='dark'] .leave-policies-edit-btn {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body[data-theme='dark'] .leave-policies-modal {
-    background: #1a1f2e !important;
-    border: 1px solid #2d334a !important;
-    color: #ffffff !important;
+  background: #1a1f2e !important;
+  border: 1px solid #2d334a !important;
+  color: #ffffff !important;
 }
 
 body[data-theme='dark'] .leave-policies-modal-header {
-    background: #12acd3 !important;
+  background: #12acd3 !important;
 }
 
 body[data-theme='dark'] .leave-policies-field label {
-    color: #94a3b8 !important;
+  color: #94a3b8 !important;
 }
 
 body[data-theme='dark'] .leave-policies-input,
 body[data-theme='dark'] .leave-policies-select {
-    background: #0f172a !important;
-    border-color: #2d334a !important;
-    color: #ffffff !important;
+  background: #0f172a !important;
+  border-color: #2d334a !important;
+  color: #ffffff !important;
 }
 
 body[data-theme='dark'] .leave-policies-checkbox-label {
-    color: #e2e8f0 !important;
+  color: #e2e8f0 !important;
 }
 
 body[data-theme='dark'] .leave-policies-modal-footer {
-    background: #1a1f2e !important;
-    border-top: 1px solid #2d334a !important;
+  background: #1a1f2e !important;
+  border-top: 1px solid #2d334a !important;
 }
 
 body[data-theme='dark'] .leave-policies-cancel-btn {
-    background: #1a1f2e !important;
-    border-color: #cbd5e1 !important;
-    color: #cbd5e1 !important;
-}
+  background: #1a1f2e !important;
+  border-color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
+}
