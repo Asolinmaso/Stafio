@@ -84,23 +84,54 @@
   position: relative;
 }
 
-.submenu::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 30px;
-  height: 80%;
-  border-right: 2px dotted #000000;
-}
+/* Removed .submenu::after vertical line to prevent "extra" tail issues */
+/* The vertical line is now handled per-item in .submenu-link::after */
 
 /* Submenu links */
 .submenu-link {
   color: #000000;
   text-decoration: none !important;
-  padding: 4px 0;
-  font-size: 13px;
+  padding: 6px 0;
+  font-size: 13.5px;
   display: block;
   transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Horizontal branch line */
+.submenu-link::before {
+  content: "";
+  position: absolute;
+  left: -25px;
+  top: 50%;
+  width: 25px;
+  height: 1.5px;
+  background-image: linear-gradient(to right, #000 50%, transparent 50%);
+  background-size: 6px 1.5px;
+  background-repeat: repeat-x;
+}
+
+/* Vertical line segment */
+.submenu-link::after {
+  content: "";
+  position: absolute;
+  left: -26.5px;
+  top: -10px;
+  bottom: -10px;
+  width: 1.5px;
+  background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+  background-size: 1.5px 6px;
+  background-repeat: repeat-y;
+}
+
+/* Ensure the first item connects upwards if needed, or starts correctly */
+.submenu-link:first-child::after {
+  top: -15px; /* Reaches up towards the parent menu */
+}
+
+/* Eliminate the "extra" tail on the last item */
+.submenu-link:last-child::after {
+  bottom: 50%; /* Stops exactly at the horizontal branch */
 }
 
 .submenu-link:hover {
@@ -242,6 +273,35 @@
     padding-top: 6px;
   }
 
+  .submenu::after {
+    display: none;
+  }
+
+  .submenu-link::after {
+    content: "";
+    position: absolute;
+    left: -21px; 
+    top: -10px;
+    bottom: -10px;
+    width: 1.5px;
+    background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+    background-size: 1.5px 6px;
+    background-repeat: repeat-y;
+  }
+
+  .submenu-link:last-child::after {
+    bottom: 50%;
+  }
+
+  .submenu-link::before {
+    left: -20px;
+    width: 20px;
+    height: 1.5px;
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 6px 1.5px;
+    background-repeat: repeat-x;
+  }
+
   .submenu-link {
     font-size: 11.5px;
     padding: 3px 0;
@@ -284,6 +344,35 @@
     padding-left: 43px !important;
     padding-bottom: 10px;
     padding-top: 7px;
+  }
+
+  .submenu::after {
+    display: none;
+  }
+
+  .submenu-link::after {
+    content: "";
+    position: absolute;
+    left: -22px; 
+    top: -10px;
+    bottom: -10px;
+    width: 1.5px;
+    background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+    background-size: 1.5px 6px;
+    background-repeat: repeat-y;
+  }
+
+  .submenu-link:last-child::after {
+    bottom: 50%;
+  }
+
+  .submenu-link::before {
+    left: -21px; /* rounding adjustment */
+    width: 21px;
+    height: 1.5px;
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 6px 1.5px;
+    background-repeat: repeat-x;
   }
 
   .submenu-link {
@@ -330,6 +419,35 @@
     padding-top: 7px;
   }
 
+  .submenu::after {
+    display: none;
+  }
+
+  .submenu-link::after {
+    content: "";
+    position: absolute;
+    left: -22.5px; 
+    top: -10px;
+    bottom: -10px;
+    width: 1.5px;
+    background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+    background-size: 1.5px 6px;
+    background-repeat: repeat-y;
+  }
+
+  .submenu-link:last-child::after {
+    bottom: 50%;
+  }
+
+  .submenu-link::before {
+    left: -21px;
+    width: 21px;
+    height: 1.5px;
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 6px 1.5px;
+    background-repeat: repeat-x;
+  }
+
   .submenu-link {
     font-size: 12.5px;
     padding: 4px 0;
@@ -365,6 +483,35 @@
     padding-left: 48px !important;
     padding-bottom: 11px;
     padding-top: 8px;
+  }
+
+  .submenu::after {
+    display: none;
+  }
+
+  .submenu-link::after {
+    content: "";
+    position: absolute;
+    left: -24.5px; 
+    top: -10px;
+    bottom: -10px;
+    width: 1.5px;
+    background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+    background-size: 1.5px 6px;
+    background-repeat: repeat-y;
+  }
+
+  .submenu-link:last-child::after {
+    bottom: 50%;
+  }
+
+  .submenu-link::before {
+    left: -23px;
+    width: 23px;
+    height: 1.5px;
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 6px 1.5px;
+    background-repeat: repeat-x;
   }
 
   .submenu-link {
@@ -406,7 +553,32 @@
   }
 
   .submenu::after {
-    left: 42px;
+    display: none;
+  }
+
+  .submenu-link::after {
+    content: "";
+    position: absolute;
+    left: -30px; 
+    top: -15px;
+    bottom: -15px;
+    width: 2.5px; /* Thicker for 4K */
+    background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+    background-size: 2.5px 10px;
+    background-repeat: repeat-y;
+  }
+
+  .submenu-link:last-child::after {
+    bottom: 50%;
+  }
+
+  .submenu-link::before {
+    left: -28px;
+    width: 28px;
+    height: 2.5px;
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 10px 2.5px;
+    background-repeat: repeat-x;
   }
 
   .submenu-link {

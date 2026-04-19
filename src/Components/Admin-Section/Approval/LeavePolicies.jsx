@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTimes } from "react-icons/fa";
+// import { FaEdit, FaTimes } from "react-icons/fa"; // Removed as replaced by custom SVGs
 import "./LeavePolicies.css";
 import AdminSidebar from "../AdminSidebar";
 import Topbar from "../Topbar";
@@ -225,7 +225,10 @@ const LeavePolicies = () => {
             className="leave-policies-add-btn"
             onClick={() => setShowModal(true)}
           >
-            + Add Leave Type
+            <div className="add-btn-icon-circle">
+              <span className="plus-symbol">+</span>
+            </div>
+            Add Leave Type
           </button>
         </div>
 
@@ -236,7 +239,7 @@ const LeavePolicies = () => {
               <th>Leave Name</th>
               <th>Created On</th>
               <th>Leave Type</th>
-              <th>Action</th>
+              <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -245,18 +248,25 @@ const LeavePolicies = () => {
                 <td>{policy.name}</td>
                 <td>{policy.createdOn}</td>
                 <td>{policy.type}</td>
-                <td className="leave-policies-actions">
+                <td className="leave-policies-actions text-center">
                   <button
                     className="leave-policies-edit-btn"
                     onClick={() => openEditModal(policy)}
                   >
-                    <FaEdit />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </button>
                   <button
                     className="leave-policies-delete-btn"
                     onClick={() => handleDelete(policy.id)}
                   >
-                    <FaTimes />
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="14" cy="14" r="12" fill="#FF3B30"/>
+                      <path d="M10 10L18 18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M18 10L10 18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
                   </button>
                 </td>
               </tr>
